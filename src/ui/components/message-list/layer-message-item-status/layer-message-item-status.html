@@ -1,0 +1,32 @@
+<template>
+  <style>
+    layer-message-item-status {
+      display: flex;
+      flex-direction: column;
+      align-content: stretch;
+    }
+
+    layer-message-item-status .layer-list-item {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+    }
+
+    layer-message-item-status  .layer-message-item-main {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    /* Insure that text, images, videos, etc... are all left aligned */
+    layer-message-item-status layer-message-text-plain {
+      display: block;
+    }
+  </style>
+
+  <div class='layer-list-item' layer-id='innerNode'>
+      <layer-message-viewer layer-id='messageViewer' class='layer-message-item-main'></layer-message-viewer>
+  </div>
+</template>
+<script>
+  window.layerUI.registerTemplate('layer-message-item-status');
+</script>

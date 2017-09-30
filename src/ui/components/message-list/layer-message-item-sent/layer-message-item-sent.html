@@ -1,0 +1,80 @@
+<template>
+  <style>
+    layer-message-item-sent {
+      display: flex;
+      flex-direction: column;
+      align-content: stretch;
+    }
+
+    /* Twemoji */
+    layer-message-item-sent img.emoji {
+      margin: 0 .05em 0 .1em;
+      vertical-align: -0.1em;
+    }
+
+    layer-message-item-sent .layer-list-item {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    layer-message-item-sent .layer-message-row {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      flex-grow: 1;
+    }
+
+    layer-message-item-sent .layer-message-item-main {
+      text-align: right;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+    layer-message-item-sent .layer-message-item-main .layer-message-item-content {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+
+    /* Insure that text, images, videos, etc... are all right aligned */
+    layer-message-item-sent layer-message-text-plain {
+      display: block;
+    }
+
+    layer-message-item-sent .layer-message-right-side > div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+  </style>
+
+  <div class='layer-list-item' layer-id='innerNode'>
+
+    <!-- Header -->
+    <layer-replaceable-content class='layer-message-header' name='messageRowHeader'></layer-replaceable-content>
+
+    <!-- Body -->
+    <div class='layer-message-row' layer-id='messageRow'>
+
+      <!-- Body: left Side -->
+      <layer-replaceable-content class='layer-message-left-side' name='messageRowLeftSide'></layer-replaceable-content>
+
+
+      <!-- Body: Message Contents -->
+      <div class='layer-message-item-main'>
+        <layer-message-viewer layer-id='messageViewer'></layer-message-viewer>
+        <div class='layer-message-item-content' layer-id='content'></div>
+      </div>
+
+      <!-- Body: Right Side -->
+      <layer-replaceable-content class='layer-message-right-side' name='messageRowRightSide'></layer-replaceable-content>
+    </div>
+
+    <!-- Footer -->
+    <layer-replaceable-content class='layer-message-footer' name='messageRowFooter'></layer-replaceable-content>
+  </div>
+</template>
+
+<script>
+  window.layerUI.registerTemplate('layer-message-item-sent');
+</script>

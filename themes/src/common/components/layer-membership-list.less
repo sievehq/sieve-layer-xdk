@@ -1,0 +1,14 @@
+layer-membership-list {
+    background-color: @membership-list-color-background;
+
+    .layer-list-item {
+        cursor: pointer;
+        > * {
+            cursor: pointer;
+        }
+        border-bottom: @membership-list-item-border;
+        &:not(:first-child) {
+            border-top: @membership-list-item-border;
+        }
+    }
+}

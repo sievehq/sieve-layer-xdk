@@ -1,3 +1,15 @@
+
+
+# Contents of this file get merged with .gitignore to generate the .npmignore
+# DO NOT directly edit .npmignore
+test
+npmignore-source
+sauce-gruntfile.js
+grunt-template-jasmine-istanbul_src*
+jsduck-config
+coverage
+
+
 # Logs
 logs
 *.log
@@ -46,6 +58,3 @@ docs
 npm-link-projects.json
 test/index.html
 
-# !npmignored: Everything after this line is left out of the .npmignore file
-/lib
-samples/build.js

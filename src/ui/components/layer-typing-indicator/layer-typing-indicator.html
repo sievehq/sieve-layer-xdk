@@ -1,0 +1,19 @@
+<template>
+  <style>
+    layer-typing-indicator {
+      display: block;
+    }
+
+    layer-typing-indicator span {
+      display: none;
+    }
+
+    layer-typing-indicator.layer-typing-occuring span {
+      display: inline;
+    }
+  </style>
+  <span class='layer-typing-message' layer-id='panel'></span>
+</template>
+<script>
+  window.layerUI.registerTemplate('layer-typing-indicator');
+</script>

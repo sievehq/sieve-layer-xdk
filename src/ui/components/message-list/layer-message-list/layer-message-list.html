@@ -1,0 +1,41 @@
+<template>
+  <style>
+    layer-message-list {
+      display: block;
+      flex-grow: 1;
+      height: 100px; /* flexbox bug */
+      padding-bottom: 15px;
+      overflow-y: scroll; /* has to be scroll, not auto */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    layer-message-list:not(.layer-loading-data) .layer-load-indicator,
+    layer-message-list:not(.layer-end-of-results) .layer-end-of-results-indicator {
+      display: none;
+    }
+
+  </style>
+  <!-- The List Header contains a collection of special nodes that may render at the top of the list for
+    different conditions -->
+  <div class='layer-list-meta' layer-id='listMeta'>
+
+    <!-- Rendered when the list is empty -->
+    <layer-replaceable-content layer-id='emptyNode' class='layer-empty-list' name='emptyNode'></layer-replaceable-content>
+
+    <div class='layer-header-toggle'>
+
+      <!-- Rendered when there are no more results to page to -->
+      <layer-replaceable-content layer-id='endOfResultsNode' class='layer-end-of-results-indicator' name='endOfResultsNode'>
+        <layer-start-of-conversation layer-id='startOfConversation'></layer-start-of-conversation>
+      </layer-replaceable-content>
+
+      <!-- Rendered when waiting for server data -->
+      <layer-replaceable-content layer-id='loadIndicator' class='layer-load-indicator' name='loadIndicator'>
+        <layer-loading-indicator></layer-loading-indicator>
+      </layer-replaceable-content>
+    </div>
+  </div>
+</template>
+<script>
+  window.layerUI.registerTemplate('layer-message-list');
+</script>

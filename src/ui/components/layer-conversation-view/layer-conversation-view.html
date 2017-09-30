@@ -1,0 +1,25 @@
+<template>
+  <style>
+    layer-conversation-view {
+      display: flex;
+      flex-direction: column;
+      outline: none; /* Don't show focus on the widget; typing will refocus on textarea. */
+    }
+
+    layer-message-list {
+      flex-grow: 1;
+      height: 100px;
+    }
+
+    layer-compose-bar {
+      border-top: 1px solid #dedede;
+      min-height: 30px;
+    }
+</style>
+  <layer-message-list layer-id='list'></layer-message-list>
+  <layer-typing-indicator layer-id='typingIndicators'></layer-typing-indicator>
+  <layer-compose-bar layer-id='composer'></layer-compose-bar>
+</template>
+<script>
+  window.layerUI.registerTemplate('layer-conversation-view');
+</script>

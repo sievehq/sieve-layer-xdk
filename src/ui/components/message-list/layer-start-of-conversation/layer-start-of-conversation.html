@@ -1,0 +1,18 @@
+<template>
+  <style>
+    layer-start-of-conversation {
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    layer-start-of-conversation layer-date {
+      display: inline;
+    }
+</style>
+Conversation began <layer-date layer-id='startDate' default-format='{"month": "long", "year": "numeric", "day": "numeric", "hour": "numeric", "minute": "numeric" }' today-format='{"hour": "numeric", "minute": "numeric"}' week-format='{"weekday": "long", "hour": "numeric", "minute": "numeric"}'></layer-date>
+</template>
+<script>
+  window.layerUI.registerTemplate('layer-age');
+</script>
+

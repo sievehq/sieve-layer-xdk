@@ -1,0 +1,30 @@
+layer-message-list {
+    background-color: @message-list-color-background;
+    .layer-list-meta {
+        height: @message-list-header-height;
+        border: solid 1px transparent; /* Fixes dumb chrome reflow bug */
+    }
+    .layer-header-toggle {
+        height: @message-list-header-height;
+    }
+
+    .layer-end-of-results-indicator, .layer-empty-list {
+        font-size: 11px;
+        padding: 4px 0px;
+        margin: 8px 0px;
+        color: @separator-end-of-results-text-color;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .layer-load-indicator {
+        max-height: @message-list-header-height;
+
+        layer-loading-indicator {
+            position: relative;
+            top: -20px;
+        }
+    }
+}
+

@@ -1,0 +1,68 @@
+/*
+ * The Identity Item widget
+ */
+layer-identity-item {
+    /*
+     * List items all contain a layer-list-item that contains the real contents of the item.
+     */
+    .layer-list-item {
+        /* Eventually this may be used outside of a list, but for now, these should always appear selectable */
+        cursor: pointer;
+        * {
+            cursor: pointer;
+        }
+        padding-right: 12px;
+        padding-left: 12px;
+        box-sizing: border-box;
+        input[type=checkbox] {
+            margin-left: 12px;
+        }
+        .layer-identity-name {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            color: @identity-item-title-color;
+        }
+        layer-age {
+            font-size: 12px;
+            color: @identity-item-age-color;
+        }
+    }
+
+    /*
+     * Manage the different sizes
+     */
+    &.layer-size-medium .layer-list-item {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        min-height: 60px;
+        .layer-identity-name {
+            font-size: @identity-item-medium-title-size;
+        }
+        layer-avatar {
+            margin-right: 12px;
+        }
+    }
+    &.layer-size-small .layer-list-item {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        min-height: 48px;
+        .layer-identity-name {
+            font-size: @identity-item-small-title-size;
+        }
+        layer-avatar {
+            margin-right: 12px;
+        }
+    }
+    &.layer-size-tiny .layer-list-item {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        min-height: 32px;
+        .layer-identity-name {
+            font-size: @identity-item-tiny-title-size;
+        }
+        layer-presence.presence-without-avatar {
+            margin-right: 8px;
+        }
+    }
+}

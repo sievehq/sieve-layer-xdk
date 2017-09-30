@@ -1,0 +1,72 @@
+[
+  {
+    "name": "WebSDK Components",
+    "groups": [
+      {
+        "name": "Core Classes",
+        "classes": [
+          "layer.Client",
+          "layer.Conversation",
+          "layer.Message",
+          "layer.MessagePart",
+          "layer.Core.Query"
+        ]
+      },
+      {
+        "name": "Utilities",
+        "classes": [
+          "layer.Core.QueryBuilder.ConversationsQuery",
+          "layer.Core.QueryBuilder.MessagesQuery",
+          "layer.Core.LayerEvent",
+          "layer.Core.LayerEvent",
+          "layer.ClientUtils",
+          "layer.Root",
+          "layer.Constants"
+        ]
+      },
+      {
+        "name": "Services",
+        "classes": [
+          "layer.TypingIndicators.TypingPublisher",
+          "layer.TypingIndicators.TypingListener",
+          "layer.TypingIndicators.TypingIndicatorListener",
+          "layer.SyncManager"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "WebUI Components",
+    "groups": [
+      {
+        "name": "Main Components",
+        "classes": [
+          "layerUI.components.ConversationPanel",
+          "layerUI.components.ConversationsListPanel.List",
+          "layerUI.components.IdentitiesListPanel.List",
+          "layerUI.components.Notifier"
+        ]
+      },
+      {
+        "name": "Utilities",
+        "classes": [
+          "layerUI",
+          "layerUI.components.Component",
+          "layerUI.adapters.react",
+          "layerUI.adapters.angular",
+          "layerUI.adapters.backbone"
+        ]
+      },
+      {
+        "name": "Message Handlers",
+        "classes": [
+          "layerUI.handlers.message.TextPlain",
+          "layerUI.handlers.message.Image",
+          "layerUI.handlers.message.Video",
+          "layerUI.handlers.message.Unknown"
+        ]
+      }
+    ]
+  }
+]
+

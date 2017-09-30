@@ -1,0 +1,23 @@
+<template>
+  <style>
+    layer-menu-button {
+      display: block;
+      cursor: pointer;
+      position: relative;
+      width: 0px;
+      height: 14px;
+    }
+    layer-menu-button span {
+      padding: 0px 8px;
+      user-select: none;
+      -webkit-user-select: none;
+      position: absolute;
+      top: -9px;
+      left: -9px;
+    }
+  </style>
+<span>&#8285;</span>
+</template>
+<script>
+  window.layerUI.registerTemplate('layer-menu-button');
+</script>

@@ -1,0 +1,226 @@
+/* Color Pallete */
+@color-white: #ffffff;
+@color-g1: #f3f3f3;
+@color-g2: #e9ebef;
+@color-g3: #dadde4;
+@color-g4: #c3c6cf;
+@color-g5: #a4a8b2;
+@color-g6: #6e727a;
+@color-black: #1b1c1d;
+@color-darknavy: #313f48;
+@color-darkblue: #1094d0;
+@color-yellow: #ffd624;
+@color-light-yellow: #FFEEA7;
+@color-green: #56bf46;
+@color-red: #eb3838;
+
+/* Color Role Definitions */
+@color-role-font-standard: @color-black;
+@color-role-font-light: @color-g5;
+@color-role-font-inverted: @color-white;
+@color-role-background: @color-white;
+@color-role-border: @color-g1;
+@color-role-heavy-border: @color-g3;
+@color-role-hidden: transparent;
+@color-role-list-background: @color-role-background;
+@color-role-list-item-border: @color-role-border;
+
+/* Font Size Definitions */
+@font-larger: 1.2rem;
+@font-large: 1.1rem;
+@font-medium: 1.0rem;
+@font-small: 0.8rem;
+
+/* Presence Widget */
+@presence-color-busy: @color-red;
+@presence-color-away: @color-yellow;
+@presence-color-offline: @color-g3;
+@presence-color-invisible: @color-green;
+@presence-color-invisible-inside: @color-role-hidden;
+@presence-color-available: @color-green;
+@presence-size-small: 8px;
+@presence-size-medium: 10px;
+@presence-size-large: 12px;
+
+/* Avatar Widget */
+@avatar-color-background: @color-g3;
+@avatar-color-text: @color-role-font-inverted;
+@avatar-color-border: @color-role-hidden;
+@avatar-color-multi-avatar-border: @color-role-background;
+@avatar-color-presence-border: @color-role-background;
+@avatar-color-presence-invisible-inside: @color-role-background; // Note that transparent does not work here; but this is currently a rare state to handle
+@avatar-size-small: 32px;
+@avatar-size-medium: 40px;
+@avatar-size-large: 48px;
+@avatar-size-larger: 72px;
+@avatar-font-small: 14px;
+@avatar-font-medium: 16px;
+@avatar-font-large: 18px;
+@avatar-font-larger: 20px;
+
+/* Color Definitions: Avatar */
+@color-avatar-background: @color-g3;
+@color-avatar-text: @color-white;
+@color-avatar-border: transparent;
+@color-avatar-multi-avatar-border: @color-white;
+@color-avatar-presence-border: @color-white;
+@color-avatar-presence-invisible-inside: @color-white; // Note that transparent does not work here; but this is currently a rare state to handle
+
+/* Conversation Item */
+@conversation-item-color-title: @color-role-font-standard;
+@conversation-item-color-read: @color-role-font-light;
+@conversation-item-color-unread: @color-role-font-standard;
+@conversation-item-color-selected-background: @color-g1;
+
+@conversation-item-large-title-size: @font-larger;
+@conversation-item-medium-title-size: @font-larger;
+@conversation-item-small-title-size: @font-medium;
+@conversation-item-tiny-title-size: @font-medium;
+
+@conversation-item-large-date-size: @font-medium;
+@conversation-item-medium-date-size: @font-medium;
+@conversation-item-small-date-size: @font-small;
+@conversation-item-tiny-date-size: @font-small;
+
+@conversation-item-large-last-message-size: @font-large;
+@conversation-item-medium-last-message-size: @font-medium;
+@conversation-item-small-last-message-size: @font-small;
+@conversation-item-tiny-last-message-size: @font-small;
+
+// Group Counters are part of Conversation Item if using the Small size Items
+@conversation-item-color-group-count: @color-role-font-light;
+@conversation-item-color-group-count-border: @color-role-font-light;
+@conversation-item-unread-title-weight: bold;
+
+/* Conversation List */
+@conversation-list-color-background: @color-role-list-background;
+@conversation-list-item-border: @color-role-list-item-border;
+@conversation-list-empty-color: @color-role-font-light;
+@conversation-list-empty-size: @font-larger;
+@conversation-list-end-of-query-color: @color-role-font-light;
+
+/* Identity Item */
+@identity-item-title-color: @color-role-font-standard;
+@identity-item-age-color: @color-role-font-light;
+@identity-item-medium-title-size: @font-large;
+@identity-item-small-title-size: @font-large;
+@identity-item-tiny-title-size: @font-large;
+
+/* Identity List */
+@identity-list-color-background: @color-role-list-background;
+@identity-list-item-border: @color-role-list-item-border;
+@identity-list-empty-color: @color-role-font-light;
+@identity-list-empty-size: @font-larger;
+@identity-list-end-of-query-color: @color-role-font-light;
+
+/* Membership Item */
+@membership-item-title-color: @color-role-font-standard;
+@membership-item-title-size: @font-large;
+
+/* Membership List */
+@membership-list-color-background: @color-role-list-background;
+@membership-list-item-border: @color-role-list-item-border;
+@membership-item-color-selected-background: @color-g1;
+
+/* Menu Button */
+@menu-button-color: @color-role-font-light;
+@menu-button-hover-color: @color-role-font-standard;
+
+/* Menu */
+@menu-background-color: @color-role-background;
+@menu-border: @color-role-border;
+@menu-item-text-color: @color-role-font-standard;
+@menu-item-text-size: @font-medium;
+@menu-item-background-color-hover: @color-g1;
+@menu-item-color-hover: @color-darknavy;
+
+/* Message Item */
+@message-item-status-color: @color-role-font-light;
+@message-item-status-size: @font-small;
+@message-item-date-color: @color-role-font-light;
+@message-item-date-size: @font-small;
+@message-item-sender-color: @color-role-font-light;
+@message-item-sender-size: @font-medium;
+@message-item-text-indent: 12px + 32px;
+
+@message-item-color: @color-black;
+@message-item-size: @font-medium;
+
+/* Messages List */
+@message-list-header-height: 50px;
+@message-list-color-background: @color-role-list-background;
+
+/* Notifier / Toast */
+@toast-background-color: @color-role-background;
+@toast-border-color: @color-role-border;
+@toast-border-radius: 8px;
+@toast-title-color: @color-role-font-standard;
+@toast-title-size: @font-medium;
+@toast-title-weight: bold;
+@toast-message-color: @color-role-font-standard;
+@toast-message-size: @font-medium;
+@toast-message-weight: normal;
+@toast-width: 320px;
+
+/* Spinner */
+@loading-indicator-color1: @color-g3;
+@loading-indicator-color2: @color-g1;
+
+/* Typing Indicators */
+@typing-indicators-background: @color-role-background;
+@typing-indicators-size: @font-small;
+@typing-indicators-color: @color-darknavy;
+
+/* Composer */
+@composer-top-border-color: @color-role-border;
+@composer-font-size: @font-larger;
+@composer-bottom-border-focus-color: @color-darkblue;
+@composer-send-button-empty-color: @color-g5;
+@composer-send-button-non-empty-color: @color-darkblue;
+@composer-send-button-disabled-color: @color-g3;
+@composer-send-button-size: @font-large;
+
+/* Generic Button */
+@button-color: @color-g5;
+@button-border: @color-g5;
+
+
+/* Boundaries (optional components) */
+@separator-date-border-color: @color-role-heavy-border;
+@separator-date-color: @color-role-font-light;
+@separator-date-size: @font-small;
+@separator-text-color: @color-role-font-light;
+@separator-text-size: @font-small;
+@separator-end-of-results-text-color: @color-role-font-light;
+
+/* Card Containers */
+@card-container-core-ui-background: @color-role-background;
+@card-container-footer-color: @color-g5;
+@card-container-description-color: @color-g6;
+@card-container-title-color: @color-black;
+@card-outer-border-color: @color-role-heavy-border;
+@card-inner-border-color: @color-role-heavy-border;
+
+/* Card Buttons */
+@card-button-background: @color-role-background;
+@card-button-text: @color-darkblue;
+@card-button-selected-background: @color-darkblue;
+@card-button-selected-text: @color-role-font-inverted;
+@card-button-disabled-background: @color-g3;
+@card-button-disabled-text: @color-g5;
+@card-button-focus-background: @color-g2;
+@card-button-focus-text: @color-darkblue;
+@card-button-hover-background: @color-g1;
+@card-button-hover-text: @color-darkblue;
+@card-button-size: @font-medium;
+@carousel-next-button-border-color: @color-g5;
+@carousel-next-button-background: @color-g3;
+
+/* Card Misc */
+@card-standard-minimum-width: 192px;
+
+/* IGNORE THESE */
+@message-item-bubble-received-background-color: @color-g1;
+@message-item-bubble-received-color: @color-black;
+@message-item-bubble-sent-background-color: @color-darkblue;
+@message-item-bubble-text-sent-color: @color-white;

@@ -1,0 +1,141 @@
+/*
+ * Avatar widget theme
+ */
+layer-avatar {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    /* Every avatar has a span that contains text (initials) or an Image tag. If text, it will have a layer-text-avatar css class */
+    span {
+        border: solid 1px @avatar-color-border;
+        display: block;
+        align-items: center;
+        border-radius: 50%;
+        overflow: hidden;
+        /* Text customizations */
+        &.layer-text-avatar {
+            display: flex;
+            justify-content: center;
+            background-color: @avatar-color-background;
+            color: @avatar-color-text;
+        }
+        /* Image customizations */
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    /*
+     * Handle the layout of each size of Avatar
+     */
+    &.layer-size-small {
+        width: @avatar-size-small;
+        height: @avatar-size-small;
+        line-height: @avatar-size-small;
+        font-size: @avatar-font-small;
+        span {
+            height: @avatar-size-small - 2px;
+            width: @avatar-size-small - 2px;
+        }
+    }
+    &.layer-size-medium {
+        width: @avatar-size-medium;
+        height: @avatar-size-medium;
+        line-height: @avatar-size-medium;
+        font-size: @avatar-font-medium;
+        span {
+            height: @avatar-size-medium - 2px;
+            width: @avatar-size-medium - 2px;
+        }
+    }
+    &.layer-size-large {
+        width: @avatar-size-large;
+        height: @avatar-size-large;
+        line-height: @avatar-size-large;
+        font-size: @avatar-font-large;
+        span {
+            height: @avatar-size-large - 2px;
+            width: @avatar-size-large - 2px;
+        }
+    }
+    &.layer-size-larger {
+        width: @avatar-size-larger;
+        height: @avatar-size-larger;
+        line-height: @avatar-size-larger;
+        font-size: @avatar-font-larger;
+        span {
+            height: @avatar-size-larger - 2px;
+            width: @avatar-size-larger - 2px;
+        }
+    }
+    /*
+     * Presence is not a required part of the Avatar widget.  If you do not want it,
+     * you should set the Avatar.showPresence property to false rather than setting
+     * display: none.  Why? Because if showPresence is false, the presence widget is not created,
+     * which is more efficient.
+     */
+    layer-presence {
+        &.layer-presence-invisible {
+            background-color: @avatar-color-presence-invisible-inside;
+        }
+        &:before {
+            content: " ";
+            border: solid 2px @avatar-color-presence-border;
+            position: absolute;
+            border-radius: 16px;
+            top: -2px;
+            bottom: -2px;
+            left: -2px;
+            right: -2px;
+        }
+        &.layer-presence-invisible:before {
+            top: -4px;
+            bottom: -4px;
+            left: -4px;
+            right: -4px;
+        }
+    }
+    &.layer-avatar-cluster > span {
+        position: absolute;
+        &:nth-child(n+2) {
+            border: solid 1px @avatar-color-multi-avatar-border;
+        }
+    }
+    /*
+     * Clustered Avatars for Group Chats have size and layout adjustments
+     */
+    &.layer-avatar-cluster {
+        &.layer-size-small,
+        &.layer-size-medium,
+        &.layer-size-large,
+        &.layer-size-larger {
+            &>*:nth-child(1) {
+                display: block;
+            }
+            &>*:nth-child(2) {
+                margin-left: 25%;
+                margin-top: 25%;
+                z-index: 2;
+                display: block;
+            }
+            &>* {
+                height: 70%;
+                width: 70%;
+                font-size: 0.7em;
+                display: none;
+            }
+        }
+        &.layer-size-small > span {
+            line-height: @avatar-size-small * 0.7;
+        }
+        &.layer-size-medium > span {
+            line-height: @avatar-size-medium * 0.7;
+        }
+        &.layer-size-large > span {
+            line-height: @avatar-size-large * 0.7;
+        }
+        &.layer-size-larger > span {
+            line-height: @avatar-size-larger * 0.7;
+        }
+    }
+}

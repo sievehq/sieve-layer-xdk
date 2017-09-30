@@ -1,0 +1,38 @@
+/*
+ * Presence widget theme
+ */
+layer-presence {
+    box-sizing: border-box;
+
+    /* Styling for each presence state */
+    &.layer-presence-away {
+        background-color: @presence-color-away;
+    }
+    &.layer-presence-busy {
+        background-color: @presence-color-busy;
+    }
+    &.layer-presence-available {
+        background-color: @presence-color-available;
+    }
+    &.layer-presence-offline {
+        background-color: @presence-color-offline;
+    }
+    &.layer-presence-invisible {
+        background-color: @presence-color-invisible-inside;
+        border: solid 2px @presence-color-invisible;
+    }
+
+    /* Styling for each presence size */
+    &.layer-size-small {
+        width: @presence-size-small;
+        height: @presence-size-small;
+    }
+    &.layer-size-medium {
+        width: @presence-size-medium;
+        height: @presence-size-medium;
+    }
+    &.layer-size-large {
+        width: @presence-size-large;
+        height: @presence-size-large;
+    }
+}

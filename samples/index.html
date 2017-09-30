@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <title>Card Test App</title>
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <script>
+  window.googleMapsAPIKey = 'AIzaSyBTX7IDEkTLEAhM-Tp9dxbLnlBYX5NHxpA';
+    </script>
+    <script src='build.js'></script>
+
+    <link rel="stylesheet" href="../themes/build/layer-basic-blue.css">
+    <style>
+      @media (max-width: 750px) {
+        layer-conversation-list, .layer-conversation-list-header {
+          display: none !important;
+        }
+        layer-message-item-sent layer-avatar {
+          display: none !important;
+        }
+        layer-menu-button {
+          display: none !important;
+        }
+        .layer-message-right-side {
+          display: none !important;
+        }
+      }
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0px;
+      padding: 0px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+    }
+    .header {
+      height: 40px;
+    }
+    .content, .header {
+      display: flex;
+      flex-direction: row;
+    }
+    .header {
+      border-bottom: solid 1px black;
+    }
+    .content {
+      flex-grow: 1;
+    }
+    layer-conversation-list, .layer-conversation-list-header {
+      width: 350px;
+      border-right: solid 1px black;
+    }
+    layer-conversation-view, .layer-conversation-header {
+      flex-grow: 1;
+      width: 50px; /* flexbox bug workaround */
+    }
+    </style>
+  </head>
+  <body>
+    <div class='header'>
+      <div class='layer-conversation-list-header'>
+        <layer-presence></layer-presence>
+        Logged in as User <span class='user-name'></span>
+      </div>
+      <div class='layer-conversation-header'>
+      </div>
+      <div class='layer-membership-list-header'>
+      </div>
+    </div>
+    <div class='content'>
+      <layer-notifier id="notifier" notify-in-background="toast"></layer-notifier>
+      <layer-conversation-list selected-id="layer:///conversations/083af962-cc5e-4d89-85e0-a5b6e8d0dcff" id="list"></layer-conversation-list>
+      <layer-conversation-view conversation-id="layer:///conversations/083af962-cc5e-4d89-85e0-a5b6e8d0dcff" listen-to="notifier,list"></layer-conversation-view>
+    </div>
+  </body>
+</html>

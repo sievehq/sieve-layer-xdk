@@ -1,0 +1,39 @@
+.layer-list-item-separator-parent {
+  .layer-list-item-separator {
+    &:first-child {
+      margin-top: 12px;
+    }
+    &:last-child {
+      margin-bottom: 12px;
+    }
+    margin-top: 4px;
+    margin-bottom: 4px;
+    color: @separator-text-color;
+    font-size: @separator-text-size;
+  }
+
+  .layer-list-item-separator-date {
+    height: 25px;
+  }
+
+  .layer-list-item-separator-date-inner {
+    border-bottom: solid 1px @separator-date-border-color;
+    text-align: center;
+    height: 12px;
+
+    layer-date {
+      display: inline-block;
+      color: @separator-date-color;
+      font-size: @separator-date-size;
+      background-color: @color-role-list-background;
+      padding: 2px 15px;
+      border: solid 1px @separator-date-border-color;
+      border-radius: 8px;
+    }
+  }
+}
+
+/* Welcome message replaces the need for a first date indicator */
+.layer-first-message-of-conversation .layer-list-item-separator-date {
+  display: none;
+}

@@ -1,0 +1,8 @@
+# Contents of this file get merged with .gitignore to generate the .npmignore
+# DO NOT directly edit .npmignore
+test
+npmignore-source
+sauce-gruntfile.js
+grunt-template-jasmine-istanbul_src*
+jsduck-config
+coverage

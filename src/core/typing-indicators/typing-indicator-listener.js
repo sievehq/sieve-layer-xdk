@@ -1,0 +1,267 @@
+/**
+ * The TypingIndicatorListener receives Typing Indicator state
+ * for other users via a websocket, and notifies
+ * the client of the updated state.  Typical applications
+ * do not access this component directly, but DO subscribe
+ * to events produced by this component:
+ *
+ *      client.on('typing-indicator-change', function(evt) {
+ *        if (evt.conversationId == conversationICareAbout) {
+ *          console.log('The following users are typing: ' + evt.typing.join(', '));
+ *          console.log('The following users are paused: ' + evt.paused.join(', '));
+ *        }
+ *      });
+ *
+ * @class layer.TypingIndicators.TypingIndicatorListener
+ * @extends {layer.Root}
+ */
+
+const Root = require('../root');
+const ClientRegistry = require('../client-registry');
+const { STARTED, PAUSED, FINISHED } = require('./typing-indicators');
+
+class TypingIndicatorListener extends Root {
+
+  /**
+   * Creates a Typing Indicator Listener for this Client.
+   *
+   * @method constructor
+   * @protected
+   * @param  {Object} args
+   * @param {string} args.clientId - ID of the client this belongs to
+   */
+  constructor(args) {
+    super(args);
+
+    /**
+     * Stores the state of all Conversations, indicating who is typing and who is paused.
+     *
+     * People who are stopped are removed from this state.
+     * @property {Object} state
+     */
+    this.state = {};
+    this._pollId = 0;
+    const client = this._getClient();
+    client.on('ready', () => this._clientReady());
+  }
+
+  /**
+   * Called when the client is ready
+   *
+   * @method _clientReady
+   * @private
+   */
+  _clientReady() {
+    const client = this._getClient();
+    this.user = client.user;
+    const ws = client.socketManager;
+    ws.on('message', this._handleSocketEvent, this);
+    this._startPolling();
+  }
+
+  /**
+   * Determines if this event is relevant to report on.
+   * Must be a typing indicator signal that is reporting on
+   * someone other than this user.
+   *
+   * @method _isRelevantEvent
+   * @private
+   * @param  {Object}  Websocket event data
+   * @return {Boolean}
+   */
+  _isRelevantEvent(evt) {
+    return evt.type === 'signal' &&
+      evt.body.type === 'typing_indicator' &&
+      evt.body.data.sender.id !== this.user.id;
+  }
+
+  /**
+   * This method receives websocket events and
+   * if they are typing indicator events, updates its state.
+   *
+   * @method _handleSocketEvent
+   * @private
+   * @param {layer.Core.LayerEvent} evtIn - All websocket events
+   */
+  _handleSocketEvent(evtIn) {
+    const evt = evtIn.data;
+
+    if (this._isRelevantEvent(evt)) {
+      // Could just do _createObject() but for ephemeral events, going through _createObject and updating
+      // objects for every typing indicator seems a bit much.  Try getIdentity and only create if needed.
+      const identity = this._getClient().getIdentity(evt.body.data.sender.id) ||
+        this._getClient()._createObject(evt.body.data.sender);
+      const state = evt.body.data.action;
+      const conversationId = evt.body.object.id;
+      let stateEntry = this.state[conversationId];
+      if (!stateEntry) {
+        stateEntry = this.state[conversationId] = {
+          users: {},
+          typing: [],
+          paused: [],
+        };
+      }
+      stateEntry.users[identity.id] = {
+        startTime: Date.now(),
+        state,
+        identity,
+      };
+      if (stateEntry.users[identity.id].state === FINISHED) {
+        delete stateEntry.users[identity.id];
+      }
+
+      this._updateState(stateEntry, state, identity.id);
+
+      this.trigger('typing-indicator-change', {
+        conversationId,
+        typing: stateEntry.typing.map(id => stateEntry.users[id].identity.toObject()),
+        paused: stateEntry.paused.map(id => stateEntry.users[id].identity.toObject()),
+      });
+    }
+  }
+
+  /**
+   * Get the current typing indicator state of a specified Conversation.
+   *
+   * Typically used to see if anyone is currently typing when first opening a Conversation.
+   * Typically accessed via `client.getTypingState(conversationId)`
+   *
+   * @method getState
+   * @param {String} conversationId
+   */
+  getState(conversationId) {
+    const stateEntry = this.state[conversationId];
+    if (stateEntry) {
+      return {
+        typing: stateEntry.typing.map(id => stateEntry.users[id].identity.toObject()),
+        paused: stateEntry.paused.map(id => stateEntry.users[id].identity.toObject()),
+      };
+    } else {
+      return {
+        typing: [],
+        paused: [],
+      };
+    }
+  }
+
+  /**
+   * Updates the state of a single stateEntry; a stateEntry
+   * represents a single Conversation's typing indicator data.
+   *
+   * Updates typing and paused arrays following immutable strategies
+   * in hope that this will help Flex based architectures.
+   *
+   * @method _updateState
+   * @private
+   * @param  {Object} stateEntry - A Conversation's typing indicator state
+   * @param  {string} newState   - started, paused or finished
+   * @param  {string} identityId     - ID of the user whose state has changed
+   */
+  _updateState(stateEntry, newState, identityId) {
+    const typingIndex = stateEntry.typing.indexOf(identityId);
+    if (newState !== STARTED && typingIndex !== -1) {
+      stateEntry.typing = [
+        ...stateEntry.typing.slice(0, typingIndex),
+        ...stateEntry.typing.slice(typingIndex + 1),
+      ];
+    }
+    const pausedIndex = stateEntry.paused.indexOf(identityId);
+    if (newState !== PAUSED && pausedIndex !== -1) {
+      stateEntry.paused = [
+        ...stateEntry.paused.slice(0, pausedIndex),
+        ...stateEntry.paused.slice(pausedIndex + 1),
+      ];
+    }
+
+
+    if (newState === STARTED && typingIndex === -1) {
+      stateEntry.typing = [...stateEntry.typing, identityId];
+    } else if (newState === PAUSED && pausedIndex === -1) {
+      stateEntry.paused = [...stateEntry.paused, identityId];
+    }
+  }
+
+  /**
+   * Any time a state change becomes more than 6 seconds stale,
+   * assume that the user is 'finished'.
+   *
+   * In theory, we should
+   * receive a new event every 2.5 seconds.  If the current user
+   * has gone offline, lack of this code would cause the people
+   * currently flagged as typing as still typing hours from now.
+   *
+   * For this first pass, we just mark the user as 'finished'
+   * but a future pass may move from 'started' to 'paused'
+   * and 'paused to 'finished'
+   *
+   * @method _startPolling
+   * @private
+   */
+  _startPolling() {
+    if (this._pollId) return;
+    this._pollId = setInterval(() => this._poll(), 5000);
+  }
+
+  _poll() {
+    const conversationIds = Object.keys(this.state);
+
+    conversationIds.forEach((id) => {
+      const state = this.state[id];
+      Object.keys(state.users)
+        .forEach((identityId) => {
+          if (Date.now() >= state.users[identityId].startTime + 6000) {
+            this._updateState(state, FINISHED, identityId);
+            delete state.users[identityId];
+            this.trigger('typing-indicator-change', {
+              conversationId: id,
+              typing: state.typing.map(aIdentityId => state.users[aIdentityId].identity.toObject()),
+              paused: state.paused.map(aIdentityId => state.users[aIdentityId].identity.toObject()),
+            });
+          }
+        });
+    });
+  }
+
+  /**
+   * Get the Client associated with this class.  Uses the clientId
+   * property.
+   *
+   * @method _getClient
+   * @protected
+   * @return {layer.Client}
+   */
+  _getClient() {
+    return ClientRegistry.get(this.clientId);
+  }
+}
+
+/**
+ * setTimeout ID for polling for states to transition
+ * @type {Number}
+ * @private
+ */
+TypingIndicatorListener.prototype._pollId = 0;
+
+/**
+ * ID of the client this instance is associated with
+ * @type {String}
+ */
+TypingIndicatorListener.prototype.clientId = '';
+
+TypingIndicatorListener.bubbleEventParent = '_getClient';
+
+
+TypingIndicatorListener._supportedEvents = [
+  /**
+   * There has been a change in typing indicator state of other users.
+   * @event change
+   * @param {layer.Core.LayerEvent} evt
+   * @param {layer.Core.Identity[]} evt.typing - Array of Identities of people who are typing
+   * @param {layer.Core.Identity[]} evt.paused - Array of Identities of people who are paused
+   * @param {string} evt.conversationId - ID of the Conversation that has changed typing indicator state
+   */
+  'typing-indicator-change',
+].concat(Root._supportedEvents);
+
+Root.initClass.apply(TypingIndicatorListener, [TypingIndicatorListener, 'TypingIndicatorListener']);
+module.exports = TypingIndicatorListener;

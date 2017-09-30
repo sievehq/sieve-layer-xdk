@@ -1,0 +1,20 @@
+
+#north-region {
+  height: 40px !important;
+  background: #19a5e4;
+}
+
+#container-1012 {
+  top: 40px !important;
+}
+
+#doctabs {
+  display: none;
+}
+
+
+.class-categories .section div {
+  min-width: 250px;
+  margin-right: 35px;
+  width: auto !important;
+}

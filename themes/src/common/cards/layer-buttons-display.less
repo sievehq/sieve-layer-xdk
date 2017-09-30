@@ -1,0 +1,37 @@
+layer-buttons-display {
+  min-width: @card-standard-minimum-width;
+
+  .layer-button-content layer-message-viewer {
+    border-width: 0px;
+    border-radius: 0px;
+  }
+
+  .layer-button-list > * {
+    border-width: 1px 0px 0px 0px;
+    border-color: @card-inner-border-color;
+    border-style: solid;
+  }
+
+  .layer-button-list layer-action-button > button {
+    padding: 8px 12px;
+    outline: none;
+  }
+
+  &.layer-button-card-no-content > .layer-button-list > *:first-child {
+    border-top-width: 0px;
+  }
+
+
+  layer-choice-button {
+    layer-action-button {
+      border-right: solid 1px @color-g2;
+    }
+    layer-action-button:last-child {
+      border-right-width: 0px;
+    }
+  }
+}
+
+layer-message-viewer.layer-root-card.layer-buttons-display.layer-button-card-with-choices {
+  min-width: 350px;
+}

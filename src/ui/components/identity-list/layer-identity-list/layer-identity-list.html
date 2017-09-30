@@ -1,0 +1,33 @@
+<template>
+  <style>
+    layer-identity-list {
+      overflow-y: auto;
+      display: block;
+    }
+    layer-identity-list:not(.layer-loading-data) .layer-load-indicator,
+    layer-identity-list:not(.layer-end-of-results) .layer-end-of-results-indicator {
+      display: none;
+    }
+  </style>
+  <div class='layer-list-meta' layer-id='listMeta'>
+    <div class='layer-empty-list' layer-id='emptyNode'></div>
+    <div class='layer-meta-toggle'>
+      <!-- Rendered when the list is empty -->
+      <layer-replaceable-content layer-id='emptyNode' class='layer-empty-list' name='emptyNode'>
+        No Users yet
+      </layer-replaceable-content>
+
+      <!-- Rendered when there are no more results to page to -->
+      <layer-replaceable-content layer-id='endOfResultsNode' class='layer-end-of-results-indicator' name='endOfResultsNode'></layer-replaceable-content>
+
+       <!-- Rendered when waiting for server data -->
+      <layer-replaceable-content layer-id='loadIndicator' class='layer-load-indicator' name='loadIndicator'>
+        <layer-loading-indicator></layer-loading-indicator>
+      </layer-replaceable-content>
+    </div>
+  </div>
+</template>
+<script>
+  window.layerUI.registerTemplate('layer-identity-list');
+</script>
+

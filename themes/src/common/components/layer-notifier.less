@@ -1,0 +1,45 @@
+/* Styles for the Toast Popup that notifies users of new Messages */
+layer-notifier {
+  background-color: @toast-background-color;
+  border-radius: @toast-border-radius;
+  padding: 10px 20px 10px 20px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+	border: solid 1px @toast-border-color;
+  align-items: center;
+
+  layer-avatar {
+    margin-left: 0px;
+    margin-right: 10px;
+  }
+
+  .layer-notifier-title {
+    margin-bottom: 5px;
+    font-size: @toast-title-size;
+    color: @toast-title-color;
+    font-weight: @toast-title-weight;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+  .layer-notifier-title:after {
+    content: ':';
+  }
+
+  .layer-message-item-placeholder {
+    font-size: @toast-message-size;
+    color: @toast-message-color;
+    font-weight: @toast-message-weight;
+  }
+
+  /* Neither title nor messages will wrap *
+  .layer-message-item-main > * {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }*/
+
+  .layer-message-item-main {
+    width: @toast-width;
+  }
+}

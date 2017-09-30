@@ -1,0 +1,15 @@
+<template>
+  <style>
+    layer-menu {
+      display: none;
+      position: absolute;
+    }
+    layer-menu.layer-menu-list-showing {
+      display: block;
+      z-index: 10;
+    }
+  </style>
+</template>
+<script>
+  window.layerUI.registerTemplate('layer-menu');
+</script>
