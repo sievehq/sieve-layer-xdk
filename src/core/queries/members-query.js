@@ -27,7 +27,7 @@
  */
 const Root = require('../root');
 const LayerError = require('../layer-error');
-const { logger } = require('../../Util');
+const { logger } = require('../../util');
 const Query = require('./query');
 
 const findChannelIdRegex = new RegExp(
