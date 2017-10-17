@@ -10,7 +10,7 @@ const Message = require('./message');
 const ClientRegistry = require('../client-registry');
 const LayerError = require('../layer-error');
 const Constants = require('../../constants');
-const { logger } = require('../../Util');
+const { logger } = require('../../util');
 
 class ChannelMessage extends Message {
   constructor(options) {
