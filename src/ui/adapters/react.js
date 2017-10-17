@@ -78,8 +78,6 @@ function initReact(React, ReactDom) {
       constructor(props) {
         super(props);
 
-        this.state = null
-
         if (this.props.replaceableContent && !this.replaceableContent) {
           this.replaceableContent = {};
           Object.keys(this.props.replaceableContent).forEach((nodeName) => {
@@ -98,9 +96,9 @@ function initReact(React, ReactDom) {
                   // Render it
                   const tmpNode = parent || document.createElement('div');
                   widget.addEventListener('layer-widget-destroyed', () => ReactDom.unmountComponentAtNode(tmpNode));
-                  this.state = ReactDom.render(result, tmpNode);
+                  return ReactDom.render(result, tmpNode);
                 } else {
-                  this.state = result;
+                  return result;
                 }
               };
             }
