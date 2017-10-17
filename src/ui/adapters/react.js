@@ -1,5 +1,4 @@
 import layerUI from '../base';
-import Layer from '../../core/index';
 
 /**
  * Call this function to initialize all of the react components needed to handle the Layer UI for Web widgets.
@@ -74,7 +73,7 @@ function initReact(React, ReactDom) {
       .replace(/-(.)/g, (str, value) => value.toUpperCase()))
         .replace(/^Layer/, '');
 
-    libraryResult[className] = React.createClass({
+    libraryResult[className] = class extends React.Component {
 
       // hacky putting this here, but unable to provide a constructor in this environment and this is the only gaurenteed call.
       getInitialState() {
@@ -105,7 +104,7 @@ function initReact(React, ReactDom) {
           });
         }
         return null;
-      },
+      }
 
       /**
        * On mounting, copy in all properties, and optionally setup a Query.
@@ -147,7 +146,7 @@ function initReact(React, ReactDom) {
         // a DocumentFragment so it must follow a more typical lifecycle
         if (this.node._onAfterCreate) this.node._onAfterCreate();
 
-      },
+      }
 
       /**
        * Copy all properties into the dom node, but never let React recreate this widget.
@@ -171,7 +170,7 @@ function initReact(React, ReactDom) {
           }
         }, this);
         return false;
-      },
+      }
 
       handleReactDom(propDef, value) {
         if (!this.layerUIGeneratedNodes) this.layerUIGeneratedNodes = {};
@@ -198,7 +197,7 @@ function initReact(React, ReactDom) {
           ReactDom.render(value, this.layerUIGeneratedNodes[propDef.propertyName]);
         }
         return this.layerUIGeneratedNodes[propDef.propertyName];
-      },
+      }
 
 
       render() {
@@ -207,9 +206,8 @@ function initReact(React, ReactDom) {
           id: this.props.id,
           children: this.props.children,
         });
-      },
-    });
-
+      }
+    }
   });
   return libraryResult;
 }

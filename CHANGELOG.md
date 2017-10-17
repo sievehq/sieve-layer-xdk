@@ -1,5 +1,15 @@
 # Web XDK Change Log
 
-## 1.0.0-pre.1
+## 1.0.0-pre1.1
 
 * Prerelease of the Web XDK merges the WebSDK and Layer UI for Web into a single project and evolves the concept of Messaging Experiences beyond slapping a message onto a page.
+
+## 1.0.0-pre1.2
+
+* Fixes package.json `main`
+* Fixes folder references
+
+## 1.0.0-pre1.3
+
+* Updates React adapter for React 16
+* Removes old nodejs support code; runs in browser only for now

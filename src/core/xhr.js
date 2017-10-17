@@ -45,10 +45,6 @@
  * 3. Should only access link headers if requested; annoying having it throw errors every other time.
  */
 
-// Don't set xhr to window.XMLHttpRequest as it will bypass jasmine's
-// ajax library
-const Xhr = (typeof window === 'undefined') ? require('xhr2') : null;
-
 function parseLinkHeaders(linkHeader) {
   if (!linkHeader) return {};
 
@@ -70,7 +66,7 @@ function parseLinkHeaders(linkHeader) {
 
 module.exports = (request, callback) => {
   const startTime = Date.now();
-  const req = Xhr ? new Xhr() : new XMLHttpRequest();
+  const req = new XMLHttpRequest();
   const method = (request.method || 'GET').toUpperCase();
 
   const onload = function onload() {

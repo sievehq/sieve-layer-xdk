@@ -149,7 +149,8 @@ class SocketManager extends Root {
 
     // Load up our websocket component or shim
     /* istanbul ignore next */
-    const WS = typeof WebSocket === 'undefined' ? require('websocket').w3cwebsocket : WebSocket;
+    //const WS = typeof WebSocket === 'undefined' ? require('websocket').w3cwebsocket : WebSocket;
+    const WS = WebSocket;
 
     this._socket = new WS(url, WEBSOCKET_PROTOCOL);
 
