@@ -75,8 +75,11 @@ function initReact(React, ReactDom) {
 
     libraryResult[className] = class extends React.Component {
 
-      // hacky putting this here, but unable to provide a constructor in this environment and this is the only gaurenteed call.
-      getInitialState() {
+      constructor(props) {
+        super(props);
+
+        this.state = null
+
         if (this.props.replaceableContent && !this.replaceableContent) {
           this.replaceableContent = {};
           Object.keys(this.props.replaceableContent).forEach((nodeName) => {
@@ -95,15 +98,14 @@ function initReact(React, ReactDom) {
                   // Render it
                   const tmpNode = parent || document.createElement('div');
                   widget.addEventListener('layer-widget-destroyed', () => ReactDom.unmountComponentAtNode(tmpNode));
-                  return ReactDom.render(result, tmpNode);
+                  this.state = ReactDom.render(result, tmpNode);
                 } else {
-                  return result;
+                  this.state = result;
                 }
               };
             }
           });
         }
-        return null;
       }
 
       /**
