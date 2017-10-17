@@ -416,8 +416,8 @@ class Client extends ClientAuth {
   _scheduleCheckAndPurgeCache(object) {
     if (object.isSaved()) {
       if (this._scheduleCheckAndPurgeCacheAt < Date.now()) {
-        this._scheduleCheckAndPurgeCacheAt = Date.now() + Client.QUERIED_CACHE_PURGE_INTERVAL;
-        setTimeout(() => this._runScheduledCheckAndPurgeCache(), Client.QUERIED_CACHE_PURGE_INTERVAL);
+        this._scheduleCheckAndPurgeCacheAt = Date.now() + Client.CACHE_PURGE_INTERVAL;
+        setTimeout(() => this._runScheduledCheckAndPurgeCache(), Client.CACHE_PURGE_INTERVAL);
       }
       this._scheduleCheckAndPurgeCacheItems.push(object);
     }

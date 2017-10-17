@@ -13,3 +13,7 @@
 
 * Updates React adapter for React 16
 * Removes old nodejs support code; runs in browser only for now
+
+## 1.0.0-pre1.4
+
+* Fixes error in static client property `QUERIED_CACHE_PURGE_INTERVAL` which should have been `CACHE_PURGE_INTERVAL`, causing new messages to be instantly destroyed
