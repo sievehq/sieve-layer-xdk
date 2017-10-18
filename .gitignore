@@ -36,7 +36,6 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-build
 docs
 .vscode
 
@@ -49,3 +48,4 @@ test/index.html
 # !npmignored: Everything after this line is left out of the .npmignore file
 /lib
 samples/build.js
+build

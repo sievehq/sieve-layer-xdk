@@ -317,6 +317,8 @@ class MessageTypeModel extends Root {
  */
 MessageTypeModel.prototype.parentId = null;
 
+MessageTypeModel.prototype.nodeId = null;
+
 /**
  * Message for this Message Model
  *
