@@ -861,6 +861,7 @@ MessagePart.prototype.size = 0;
 
 
 MessagePart.prototype.parentId = '';
+MessagePart.prototype.nodeId = '';
 MessagePart.prototype.role = '';
 
 /**

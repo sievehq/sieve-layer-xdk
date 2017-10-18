@@ -1,5 +1,9 @@
 # Web XDK Change Log
 
+## 1.0.0-pre1.6
+
+* Fixes `nodeId` property which was missing from the prototype, and breaking attempts to set `parentNodeId`
+
 ## 1.0.0-pre1.5
 
 * Updates React adapter's getInitialProps method to work with new class definitions
