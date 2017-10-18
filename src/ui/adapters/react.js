@@ -75,8 +75,9 @@ function initReact(React, ReactDom) {
 
     libraryResult[className] = class extends React.Component {
 
-      // hacky putting this here, but unable to provide a constructor in this environment and this is the only gaurenteed call.
-      getInitialState() {
+      constructor(props) {
+        super(props);
+
         if (this.props.replaceableContent && !this.replaceableContent) {
           this.replaceableContent = {};
           Object.keys(this.props.replaceableContent).forEach((nodeName) => {
@@ -103,7 +104,6 @@ function initReact(React, ReactDom) {
             }
           });
         }
-        return null;
       }
 
       /**
