@@ -151,7 +151,7 @@ module.exports = (request, callback) => {
       if (links) result.Links = parseLinkHeaders(links);
     }
     result.xhr = this;
-
+    result.request = request;
     if (callback) callback(result);
   };
 
