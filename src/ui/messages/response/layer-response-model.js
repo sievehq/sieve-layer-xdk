@@ -1,4 +1,5 @@
 import { Client, MessagePart, MessageTypeModel }  from '../../../core';
+import { statusMimeTypes } from '../../base';
 
 class ResponseModel extends MessageTypeModel {
   _generateParts(callback) {
@@ -48,5 +49,6 @@ ResponseModel.MIMEType = 'application/vnd.layer.response+json';
 
 // Register the Message Model Class with the Client
 Client.registerMessageTypeModelClass(ResponseModel, 'ResponseModel');
+statusMimeTypes.push(ResponseModel.MIMEType);
 
 module.exports = ResponseModel;

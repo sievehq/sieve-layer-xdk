@@ -548,8 +548,7 @@ registerComponent('layer-message-list', {
 
     _isStatusMessage(rootPart, message) {
       if (!rootPart) return false;
-      if (rootPart.mimeType === 'application/vnd.layer.response+json') return true;
-      return this.onIsStatusMessage ? this.onIsStatusMessage(rootPart, message) : false;
+      return LayerUI.statusMimeTypes.indexOf(rootPart.mimeType) !== -1;
     },
 
     /**

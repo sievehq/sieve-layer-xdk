@@ -1,5 +1,10 @@
 # Web XDK Change Log
 
+## 1.0.0-pre1.8
+
+* Adds a Status Message Type
+* Adds a `Layer.UI.statusMimeTypes` array of mime types that are treated as Status Messages
+
 ## 1.0.0-pre1.7
 
 * Test Framework

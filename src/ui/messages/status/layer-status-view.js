@@ -7,11 +7,11 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Base from '../../base';
 
-registerComponent('layer-text-view', {
-  style: `layer-text-view {
+registerComponent('layer-status-view', {
+  style: `layer-status-view {
     display: block;
   }
-  .layer-root-card.layer-text-view > * > .layer-card-top {
+  .layer-root-card.layer-status-view > * > .layer-card-top {
     display: block;
   }
   `,
@@ -24,13 +24,10 @@ registerComponent('layer-text-view', {
       },
     },
     widthType: {
-      get() {
-        return this.parentComponent.isShowingMetadata ? 'flex-width' : 'chat-bubble';
-      },
+      value: 'chat-bubble',
     },
     messageViewContainerTagName: {
-      noGetterFromSetter: true,
-      value: 'layer-standard-display-container',
+      value: '',
     },
   },
   methods: {
@@ -47,12 +44,6 @@ registerComponent('layer-text-view', {
     },
 
     onRerender() {
-      if (this.messageViewer) {
-        this.messageViewer.toggleClass(
-          'layer-message-as-chat-bubble',
-          !this.model.title && !this.model.author
-        );
-      }
       this._processText();
     },
 

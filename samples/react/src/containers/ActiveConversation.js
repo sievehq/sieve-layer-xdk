@@ -382,6 +382,16 @@ export default class ActiveConversation extends Component {
           model.generateMessage(conversation, message => message.send());
         }.bind(this),
       },
+      {
+        text: 'Create Status Message',
+        method: function() {
+          const StatusModel = Layer.Core.Client.getMessageTypeModelClass('StatusModel');
+          const model = new StatusModel({
+            text: 'You have just received a status message. This could be something important.'
+          });
+          model.generateMessage(conversation, message => message.send());
+        }.bind(this),
+      }
     ];
   };
 

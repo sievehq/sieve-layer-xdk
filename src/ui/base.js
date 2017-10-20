@@ -113,6 +113,14 @@ layerUI.textHandlers = {};
 layerUI.messageActionHandlers = {};
 
 /**
+ * Array of mime types that are used in Status messages (not rendered as sent nor received)
+ *
+ * @property {String[]} statusMimeTypes
+ * @protected
+ */
+layerUI.statusMimeTypes = [];
+
+/**
  * Hash of components defined using layer.UI.components.Component.
  *
  * @property {Object} components

@@ -51,6 +51,9 @@ require('./utils/date-separator');
 require('./messages/text/layer-text-model');
 require('./messages/text/layer-text-view');
 
+require('./messages/status/layer-status-model');
+require('./messages/status/layer-status-view');
+
 require('./messages/response/layer-response-model');
 require('./messages/response/layer-response-view');
 
