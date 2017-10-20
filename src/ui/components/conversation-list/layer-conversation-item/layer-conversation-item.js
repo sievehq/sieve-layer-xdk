@@ -2,7 +2,7 @@
  * The Layer Conversation Item widget renders a single Conversation, typically for use representing a
  * conversation within a list of conversations.
  *
- * This is designed to go inside of the layerUI.components.ConversationsListPanel.List widget, and be a
+ * This is designed to go inside of the layer.UI.components.ConversationsListPanel.List widget, and be a
  * concise enough summary that it can be scrolled through along
  * with hundreds of other Conversations Item widgets.
  *
@@ -10,8 +10,8 @@
  *
  * * Badges for unread messages (currently just adds a css class so styling can change if there are any unread messages)
  *
- * @class layerUI.components.ConversationsListPanel.Item.Conversation
- * @extends layerUI.components.Component
+ * @class layer.UI.components.ConversationsListPanel.Item.Conversation
+ * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../../../components/component';
 import ListItem from '../../../mixins/list-item';
@@ -51,7 +51,7 @@ registerComponent('layer-conversation-item', {
      *
      * By default, only text/plain last-messages are fully rendered in the Conversation List.
      *
-     * All other messages are rendered using the `label` passed in with their layerUI.registerMessageHandler call.
+     * All other messages are rendered using the `label` passed in with their layer.UI.registerMessageHandler call.
      *
      * ```javascript
      * listItem.canFullyRenderLastMessage = function(message) {
@@ -83,7 +83,7 @@ registerComponent('layer-conversation-item', {
     /**
      * Set the date format for the Conversation Item.
      *
-     * Note that typically you'd set layerUI.components.ConversationsListPanel.List.dateFormat instead.
+     * Note that typically you'd set layer.UI.components.ConversationsListPanel.List.dateFormat instead.
      *
      * @property {Object} [dateFormat]
      */

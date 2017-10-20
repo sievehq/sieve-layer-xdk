@@ -2,10 +2,10 @@
  * The Layer Membership Item represents a single user within a Membership List.
  *
  *
- * @class layerUI.components.MembershipListPanel.Item
+ * @class layer.UI.components.MembershipListPanel.Item
  * @experimental
  * @mixin layerUI.mixins.ListItem
- * @extends layerUI.components.Component
+ * @extends layer.UI.components.Component
  */
 import ListItem from '../../../mixins/list-item';
 import ListItemSelection from '../../../mixins/list-item-selection';

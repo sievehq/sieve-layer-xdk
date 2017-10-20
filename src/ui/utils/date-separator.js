@@ -17,7 +17,7 @@
  *
  * Date separators come as `<div class='layer-list-item-separator-date'><span>DATE</span></div>`
  *
- * @class layerUI.utils.DateSeparator
+ * @class layer.UI.utils.DateSeparator
  */
 import LayerUI, { utils } from '../base';
 

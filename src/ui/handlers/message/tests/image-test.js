@@ -54,7 +54,7 @@ describe("Image Handler", function() {
       ]
     });
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({layer: layer});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
 
     el = document.createElement('layer-message-image');
     layer.Util.defer.flush();
@@ -71,12 +71,12 @@ describe("Image Handler", function() {
 
   describe("The handlesMessage() method", function() {
     it("Should select the handler for one part", function() {
-      var handler = layerUI.getHandler(message1);
+      var handler = layer.UI.getHandler(message1);
       expect(handler.tagName).toEqual('layer-message-image');
     });
 
     it("Should select the handler for three part", function() {
-      var handler = layerUI.getHandler(message2);
+      var handler = layer.UI.getHandler(message2);
       expect(handler.tagName).toEqual('layer-message-image');
     });
   });
@@ -203,7 +203,7 @@ describe("Image Handler", function() {
       el.message = message1;
       el.properties.meta = {width: 1000, height: 2000, orientation: 0};
       el.onRender();
-      expect(el.style.height).toEqual(layerUI.settings.maxSizes.height + "px");
+      expect(el.style.height).toEqual(layer.UI.settings.maxSizes.height + "px");
     });
   });
 

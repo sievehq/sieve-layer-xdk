@@ -1,7 +1,7 @@
 /**
  * The Layer Send button widget provides an alternative to hitting a keyboard `ENTER` key for sending a message.
  *
- * Its assumed that this button will be used within the layerUI.components.ComposeButtonPanel.
+ * Its assumed that this button will be used within the layer.UI.components.ComposeButtonPanel.
  * If using it elsewhere, note that it triggers a `layer-send-click` event that you would listen for to do your own processing.
  * If using it in the ComposeButtonPanel, this event will be received and handled by the Composer and will not propagate any further.
  *
@@ -20,8 +20,8 @@
  * ];
  * ```
  *
- * @class layerUI.components.SendButton
- * @extends layerUI.components.Component
+ * @class layer.UI.components.SendButton
+ * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../component';
 import Clickable from '../../mixins/clickable';

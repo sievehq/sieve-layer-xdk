@@ -178,7 +178,7 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-* @class layerUI.cards.ButtonsModel
+* @class layer.UI.cards.ButtonsModel
 * @extends layer.model
 */
 import { Client, MessagePart, MessageTypeModel } from '../../../core';
@@ -263,7 +263,7 @@ ButtonsModel.prototype.choices = null;
 ButtonsModel.prototype.states = null;
 
 ButtonsModel.Label = 'Buttons';
-ButtonsModel.messageRenderer = 'layer-buttons-display';
+ButtonsModel.messageRenderer = 'layer-buttons-view';
 ButtonsModel.MIMEType = 'application/vnd.layer.buttons+json';
 
 // Register the Message Model Class with the Client

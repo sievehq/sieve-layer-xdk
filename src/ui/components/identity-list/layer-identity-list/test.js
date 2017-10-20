@@ -2,12 +2,12 @@ describe('layer-identity-list', function() {
   var el, testRoot, client, query;
 
   beforeAll(function(done) {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeAll(function(done) {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -25,7 +25,7 @@ describe('layer-identity-list', function() {
     });
     client._clientAuthenticated();
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-identity-list');

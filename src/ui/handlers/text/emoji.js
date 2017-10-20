@@ -1,7 +1,7 @@
 /**
  * The Layer Emoji TextHandler replaces all :smile: and :-) with emoji images
  *
- * @class layerUI.handlers.text.Emoji
+ * @class layer.UI.handlers.text.Emoji
  */
 import Twemoji from 'twemoji';
 import RemarkableParser from 'remarkable-emoji/setEmoji';

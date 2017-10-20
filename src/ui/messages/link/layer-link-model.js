@@ -4,23 +4,23 @@
   LinkModel = layer.Core.Client.getMessageTypeModelClass('LinkModel')
 
   model = new LinkModel({
-    url: "http://www.cnn.com/2017/07/07/us/sc-prison-escape-drone/index.html",
+    url: "https://layer.com/introducing-the-layer-conversation-design-system/",
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
 
    model = new LinkModel({
-    url: "http://www.cnn.com/2017/07/07/us/sc-prison-escape-drone/index.html",
+    url: "https://layer.com/introducing-the-layer-conversation-design-system/",
     description: ""
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
 
  model = new LinkModel({
-    url: "http://www.cnn.com/2017/07/07/us/sc-prison-escape-drone/index.html",
-    title: "South Carolina inmate used drone, makeshift dummy to escape prison",
-    imageUrl: "http://i2.cdn.cnn.com/cnnnext/dam/assets/170707132615-sc-prison-escape-super-tease.jpg",
-    description: "A South Carolina prisoner broke out of prison using a cell phone, a makeshift dummy, a drone and wire cutters, the South Carolina Department of Corrections said"
+    url: "https://layer.com/introducing-the-layer-conversation-design-system/",
+    title: "Introducing the Layer Conversation Design System",
+    imageUrl: "https://layer.com/wp-content/uploads/2017/07/bezier-blog-header-2x.png",
+    description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices."
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
@@ -62,11 +62,11 @@
   LinkModel = layer.Core.Client.getMessageTypeModelClass('LinkModel')
 
   model = new LinkModel({
-    url: "http://www.cnn.com/2017/07/07/us/sc-prison-escape-drone/index.html",
+    url: "https://layer.com/introducing-the-layer-conversation-design-system/",
     description:  'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.'
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send());
- * @class layerUI.cards.LinkModel
+ * @class layer.UI.cards.LinkModel
  * @extends layer.model
  */
 import { Client, MessagePart, MessageTypeModel, xhr }  from '../../../core';
@@ -139,7 +139,7 @@ LinkModel.prototype.html = '';
 
 LinkModel.Label = 'Link to';
 LinkModel.defaultAction = 'open-url';
-LinkModel.messageRenderer = 'layer-link-display';
+LinkModel.messageRenderer = 'layer-link-view';
 
 LinkModel.MIMEType = 'application/vnd.layer.link+json';
 

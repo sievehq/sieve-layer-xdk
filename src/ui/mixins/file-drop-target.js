@@ -20,7 +20,7 @@ window.loadImage = ImageManager;
  * Must be mixed in with a Component that defines a `conversation` property.
  *
  *
- * @class layerUI.mixins.FileDropTarget
+ * @class layer.UI.mixins.FileDropTarget
  */
 module.exports = {
   properties: {

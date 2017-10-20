@@ -1,7 +1,7 @@
 /**
  * A helper mixin to add a size property components; adding a layer-size-small, layer-size-medium or layer-size-large css class.
  *
- * @class layerUI.mixins.SizeProperty
+ * @class layer.UI.mixins.SizeProperty
  */
 import { registerComponent } from '../components/component';
 

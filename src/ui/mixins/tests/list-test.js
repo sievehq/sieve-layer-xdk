@@ -5,8 +5,8 @@ describe("List Mixin", function() {
     beforeEach(function() {
       jasmine.clock().install();
 
-      restoreAnimatedScrollTo = layerUI.animatedScrollTo;
-      spyOn(layerUI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+      restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
+      spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
         var timeoutId = setTimeout(function() {
           node.scrollTop = position;
           if (callback) callback();
@@ -28,7 +28,7 @@ describe("List Mixin", function() {
       });
       client._clientAuthenticated();
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({layer: layer});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
       testRoot = document.createElement('div');
       document.body.appendChild(testRoot);
       el = document.createElement('layer-identity-list');
@@ -59,6 +59,7 @@ describe("List Mixin", function() {
 
     afterEach(function() {
       try {
+        layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
         jasmine.clock().uninstall();
         layerUI.settings.appId = null;
         document.body.removeChild(testRoot);

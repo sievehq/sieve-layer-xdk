@@ -11,8 +11,8 @@
  * except in response to a user action.  Otherwise scroll positions get mucked and users get lost.
  * As a result, image heights should be fixed before any asynchronously loaded image has loaded.
  *
- * @class layerUI.handlers.message.Image
- * @extends layerUI.components.Component
+ * @class layer.UI.handlers.message.Image
+ * @extends layer.UI.components.Component
  */
 import ImageManager from 'blueimp-load-image/js/load-image';
 import 'blueimp-load-image/js/load-image-orientation';

@@ -22,11 +22,11 @@
  * and the new message is already visible to the user.  However,
  * this widget does not know what conversation is currently visible, so its up to you to manage this.
  *
- * Provide a layerUI.components.misc.Notifier.onMessageNotification handler to perform tests to see
+ * Provide a layer.UI.components.misc.Notifier.onMessageNotification handler to perform tests to see
  * if notifications are required, and then call `evt.preventDefault()` to prevent the notification from showing.
  *
- * @class layerUI.components.Notifier
- * @extends layerUI.components.Component
+ * @class layer.UI.components.Notifier
+ * @extends layer.UI.components.Component
  */
 import NotifyLib from 'notifyjs';
 import { isInBackground as IsInBackground, getHandler as GetHandler } from '../../base';
@@ -188,7 +188,7 @@ registerComponent('layer-notifier', {
      * after reloading the app; its assumed that the user who reloads your app has seen what they want
      * to see, and that the purpose of this indicator is to flag new stuff that should bring them back to your window.
      *
-     * See layerUI.components.Notifier.notifyCharacterForTitlebar for more controls.
+     * See layer.UI.components.Notifier.notifyCharacterForTitlebar for more controls.
      *
      * @property {String} notifyInTitleBar
      */
@@ -200,7 +200,7 @@ registerComponent('layer-notifier', {
     /**
      * Set a character or string to prefix your window titlebar with when there are unread messages.
      *
-     * This property is used if layerUI.components.Notifier.notifyInTitlebar is enabled.
+     * This property is used if layer.UI.components.Notifier.notifyInTitlebar is enabled.
      *
      * @property {String} notifyCharacterForTitlebar
      */
@@ -211,10 +211,10 @@ registerComponent('layer-notifier', {
     /**
      * Set to true to force the notifier to show the unread badge in the titlebar, or set to false to force it to remove this.
      *
-     * Use this at runtime to modify the badging behavior, use layerUI.components.Notifier.notifyInTitlebar to enable/disable
+     * Use this at runtime to modify the badging behavior, use layer.UI.components.Notifier.notifyInTitlebar to enable/disable
      * badging.  Treat this as state rather than setting.
      *
-     * If you want to just set the badge until the message is marked as read, use layerUI.components.Notifier.flagTitlebarForMessage
+     * If you want to just set the badge until the message is marked as read, use layer.UI.components.Notifier.flagTitlebarForMessage
      *
      * @property {Boolean} flagTitlebar
      */

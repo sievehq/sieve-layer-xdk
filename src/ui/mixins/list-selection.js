@@ -6,7 +6,7 @@ import Clickable from './clickable';
  * Also listens for `click` events to update the `selectedId` property,
  * and triggers selection events.
  *
- * @class layerUI.mixins.ListSelection
+ * @class layer.UI.mixins.ListSelection
  */
 module.exports = {
   mixins: [Clickable],
@@ -61,7 +61,7 @@ module.exports = {
      * User has selected something in the Conversation List that didn't handle that click event.
      *
      * Find the Conversation Item selected and generate a `layer-conversation-selected` event.
-     * Click events do NOT bubble up; they must either be handled by the layerUI.components.ConversationsListPanel.Item.Conversation or
+     * Click events do NOT bubble up; they must either be handled by the layer.UI.components.ConversationsListPanel.Item.Conversation or
      * they are treated as a selection event.
      *
      * Listening to `layer-conversation-selected` you will still receive the original click event

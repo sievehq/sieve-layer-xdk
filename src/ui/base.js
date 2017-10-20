@@ -1,5 +1,5 @@
 /**
- * @class layerUI
+ * @class layer.UI
  * @static
  *
  * The layerUI contains utilities for working with the layerUI components.
@@ -7,24 +7,24 @@
  * The key method to know here is the `init()` method.  Any use of the library will need a call:
  *
  * ```
- * layerUI.init({
+ * layer.UI.init({
  *   appId: 'layer:///apps/staging/my-app-id'
  * });
  * ```
  *
  * Or
  *
- * layerUI.init({
+ * layer.UI.init({
  *   appId: 'layer:///apps/staging/my-app-id'
  * });
  * ```
  *
- * See layerUI.settings for more options to layerUI.init.
+ * See layerUI.settings for more options to layer.UI.init.
  *
  * One other property deserving special mention: layerUI.adapters.  Adapters help you to use these widgets within other UI frameworks.
  * It is not required to use an adapter, but it solves many inconsistencies in how these frameworks handle webcomponents built using this framework.
  *
- * While there are many other methods defined here, for new projects ignore everything except layerUI.settings, layerUI.init and layerUI.adapters.
+ * While there are many other methods defined here, for new projects ignore everything except layerUI.settings, layer.UI.init and layerUI.adapters.
  */
 import Layer from '../core';
 import Util from '../util';
@@ -41,7 +41,7 @@ const layerUI = {};
 /**
  * The settings object stores a hash of configurable properties to change widget Behaviors.
  *
- * The settings object is typically set using layerUI.init().
+ * The settings object is typically set using layer.UI.init().
  *
  * Below are the available settings and their defintions.
  *
@@ -113,7 +113,7 @@ layerUI.textHandlers = {};
 layerUI.messageActionHandlers = {};
 
 /**
- * Hash of components defined using layerUI.components.Component.
+ * Hash of components defined using layer.UI.components.Component.
  *
  * @property {Object} components
  * @private
@@ -244,7 +244,7 @@ layerUI.addListItemSeparator = function addListItemSeparator(listItemNode, conte
  *
  * @property {Object} adapters
  */
-const adapterError = 'You must call layerUI.init() before you can use an adapter';
+const adapterError = 'You must call layer.UI.init() before you can use an adapter';
 layerUI.adapters = {
   angular: () => {
     throw new Error(adapterError);
@@ -401,7 +401,7 @@ layerUI.registerMessageActionHandler = function registerMessageActionHandler(act
 /**
  * Register your template for use by an existing Component.
  *
- * Assumes that the specified Component has already been defined using layerUI.components.Component.
+ * Assumes that the specified Component has already been defined using layer.UI.components.Component.
  *
  * This can be used to associate a template with the Component, or to overwrite the default template
  * with your custom template.
@@ -416,7 +416,7 @@ layerUI.registerMessageActionHandler = function registerMessageActionHandler(act
  * </template>
  * < script >
  *    // Register the template in this *.html file to be the layer-avatar template.
- *    window.layerUI.registerTemplate('layer-avatar')
+ *    window.layer.UI.registerTemplate('layer-avatar')
  * </script>
  *
  * ```
@@ -546,12 +546,12 @@ layerUI.addAdapter = (name, adapter) => { layerUI.adapters[name] = adapter; };
  * prior to putting any webcomponents into your document.
  *
  * ```javascript
- * layerUI.init({
+ * layer.UI.init({
  *   appId: 'layer:///apps/staging/my-app-id'
  * });
  * ```
  *
- * See layerUI.settings for more options to layerUI.init.
+ * See layerUI.settings for more options to layer.UI.init.
  *
  * @method init
  * @static
@@ -570,7 +570,7 @@ layerUI.init = function init(settings) {
 layerUI.version = '1.0.0-beta1';
 
 /**
- * This method is shorthand for accessing layerUI.components.Component.registerComponent
+ * This method is shorthand for accessing layer.UI.components.Component.registerComponent
  *
  * Note: This code is actually in components/component.js and is only attached to layerUI
  * if you require `layer-ui-web/index.js` or just `layer-ui-web`, else you have to directly

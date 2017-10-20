@@ -6,6 +6,7 @@ const Root = require('../root');
 const Util = require('../../util');
 const Message = require('../models/message');
 const MessagePart = require('../models/message-part');
+const LayerError = require('../layer-error');
 
 // FIXME: this doesn't really need to extend root probably
 class MessageTypeModel extends Root {
@@ -35,6 +36,8 @@ class MessageTypeModel extends Root {
   }
 
   generateMessage(conversation, callback) {
+    if (!conversation) throw new Error(LayerError.dictionary.conversationMissing);
+    if (!(conversation instanceof Root)) throw new Error(LayerError.dictionary.conversationMissing);
     this._generateParts((parts) => {
       this.childParts = parts;
       this.part.mimeAttributes.role = 'root';
@@ -61,8 +64,9 @@ class MessageTypeModel extends Root {
       this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
       this.role = this.part.mimeAttributes.role;
       this.childParts = this.message.getPartsMatchingAttribute({
-        'parent-node-id': Util.uuid(this.id),
+        'parent-node-id': this.nodeId,
       });
+
 
       // Call handlePartChanges any message edits that update a part.
       this.part.on('messageparts:change', this._handlePartChanges, this);
@@ -310,13 +314,21 @@ class MessageTypeModel extends Root {
 }
 
 /**
- * If a model is created without a Part, it may still need to know what its parent part is.
+ * Property to reference the Parent node this model's Message Part's Parent Message Part within the Message Part Tree.
  *
  * @protected
  * @type {String}
  */
 MessageTypeModel.prototype.parentId = null;
 
+MessageTypeModel.prototype.nodeId = null;
+
+/**
+ * Node Identifier to uniquely identify this Message Part such that a Parent ID can reference it.
+ *
+ * @protected
+ * @type {String}
+ */
 MessageTypeModel.prototype.nodeId = null;
 
 /**

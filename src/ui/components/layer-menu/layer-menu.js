@@ -9,8 +9,8 @@
  * ];
  * ```
  *
- * @class layerUI.components.MenuButton
- * @extends layerUI.components.Component
+ * @class layer.UI.components.MenuButton
+ * @extends layer.UI.components.Component
  */
 import Layer from '../../../core';
 import Constants from '../../../constants';

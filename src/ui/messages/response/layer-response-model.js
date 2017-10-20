@@ -43,7 +43,7 @@ ResponseModel.prototype.responseTo = null;
 ResponseModel.prototype.responseToNodeId = null;
 ResponseModel.prototype.displayModel = null;
 
-ResponseModel.messageRenderer = 'layer-response-display';
+ResponseModel.messageRenderer = 'layer-response-view';
 ResponseModel.MIMEType = 'application/vnd.layer.response+json';
 
 // Register the Message Model Class with the Client

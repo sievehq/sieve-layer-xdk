@@ -61,7 +61,7 @@
  * });
  * ```
  *
- * @class layerUI.mixins.MessageHandler
+ * @class layer.UI.mixins.MessageHandler
  */
 import { registerComponent } from '../components/component';
 

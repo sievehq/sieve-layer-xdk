@@ -3,10 +3,10 @@
  *
  * This is provided as a specialized component so that it can be easily redefined by your app to
  * provide your own date formatting.  Note that most customization of message status rendering can be accomplished instead
- * using layerUI.components.ConversationPanel.messageStatusRenderer.
+ * using layer.UI.components.ConversationPanel.messageStatusRenderer.
  *
  * ```
- * layerUI.registerComponent('layer-message-status', {
+ * layer.UI.registerComponent('layer-message-status', {
  *    properties: {
  *      message: {
  *        set: function(value) {
@@ -24,13 +24,13 @@
  * });
  *
  * // Call init after custom components are defined
- * layerUI.init({
+ * layer.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
  *
- * @class layerUI.components.MessageStatus
- * @extends layerUI.components.Component
+ * @class layer.UI.components.MessageStatus
+ * @extends layer.UI.components.Component
  */
 import Layer from '../../../core';
 import Constants from '../../../constants';
@@ -85,7 +85,7 @@ registerComponent('layer-message-status', {
     /**
      * There are many ways to render the status of a Message.
      *
-     * See layerUI.components.ConversationPanel.messageStatusRenderer to customize this.
+     * See layer.UI.components.ConversationPanel.messageStatusRenderer to customize this.
      *
      * @method
      * @private

@@ -9,13 +9,15 @@
  * ```
  * var menuButton = document.createElement('layer-menu-button');
  * menuButton.item = message;
- * menuButton.options = [
- *   {text: "delete", method: function(item) {item.delete(Layer.Constants.DELETION_MODE.ALL);}
- * ];
+ * menuButton.getMenuOptions = function() {
+ *     return [
+ *       {text: "delete", method: function(item) {item.delete(Layer.Constants.DELETION_MODE.ALL);}
+ *     ];
+ * };
  * ```
  *
- * @class layerUI.components.MenuButton
- * @extends layerUI.components.Component
+ * @class layer.UI.components.MenuButton
+ * @extends layer.UI.components.Component
  */
 import Layer from '../../../core';
 import { registerComponent } from '../../components/component';

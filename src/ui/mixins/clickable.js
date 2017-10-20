@@ -1,7 +1,7 @@
 /**
  * Handler that manages click vs tap event handling
  *
- * @class layerUI.mixins.Clickable
+ * @class layer.UI.mixins.Clickable
  */
 module.exports = {
   methods: {

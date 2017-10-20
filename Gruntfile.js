@@ -6,6 +6,9 @@ var CSS = fs.readFileSync('./jsduck-config/style.css').toString();
 var babel = require('babel-core');
 
 module.exports = function (grunt) {
+  var saucelabsTests = require('./sauce-gruntfile')(grunt, version);
+
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     webcomponents: {
@@ -229,6 +232,12 @@ module.exports = function (grunt) {
       }
     },
     connect: {
+      saucelabs: {
+        options: {
+          base: "",
+          port: 9999
+        }
+      },
       develop: {
         options: {
           base: "",
@@ -264,6 +273,7 @@ module.exports = function (grunt) {
         }
       }
     },
+    'saucelabs-jasmine': saucelabsTests.tasks.saucelabs,
   });
 
   /* Insure that browserify and babelify generated code does not get counted against our test coverage */
@@ -330,7 +340,7 @@ module.exports = function (grunt) {
             });
 
             srcFile = srcFile.substring(0, startIndex) +
-            `### Templates\n\n * You can see the template for the latest template version at [${file.replace(/^.*\//, '')}](https://github.com/layerhq/layer-ui-web/blob/master/src/${srcFilePath.replace(/^.*lib/,'').replace(/\.js$/, '.html')})  \n * \n * The following layer-id attributes are expected in templates for this component: \n * \n * * ${layerIds.join('\n * * ')} \n` + srcFile.substring(startIndex);
+            `### Templates\n\n * You can see the template for the latest template version at [${file.replace(/^.*\//, '')}](https://github.com/layerhq/web-xdk/blob/master/src/${srcFilePath.replace(/^.*lib/,'').replace(/\.js$/, '.html')})  \n * \n * The following layer-id attributes are expected in templates for this component: \n * \n * * ${layerIds.join('\n * * ')} \n` + srcFile.substring(startIndex);
             grunt.file.write(srcFilePath, srcFile);
           }
         });
@@ -582,7 +592,6 @@ module.exports = function (grunt) {
         }
       }
     }
-    specFiles.forEach(specFile => grunt.file.write(specFile.file, specFile.contents));
   });
 
   grunt.registerTask('generate-npmignore', 'Building .npmignore', function() {
@@ -626,8 +635,9 @@ module.exports = function (grunt) {
 
   // Testing
   grunt.loadNpmTasks('grunt-contrib-jasmine');
-  grunt.registerTask('phantomtest', ['debug', 'jasmine:debug']);
+  //grunt.registerTask('phantomtest', ['debug', 'jasmine:debug']);
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'custom_copy:src', 'custom_babel:dist', 'browserify:coverage']);
+  grunt.registerTask("test", ["generate-tests", "connect:saucelabs", "saucelabs-jasmine"]);
 
 
   grunt.registerTask('docs', ['debug', 'jsducktemplates', 'jsduck', 'jsduckfixes']);

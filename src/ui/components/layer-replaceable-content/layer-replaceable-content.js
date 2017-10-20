@@ -3,8 +3,8 @@
  *
  * TODO: Should be able to access mainComponent's originalChildNodes and find matching children
  *
- * @class layerUI.components.ReplaceableContent
- * @extends layerUI.components.Component
+ * @class layer.UI.components.ReplaceableContent
+ * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../component';
 

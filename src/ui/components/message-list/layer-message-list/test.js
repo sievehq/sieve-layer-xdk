@@ -2,14 +2,14 @@ describe('layer-message-list', function() {
   var el, testRoot, client, conversation, query, user1, restoreAnimatedScrollTo, animatedScrollIndex = 1;
 
   beforeAll(function(done) {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layerUI.animatedScrollTo;
-    spyOn(layerUI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
+    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -35,7 +35,7 @@ describe('layer-message-list', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-list');
@@ -68,7 +68,7 @@ describe('layer-message-list', function() {
   });
 
   afterEach(function() {
-    layerUI.animatedScrollTo = restoreAnimatedScrollTo;
+    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     document.body.removeChild(testRoot);
     if (el) el.onDestroy();
     jasmine.clock().uninstall();
@@ -454,8 +454,8 @@ describe('layer-message-list', function() {
     });
 
     it("Should set a suitable _contentTag", function() {
-      var handlers = window.layerUI.handlers;
-      window.layerUI.handlers = [
+      var handlers = window.layer.UI.handlers;
+      window.layer.UI.handlers = [
         {
           handlesMessage: jasmine.createSpy('handlesNo').and.returnValue(false),
           tagName: "frodo-dom"
@@ -467,7 +467,7 @@ describe('layer-message-list', function() {
       ];
       var m = conversation.createMessage("m?");
       expect(el._generateItem(m)._contentTag).toEqual('sauron-dom');
-      window.layerUI.handlers = handlers;
+      window.layer.UI.handlers = handlers;
     });
 
     it("Should setup dateRenderer and messageStatusRenderer", function() {

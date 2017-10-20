@@ -25,7 +25,7 @@ describe("File Utils", function() {
 
 
   beforeEach(function() {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
   });
 
   describe("The DragAndDropFileWatcher constructor", function() {

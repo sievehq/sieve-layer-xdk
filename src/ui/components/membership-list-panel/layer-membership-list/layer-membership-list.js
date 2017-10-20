@@ -14,9 +14,9 @@
  * var membersList = document.createElement('layer-membership-list');
  * ```
  *
- * @class layerUI.components.MembershipListPanel.List
+ * @class layer.UI.components.MembershipListPanel.List
  * @experimental This feature is incomplete, and available as Preview only.
- * @extends layerUI.components.Component
+ * @extends layer.UI.components.Component
  * @mixin layerUI.mixins.List
  * @mixin layerUI.mixins.MainComponent
  * @mixin layerUI.mixins.ListSelection
@@ -65,7 +65,7 @@ registerComponent('layer-membership-list', {
   /**
    * A membership selection change has occurred
    *
-   * See the {@link layerUI.components.MembershipListPanel.List#layer-membership-selected layer-membership-selected} event for more detail.
+   * See the {@link layer.UI.components.MembershipListPanel.List#layer-membership-selected layer-membership-selected} event for more detail.
    *
    * @property {Function} onMembershipSelected
    * @param {Event} evt
@@ -80,7 +80,7 @@ registerComponent('layer-membership-list', {
      *
      * This property may need to be changed any time you change to view a different Channel.
      *
-     * Alternative: See layerUI.components.MembershipListPanel.List.channel property.  Strings however are easier to stick
+     * Alternative: See layer.UI.components.MembershipListPanel.List.channel property.  Strings however are easier to stick
      * into html template files.
      *
      * ```
@@ -113,7 +113,7 @@ registerComponent('layer-membership-list', {
      *
      * This property may need to be changed any time you change to view a different channel.
      *
-     * Alternative: See layerUI.components.MembershipListPanel.List.channelId property for an easier property to use
+     * Alternative: See layer.UI.components.MembershipListPanel.List.channelId property for an easier property to use
      * within html templates.
      *
      * ```
@@ -162,7 +162,7 @@ registerComponent('layer-membership-list', {
   methods: {
 
     /**
-     * Append a layerUI.components.IdentitiesListPanel.Item to the Document Fragment
+     * Append a layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
      *
      * @method _generateItem
      * @param {layer.Membership} membership

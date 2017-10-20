@@ -5,8 +5,8 @@
  * except in response to a user action.  Otherwise scroll positions get mucked and users get lost.
  * As a result, video heights should be fixed before any asynchronously loaded video or preview has loaded.
  *
- * @class layerUI.handlers.message.Video
- * @extends layerUI.components.Component
+ * @class layer.UI.handlers.message.Video
+ * @extends layer.UI.components.Component
  */
 import { registerMessageComponent } from '../../components/component';
 import normalizeSize from '../../utils/sizing';

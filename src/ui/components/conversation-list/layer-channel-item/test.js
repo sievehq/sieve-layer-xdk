@@ -2,7 +2,7 @@ describe('layer-channel-item', function() {
   var el, testRoot, client, channel, user;
 
   beforeAll(function() {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
   });
 
   beforeEach(function() {
@@ -30,7 +30,7 @@ describe('layer-channel-item', function() {
 
     client._clientAuthenticated();
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({layer: layer});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-channel-item');

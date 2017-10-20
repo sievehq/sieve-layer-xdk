@@ -1,7 +1,7 @@
 /**
  * The Layer file upload button widget allows users to select a File to send.
  *
- * Its assumed that this button will be used within the layerUI.components.ComposeButtonPanel:
+ * Its assumed that this button will be used within the layer.UI.components.ComposeButtonPanel:
  *
  * ```
  * myConversationPanel.composeButtons = [
@@ -19,8 +19,8 @@
  * }
  * ```
  *
- * @class layerUI.components.FileUploadButton
- * @extends layerUI.components.Component
+ * @class layer.UI.components.FileUploadButton
+ * @extends layer.UI.components.Component
  */
 import Layer, { MessagePart } from '../../../core';
 import Util from '../../../util';
@@ -94,7 +94,7 @@ registerComponent('layer-file-upload-button', {
 
       /**
        * This widget triggers a `layer-file-selected` event when the user selects files.
-       * This event is captured and stopped from propagating by the layerUI.components.Composer.
+       * This event is captured and stopped from propagating by the layer.UI.components.Composer.
        * If using it outside of the composer, this event can be used to receive the MessageParts generated
        * for the selected files.
        *

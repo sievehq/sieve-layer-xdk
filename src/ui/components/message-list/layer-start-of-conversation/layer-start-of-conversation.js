@@ -3,8 +3,8 @@
  *
  * TODO: Document this
  *
- * @class layerUI.components.Age
- * @extends layerUI.components.Component
+ * @class layer.UI.components.Age
+ * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../../component';
 

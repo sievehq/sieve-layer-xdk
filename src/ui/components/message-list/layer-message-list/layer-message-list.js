@@ -1,5 +1,5 @@
 /**
- * The Layer Message List widget renders a scrollable, pagable list of layerUI.components.MessagesListPanel.Item widgets.
+ * The Layer Message List widget renders a scrollable, pagable list of layer.UI.components.MessagesListPanel.Item widgets.
  *
  * This is designed to go inside of the layerUI.Conversation widget.
  *
@@ -18,15 +18,15 @@
  *
  * 1. Define a custom `<layer-message-list/>` widget; this works but your now entirely responsible for all of its
  *    behaviors, and can not easily integrate fixes and enhancements added to this repo. Defining components is discussed in
- *    layerUI.components.Component.
- * 2. Enhance the provided widget with Mixins.  Details of Mixins are described in layerUI.components.Component.
+ *    layer.UI.components.Component.
+ * 2. Enhance the provided widget with Mixins.  Details of Mixins are described in layer.UI.components.Component.
  *    Below illustrates an example of a mixin for modifying this widget.
  *
  *
  * The following example adds a search bar to the Message List
  *
  * ```
- * layerUI.init({
+ * layer.UI.init({
  *   appId: 'my-app-id',
  *   layer: window.layer,
  *   mixins: {
@@ -79,8 +79,8 @@
  * });
  * ```
  *
- * @class layerUI.components.MessagesListPanel.List
- * @extends layerUI.components.Component
+ * @class layer.UI.components.MessagesListPanel.List
+ * @extends layer.UI.components.Component
  *
  * @mixin layerUI.mixins.EmptyList
  * @mixin layerUI.mixins.List
@@ -498,7 +498,7 @@ registerComponent('layer-message-list', {
      *
      * @method _markAsRead
      * @private
-     * @param {layerUI.components.MessagesListPanel.Item} child
+     * @param {layer.UI.components.MessagesListPanel.Item} child
      */
     _markAsRead(child) {
       if (LayerUI.isInBackground() || this.disable) return;
@@ -522,7 +522,7 @@ registerComponent('layer-message-list', {
       if (handler) {
         const rootPart = message.getPartsMatchingAttribute({role: 'root'})[0];
         let type;
-        if (rootPart && rootPart.mimeType === 'application/vnd.layer.response+json') {
+        if (this._isStatusMessage(rootPart, message)) {
           type = 'layer-message-item-status';
         } else if (message.sender.sessionOwner) {
           type = 'layer-message-item-sent';
@@ -544,6 +544,12 @@ registerComponent('layer-message-list', {
       } else {
         return null;
       }
+    },
+
+    _isStatusMessage(rootPart, message) {
+      if (!rootPart) return false;
+      if (rootPart.mimeType === 'application/vnd.layer.response+json') return true;
+      return this.onIsStatusMessage ? this.onIsStatusMessage(rootPart, message) : false;
     },
 
     /**
@@ -568,7 +574,7 @@ registerComponent('layer-message-list', {
      *
      * @method _processAffectedWidgetsCustom
      * @private
-     * @param {layerUI.components.MessagesListPanel.Item[]} widgets
+     * @param {layer.UI.components.MessagesListPanel.Item[]} widgets
      */
     _processAffectedWidgetsCustom(widgets, firstIndex, isTopItemNew) {
       if (widgets.length === 0) return;

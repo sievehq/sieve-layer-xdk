@@ -5,8 +5,8 @@ describe('Text Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layerUI.animatedScrollTo;
-    spyOn(layerUI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
+    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -32,7 +32,7 @@ describe('Text Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -48,6 +48,7 @@ describe('Text Message Components', function() {
 
 
   afterEach(function() {
+    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -166,7 +167,7 @@ describe('Text Message Components', function() {
   describe("View Tests", function() {
     var el;
     beforeEach(function() {
-      el = document.createElement('layer-text-display');
+      el = document.createElement('layer-text-view');
       testRoot.appendChild(el);
     });
     afterEach(function() {

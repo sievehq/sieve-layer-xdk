@@ -1,7 +1,7 @@
 /**
  * The Layer Image TextHandler replaces all image URLs with image tags
  *
- * @class layerUI.handlers.text.Images
+ * @class layer.UI.handlers.text.Images
  * @removed
  */
 /*

@@ -3,7 +3,7 @@ import layerUI from '../base';
 /**
  * Call this function to initialize all of the react components needed to handle the Layer UI for Web widgets.
  *
- * Before using this, please note that layerUI.init() must be called prior to calling layerUI.adapters.react().
+ * Before using this, please note that layer.UI.init() must be called prior to calling layerUI.adapters.react().
  *
  * Initialize with:
  *
@@ -15,12 +15,12 @@ import layerUI from '../base';
  *
  * Calling this will expose the following React Components:
  *
- * * ConversationPanel: A wrapper around a layerUI.components.ConversationPanel
- * * ConversationsList: A wrapper around a layerUI.components.ConversationsListPanel
- * * IdentitiesList: A wrapper around a layerUI.components.IdentitiesListPanel
- * * Notifier: A wrapper around a layerUI.components.misc.Notifier
- * * SendButton: A wrapper around a layerUI.components.SendButton
- * * FileUploadButton: A wrapper around a layerUI.components.FileUploadButton
+ * * ConversationPanel: A wrapper around a layer.UI.components.ConversationPanel
+ * * ConversationsList: A wrapper around a layer.UI.components.ConversationsListPanel
+ * * IdentitiesList: A wrapper around a layer.UI.components.IdentitiesListPanel
+ * * Notifier: A wrapper around a layer.UI.components.misc.Notifier
+ * * SendButton: A wrapper around a layer.UI.components.SendButton
+ * * FileUploadButton: A wrapper around a layer.UI.components.FileUploadButton
  *
  * You can then use:
  *
@@ -52,7 +52,7 @@ import layerUI from '../base';
  * Now anywhere you need access to the LayerUIWidgets library can import this module and expect everything to
  * evaluate at the correct time, correct order, and only evaluate once.
  *
- * @class layerUI.adapters.react
+ * @class layer.UI.adapters.react
  * @singleton
  * @param {Object} React - Pass in the reactJS library
  * @param {Object} ReactDom - Pass in the ReactDom library
@@ -83,7 +83,6 @@ function initReact(React, ReactDom) {
           Object.keys(this.props.replaceableContent).forEach((nodeName) => {
             const value = this.props.replaceableContent[nodeName];
             if (typeof value === 'function' && !value.replaceableIsSetup) {
-
               this.replaceableContent[nodeName] = (widget, parent) => {
                 let result = value(widget);
                 if (result && !(result instanceof HTMLElement)) {
@@ -214,4 +213,3 @@ function initReact(React, ReactDom) {
 
 module.exports = initReact;
 layerUI.addAdapter('react', initReact);
-

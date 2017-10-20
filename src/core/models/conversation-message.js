@@ -220,11 +220,11 @@ __updateParts(parts) {
    */
   __updateIsRead(value) {
     if (value) {
-      if (!this._inPopulateFromServer && !this.getConversation()._inMarkAllAsRead) {
+      const conversation = this.getConversation();
+      if (!this._inPopulateFromServer && (!conversation || !conversation._inMarkAllAsRead)) {
         this._sendReceipt(Constants.RECEIPT_STATE.READ);
       }
       this._triggerMessageRead();
-      const conversation = this.getConversation(false);
       if (conversation) conversation.unreadCount--;
     }
   }

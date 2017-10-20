@@ -1,7 +1,7 @@
 /**
  * A Mixin for main components (not needed for subcomponents) that provides common properties, shortcuts and code.
  *
- * @class layerUI.mixins.MainComponent
+ * @class layer.UI.mixins.MainComponent
  */
 import Layer from '../../core';
 import { settings, version } from '../base';
@@ -27,7 +27,7 @@ module.exports = {
      * App IDs are typically provided via:
      *
      * ```
-     * layerUI.init(({ appId: myAppId })
+     * layer.UI.init(({ appId: myAppId })
      * ```
      *
      * The only time one would use this property
@@ -58,7 +58,7 @@ module.exports = {
      * App IDs are typically provided via:
      *
      * ```
-     * layerUI.init(({ appId: myAppId })
+     * layer.UI.init(({ appId: myAppId })
      * ```
      *
      * The only time one would use this property

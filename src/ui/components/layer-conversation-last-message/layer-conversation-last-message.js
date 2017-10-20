@@ -5,7 +5,7 @@
  * provide your own Conversation Last Message rendering:
  *
  * ```
- * layerUI.registerComponent('layer-conversation-last-message', {
+ * layer.UI.registerComponent('layer-conversation-last-message', {
  *   properties: {
  *      item: {}
  *   },
@@ -17,13 +17,13 @@
  * });
  *
  * // Call init after custom components are defined
- * layerUI.init({
+ * layer.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
  *
- * @class layerUI.components.ConversationLastMessage
- * @extends layerUI.components.Component
+ * @class layer.UI.components.ConversationLastMessage
+ * @extends layer.UI.components.Component
  */
 import layerUI from '../../base';
 import { registerComponent } from '../component';

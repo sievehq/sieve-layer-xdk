@@ -1,7 +1,7 @@
 /**
  *
  * @class
- * @extends layerUI.components.Component
+ * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../component';
 

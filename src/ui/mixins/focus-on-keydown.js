@@ -3,7 +3,7 @@
  *
  * Any class using this mixin must provide an `onKeyDown` method.
  *
- * @class layerUI.mixins.FocusOnKeydown
+ * @class layer.UI.mixins.FocusOnKeydown
  */
 module.exports = {
   methods: {

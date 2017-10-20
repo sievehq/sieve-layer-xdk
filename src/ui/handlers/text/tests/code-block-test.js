@@ -1,8 +1,8 @@
 describe("Code Block Text Handler", function() {
   var handler;
   beforeEach(function() {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
-    handler = layerUI.textHandlers['code-blocks'].handler;
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    handler = layer.UI.textHandlers['code-blocks'].handler;
   });
 
   it("Should replace all tripple tick blocks with pre blocks", function() {

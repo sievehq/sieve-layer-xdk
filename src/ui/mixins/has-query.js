@@ -1,9 +1,9 @@
-import Layer from '../../core';
+import Core from '../../core';
 
 /**
  * A Mixin for main components that can receive or generate a Query
  *
- * @class layerUI.mixins.HasQuery
+ * @class layer.UI.mixins.HasQuery
  */
 module.exports = {
   properties: {
@@ -57,7 +57,7 @@ module.exports = {
     query: {
       set(newValue, oldValue) {
         if (oldValue) oldValue.off(null, null, this);
-        if (newValue instanceof layer.Core.Query) {
+        if (newValue instanceof Core.Query) {
           this._updateQuery();
         } else {
           this.properties.query = null;
@@ -119,7 +119,7 @@ module.exports = {
       if (this._queryModel && !this.properties.query && this.client && !this.client.isDestroyed) {
         this.query = this.client.createQuery({
           model: this._queryModel,
-          dataType: layer.Core.Query.InstanceDataType,
+          dataType: Core.Query.InstanceDataType,
           paginationWindow: this.pageSize || 50,
           sortBy: this.sortBy,
         });

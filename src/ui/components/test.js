@@ -2,7 +2,7 @@ describe('Components', function() {
   var el, testRoot, client, query;
 
   beforeAll(function(done) {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -756,7 +756,7 @@ describe('Components', function() {
       el1.client = client
 
       // Posttest
-      expect(layerUI.components['layer-conversation-view'].properties.filter(function(prop) {
+      expect(layer.UI.components['layer-conversation-view'].properties.filter(function(prop) {
         return prop.propertyName === 'client'
       })[0].propagateToChildren).toBe(true);
       expect(el1.nodes.composer.client).toBe(client);
@@ -770,7 +770,7 @@ describe('Components', function() {
       el1.client = client2;
 
       // Posttest 2
-      expect(layerUI.components['layer-conversation-view'].properties.filter(function(prop) {
+      expect(layer.UI.components['layer-conversation-view'].properties.filter(function(prop) {
         return prop.propertyName === 'client'
       })[0].propagateToChildren).toBe(true);
       expect(el1.nodes.composer.client).toBe(client2);

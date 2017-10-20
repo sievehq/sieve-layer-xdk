@@ -90,7 +90,7 @@ model = new ButtonsModel({
 
  * A Product model, typically used within a Recipt Model, but usable anywhere that you want to display simple product information.
  *
- * @class layerUI.cards.ProductModel
+ * @class layer.UI.cards.ProductModel
  * @extends layer.model
  */
 
@@ -156,6 +156,7 @@ class ProductModel extends MessageTypeModel {
     return this.name;
   }
   getFormattedPrice() {
+    if (!this.price) return '';
     return new Number(this.price).toLocaleString(navigator.language, {
       currency: this.currency,
       style: 'currency',
@@ -188,7 +189,7 @@ ProductModel.prototype.url = ''; // Where to go for more information on this pro
 ProductModel.defaultAction = 'open-url';
 
 ProductModel.Label = 'Product';
-ProductModel.messageRenderer = 'layer-product-display';
+ProductModel.messageRenderer = 'layer-product-view';
 ProductModel.MIMEType = 'application/vnd.layer.product+json';
 
 // Register the Message Model Class with the Client

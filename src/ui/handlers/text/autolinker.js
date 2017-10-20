@@ -11,7 +11,7 @@ const autolinker = new Autolinker({
 /**
  * The Layer Image TextHandler replaces all image URLs with image tags
  *
- * @class layerUI.handlers.text.Autolinker
+ * @class layer.UI.handlers.text.Autolinker
  */
 layerUI.registerTextHandler({
   name: 'autolinker',

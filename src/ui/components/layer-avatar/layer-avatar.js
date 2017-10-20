@@ -3,9 +3,9 @@
  *
  * This widget appears within
  *
- * * layerUI.components.MessagesListPanel.Item: Represents the sender of a Message
- * * layerUI.components.ConversationsListPanel.Item.Conversation: Represents the participants of a Conversation
- * * layerUI.components.IdentitiesListPanel.Item: Represents a user in a User List
+ * * layer.UI.components.MessagesListPanel.Item: Represents the sender of a Message
+ * * layer.UI.components.ConversationsListPanel.Item.Conversation: Represents the participants of a Conversation
+ * * layer.UI.components.IdentitiesListPanel.Item: Represents a user in a User List
  *
  * Rendering is done using data from the `layer.Core.Identity` object for each user, using the layer.Core.Identity.avatarUrl if available to
  * add an image, or first initials from layer.Core.Identity.firstName, layer.Core.Identity.lastName if no avatarUrl is available.
@@ -14,7 +14,7 @@
  * The simplest way to customize this widget is to replace it with your own implementation of the `<layer-avatar />` tag.
  *
  * ```javascript
- * layerUI.registerComponent('layer-avatar', {
+ * layer.UI.registerComponent('layer-avatar', {
  *    properties: {
  *      users: {
  *        set: function(value) {
@@ -30,7 +30,7 @@
  * });
  *
  * // Call init after custom components are defined
- * layerUI.init({
+ * layer.UI.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
@@ -40,8 +40,8 @@
  * * When used in a Messages List or Identities List, there will be only one user in the list
  * * When used in a Conversations List, there may be multiple users who are participants of the Conversation.
  *
- * @class layerUI.components.Avatar
- * @extends layerUI.components.Component
+ * @class layer.UI.components.Avatar
+ * @extends layer.UI.components.Component
  */
 import Core from '../../../core';
 
@@ -190,7 +190,7 @@ registerComponent('layer-avatar', {
      * You can replace Layer's method for coming up with initials with your own:
      *
      * ```
-     * layerUI.init({
+     * layer.UI.init({
      *   mixins: {
      *     'layer-avatar': {
      *        methods: {

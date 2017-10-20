@@ -383,7 +383,7 @@
     return existing;
   };
 
-  JSR._buildReport = function () {
+  JSR._buildReportOriginal = function () {
     var overallDuration = 0;
     var overallPassed = true;
     var overallSuites = [];
@@ -399,6 +399,47 @@
       passed: overallPassed,
       durationSec: overallDuration / 1000,
       suites: overallSuites
+    };
+  };
+
+  // LAYER ADDITION: Shrink errors to something minimal that saucelabs can handle
+  JSR._buildErrors = function(suite, prefix) {
+    var errors = [];
+    if (suite.failedExpectations) {
+        suite.failedExpectations.forEach(function(expectation) {
+           errors.push(prefix + ' ' + expectation.description);
+        }, this);
+    }
+    if (suite.specs) {
+        suite.specs.forEach(function(spec) {
+            if (!spec.passed) errors.push(prefix + ' ' + spec.description);
+        }, this);
+    }
+    if (suite.suites) {
+        suite.suites.forEach(function(suite) {
+            errors = errors.concat(this._buildErrors(suite, prefix + ' ' + suite.description));
+        }, this);
+    }
+    return errors;
+  }
+
+  // Layer version to work better with Saucelabs limitations on report size
+  JSR._buildReport = function () {
+    var overallDuration = 0;
+    var overallPassed = true;
+    var errors = [];
+
+    for (var i = 0, j = this.rootSuites.length; i < j; i++) {
+      var suite = this.suites[this.rootSuites[i]];
+      overallDuration += suite.duration;
+      overallPassed = overallPassed && suite.passed;
+      if (!suite.passed) errors = errors.concat(this._buildErrors(suite, suite.description));
+    }
+
+    jasmine.jsReport = {
+      passed: overallPassed,
+      durationSec: overallDuration / 1000,
+      errors: errors
     };
   };
 

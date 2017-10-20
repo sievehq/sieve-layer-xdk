@@ -1,10 +1,10 @@
 /**
  * The Layer Plain Text MessageHandler renders a single text/plain message part.
  *
- * See layerUI.registerTextHandler for details on adding new text processing capabilities.
+ * See layer.UI.registerTextHandler for details on adding new text processing capabilities.
  *
- * @class layerUI.handlers.message.TextPlain
- * @extends layerUI.components.Component
+ * @class layer.UI.handlers.message.TextPlain
+ * @extends layer.UI.components.Component
  */
 import { registerMessageComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';

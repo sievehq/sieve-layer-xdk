@@ -41,29 +41,29 @@
       {
         "name": "Main Components",
         "classes": [
-          "layerUI.components.ConversationPanel",
-          "layerUI.components.ConversationsListPanel.List",
-          "layerUI.components.IdentitiesListPanel.List",
-          "layerUI.components.Notifier"
+          "layer.UI.components.ConversationPanel",
+          "layer.UI.components.ConversationsListPanel.List",
+          "layer.UI.components.IdentitiesListPanel.List",
+          "layer.UI.components.Notifier"
         ]
       },
       {
         "name": "Utilities",
         "classes": [
-          "layerUI",
-          "layerUI.components.Component",
-          "layerUI.adapters.react",
-          "layerUI.adapters.angular",
-          "layerUI.adapters.backbone"
+          "layer.UI",
+          "layer.UI.components.Component",
+          "layer.UI.adapters.react",
+          "layer.UI.adapters.angular",
+          "layer.UI.adapters.backbone"
         ]
       },
       {
         "name": "Message Handlers",
         "classes": [
-          "layerUI.handlers.message.TextPlain",
-          "layerUI.handlers.message.Image",
-          "layerUI.handlers.message.Video",
-          "layerUI.handlers.message.Unknown"
+          "layer.UI.handlers.message.TextPlain",
+          "layer.UI.handlers.message.Image",
+          "layer.UI.handlers.message.Video",
+          "layer.UI.handlers.message.Unknown"
         ]
       }
     ]

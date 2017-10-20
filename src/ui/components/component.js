@@ -115,7 +115,7 @@
  *
  * ### Events
  *
- * As part of your layerUI.components.Component.registerComponents call you can pass in an `events` array; this is an array of strings representing events to listen for,
+ * As part of your layer.UI.components.Component.registerComponents call you can pass in an `events` array; this is an array of strings representing events to listen for,
  * and provide as property-based event listeners.
  *
  * Example:
@@ -168,7 +168,7 @@
  * Mixins can be added to a widget in two ways:
  *
  * * A Component may add a `mixins` array to its definition
- * * An Application, initializing the framework via `layerUI.init()` may pass in mixins into the `init` call.
+ * * An Application, initializing the framework via `layer.UI.init()` may pass in mixins into the `init` call.
  *
  * #### Using Mixins from the Component
  *
@@ -208,7 +208,7 @@
  * registerComponent(tagName, componentDefinition);
  * ```
  *
- * An app can modify an existing component by adding custom mixins to it using `layerUI.init()`.  The `mixins` parameter
+ * An app can modify an existing component by adding custom mixins to it using `layer.UI.init()`.  The `mixins` parameter
  * takes as keys, the tag-name for any widget you want to customize;
  * (e.g `layer-message-item`, `layer-message-list`, `layer-conversation-view`, etc...)
  *
@@ -226,7 +226,7 @@
  *     }
  * });
  *
- * layerUI.init({
+ * layer.UI.init({
  *   appId: 'my-app-id',
  *   mixins: {
  *     'layer-messages-item': mixinObj
@@ -450,7 +450,7 @@
  * layerUI.buildAndRegisterTemplate('my-widget', '<div><button />Click me</div>');
  * ```
  *
- * @class layerUI.components.Component
+ * @class layer.UI.components.Component
  */
 
 
@@ -990,7 +990,7 @@ function _registerComponent(tagName) {
       this.properties._internalState.disableSetters = false;
       this.properties._internalState.disableGetters = false;
       this.properties._internalState.inPropInit =
-        layerUI.components[tagName].properties.map(propDef => propDef.propertyName);
+      layerUI.components[tagName].properties.map(propDef => propDef.propertyName);
 
       props.forEach((prop) => {
         const value = this.properties[prop.propertyName];
@@ -1463,7 +1463,7 @@ const standardClassMethods = {
    * });
    * ```
    *
-   * layerUI.components.Component.events can be used to generate properties to go with your events, allowing
+   * layer.UI.components.Component.events can be used to generate properties to go with your events, allowing
    * the following widget property to be used:
    *
    * ```

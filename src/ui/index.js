@@ -49,52 +49,52 @@ require('./utils/date-separator');
 
 // Load standard cards
 require('./messages/text/layer-text-model');
-require('./messages/text/layer-text-display');
+require('./messages/text/layer-text-view');
 
 require('./messages/response/layer-response-model');
-require('./messages/response/layer-response-display');
+require('./messages/response/layer-response-view');
 
 require('./messages/receipt/layer-receipt-model');
-require('./messages/receipt/layer-receipt-display');
+require('./messages/receipt/layer-receipt-view');
 
 require('./messages/choice/layer-choice-model');
-require('./messages/choice/layer-choice-display');
-require('./messages/choice/layer-choice-tiles-display');
-require('./messages/choice/layer-choice-label-display');
+require('./messages/choice/layer-choice-view');
+require('./messages/choice/layer-choice-tiles-view');
+require('./messages/choice/layer-choice-label-view');
 
 
 require('./messages/layer-standard-display-container');
 require('./messages/layer-titled-display-container');
 //require('./messages/layer-list-item-container');
-require('./messages/text/layer-text-display');
+require('./messages/text/layer-text-view');
 require('./messages/text/layer-text-model');
 
 require('./messages/image/layer-image-model');
-require('./messages/image/layer-image-display');
+require('./messages/image/layer-image-view');
 
 // require('./messages/list/list-model');
-// require('./messages/list/layer-list-display');
+// require('./messages/list/layer-list-view');
 
 require('./messages/carousel/layer-carousel-model');
-require('./messages/carousel/layer-carousel-display');
+require('./messages/carousel/layer-carousel-view');
 
 require('./messages/buttons/layer-buttons-model');
-require('./messages/buttons/layer-buttons-display');
+require('./messages/buttons/layer-buttons-view');
 
 require('./messages/file/layer-file-model');
-require('./messages/file/layer-file-display');
+require('./messages/file/layer-file-view');
 
 require('./messages/link/layer-link-model');
-require('./messages/link/layer-link-display');
+require('./messages/link/layer-link-view');
 
 require('./messages/location/layer-location-model');
-require('./messages/location/layer-location-display');
+require('./messages/location/layer-location-view');
 
 // require('./messages/address/address-model');
-// require('./messages/address/layer-address-display');
+// require('./messages/address/layer-address-view');
 
 require('./messages/product/layer-product-model');
-require('./messages/product/layer-product-display');
+require('./messages/product/layer-product-view');
 
 require('./messages/models/layer-person-model');
 require('./messages/models/layer-organization-model');
@@ -111,8 +111,8 @@ LayerUI.mixins = {
   ListSelection: require('./mixins/list-selection'),
   ListItemSelection: require('./mixins/list-item-selection'),
   FocusOnKeydown: require('./mixins/focus-on-keydown'),
-  MessageDisplayMixin: require('./messages/message-display-mixin'),
+  MessageViewMixin: require('./messages/message-view-mixin'),
 };
 
-// If we don't expose global.layerUI then custom templates can not load and call window.layerUI.registerTemplate()
+// If we don't expose global.layerUI then custom templates can not load and call window.layer.UI.registerTemplate()
 module.exports = LayerUI;

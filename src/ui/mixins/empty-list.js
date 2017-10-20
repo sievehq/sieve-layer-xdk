@@ -1,7 +1,7 @@
 /**
  * A helper mixin for Lists that render alternate text in the event that the list is Empty.
  *
- * @class layerUI.mixins.EmptyList
+ * @class layer.UI.mixins.EmptyList
  */
 module.exports = {
   properties: {

@@ -29,11 +29,11 @@
  *
  * Events listed here come from either this component, or its subcomponents.
  *
- * * {@link layerUI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected}: User has clicked to unselect an Identity
- * * {@link layerUI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected}: User has clicked to select an Identity
+ * * {@link layer.UI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected}: User has clicked to unselect an Identity
+ * * {@link layer.UI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected}: User has clicked to select an Identity
  *
- * @class layerUI.components.IdentitiesListPanel.List
- * @extends layerUI.components.Component
+ * @class layer.UI.components.IdentitiesListPanel.List
+ * @extends layer.UI.components.Component
  * @mixin layerUI.mixins.List
  * @mixin layerUI.mixins.MainComponent
  * @mixin layerUI.mixins.ListLoadIndicator
@@ -88,7 +88,7 @@ registerComponent('layer-identity-list', {
   /**
    * A identity selection change has occurred
    *
-   * See the {@link layerUI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected} event for more detail.
+   * See the {@link layer.UI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected} event for more detail.
    *
    * @property {Function} onIdentitySelected
    * @param {Event} evt
@@ -127,7 +127,7 @@ registerComponent('layer-identity-list', {
   /**
    * A identity selection change has occurred
    *
-   * See the {@link layerUI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected} event for more detail.
+   * See the {@link layer.UI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected} event for more detail.
    *
    * @property {Function} onIdentityDeselected
    * @param {Event} evt
@@ -246,7 +246,7 @@ registerComponent('layer-identity-list', {
     },
 
     /**
-     * Handle a user Selection event triggered by a layerUI.components.IdentitiesListPanel.Item.
+     * Handle a user Selection event triggered by a layer.UI.components.IdentitiesListPanel.Item.
      *
      * Adds the Identity to the selectedIdentities array.
      *
@@ -272,7 +272,7 @@ registerComponent('layer-identity-list', {
 
 
     /**
-     * Handle a user Deselection event triggered by a layerUI.components.IdentitiesListPanel.Item
+     * Handle a user Deselection event triggered by a layer.UI.components.IdentitiesListPanel.Item
      *
      * Removes the identity from the selectedIdentities array.
      *
@@ -297,7 +297,7 @@ registerComponent('layer-identity-list', {
     },
 
     /**
-     * Append a layerUI.components.IdentitiesListPanel.Item to the Document Fragment
+     * Append a layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
      *
      * @method _generateItem
      * @param {layer.Core.Identity} identity

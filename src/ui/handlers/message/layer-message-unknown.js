@@ -2,8 +2,8 @@
  * The Unknown MessageHandler renders unhandled content with a placeholder politely
  * suggesting that a developer should probably handle it.
  *
- * @class layerUI.handlers.message.Unknown
- * @extends layerUI.components.Component
+ * @class layer.UI.handlers.message.Unknown
+ * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';

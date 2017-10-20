@@ -3,7 +3,7 @@
  *
  * Import index.js instead of you want a standard setup with standard widgets installed.
  *
- * @class layerUI
+ * @class layer.UI
  * @static
  */
 

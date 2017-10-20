@@ -22,7 +22,7 @@ describe("Unknown Handler", function() {
     });
     message = conversation.createMessage({parts: [{mimeType: "text/hat", body: "howdy ho"}]});
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({layer: layer});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
 
     el = document.createElement('layer-message-unknown');
     el._contentTag = 'layer-message-unknown';
@@ -39,7 +39,7 @@ describe("Unknown Handler", function() {
   });
 
   it("Should select unknown", function() {
-    var handler = layerUI.getHandler(message);
+    var handler = layer.UI.getHandler(message);
     expect(handler.tagName).toEqual('layer-message-unknown');
   });
 

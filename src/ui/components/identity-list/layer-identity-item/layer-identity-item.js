@@ -5,9 +5,9 @@
  *
  * This widget includes a checkbox for selection.
  *
- * @class layerUI.components.IdentitiesListPanel.Item
+ * @class layer.UI.components.IdentitiesListPanel.Item
  * @mixin layerUI.mixins.ListItem
- * @extends layerUI.components.Component
+ * @extends layer.UI.components.Component
  */
 import Layer from '../../../../core';
 import Util from '../../../../util';

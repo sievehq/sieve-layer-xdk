@@ -5,7 +5,7 @@
  * provide your own Conversation titles:
  *
  * ```
- * layerUI.registerComponent('layer-conversation-title', {
+ * layer.UI.registerComponent('layer-conversation-title', {
  *    properties: {
  *      item: {
  *        set: function(value) {
@@ -16,13 +16,13 @@
  * });
  *
  * // Call init after custom components are defined
- * layerUI.init({
+ * layer.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
  *
- * @class layerUI.components.ConversationTitle
- * @extends layerUI.components.Component
+ * @class layer.UI.components.ConversationTitle
+ * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
 

@@ -88,7 +88,7 @@
    model.generateMessage($("layer-conversation-view").conversation, message => message.send())
  *
  *
- * @class layerUI.cards.ChoiceModel
+ * @class layer.UI.cards.ChoiceModel
  * @extends layer.model
  */
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
@@ -272,11 +272,11 @@ class ChoiceModel extends MessageTypeModel {
   __getCurrentMessageRenderer() {
     switch (this.type) {
       case 'standard':
-        return 'layer-choice-display';
+        return 'layer-choice-view';
       // case 'TiledChoices':
-      // return 'layer-choice-tiles-display';
+      // return 'layer-choice-tiles-view';
       case 'Label':
-        return 'layer-choice-label-display';
+        return 'layer-choice-label-view';
     }
   }
 
@@ -358,7 +358,7 @@ ChoiceModel.prototype.customResponseData = null;
 
 ChoiceModel.Label = 'Choose One';
 ChoiceModel.defaultAction = 'layer-choice-select';
-ChoiceModel.messageRenderer = 'layer-choice-display';
+ChoiceModel.messageRenderer = 'layer-choice-view';
 ChoiceModel.MIMEType = 'application/vnd.layer.choice+json';
 
 Root.initClass.apply(ChoiceModel, [ChoiceModel, 'ChoiceModel']);

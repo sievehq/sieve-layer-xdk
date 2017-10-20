@@ -1,8 +1,8 @@
 describe("Youtube Text Handler", function() {
   var handler;
   beforeEach(function() {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
-    handler = layerUI.textHandlers.youtube.handler;
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    handler = layer.UI.textHandlers.youtube.handler;
   });
 
   it("Should replace a youtube url with a video", function() {

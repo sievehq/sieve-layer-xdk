@@ -1,7 +1,7 @@
 /**
  * A List Mixin that provides common list patterns
  *
- * @class layerUI.mixins.List
+ * @class layer.UI.mixins.List
  * @mixin layerUI.mixins.HasQuery
  */
 import Layer from '../../core';

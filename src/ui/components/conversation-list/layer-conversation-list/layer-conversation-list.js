@@ -24,7 +24,7 @@
  *
  * ## Common Properties
  *
- * The most common property of this widget is layerUI.components.ConversationsListPanel.onConversationSelected, as typical use
+ * The most common property of this widget is layer.UI.components.ConversationsListPanel.onConversationSelected, as typical use
  * of this widget is to prompt the user to select a Conversation, and use that selection elsewhere.
  *
  * Note that you can also listen for `layer-conversation-selected` to achieve the same result:
@@ -41,8 +41,8 @@
  * conversationList.selectedConversationId = myConversation.id;
  * ```
  *
- * @class layerUI.components.ConversationsListPanel.List
- * @extends layerUI.components.Component
+ * @class layer.UI.components.ConversationsListPanel.List
+ * @extends layer.UI.components.Component
  * @mixin layerUI.mixins.List
  * @mixin layerUI.mixins.MainComponent
  * @mixin layerUI.mixins.ListSelection
@@ -99,7 +99,7 @@ registerComponent('layer-conversation-list', {
    */
 
   /**
-   * See layerUI.components.ConversationsListPanel.onConversationSelected.
+   * See layer.UI.components.ConversationsListPanel.onConversationSelected.
    *
    * @event layer-conversation-selected
    * @param {Event} evt
@@ -142,7 +142,7 @@ registerComponent('layer-conversation-list', {
    */
 
   /**
-   * See layerUI.components.ConversationsListPanel.List.onConversationDeleted.
+   * See layer.UI.components.ConversationsListPanel.List.onConversationDeleted.
    *
    * @event layer-conversation-deleted
    * @param {Event} evt
@@ -169,7 +169,7 @@ registerComponent('layer-conversation-list', {
      * The above code will set the selected Conversation and render the conversation as selected.
      *
      * @property {String} [selectedConversationId='']
-     * @deprecated see layerUI.components.ConversationsListPanel.ListSelection.selectedId
+     * @deprecated see layer.UI.components.ConversationsListPanel.ListSelection.selectedId
      */
     selectedConversationId: {
       set(value) {
@@ -191,7 +191,7 @@ registerComponent('layer-conversation-list', {
      * });
      * ```
      *
-     * If delete is enabled, the layerUI.components.misc.Delete.enabled property is changed, causing
+     * If delete is enabled, the layer.UI.components.misc.Delete.enabled property is changed, causing
      * the `layer-delete-enabled` css class to be added/removed on that widget.
      *
      * @property {Function} [deleteConversationEnabled=null]
@@ -261,7 +261,7 @@ registerComponent('layer-conversation-list', {
      * in the Message List to render that same image in the Conversation List.
      *
      * If you prevent rendering of a Message, it will instead render the `label` attribute for that message handler;
-     * see layerUI.registerMessageHandler for more info on the `label`.
+     * see layer.UI.registerMessageHandler for more info on the `label`.
      *
      * TODO: Should test to see what handler is returned rather than testing the mimeType
      *

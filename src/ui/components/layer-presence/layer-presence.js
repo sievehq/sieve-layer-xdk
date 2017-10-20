@@ -10,7 +10,7 @@
  * The simplest way to customize this widget is to replace it with your own implementation of the `<layer-presence />` tag.
  *
  * ```javascript
- * layerUI.registerComponent('layer-presence', {
+ * layer.UI.registerComponent('layer-presence', {
  *    properties: {
  *      item: {
  *        set: function(value) {
@@ -30,13 +30,13 @@
  * });
  *
  * // Call init after custom components are defined
- * layerUI.init({
+ * layer.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
  *
- * @class layerUI.components.Presence
- * @extends layerUI.components.Component
+ * @class layer.UI.components.Presence
+ * @extends layer.UI.components.Component
  * @mixin layerUI.mixins.MainComponent
  */
 import Core from '../../../core';

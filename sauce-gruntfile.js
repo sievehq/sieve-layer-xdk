@@ -12,7 +12,7 @@ module.exports = function(grunt, version) {
 // * -1: Latest - 1 version
 // ** Number: A hardcoded version number
 var supportedBrowsers = {
-  'ie11': {
+  /*'ie11': {
     browserName: 'internet explorer',
     platform: 'Windows 8.1',
     version: '11.0'
@@ -26,7 +26,7 @@ var supportedBrowsers = {
      browserName: 'MicrosoftEdge',
      'platform': 'Windows 10',
      version: 'latest'
-  },
+  },*/
   'safari-1': {
     browserName: 'safari',
     version: '9.0',
@@ -119,17 +119,28 @@ var unsupportedBrowsers = {
     all: {
       options: {
         browsers: browsers,
-        build: "Layer UI Web <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
-        urls: ["http://127.0.0.1:9999/test/SpecRunner.html"],
+        build: "Layer Web XDK <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
+        //urls: ["http://127.0.0.1:9999/test/SpecRunner.html"],
+        urls: [
+          /*"core_client",
+          "core_models_queries",
+          "core_services",
+          "ui_components",
+          "ui_handlers",*/
+          "ui_messages"/*,
+          "ui_mixins",
+        "ui_utils"*/].map(function(testName) {
+            return  "http://127.0.0.1:9999/test/" + testName + ".html?stop=true";
+          }),
         tunneled: true,
         concurrency: 1,
         throttled: 1,
-        testname: "Running LUI Web <%= pkg.version %> Unit Test",
+        testname: "Running Layer Web XDK <%= pkg.version %> Unit Test",
         tags: ["master", 'Unit Test', 'Web'],
 
         // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
-        pollInterval: 10000, // Check for test results every 10 seconds (miliseconds)
-        statusCheckAttempts: 180, // Allow up to 30 minutes (presumed to be 30 from start of first browser to end of last)
+        pollInterval: 5000, // Check for test results every 5 seconds (miliseconds)
+        statusCheckAttempts: 360, // Allow up to 30 minutes (presumed to be 30 from start of first browser to end of last)
         // max-duration should insure that the tunnel stays alive for the specified period.  Large values however cause
         // saucelabs to just hang and not start any jobs on their servers.  This time appears to be per-job, not total
         // runtime
@@ -142,7 +153,7 @@ var unsupportedBrowsers = {
               auth: { user: process.env.SAUCE_USERNAME, pass: process.env.SAUCE_ACCESS_KEY },
               json: {
                 passed: Boolean(result.passed),
-                name: "Completed LUI Web " + version + " Unit Test"
+                name: "Completed Layer Web XDK " + version + " Unit Test"
               }
             }, function (error, response, body) {
               if (response.statusCode != 200) {

@@ -2,7 +2,7 @@ describe("State property", function() {
   var testRoot;
 
   beforeAll(function(done) {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({layer: layer});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     setTimeout(done, 1000);
   });
 

@@ -1,7 +1,7 @@
 /**
  *
- * @class layerUI.handlers.message.messageViewer
- * @extends layerUI.components.Component
+ * @class layer.UI.handlers.message.messageViewer
+ * @extends layer.UI.components.Component
  */
 import { registerMessageComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
@@ -44,7 +44,7 @@ registerMessageComponent('layer-message-viewer', {
      * This property primarily exists so that one can set/override the messageViewContainerTagName on
      * individual Card UIs.
      *
-     * Currently can only be used to replace 'layer-standard-display-container' with a custom value.
+     * Currently can only be used to replace 'layer-standard-view-container' with a custom value.
      *
      * @type {String}
      */
@@ -55,7 +55,7 @@ registerMessageComponent('layer-message-viewer', {
       },
       get() {
         const result = this.nodes.ui.messageViewContainerTagName;
-        if (result === 'layer-standard-display-container' && this.properties.messageViewContainerTagNameIsSet) {
+        if (result === 'layer-standard-view-container' && this.properties.messageViewContainerTagNameIsSet) {
           return this.properties.messageViewContainerTagName;
         } else {
           return result;

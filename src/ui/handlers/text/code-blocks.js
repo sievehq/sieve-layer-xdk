@@ -1,7 +1,7 @@
 /**
  * The Layer Code Block TextHandler replaces all \`\`\` with code blocks, and all \` with inline code blocks.
  *
- * @class layerUI.handlers.text.CodeBlocks
+ * @class layer.UI.handlers.text.CodeBlocks
  */
 import layerUI from '../../base';
 

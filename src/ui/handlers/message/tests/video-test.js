@@ -53,7 +53,7 @@ describe("Video Handler", function() {
       ]
     });
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({layer: layer});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
 
     el = document.createElement('layer-message-video');
     layer.Util.defer.flush();
@@ -70,12 +70,12 @@ describe("Video Handler", function() {
 
   describe("The handlesMessage() method", function() {
     it("Should select the handler for one part", function() {
-      var handler = layerUI.getHandler(message1);
+      var handler = layer.UI.getHandler(message1);
       expect(handler.tagName).toEqual('layer-message-video');
     });
 
     it("Should select the handler for three part", function() {
-      var handler = layerUI.getHandler(message2);
+      var handler = layer.UI.getHandler(message2);
       expect(handler.tagName).toEqual('layer-message-video');
     });
   });

@@ -39,18 +39,18 @@
  * Any method of this class can be enhanced using a Custom Mixin, however the following methods are recommended
  * as sufficient for most solutions:
  *
- * * layerUI.components.MessagesListPanel.List.onCreate: Your widget has just been created; it has a DOM node, it has child
+ * * layer.UI.components.MessagesListPanel.List.onCreate: Your widget has just been created; it has a DOM node, it has child
  *   nodes, *it has no properties*, nor does not yet have a `parentNode`.
  *   Provide an `onCreate` if there is any DOM manipulation you want to do any initialization.  (DOM Manipulation here should NOT depend
  *   upon property values).
- * * layerUI.components.MessagesListPanel.List.onAttach: Your widget now has a `parentNode`.  This is solely for initialization
+ * * layer.UI.components.MessagesListPanel.List.onAttach: Your widget now has a `parentNode`.  This is solely for initialization
  *   code that depends upon looking at the `parentNode`, and is not commonly used.
- * * layerUI.components.MessagesListPanel.List.onRender: Your Message Item widget has just been rendered for the first time.
+ * * layer.UI.components.MessagesListPanel.List.onRender: Your Message Item widget has just been rendered for the first time.
  *   Your widget should have an `item` at this point and any property-based dom manipulation can be done at this time.
  *
  * The following example adds a search bar to the Message List
  * ```
- * layerUI.init({
+ * layer.UI.init({
  *   appId: 'my-app-id',
  *   mixins: {
  *     'layer-messages-item': {
@@ -93,9 +93,9 @@
  * });
  * ```
  *
- * @class layerUI.components.MessagesListPanel.Item
+ * @class layer.UI.components.MessagesListPanel.Item
  * @mixins layerUI.mixins.ListItem
- * @extends layerUI.components.Component
+ * @extends layer.UI.components.Component
  */
 import Layer from '../../../core';
 import Constants from '../../../constants';

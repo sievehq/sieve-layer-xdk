@@ -5,7 +5,7 @@
  * NOT be replaced with a <br/> tag as the code block will render that as a visible
  * <br/> rather than go to the next line.
  *
- * @class layerUI.handlers.text.NewLine
+ * @class layer.UI.handlers.text.NewLine
  */
 import layerUI from '../../base';
 

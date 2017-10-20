@@ -8,7 +8,7 @@
  *
  * This mixin requires "layer-id=endOfResultsNode" to exist in the template for any component using this mixin.
  *
- * @class layerUI.mixins.QueryEndIndicator
+ * @class layer.UI.mixins.QueryEndIndicator
  */
 import Util from '../../util';
 module.exports = {

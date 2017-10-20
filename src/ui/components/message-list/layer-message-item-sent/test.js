@@ -2,7 +2,7 @@ describe('layer-message-item', function() {
   var el, testRoot, client, conversation, message, user1;
 
   beforeAll(function(done) {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -36,7 +36,7 @@ describe('layer-message-item', function() {
 
     client._clientAuthenticated();
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-item-sent');
@@ -330,12 +330,12 @@ describe('layer-message-item', function() {
 
     // Dont know how to test this
     it("Should propagate the message handlers height to the content node", function() {
-      layerUI.registerMessageHandler({
+      layer.UI.registerMessageHandler({
         tagName: 'test-handler-height',
         label: 'Test',
         handlesMessage: function(message, container) {return message.parts[0].mimeType=='text/height-test';}
       });
-      layerUI.registerComponent('test-handler-height', {
+      layer.UI.registerComponent('test-handler-height', {
         methods: {
           onRender: function() {
             this.style.height = "234px";

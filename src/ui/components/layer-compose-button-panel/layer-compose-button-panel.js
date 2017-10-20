@@ -1,7 +1,7 @@
 /**
  * Provides a Button Panel for adding custom actions to the layerUI.Composer panel.
  *
- * You can populate this button panel using the layerUI.components.ConversationPanel.composeButtons property.
+ * You can populate this button panel using the layer.UI.components.ConversationPanel.composeButtons property.
  *
  * Alternatively, you can replace this by defining a custom `layer-compose-button-panel` to make the resulting component entirely yours:
  *
@@ -17,13 +17,13 @@
  * });
  *
  * // Call init after custom components are defined
- * layerUI.init({
+ * layer.UI.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
  *
- * @class layerUI.components.ComposeButtonPanel
- * @extends layerUI.components.Component
+ * @class layer.UI.components.ComposeButtonPanel
+ * @extends layer.UI.components.Component
  * @removed
  */
 import { registerComponent } from '../../../components/component';

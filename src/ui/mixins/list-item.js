@@ -3,7 +3,7 @@
  *
  * This Mixin requires a template that provides a `layer-list-item` class
  *
- * @class layerUI.mixins.ListItem
+ * @class layer.UI.mixins.ListItem
  */
 import { registerComponent } from '../components/component';
 import { components } from '../base';

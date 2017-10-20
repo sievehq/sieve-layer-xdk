@@ -3,10 +3,10 @@
  *
  * This is provided as a specialized component so that it can be easily redefined by your app to
  * provide your own date formatting.  Note that most customization of date rendering can be accomplished instead
- * using layerUI.components.ConversationPanel.dateRenderer.
+ * using layer.UI.components.ConversationPanel.dateRenderer.
  *
  * ```
- * layerUI.registerComponent('layer-date', {
+ * layer.UI.registerComponent('layer-date', {
  *    properties: {
  *      date: {
  *        set: function(value) {
@@ -20,13 +20,13 @@
  * });
  *
  * // Call init after custom components are defined
- * layerUI.init({
+ * layer.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
  *
- * @class layerUI.components.Date
- * @extends layerUI.components.Component
+ * @class layer.UI.components.Date
+ * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
 

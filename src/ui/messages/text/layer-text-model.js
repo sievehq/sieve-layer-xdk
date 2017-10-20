@@ -63,7 +63,7 @@ TextModel.prototype.mimeType = 'text/plain';
 
 TextModel.Label = 'Text';
 TextModel.MIMEType = 'application/vnd.layer.text+json';
-TextModel.messageRenderer = 'layer-text-display';
+TextModel.messageRenderer = 'layer-text-view';
 Root.initClass.apply(TextModel, [TextModel, 'TextModel']);
 
 // Register the Message Model Class with the Client

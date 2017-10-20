@@ -4,7 +4,7 @@
  * Also listens for `click` events to update the `selectedId` property,
  * and triggers a selection events.
  *
- * @class layerUI.mixins.ListSelection
+ * @class layer.UI.mixins.ListSelection
  */
 
 module.exports = {

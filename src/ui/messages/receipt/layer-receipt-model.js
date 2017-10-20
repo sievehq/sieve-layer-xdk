@@ -181,7 +181,7 @@ new ReceiptModel({
   ]
 }).generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-* @class layerUI.cards.ReceiptModel
+* @class layer.UI.cards.ReceiptModel
 * @extends layer.model
 */
 import { Client, MessagePart, MessageTypeModel } from '../../../core';
@@ -189,7 +189,12 @@ import Util from '../../../util';
 
 class ReceiptModel extends MessageTypeModel {
   _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['createdAt', 'currency', 'discounts', 'paymentMethod', 'summary', 'order']);
+    const body = this._initBodyWithMetadata(['createdAt', 'currency', 'discounts', 'paymentMethod',  'order']);
+    body.summary = {};
+    Object.keys(this.summary).forEach((keyName) => {
+      const newKeyName = Util.hyphenate(keyName);
+      body.summary[newKeyName] = this.summary[keyName];
+    });
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -276,7 +281,7 @@ ReceiptModel.modelSet = [
 
 ReceiptModel.Label = 'Receipt';
 ReceiptModel.MIMEType = 'application/vnd.layer.receipt+json';
-ReceiptModel.messageRenderer = 'layer-receipt-display';
+ReceiptModel.messageRenderer = 'layer-receipt-view';
 
 // Register the Message Model Class with the Client
 Client.registerMessageTypeModelClass(ReceiptModel, 'ReceiptModel');

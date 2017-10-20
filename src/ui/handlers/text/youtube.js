@@ -1,7 +1,7 @@
 /**
  * The Layer Youtube URL TextHandler replaces all youtube-like URLs with a video player.
  *
- * @class layerUI.handlers.text.Youtube
+ * @class layer.UI.handlers.text.Youtube
  * @removed
  */
 /*

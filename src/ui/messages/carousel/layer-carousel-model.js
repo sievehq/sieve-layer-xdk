@@ -331,7 +331,7 @@ model.generateMessage($("layer-conversation-view").conversation, message => mess
     ]
   }).generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-* @class layerUI.cards.CarouselModel
+* @class layer.UI.cards.CarouselModel
 * @extends layer.model
 */
 import { Client, MessagePart, MessageTypeModel }  from '../../../core';
@@ -384,7 +384,7 @@ CarouselModel.prototype.items = null;
 CarouselModel.prototype.title = '';
 
 CarouselModel.Label = 'Items';
-CarouselModel.messageRenderer = 'layer-carousel-display';
+CarouselModel.messageRenderer = 'layer-carousel-view';
 CarouselModel.MIMEType = 'application/vnd.layer.carousel+json';
 
 // Register the Message Model Class with the Client

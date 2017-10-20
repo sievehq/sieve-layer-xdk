@@ -33,8 +33,8 @@
  *
  * ## Key Properties
  *
- * * layerUI.components.ConversationPanel.conversationId (attribute-name: `conversation-id`): Set what conversation is being viewed
- * * layerUI.components.ConversationPanel.queryId (attribute-name: `query-id`): If your app already has a layer.Core.Query, you can provide it to this widget to render and page through its Messages.  If you don't have a layer.Core.Query instance, this widget will generate one for you.
+ * * layer.UI.components.ConversationPanel.conversationId (attribute-name: `conversation-id`): Set what conversation is being viewed
+ * * layer.UI.components.ConversationPanel.queryId (attribute-name: `query-id`): If your app already has a layer.Core.Query, you can provide it to this widget to render and page through its Messages.  If you don't have a layer.Core.Query instance, this widget will generate one for you.
  *
  * NOTE: If you provide your own Query, you must update its predicate when changing Conversations.
  *
@@ -42,11 +42,11 @@
  *
  * Events listed here come from either this component, or its subcomponents.
  *
- * * {@link layerUI.components.Composer#layer-send-message layer-send-message}: User has requested their Message be sent
- * * {@link layerUI.components.TypingIndicator#layer-typing-indicator-change layer-typing-indicator-change}: Someone in the Conversation has started/stopped typing
+ * * {@link layer.UI.components.Composer#layer-send-message layer-send-message}: User has requested their Message be sent
+ * * {@link layer.UI.components.TypingIndicator#layer-typing-indicator-change layer-typing-indicator-change}: Someone in the Conversation has started/stopped typing
  *
- * @class layerUI.components.ConversationPanel
- * @extends layerUI.components.Component
+ * @class layer.UI.components.ConversationPanel
+ * @extends layer.UI.components.Component
  * @mixin layerUI.mixins.MainComponent
  * @mixin layerUI.mixins.HasQuery
  * @mixin layerUI.mixins.FileDropTarget
@@ -253,7 +253,7 @@ registerComponent('layer-conversation-view', {
      * This Conversation ID specifies what conversation to render and interact with.
      * This property needs to be changed any time you change to view a different Conversation.
      *
-     * Alternative: See layerUI.components.LayerConversation.conversation property.  Strings however are easier to stick
+     * Alternative: See layer.UI.components.LayerConversation.conversation property.  Strings however are easier to stick
      * into html template files.
      *
      * ```
@@ -308,7 +308,7 @@ registerComponent('layer-conversation-view', {
      * This Conversation ID specifies what conversation to render and interact with.
      * This property needs to be changed any time you change to view a different Conversation.
      *
-     * Alternative: See layerUI.components.LayerConversation.conversationId property for an easier property to use
+     * Alternative: See layer.UI.components.LayerConversation.conversationId property for an easier property to use
      * within html templates.
      *
      * ```
@@ -383,7 +383,7 @@ registerComponent('layer-conversation-view', {
      * ```
      *
      * @property {Function} onRenderListItem
-     * @property {layerUI.components.MessagesListPanel.Item} onRenderListItem.widget
+     * @property {layer.UI.components.MessagesListPanel.Item} onRenderListItem.widget
      *    One row of the list
      * @property {layer.Message[]} onRenderListItem.items
      *    full set of messages in the list

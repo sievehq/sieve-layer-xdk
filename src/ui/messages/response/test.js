@@ -2,11 +2,16 @@ describe('Response Message Components', function() {
   var ResponseModel, TextModel;
   var conversation;
   var testRoot;
+  var uuidPart, uuidMessage;
+  var responseToMessage;
 
   beforeEach(function() {
+    uuidMessage = layer.Util.generateUUID();
+    uuidPart = layer.Util.generateUUID();
+
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layerUI.animatedScrollTo;
-    spyOn(layerUI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
+    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -32,7 +37,7 @@ describe('Response Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -43,6 +48,9 @@ describe('Response Message Components', function() {
     ResponseModel = layer.Core.Client.getMessageTypeModelClass("ResponseModel");
     TextModel = layer.Core.Client.getMessageTypeModelClass("TextModel");
 
+    responseToMessage = conversation.createMessage("hello");
+    responseToMessage.presend();
+
     layer.Util.defer.flush();
     jasmine.clock().tick(800);
   });
@@ -50,14 +58,10 @@ describe('Response Message Components', function() {
 
   afterEach(function() {
     layer.Core.Client.removeListenerForNewClient();
+    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
   });
 
   describe("Model Tests", function() {
-    var responseToMessage;
-    beforeEach(function() {
-      responseToMessage = conversation.createMessage("hello");
-      responseToMessage.presend();
-    });
 
     it("Should create an appropriate Message with a display", function() {
       var model = new ResponseModel({
@@ -108,14 +112,14 @@ describe('Response Message Components', function() {
       var message = conversation.createMessage({
         parts: [
           {
-            mimeType: ResponseModel.MIMEType + '; role=root; node-id=a',
+            mimeType: ResponseModel.MIMEType + '; role=root; node-id=' + uuidPart,
             body: JSON.stringify({
-              response_to: "a",
+              response_to: uuidMessage,
               participant_data: {user_a: {hey: "ho"}}
             })
           },
           {
-            mimeType: TextModel.MIMEType + '; role=message; parent-node-id=a',
+            mimeType: TextModel.MIMEType + '; role=message; parent-node-id=' + uuidPart,
             body: JSON.stringify({text: "ho hum"})
           }
         ]
@@ -124,7 +128,7 @@ describe('Response Message Components', function() {
         message: message,
         part: message.parts[0]
       });
-      expect(model.responseTo).toEqual("a");
+      expect(model.responseTo).toEqual(uuidMessage);
       expect(model.participantData).toEqual({user_a: {hey: "ho"}});
       expect(model.displayModel.text).toEqual("ho hum");
     });
@@ -133,9 +137,9 @@ describe('Response Message Components', function() {
       var m = conversation.createMessage({
         parts: [
           {
-            mimeType: ResponseModel.MIMEType + '; role=root; node-id=a',
+            mimeType: ResponseModel.MIMEType + '; role=root; node-id=' + uuidPart,
             body: JSON.stringify({
-              response_to: "a",
+              response_to: uuidMessage,
               participant_data: {user_a: {hey: "ho"}}
             })
           }
@@ -145,8 +149,8 @@ describe('Response Message Components', function() {
         message: m,
         part: m.parts[0]
       });
-      expect(m.responesTo).toEqual("a");
-      expect(m.paricipantData).toEqual({user_a: {hey: "ho"}});
+      expect(m.responseTo).toEqual(uuidMessage);
+      expect(m.participantData).toEqual({user_a: {hey: "ho"}});
       expect(m.displayModel).toBe(null);
     });
 
@@ -175,7 +179,7 @@ describe('Response Message Components', function() {
   describe("View Tests", function() {
     var el;
     beforeEach(function() {
-      el = document.createElement('layer-response-display');
+      el = document.createElement('layer-response-view');
       testRoot.appendChild(el);
     });
     afterEach(function() {

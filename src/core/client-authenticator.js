@@ -438,16 +438,21 @@ class ClientAuthenticator extends Root {
   answerAuthenticationChallenge(identityToken) {
     // Report an error if no identityToken provided
     if (!identityToken) {
+      logger.error(LayerError.dictionary.identityTokenMissing);
       throw new Error(LayerError.dictionary.identityTokenMissing);
     } else {
       const userData = Util.decode(identityToken.split('.')[1]);
       const identityObj = JSON.parse(userData);
 
       if (!identityObj.prn) {
-        throw new Error('Your identity token prn (user id) is empty');
+        // TODO: Move to dictionary
+        const err = 'Your identity token prn (user id) is empty';
+        logger.error(err);
+        throw new Error(err);
       }
 
       if (this.user.userId && this.user.userId !== identityObj.prn) {
+        logger.error(LayerError.dictionary.invalidUserIdChange);
         throw new Error(LayerError.dictionary.invalidUserIdChange);
       }
 

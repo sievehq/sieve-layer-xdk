@@ -39,13 +39,11 @@ jspm_packages
 docs
 .vscode
 
-/lib-es5
-/lib-es6
+samples/build.js
 
-npm-link-projects.json
-test/index.html
+samples/react/common/LayerConfiguration.json
 
 # !npmignored: Everything after this line is left out of the .npmignore file
 /lib
-samples/build.js
+/lib-es6
 build

@@ -1,8 +1,8 @@
 describe("Newline Text Handler", function() {
   var handler;
   beforeEach(function() {
-    if (layerUI.components['layer-conversation-view'] && !layerUI.components['layer-conversation-view'].classDef) layerUI.init({});
-    handler = layerUI.textHandlers.newline.handler;
+    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    handler = layer.UI.textHandlers.newline.handler;
   });
 
   it("Should replace any occurance of newline with br tags", function() {

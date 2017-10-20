@@ -14,10 +14,10 @@
   }).generateMessage($("layer-conversation-view").conversation, message => message.send())
 
   new ImageModel({
-    sourceUrl: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
-    artist: "unknown photographer",
-    title: "Source URL Test",
-    subtitle: "Ooooh, Pretty..."
+    sourceUrl: "https://78.media.tumblr.com/1b019b4237ab18f789381941eca98784/tumblr_nlmlir7Lhk1u0k6deo1_400.gif",
+    artist: "Monty Python",
+    title: "Tis only a flesh wound",
+    subtitle: "Your arm's off!"
   }).generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 new ImageModel({
@@ -88,7 +88,7 @@ img = layer.Util.base64ToBlob('iVBORw0KGgoAAAANSUhEUgAAAyAAAAGQCAYAAABWJQQ0AAAHJ
     title: "Wider and taller than card but much wider than tall"
   }).generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-* @class layerUI.cards.ImageModel
+* @class layer.UI.cards.ImageModel
 * @extends layer.model
 */
 import ImageManager from 'blueimp-load-image/js/load-image';
@@ -282,7 +282,7 @@ ImageModel.prototype.url = '';
 
 ImageModel.Label = 'Picture';
 ImageModel.defaultAction = 'open-url';
-ImageModel.messageRenderer = 'layer-image-display';
+ImageModel.messageRenderer = 'layer-image-view';
 ImageModel.MIMEType = 'application/vnd.layer.image+json';
 Root.initClass.apply(ImageModel, [ImageModel, 'ImageModel']);
 

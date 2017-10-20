@@ -2,7 +2,7 @@
  * The Layer Channel Item widget renders a single Channel, typically for use representing a
  * channel within a list of channels.
  *
- * This is designed to go inside of the layerUI.components.ConversationsListPanel.List widget, and be a
+ * This is designed to go inside of the layer.UI.components.ConversationsListPanel.List widget, and be a
  * concise enough summary that it can be scrolled through along
  * with hundreds of other Conversations Item widgets.
  *
@@ -10,9 +10,9 @@
  *
  * * Badges for unread messages (currently just adds a css class so styling can change if there are any unread messages)
  *
- * @class layerUI.components.ConversationsListPanel.Item.Channel
+ * @class layer.UI.components.ConversationsListPanel.Item.Channel
  * @experimental
- * @extends layerUI.components.Component
+ * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../../../components/component';
 import ListItem from '../../../mixins/list-item';
