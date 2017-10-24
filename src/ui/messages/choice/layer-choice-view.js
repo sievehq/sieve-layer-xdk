@@ -65,7 +65,7 @@ registerComponent('layer-choice-view', {
         const button = this.nodes.answers.childNodes[index];
         button.text = this.model.getText(index);
         button.selected = this.model.isSelectedIndex(index);
-        if (this.model.selectedAnswer && !this.model.allowReselect || !this.model.allowDeselect && button.selected) {
+        if (!this.model.isSelectionEnabled() || !this.model.allowDeselect && button.selected) {
           button.disabled = true;
         } else {
           button.disabled = false;
@@ -79,6 +79,7 @@ registerComponent('layer-choice-view', {
 
     runAction({ event, data }) {
       if (event === 'layer-choice-select') {
+        if (!this.model.isSelectionEnabled()) return;
         this.onChoiceSelect(data);
 
         const rootPart = this.model.message.getPartsMatchingAttribute({ role: 'root' })[0];

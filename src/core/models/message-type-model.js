@@ -27,13 +27,15 @@ class MessageTypeModel extends Root {
     if (!this.customData) this.customData = {};
     this.currentMessageRenderer = this.constructor.messageRenderer;
     this.childParts = [];
-
+    this.initializeProperties();
     if (this.message) {
       this._setupMessage();
     } else {
 
     }
   }
+
+  initializeProperties() {}
 
   generateMessage(conversation, callback) {
     if (!conversation) throw new Error(LayerError.dictionary.conversationMissing);

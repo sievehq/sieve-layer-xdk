@@ -130,6 +130,7 @@ registerMessageComponent('layer-message-viewer', {
 
       const cardUIType = this.model.currentMessageRenderer;
       this.classList.add(cardUIType);
+      if (this.parentComponent) this.parentComponent.classList.add('layer-message-item-' + cardUIType);
       const cardUI = this.createElement(cardUIType, {
         model: this.model,
         messageViewer: this,
@@ -162,7 +163,6 @@ registerMessageComponent('layer-message-viewer', {
       if (this.nodes.cardContainer) this.nodes.cardContainer._onAfterCreate();
       if (cardUI._onAfterCreate) cardUI._onAfterCreate();
       if (this.nodes.cardContainer) cardUI.setupContainerClasses();
-
     },
 
     /**

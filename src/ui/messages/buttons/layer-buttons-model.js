@@ -30,6 +30,19 @@
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
+     ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+  model = new ButtonModel({
+    buttons: [
+      {"type": "choice", "choices": [{"text": "like", "id": "like", "tooltip": "like"}, {"text": "dislike", "id": "dislike", "tooltip": "dislike"}], "data": {"responseName": "satisfaction", selectedAnswer: 'dislike', allowReselect: true, enabledFor: $("layer-conversation-view").conversation.participants.filter(user => user !== client.user).map(user => user.id)}},
+      {"type": "action", "text": "do nothing"},
+      {"type": "choice", "choices": [{"text": "helpful", "id": "helpful", "tooltip": "helpful"}, {"text": "unhelpful", "id": "unhelpful", "tooltip": "unhelpful"}], "data": {"responseName": "helpfulness", allowReslect: true}},
+    ]
+  });
+  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+
+
+
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
    ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
    ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
@@ -214,35 +227,38 @@ class ButtonsModel extends MessageTypeModel {
     if (!this.choices) this.choices = {};
     const choices = this.buttons.filter(button => button.type === 'choice');
     choices.forEach((button) => {
-      const obj = {
-        parentNodeId: this.nodeId,
-        choices: button.choices,
-        message: this.message,
-        parentId: uuid(this.part.id),
-        responses: this.responses,
-      };
-      if ('responseName' in button.data) obj.responseName = button.data.responseName;
-      if ('allowDeselect' in button.data) obj.allowDeselect = button.data.allowDeselect;
-      if ('allowReselect' in button.data) obj.allowReselect = button.data.allowReselect;
-      if ('selectedAnswer' in button.data) obj.selectedAnswer = button.data.selectedAnswer;
-      if ('customResponseData' in button.data) obj.customResponseData = button.data.customResponseData;
-      if ('states' in button.data) obj.states = button.data.states;
+      if (!this.choices[button.data.responseName || 'selection']) {
+        const obj = {
+          parentNodeId: this.nodeId,
+          choices: button.choices,
+          message: this.message,
+          parentId: uuid(this.part.id),
+          responses: this.responses,
+        };
+        if ('responseName' in button.data) obj.responseName = button.data.responseName;
+        if ('allowDeselect' in button.data) obj.allowDeselect = button.data.allowDeselect;
+        if ('allowReselect' in button.data) obj.allowReselect = button.data.allowReselect;
+        if ('selectedAnswer' in button.data) obj.selectedAnswer = button.data.selectedAnswer;
+        if ('customResponseData' in button.data) obj.customResponseData = button.data.customResponseData;
+        if ('enabledFor' in button.data) obj.enabledFor = button.data.enabledFor;
+        if ('states' in button.data) obj.states = button.data.states;
 
-      // Generate the model and add it to this.choices[model.responseName]
-      const model = new ChoiceModel(obj);
-      if (!this.choices[model.responseName]) {
-        this.choices[model.responseName] = model;
-        model.on('change', () => this.on('change'));
+        // Generate the model and add it to this.choices[model.responseName]
+        const model = new ChoiceModel(obj);
+        if (!this.choices[model.responseName]) {
+          this.choices[model.responseName] = model;
+          model.on('change', () => this.on('change'));
 
-        // Update the selectedAnswer based on any responses
-        if (model.responses) {
-          model._processNewResponses();
+          // Update the selectedAnswer based on any responses
+          if (model.responses) {
+            model._processNewResponses();
+          }
+        } else {
+          // the ChoiceModel already exists; lets update its properties
+          Object.keys(obj).forEach((prop) => {
+            this.choices[model.responseName][prop] = obj[prop];
+          });
         }
-      } else {
-        // the ChoiceModel already exists; lets update its properties
-        Object.keys(obj).forEach((prop) => {
-          this.choices[model.responseName][prop] = obj[prop];
-        });
       }
     });
   }

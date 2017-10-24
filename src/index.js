@@ -3,7 +3,7 @@ import Core from './core';
 import Util from './util';
 import UI from './ui';
 
-const version = '1.0.0-pre1.8';
+const version = '1.0.0-pre1.9';
 
 function init(options) {
   const client = Core.Client.getClient(options.appId) || new Core.Client(options);

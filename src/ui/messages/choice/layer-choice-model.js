@@ -1,10 +1,23 @@
 /**
+  ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+  model = new ChoiceModel({
+     question: "What is the airspeed velocity of an unladen swallow?",
+     responseName: 'airselection',
+     selectedAnswer: 'clever bastard',
+     choices: [
+        {text:  "Zero, it can not get off the ground!", id: "zero"},
+        {text:  "Are we using Imperial or Metric units?", id: "clever bastard"},
+        {text:  "What do you mean? African or European swallow?", id: "just a smart ass"},
+      ],
+   });
+   model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
 
    ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
    model = new ChoiceModel({
      question: "What is the airspeed velocity of an unladen swallow?",
      responseName: 'airselection',
-     selectedAnswer: 'clever bastard',
+     enabledFor: $("layer-conversation-view").conversation.participants.filter(user => user !== client.user).map(user => user.id),
      choices: [
         {text:  "Zero, it can not get off the ground!", id: "zero"},
         {text:  "Are we using Imperial or Metric units?", id: "clever bastard"},
@@ -65,8 +78,10 @@
    model = new ChoiceModel({
      question: "Pick a color",
      responseName: 'color',
-     selectedAnswer: 'black',
      allowMultiselect: true,
+     customResponseData: {
+       hey: "ho"
+     },
      choices: [
         {text:  "red", id: "red"},
         {text:  "blue", id: "blue"},
@@ -74,7 +89,6 @@
       ],
    });
    model.generateMessage($("layer-conversation-view").conversation, message => message.send())
-
 
   model = new ChoiceModel({
     allowReselect: true,
@@ -96,11 +110,14 @@ import ResponseModel from '../response/layer-response-model';
 import TextModel from '../text/layer-text-model';
 
 class ChoiceModel extends MessageTypeModel {
+  initializeProperties() {
+    if (!this.enabledFor) this.enabledFor = [];
+  }
   _generateParts(callback) {
     const body = this._initBodyWithMetadata([
       'question', 'choices', 'selectedAnswer', 'type', 'responseName',
       'allowReselect', 'allowDeselect', 'allowMultiselect',
-      'title', 'customResponseData',
+      'title', 'customResponseData', 'enabledFor',
     ]);
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -132,11 +149,30 @@ class ChoiceModel extends MessageTypeModel {
     }));
   }
 
+  isSelectionEnabled() {
+
+    // Disable selection if there is a selection and reselection is not permitted
+    if (!this.allowReselect && this.selectedAnswer) return false;
+
+    // Disable selection if enabledFor is in use, but this user is not in the list
+    if (this.enabledFor.length > 0 && this.enabledFor.indexOf(this.getClient().user.id) === -1) return false;
+
+    // Disable selection if this user is the sender, and other participants have made selections.
+    // Rationale: This user was requesting feedback, this user's selections do not get priority
+    const data = this.responses ? this.responses.participantData : {};
+    let responseIdentityIds = Object.keys(data).filter(participantId => data[participantId][this.responseName]);
+    if (responseIdentityIds.length > 1 && this.message.sender === this.getClient().user) return false;
+
+    return true;
+  }
+
   selectAnswer(answerData) {
-    if (this.allowMultiselect) {
-      this._selectMultipleAnswers(answerData);
-    } else {
-      this._selectSingleAnswer(answerData);
+    if (this.enabledFor.length === 0 || this.enabledFor.indexOf(this.getClient().user.id) !== -1) {
+      if (this.allowMultiselect) {
+        this._selectMultipleAnswers(answerData);
+      } else {
+        this._selectSingleAnswer(answerData);
+      }
     }
   }
 
@@ -155,12 +191,17 @@ class ChoiceModel extends MessageTypeModel {
       selectionText = ' selected ';
     }
 
+    const participantData = {
+      [this.responseName]: selectedAnswers.join(','),
+    };
+    if (this.customResponseData) {
+      Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
+    }
+
     const responseModel = new ResponseModel({
+      participantData,
       responseTo: this.message.id,
       responseToNodeId: this.parentId || this.nodeId,
-      participantData: {
-        [this.responseName]: selectedAnswers.join(','),
-      },
       displayModel: new TextModel({
         text: this.getClient().user.displayName + selectionText + text,
       }),
@@ -250,9 +291,9 @@ class ChoiceModel extends MessageTypeModel {
       const senderId = this.message.sender.userId;
       const data = this.responses.participantData;
       let responseIdentityIds = Object.keys(data).filter(participantId => data[participantId][this.responseName]);
-      if (responseIdentityIds.length > 1) {
-        responseIdentityIds = responseIdentityIds.filter(id => senderId !== id);
-      } else if (responseIdentityIds.length) {
+      if (responseIdentityIds.length > 1) responseIdentityIds = responseIdentityIds.filter(id => senderId !== id);
+
+      if (responseIdentityIds.length) {
         this.selectedAnswer = data[responseIdentityIds[0]][this.responseName];
       }
     } else {
@@ -340,8 +381,14 @@ class ChoiceModel extends MessageTypeModel {
       return 'default';
     }
   }
+
+  destroy() {
+    clearTimeout(this.pauseUpdateTimeout);
+    super.destroy();
+  }
 }
 
+ChoiceModel.prototype.enabledFor = null;
 ChoiceModel.prototype.pauseUpdateTimeout = 0;
 ChoiceModel.prototype.allowReselect = false;
 ChoiceModel.prototype.allowDeselect = true; // if true, allowReselect is forced to true

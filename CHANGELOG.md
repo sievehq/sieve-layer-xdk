@@ -1,5 +1,11 @@
 # Web XDK Change Log
 
+## 1.0.0-pre1.9
+
+* Adds `enabledFor` to Choice Model
+* Some refactoring of enabled detection for Choice Models
+* Adds CSS class name`layer-message-item-${Message View Class Name}` to the `<layer-message-item-sent />`, `<layer-message-item-received />` and `<layer-message-item-status />` elements; `layer-message-item-layer-text-view`
+
 ## 1.0.0-pre1.8
 
 * Adds a Status Message Type

@@ -75,7 +75,7 @@ registerComponent('layer-choice-button', {
       for (let i = 0; i < this.childNodes.length; i++) {
         const child = this.childNodes[i];
         const isSelected = this.model.isSelectedIndex(i);
-        child.disabled = this.model.selectedAnswer && !this.model.allowReselect ||
+        child.disabled = !this.model.isSelectionEnabled() ||
           isSelected && !this.model.allowDeselect;
         child.selected = isSelected;
 
