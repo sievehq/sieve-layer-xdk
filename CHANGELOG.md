@@ -1,5 +1,9 @@
 # Web XDK Change Log
 
+## 1.0.0-pre1.10
+
+* Adds `<layer-conversation-item-date />` added to simplify Conversation Item Date customizations
+
 ## 1.0.0-pre1.9
 
 * Adds `enabledFor` to Choice Model

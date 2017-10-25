@@ -107,7 +107,7 @@ export default class ActiveConversation extends Component {
       {
         text: 'Create Location Message',
         method: function() {
-          if (!googleMapsKey) {
+          if (!window.googleMapsAPIKey) {
             alert('Please add a Google Maps API Key to your LayerConfiguration.json file using the key name "google_maps_key"');
           } else {
             const LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel');

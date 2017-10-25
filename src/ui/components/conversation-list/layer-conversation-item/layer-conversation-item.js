@@ -21,6 +21,7 @@ import '../../layer-conversation-last-message/layer-conversation-last-message';
 import '../../layer-menu-button/layer-menu-button';
 import '../../layer-avatar/layer-avatar';
 import '../../layer-conversation-title/layer-conversation-title';
+import '../../layer-conversation-item-date/layer-conversation-item-date';
 
 registerComponent('layer-conversation-item', {
   mixins: [ListItem, ListItemSelection, SizeProperty],

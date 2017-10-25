@@ -6,7 +6,7 @@
  * using layer.UI.components.ConversationPanel.dateRenderer.
  *
  * ```
- * layer.UI.registerComponent('layer-date', {
+ * layer.UI.registerComponent('layer-conversation-item-date', {
  *    properties: {
  *      date: {
  *        set: function(value) {
@@ -25,7 +25,7 @@
  * });
  * ```
  *
- * @class layer.UI.components.Date
+ * @class layer.UI.components.ConversationItemDate
  * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
@@ -157,5 +157,6 @@ const LayerDate = {
   },
 };
 
-registerComponent('layer-date', LayerDate);
+registerComponent('layer-conversation-item-date', LayerDate);
 module.exports = LayerDate;
+

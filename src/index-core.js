@@ -2,7 +2,7 @@ import Constants from './constants';
 import Core from './core';
 import Util from './util';
 
-const version = '1.0.0-pre1.9';
+const version = '1.0.0-pre1.10';
 
 function init(options) {
   const client = new Core.Client(options);

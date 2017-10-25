@@ -31,7 +31,7 @@ layer-conversation-item {
         layer-conversation-title {
             font-size: @conversation-item-large-title-size;
         }
-        layer-date {
+        layer-conversation-item-date {
             font-size: @conversation-item-large-date-size;
         }
         layer-conversation-last-message {
@@ -47,7 +47,7 @@ layer-conversation-item {
         layer-conversation-title {
             font-size: @conversation-item-medium-title-size;
         }
-        layer-date {
+        layer-conversation-item-date {
             font-size: @conversation-item-medium-date-size;
         }
         layer-conversation-last-message {
@@ -63,7 +63,7 @@ layer-conversation-item {
         layer-conversation-title {
             font-size: @conversation-item-small-title-size;
         }
-        layer-date {
+        layer-conversation-item-date {
             font-size: @conversation-item-small-date-size;
         }
         layer-conversation-last-message {
@@ -79,7 +79,7 @@ layer-conversation-item {
         layer-conversation-title {
             font-size: @conversation-item-tiny-title-size;
         }
-        layer-date {
+        layer-conversation-item-date {
             display: none;
             font-size: @conversation-item-tiny-date-size;
         }
@@ -138,10 +138,10 @@ layer-conversation-item {
      * B. Unread
      * C. Selected
      */
-    layer-date {
+    layer-conversation-item-date {
         color: @conversation-item-color-read;
     }
-    &.layer-conversation-unread-messages layer-date {
+    &.layer-conversation-unread-messages layer-conversation-item-date {
         color: @conversation-item-color-unread;
     }
 
