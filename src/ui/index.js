@@ -16,105 +16,118 @@
  *
  */
 
-var LayerUI = require('./layer-ui');
+import LayerUI from './layer-ui';
 
 // Load Adapters
-require('./adapters/angular');
-require('./adapters/backbone');
-require('./adapters/react');
+import './adapters/angular';
+import './adapters/backbone';
+import './adapters/react';
 
 // Load Main Components
-require('./components/conversation-list/layer-conversation-list/layer-conversation-list');
-require('./components/identity-list/layer-identity-list/layer-identity-list');
-require('./components/membership-list-panel/layer-membership-list/layer-membership-list');
-require('./components/layer-conversation-view/layer-conversation-view');
-require('./components/layer-notifier/layer-notifier');
-require('./components/layer-presence/layer-presence');
+import './components/conversation-list/layer-conversation-list/layer-conversation-list';
+import './components/identity-list/layer-identity-list/layer-identity-list';
+import './components/membership-list-panel/layer-membership-list/layer-membership-list';
+import './components/layer-conversation-view/layer-conversation-view';
+import './components/layer-notifier/layer-notifier';
+import './components/layer-presence/layer-presence';
 
 
 // Load standard utilities
-require('./components/layer-file-upload-button/layer-file-upload-button');
-require('./components/layer-send-button/layer-send-button');
-require('./handlers/message/layer-message-viewer');
-//require('./handlers/message/layer-message-text-plain');
-require('./handlers/message/layer-message-image/layer-message-image');
-require('./handlers/message/layer-message-video');
-require('./handlers/text/autolinker');
-require('./handlers/text/code-blocks');
-require('./handlers/text/emoji');
-require('./handlers/text/images');
-require('./handlers/text/newline');
-require('./handlers/text/youtube');
-require('./utils/date-separator');
+import './components/layer-file-upload-button/layer-file-upload-button';
+import './components/layer-send-button/layer-send-button';
+import './handlers/message/layer-message-viewer';
+import './handlers/message/layer-message-video';
+import './handlers/text/autolinker';
+import './handlers/text/code-blocks';
+import './handlers/text/emoji';
+import './handlers/text/images';
+import './handlers/text/newline';
+import './handlers/text/youtube';
+import './utils/date-separator';
 
 // Load standard cards
-require('./messages/text/layer-text-model');
-require('./messages/text/layer-text-view');
+import './messages/text/layer-text-model';
+import './messages/text/layer-text-view';
 
-require('./messages/status/layer-status-model');
-require('./messages/status/layer-status-view');
+import './messages/status/layer-status-model';
+import './messages/status/layer-status-view';
 
-require('./messages/response/layer-response-model');
-require('./messages/response/layer-response-view');
+import './messages/response/layer-response-model';
+import './messages/response/layer-response-view';
 
-require('./messages/receipt/layer-receipt-model');
-require('./messages/receipt/layer-receipt-view');
+import './messages/receipt/layer-receipt-model';
+import './messages/receipt/layer-receipt-view';
 
-require('./messages/choice/layer-choice-model');
-require('./messages/choice/layer-choice-view');
-require('./messages/choice/layer-choice-tiles-view');
-require('./messages/choice/layer-choice-label-view');
+import './messages/choice/layer-choice-model';
+import './messages/choice/layer-choice-view';
+import './messages/choice/layer-choice-tiles-view';
+import './messages/choice/layer-choice-label-view';
 
 
-require('./messages/layer-standard-display-container');
-require('./messages/layer-titled-display-container');
-//require('./messages/layer-list-item-container');
-require('./messages/text/layer-text-view');
-require('./messages/text/layer-text-model');
+import './messages/layer-standard-display-container';
+import './messages/layer-titled-display-container';
+//import './messages/layer-list-item-container';
+import './messages/text/layer-text-view';
+import './messages/text/layer-text-model';
 
-require('./messages/image/layer-image-model');
-require('./messages/image/layer-image-view');
+import './messages/image/layer-image-model';
+import './messages/image/layer-image-view';
 
-// require('./messages/list/list-model');
-// require('./messages/list/layer-list-view');
+// import './messages/list/list-model';
+// import './messages/list/layer-list-view';
 
-require('./messages/carousel/layer-carousel-model');
-require('./messages/carousel/layer-carousel-view');
+import './messages/carousel/layer-carousel-model';
+import './messages/carousel/layer-carousel-view';
 
-require('./messages/buttons/layer-buttons-model');
-require('./messages/buttons/layer-buttons-view');
+import './messages/buttons/layer-buttons-model';
+import './messages/buttons/layer-buttons-view';
 
-require('./messages/file/layer-file-model');
-require('./messages/file/layer-file-view');
+import './messages/file/layer-file-model';
+import './messages/file/layer-file-view';
 
-require('./messages/link/layer-link-model');
-require('./messages/link/layer-link-view');
+import './messages/link/layer-link-model';
+import './messages/link/layer-link-view';
 
-require('./messages/location/layer-location-model');
-require('./messages/location/layer-location-view');
+import './messages/location/layer-location-model';
+import './messages/location/layer-location-view';
 
-// require('./messages/address/address-model');
-// require('./messages/address/layer-address-view');
+// import './messages/address/address-model';
+// import './messages/address/layer-address-view';
 
-require('./messages/product/layer-product-model');
-require('./messages/product/layer-product-view');
+import './messages/product/layer-product-model';
+import './messages/product/layer-product-view';
 
-require('./messages/models/layer-person-model');
-require('./messages/models/layer-organization-model');
+import './messages/models/layer-person-model';
+import './messages/models/layer-organization-model';
 
-LayerUI.animatedScrollTo = require('./utils/animated-scroll').animatedScrollTo;
-LayerUI.animatedScrollLeftTo = require('./utils/animated-scroll').animatedScrollLeftTo;
+import './messages/message-type-list/message-type-list-view';
+import './messages/message-type-list/message-type-list-model';
+
+import { animatedScrollTo, animatedScrollLeftTo } from './utils/animated-scroll';
+import MessageHandler from './mixins/message-handler';
+import HasQuery from './mixins/has-query';
+import MainComponent from './mixins/main-component';
+import List from './mixins/list';
+import ListItem from './mixins/list-item';
+import ListSelection from './mixins/list-selection';
+import ListItemSelection from './mixins/list-item-selection';
+import FocusOnKeydown from './mixins/focus-on-keydown';
+import MessageViewMixin from './messages/message-view-mixin';
+
+
+LayerUI.animatedScrollTo = animatedScrollTo;
+LayerUI.animatedScrollLeftTo = animatedScrollLeftTo;
 
 LayerUI.mixins = {
-  MessageHandler: require('./mixins/message-handler'),
-  HasQuery: require('./mixins/has-query'),
-  MainComponent: require('./mixins/main-component'),
-  List: require('./mixins/list'),
-  ListItem: require('./mixins/list-item'),
-  ListSelection: require('./mixins/list-selection'),
-  ListItemSelection: require('./mixins/list-item-selection'),
-  FocusOnKeydown: require('./mixins/focus-on-keydown'),
-  MessageViewMixin: require('./messages/message-view-mixin'),
+  MessageHandler,
+  HasQuery,
+  MainComponent,
+  List,
+  ListItem,
+  ListSelection,
+  ListItemSelection,
+  FocusOnKeydown,
+  MessageViewMixin,
 };
 
 // If we don't expose global.layerUI then custom templates can not load and call window.layer.UI.registerTemplate()

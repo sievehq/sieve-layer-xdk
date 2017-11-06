@@ -1,3 +1,7 @@
+layer-message-viewer:not(.layer-card-width-chat-bubble) {
+  min-width: 192px;
+}
+
 .layer-conversation-view-width-medium, .layer-conversation-view-width-small {
   layer-message-viewer.layer-root-card.layer-card-width-full-width {
     width: 90%;
@@ -12,13 +16,11 @@
 .layer-conversation-view-width-medium, .layer-conversation-view-width-small {
   layer-message-viewer.layer-root-card.layer-card-width-flex-width {
     max-width: 90%;
-    min-width: 192px;
   }
 }
 .layer-conversation-view-width-large {
   layer-message-viewer.layer-root-card.layer-card-width-flex-width {
     max-width: 60%;
-    min-width: 192px;
   }
 }
 
@@ -99,10 +101,6 @@ layer-message-viewer {
   & > * {
     max-width: 100%;
     width: 100%;
-  }
-
-  &.layer-card-primitive:not(.layer-message-as-chat-bubble) > layer-standard-display-container {
-    min-width: 192px;
   }
 
   &:not(.layer-root-card) {

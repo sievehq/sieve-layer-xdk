@@ -5,12 +5,12 @@
  * @class layer.Message.ChannelMessage
  * @extends layer.Message
  */
-const Root = require('../root');
-const Message = require('./message');
-const ClientRegistry = require('../client-registry');
-const LayerError = require('../layer-error');
-const Constants = require('../../constants');
-const { logger } = require('../../util');
+import Root from '../root';
+import Message from './message';
+import ClientRegistry from '../client-registry';
+import Constants from '../../constants';
+import { logger } from '../../util';
+import { ErrorDictionary } from '../layer-error';
 
 class ChannelMessage extends Message {
   constructor(options) {
@@ -60,7 +60,7 @@ class ChannelMessage extends Message {
    * @method delete
    */
   delete() {
-    if (this.isDestroyed) throw new Error(LayerError.dictionary.isDestroyed);
+    if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
 
     const id = this.id;
     const client = this.getClient();

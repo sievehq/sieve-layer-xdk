@@ -117,13 +117,13 @@
  * @extends layer.Syncable
  */
 
-const Root = require('../root');
-const Syncable = require('./syncable');
-const MessagePart = require('./message-part');
-const LayerError = require('../layer-error');
-const Constants = require('../../constants');
-const Util = require('../../util');
-const Identity = require('./identity');
+import Root from '../root';
+import Syncable from './syncable';
+import MessagePart from './message-part';
+import { ErrorDictionary } from '../layer-error';
+import Constants from '../../constants';
+import Util from '../../util';
+import Identity from './identity';
 
 class Message extends Syncable {
   /**
@@ -147,7 +147,7 @@ class Message extends Syncable {
     }
 
     if (options.client) options.clientId = options.client.appId;
-    if (!options.clientId) throw new Error(LayerError.dictionary.clientMissing);
+    if (!options.clientId) throw new Error(ErrorDictionary.clientMissing);
 
     // Insure __adjustParts is set AFTER clientId is set.
     const parts = options.parts;
@@ -331,17 +331,17 @@ class Message extends Syncable {
   presend() {
     const client = this.getClient();
     if (!client) {
-      throw new Error(LayerError.dictionary.clientMissing);
+      throw new Error(ErrorDictionary.clientMissing);
     }
 
     const conversation = this.getConversation(false);
 
     if (!conversation) {
-      throw new Error(LayerError.dictionary.conversationMissing);
+      throw new Error(ErrorDictionary.conversationMissing);
     }
 
     if (this.syncState !== Constants.SYNC_STATE.NEW) {
-      throw new Error(LayerError.dictionary.alreadySent);
+      throw new Error(ErrorDictionary.alreadySent);
     }
     conversation._setupMessage(this);
 
@@ -382,17 +382,17 @@ class Message extends Syncable {
   send(notification) {
     const client = this.getClient();
     if (!client) {
-      throw new Error(LayerError.dictionary.clientMissing);
+      throw new Error(ErrorDictionary.clientMissing);
     }
 
     const conversation = this.getConversation(true);
 
     if (!conversation) {
-      throw new Error(LayerError.dictionary.conversationMissing);
+      throw new Error(ErrorDictionary.conversationMissing);
     }
 
     if (this.syncState !== Constants.SYNC_STATE.NEW) {
-      throw new Error(LayerError.dictionary.alreadySent);
+      throw new Error(ErrorDictionary.alreadySent);
     }
 
 
@@ -403,7 +403,7 @@ class Message extends Syncable {
     }
 
     if (!this.parts || !this.parts.length) {
-      throw new Error(LayerError.dictionary.partsMissing);
+      throw new Error(ErrorDictionary.partsMissing);
     }
 
     this._setSyncing();

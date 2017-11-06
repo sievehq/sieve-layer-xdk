@@ -4,10 +4,11 @@
  * @class layer.mixins.ClientIdentities
  */
 
-const Identity = require('../models/identity');
-const ErrorDictionary = require('../layer-error').dictionary;
-const Util = require('../../util');
-const { WebsocketSyncEvent } = require('../sync-event');
+import Identity from '../models/identity';
+import { ErrorDictionary } from '../layer-error';
+import Util from '../../util';
+import { WebsocketSyncEvent } from '../sync-event';
+
 
 module.exports = {
   events: [

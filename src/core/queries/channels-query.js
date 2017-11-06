@@ -20,10 +20,10 @@
  * @class  layer.ChannelsQuery
  * @extends layer.Core.Query
  */
-const Root = require('../root');
-const { SYNC_STATE } = require('../../constants');
-const Query = require('./query');
-const ConversationsQuery = require('./conversations-query');
+import Root from '../root';
+import { SYNC_STATE } from '../../constants';
+import Query from './query';
+import ConversationsQuery from './conversations-query';
 
 class ChannelsQuery extends ConversationsQuery {
 

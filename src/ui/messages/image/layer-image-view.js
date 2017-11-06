@@ -20,6 +20,9 @@ registerComponent('layer-image-view', {
       display: block;
       overflow: hidden;
     }
+    layer-image-view canvas, layer-image-view img {
+      display: block;
+    }
     layer-message-viewer.layer-image-view > * {
       cursor: pointer;
     }
@@ -68,33 +71,34 @@ registerComponent('layer-image-view', {
       if (!this.properties._internalState.onAttachCalled) return;
       const maxCardWidth = this._getMaxMessageWidth();
 
-      // maxSizes should be removed
-      const width = this.model.previewWidth || this.model.width || maxCardWidth;
-      const height = this.model.previewHeight || this.model.height || this.maxHeight;
-
-      const isSmallImage = width < maxCardWidth;
-      const isSmallAndWideImage = isSmallImage && maxCardWidth > height;
-      this.toggleClass('layer-image-view-small-image', isSmallImage && !isSmallAndWideImage);
-
       if (this.model.source || this.model.preview) {
         this.model.getBlob(blob => this._renderCanvas(blob, maxCardWidth));
       } else {
         while (this.firstChild) this.removeChild(this.firstChild);
         const img = this.createElement('img', {
-          classList: isSmallImage ? [] : ['layer-top-content-for-border-radius'],
           parentNode: this,
         });
-        img.addEventListener('load', evt => (this.isHeightAllocated = true));
+        img.addEventListener('load', evt => this._imageLoaded(evt.target));
         img.src = this.model.previewUrl || this.model.sourceUrl;
         img.style.maxWidth = maxCardWidth + 'px';
         img.style.maxHeight = this.maxHeight + 'px';
       }
     },
 
+    _imageLoaded(img) {
+      this.isHeightAllocated = true;
+      const minWidth = this.parentComponent.getPreferredMinWidth();
+      // maxWidth has already been used to constrain img.width and can be ignored for this calculation
+      if (img.width > minWidth) this.messageViewer.style.width = (img.width + 2) + 'px';
+    },
+
     _getMaxMessageWidth() {
       if (this.messageViewer.classList.contains('layer-root-card')) {
         const parent = this.messageViewer.parentNode;
         if (!parent || !parent.clientWidth) return 0;
+
+        // Enforcing the 60%/80% rules is pretty arbitrary; alternate calculations should be looked at;
+        // Location View may have implemented improvements on this
         let width = parent.clientWidth;
         if (width > 600) width = width * 0.6;
         else width = width * 0.8;
@@ -140,14 +144,14 @@ registerComponent('layer-image-view', {
           // Write the image to a canvas with the specified orientation
           ImageManager(blob, (canvas) => {
             if (canvas instanceof HTMLElement) {
-              if (width < minWidth && height < minHeight) {
+            /*  if (width < minWidth && height < minHeight) {
                 if (width > height) {
                   canvas = ImageManager.scale(canvas, { minWidth });
                 } else {
                   canvas = ImageManager.scale(canvas, { minHeight });
                 }
               }
-
+*/
               while (this.firstChild) this.removeChild(this.firstChild);
               this.appendChild(canvas);
               if (canvas.width >= minWidth) this.parentComponent.style.width = canvas.width + 'px';

@@ -49,14 +49,14 @@
  * @extends layer.Container
  * @author  Michael Kantor
  */
-const Root = require('../root');
-const Syncable = require('./syncable');
-const Container = require('./container');
-const ChannelMessage = require('./channel-message');
-const LayerError = require('../layer-error');
-const LayerEvent = require('../layer-event');
-const Util = require('../../util');
-const Constants = require('../../constants');
+import Root from '../root';
+import Syncable from './syncable';
+import Container from './container';
+import ChannelMessage from './channel-message';
+import { ErrorDictionary } from '../layer-error';
+import LayerEvent from '../layer-event';
+import Util from '../../util';
+import Constants from '../../constants';
 
 class Channel extends Container {
   constructor(options = {}) {
@@ -182,7 +182,7 @@ class Channel extends Container {
 
   __adjustName(newValue) {
     if (this._inPopulateFromServer || this._inLayerParser || this.isNew() || this.isLoading) return;
-    throw new Error(LayerError.dictionary.permissionDenied);
+    throw new Error(ErrorDictionary.permissionDenied);
   }
 
   /**
@@ -462,7 +462,7 @@ class Channel extends Container {
    * @return {layer.Channel}
    */
   static create(options) {
-    if (!options.client) throw new Error(LayerError.dictionary.clientMissing);
+    if (!options.client) throw new Error(ErrorDictionary.clientMissing);
     if (!options.name) options.name = 'channel-' + String(Math.random()).replace(/\./, '');
     const newOptions = {
       name: options.name,

@@ -25,11 +25,11 @@
  * @extends layer.Root
  *
  */
-const Root = require('./root');
-const xhr = require('./xhr');
-const Util = require('../util');
-const logger = Util.logger;
-const { ACCEPT } = require('../constants');
+import Root from './root';
+import xhr from './xhr';
+import Util, { logger } from '../util';
+import { ACCEPT } from '../constants';
+import version from '../version';
 
 class OnlineStateManager extends Root {
   /**
@@ -193,7 +193,7 @@ class OnlineStateManager extends Root {
     this._lastCheckOnlineStatus = new Date();
     // Ping the server and see if we're connected.
     xhr({
-      url: `${client.url}/ping?client=${client.constructor.version}`,
+      url: `${client.url}/ping?client=${version}`,
       method: 'HEAD',
       headers: {
         accept: ACCEPT,

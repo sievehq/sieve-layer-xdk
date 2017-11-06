@@ -39,13 +39,22 @@ registerComponent('layer-product-view', {
     widthType: {
       value: 'full-width',
     },
+    preferredMaxWidth: {
+      value: 500,
+    },
   },
   methods: {
+    _fixHtml(body) {
+      body = body.replace(/</g, '&lt;');
+      body = body.replace(/>/g, '&gt;');
+      return body;
+    },
+
     onRerender() {
-      this.nodes.name.innerHTML = this.model.name;
-      this.nodes.brand.innerHTML = this.model.brand;
-      this.nodes.price.innerHTML = this.model.getFormattedPrice();
-      this.nodes.description.innerHTML = this.model.description;
+      this.nodes.name.innerHTML = this._fixHtml(this.model.name);
+      this.nodes.brand.innerHTML = this._fixHtml(this.model.brand);
+      this.nodes.price.innerHTML = this._fixHtml(this.model.getFormattedPrice());
+      this.nodes.description.innerHTML = this._fixHtml(this.model.description);
 
       this.nodes.image.src = this.model.imageUrls[0];
       this.toggleClass('layer-no-image', this.model.imageUrls.length === 0);

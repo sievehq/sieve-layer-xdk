@@ -22,9 +22,10 @@ const layerSample = {
   email: null,
   password: null,
   validateSetup: function(client, Layer) {
+    // This query should be removed from production apps; its only here to validate your sample app setup.
     var conversationQuery = client.createQuery({
       paginationWindow: 1,
-      model: Layer.Core.Query.Conversation
+      model: Layer.Core.Query.Conversation,
     });
     conversationQuery.on('change:data', function() {
       if (conversationQuery.data.length === 0) {
@@ -117,5 +118,10 @@ window.document && document.addEventListener('DOMContentLoaded', function() {
 
   button.addEventListener('click', submit);
   form.addEventListener('submit', submit);
+  form.addEventListener('keydown', (e) => {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      submit();
+    }
+  });
 });
 

@@ -1,4 +1,4 @@
-const Query = require('./query');
+import Query from './query';
 
 /**
  * Query builder class generating queries for a set of messages.

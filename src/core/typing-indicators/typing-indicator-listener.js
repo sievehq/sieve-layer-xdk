@@ -16,9 +16,9 @@
  * @extends {layer.Root}
  */
 
-const Root = require('../root');
-const ClientRegistry = require('../client-registry');
-const { STARTED, PAUSED, FINISHED } = require('./typing-indicators');
+import Root from '../root';
+import ClientRegistry from '../client-registry';
+import { STARTED, PAUSED, FINISHED } from './typing-indicators';
 
 class TypingIndicatorListener extends Root {
 

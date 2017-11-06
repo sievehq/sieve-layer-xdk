@@ -22,7 +22,7 @@ registerComponent('layer-location-view', {
   layer-message-viewer.layer-location-view {
     cursor: pointer;
   }
-  .layer-location-view-address-only {
+  layer-location-view.layer-location-view-address-only {
     display: none;
   }
   `,
@@ -86,5 +86,5 @@ registerMessageActionHandler('open-map', function openMapHandler(customData) {
   } else if (this.model.latitude) {
     url = `https://www.google.com/maps/search/?api=1&query=${this.model.latitude},${this.model.longitude}&zoom=${this.model.zoom}`;
   }
-  if (url) window.open(url);
+  this.showFullScreen(url);
 });

@@ -1,5 +1,10 @@
 # Web XDK Change Log
 
+## 1.0.0-pre1.13
+
+* Adds Message Tests for all message types
+* Adds `customResponseData` per choice item for the Choice Model (experimental/risky feature)
+
 ## 1.0.0-pre1.10
 
 * Adds `<layer-conversation-item-date />` added to simplify Conversation Item Date customizations

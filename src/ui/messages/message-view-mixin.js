@@ -23,7 +23,12 @@ module.exports = {
     preferredMinWidth: {
       get() {
         return this.properties.preferredMinWidth || 192;
-      }
+      },
+    },
+    preferredMaxWidth: {
+      get() {
+        return this.properties.preferredMaxWidth || 1000;
+      },
     },
     isHeightAllocated: {
       value: true,

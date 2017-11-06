@@ -28,11 +28,10 @@
  * @class  layer.MessagesQuery
  * @extends layer.Core.Query
  */
-const Root = require('../root');
-const LayerError = require('../layer-error');
-const Util = require('../../util');
-const logger = Util.logger;
-const Query = require('./query');
+import Root from '../root';
+import { ErrorDictionary } from '../layer-error';
+import Util, { logger } from '../../util';
+import Query from './query';
 
 const findConvIdRegex = new RegExp(
   /^conversation.id\s*=\s*['"]((layer:\/\/\/conversations\/)?.{8}-.{4}-.{4}-.{4}-.{12})['"]$/);
@@ -44,16 +43,16 @@ class MessagesQuery extends Query {
     if (inValue === '') return '';
     if (inValue.indexOf('conversation.id') !== -1) {
       let conversationId = inValue.match(findConvIdRegex) ? inValue.replace(findConvIdRegex, '$1') : null;
-      if (!conversationId) throw new Error(LayerError.dictionary.invalidPredicate);
+      if (!conversationId) throw new Error(ErrorDictionary.invalidPredicate);
       if (conversationId.indexOf('layer:///conversations/') !== 0) conversationId = 'layer:///conversations/' + conversationId;
       return `conversation.id = '${conversationId}'`;
     } else if (inValue.indexOf('channel.id') !== -1) {
       let channelId = inValue.match(findChannelIdRegex) ? inValue.replace(findChannelIdRegex, '$1') : null;
-      if (!channelId) throw new Error(LayerError.dictionary.invalidPredicate);
+      if (!channelId) throw new Error(ErrorDictionary.invalidPredicate);
       if (channelId.indexOf('layer:///channels/') !== 0) channelId = 'layer:///channels/' + channelId;
       return `channel.id = '${channelId}'`;
     } else {
-      throw new Error(LayerError.dictionary.invalidPredicate);
+      throw new Error(ErrorDictionary.invalidPredicate);
     }
   }
 

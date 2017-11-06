@@ -1,6 +1,6 @@
 {
   "name": "@layerhq/web-xdk",
-  "version": "1.0.0-pre1.11",
+  "version": "1.0.0-pre1.13",
   "description": "The Layer eXperience SDK for Web provides a library for talking to Layer Services, and a library of widgets to simplify adding chat capabilities into your application.",
   "main": "lib/index.js",
   "scripts": {
@@ -47,6 +47,7 @@
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-jsduck": "^1.0.1",
+    "grunt-move": "^0.1.2",
     "grunt-notify": "^0.4.5",
     "grunt-remove": "^0.1.0",
     "grunt-replace": "^0.11.0",

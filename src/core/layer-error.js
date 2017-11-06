@@ -141,15 +141,16 @@ LayerError.prototype.xhr = null;
 
 /**
  * Dictionary of error messages
- * @property {Object} [dictionary={}]
+ * @property {Object} [ErrorDictionary={}]
  */
-LayerError.dictionary = {
+LayerError.ErrorDictionary = {
   appIdMissing: 'Property missing: appId is required',
   identityTokenMissing: 'Identity Token missing: answerAuthenticationChallenge requires an identity token',
   sessionTokenMissing: 'Session Token missing: _authComplete requires a {session_token: value} input',
   clientMissing: 'Property missing: client is required',
   conversationMissing: 'Property missing: conversation is required',
   partsMissing: 'Property missing: parts is required',
+  messageMissing: 'Property missing: message is required',
   moreParticipantsRequired: 'Conversation needs participants other than the current user',
   isDestroyed: 'Object is destroyed',
   urlRequired: 'Object needs a url property',

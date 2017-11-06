@@ -25,10 +25,10 @@
  * @class  layer.MembersQuery
  * @extends layer.Core.Query
  */
-const Root = require('../root');
-const LayerError = require('../layer-error');
-const { logger } = require('../../util');
-const Query = require('./query');
+import Root from '../root';
+import { ErrorDictionary } from '../layer-error';
+import { logger } from '../../util';
+import Query from './query';
 
 const findChannelIdRegex = new RegExp(
   /^channel.id\s*=\s*['"]((layer:\/\/\/channels\/)?.{8}-.{4}-.{4}-.{4}-.{12})['"]$/);
@@ -39,11 +39,11 @@ class MembersQuery extends Query {
     if (inValue === '') return '';
     if (inValue.indexOf('channel.id') !== -1) {
       let channelId = inValue.match(findChannelIdRegex) ? inValue.replace(findChannelIdRegex, '$1') : null;
-      if (!channelId) throw new Error(LayerError.dictionary.invalidPredicate);
+      if (!channelId) throw new Error(ErrorDictionary.invalidPredicate);
       if (channelId.indexOf('layer:///channels/') !== 0) channelId = 'layer:///channels/' + channelId;
       return `channel.id = '${channelId}'`;
     } else {
-      throw new Error(LayerError.dictionary.invalidPredicate);
+      throw new Error(ErrorDictionary.invalidPredicate);
     }
   }
 

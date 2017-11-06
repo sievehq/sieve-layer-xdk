@@ -11,11 +11,11 @@
  * @class layer.mixins.WebsocketOperations
  */
 
-const Identity = require('../models/identity');
-const ErrorDictionary = require('../layer-error').dictionary;
-const Util = require('../../util');
-const { RECEIPT_STATE } = require('../../constants');
-const { WebsocketSyncEvent } = require('../sync-event');
+import { ErrorDictionary } from '../layer-error';
+import Identity from '../models/identity';
+import Util from '../../util';
+import { RECEIPT_STATE } from '../../constants';
+import { WebsocketSyncEvent } from '../sync-event';
 
 module.exports = {
   lifecycle: {

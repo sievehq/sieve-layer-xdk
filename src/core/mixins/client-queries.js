@@ -5,14 +5,14 @@
  * @class layer.mixins.ClientQueries
  */
 
-const Query = require('../queries/query');
-const IdentitiesQuery = require('../queries/identities-query');
-const ConversationsQuery = require('../queries/conversations-query');
-const ChannelsQuery = require('../queries/channels-query');
-const MembersQuery = require('../queries/members-query');
-const MessagesQuery = require('../queries/messages-query');
-const AnnouncementsQuery = require('../queries/announcements-query');
-const ErrorDictionary = require('../layer-error').dictionary;
+import Query from '../queries/query';
+import IdentitiesQuery from '../queries/identities-query';
+import ConversationsQuery from '../queries/conversations-query';
+import ChannelsQuery from '../queries/channels-query';
+import MembersQuery from '../queries/members-query';
+import MessagesQuery from '../queries/messages-query';
+import AnnouncementsQuery from '../queries/announcements-query';
+import { ErrorDictionary } from '../layer-error';
 
 module.exports = {
   events: [

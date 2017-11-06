@@ -5,11 +5,10 @@
  * This class listens for `change` events from the websocket server,
  * and processes them.
  */
-const Util = require('../../util');
-const logger = Util.logger;
-const Message = require('../models/message');
-const Conversation = require('../models/conversation');
-const Channel = require('../models/channel');
+import Util, { logger } from '../../util';
+import Message from '../models/message';
+import Conversation from '../models/conversation';
+import Channel from '../models/channel';
 
 
 class WebsocketChangeManager {

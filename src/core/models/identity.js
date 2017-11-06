@@ -23,11 +23,11 @@
  * 7. API For explicit follows/unfollows
  */
 
-const Syncable = require('./syncable');
-const Root = require('../root');
-const { SYNC_STATE } = require('../../constants');
-const LayerError = require('../layer-error');
-const { strictEncodeURI } = require('../../util');
+import Syncable from './syncable';
+import Root from '../root';
+import { SYNC_STATE } from '../../constants';
+import { ErrorDictionary } from '../layer-error';
+import { strictEncodeURI } from '../../util';
 
 class Identity extends Syncable {
   constructor(options = {}) {
@@ -42,7 +42,7 @@ class Identity extends Syncable {
 
     // Make sure we have an clientId property
     if (options.client) options.clientId = options.client.appId;
-    if (!options.clientId) throw new Error(LayerError.dictionary.clientMissing);
+    if (!options.clientId) throw new Error(ErrorDictionary.clientMissing);
 
     super(options);
 
@@ -266,8 +266,8 @@ class Identity extends Syncable {
    */
   setStatus(status) {
     status = (status || '').toLowerCase();
-    if (!Identity.STATUS[status.toUpperCase()]) throw new Error(LayerError.dictionary.valueNotSupported);
-    if (this !== this.getClient().user) throw new Error(LayerError.dictionary.permissionDenied);
+    if (!Identity.STATUS[status.toUpperCase()]) throw new Error(ErrorDictionary.valueNotSupported);
+    if (this !== this.getClient().user) throw new Error(ErrorDictionary.permissionDenied);
     if (status === Identity.STATUS.INVISIBLE) status = Identity.STATUS.OFFLINE; // these are equivalent; only one supported by server
 
     const oldValue = this._presence.status;
@@ -325,7 +325,7 @@ class Identity extends Syncable {
    */
   __adjustUserId(userId) {
     if (this.__userId) {
-      throw new Error(LayerError.dictionary.cantChangeUserId);
+      throw new Error(ErrorDictionary.cantChangeUserId);
     }
   }
 

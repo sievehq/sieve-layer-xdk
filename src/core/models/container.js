@@ -6,11 +6,11 @@
  * @extends layer.Syncable
  * @author  Michael Kantor
  */
-const Syncable = require('./syncable');
-const LayerError = require('../layer-error');
-const Util = require('../../util');
-const Constants = require('../../constants');
-const Root = require('../root');
+import Syncable from './syncable';
+import { ErrorDictionary } from '../layer-error';
+import Util from '../../util';
+import Constants from '../../constants';
+import Root from '../root';
 
 class Container extends Syncable {
 
@@ -41,7 +41,7 @@ class Container extends Syncable {
 
     super(options);
 
-    if (!this.clientId) throw new Error(LayerError.dictionary.clientMissing);
+    if (!this.clientId) throw new Error(ErrorDictionary.clientMissing);
     this.isInitializing = true;
 
     // If the options contains a full server definition of the object,

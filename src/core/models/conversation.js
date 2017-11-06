@@ -50,15 +50,14 @@
  * @author  Michael Kantor
  */
 
-const Root = require('../root');
-const Syncable = require('./syncable');
-const Container = require('./container');
-const ConversationMessage = require('./conversation-message');
-const LayerError = require('../layer-error');
-const Util = require('../../util');
-const logger = Util.logger;
-const Constants = require('../../constants');
-const LayerEvent = require('../layer-event');
+import Root from '../root';
+import Syncable from './syncable';
+import Container from './container';
+import ConversationMessage from './conversation-message';
+import { ErrorDictionary } from '../layer-error';
+import Util from '../../util';
+import Constants from '../../constants';
+import LayerEvent from '../layer-event';
 
 class Conversation extends Container {
   /**
@@ -202,7 +201,7 @@ class Conversation extends Container {
    */
   send(message) {
     const client = this.getClient();
-    if (!client) throw new Error(LayerError.dictionary.clientMissing);
+    if (!client) throw new Error(ErrorDictionary.clientMissing);
 
     // If this is part of a create({distinct:true}).send() call where
     // the distinct conversation was found, just trigger the cached event and exit
@@ -396,7 +395,7 @@ class Conversation extends Container {
     const removing = identities.filter(participant => currentParticipants[participant.id]);
     if (removing.length === 0) return this;
     if (removing.length === this.participants.length) {
-      throw new Error(LayerError.dictionary.moreParticipantsRequired);
+      throw new Error(ErrorDictionary.moreParticipantsRequired);
     }
     this._patchParticipants({ add: [], remove: removing });
     return this;
@@ -418,7 +417,7 @@ class Conversation extends Container {
    */
   replaceParticipants(participants) {
     if (!participants || !participants.length) {
-      throw new Error(LayerError.dictionary.moreParticipantsRequired);
+      throw new Error(ErrorDictionary.moreParticipantsRequired);
     }
 
     const client = this.getClient();
@@ -508,7 +507,7 @@ class Conversation extends Container {
    * @method leave
    */
   leave() {
-    if (this.isDestroyed) throw new Error(LayerError.dictionary.isDestroyed);
+    if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
     this._delete(`mode=${Constants.DELETION_MODE.MY_DEVICES}&leave=true`);
   }
 
@@ -539,7 +538,7 @@ class Conversation extends Container {
    * @param {String} deletionMode
    */
   delete(mode) {
-    if (this.isDestroyed) throw new Error(LayerError.dictionary.isDestroyed);
+    if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
 
     let queryStr;
     switch (mode) {
@@ -551,7 +550,7 @@ class Conversation extends Container {
         queryStr = `mode=${Constants.DELETION_MODE.MY_DEVICES}&leave=false`;
         break;
       default:
-        throw new Error(LayerError.dictionary.deletionModeUnsupported);
+        throw new Error(ErrorDictionary.deletionModeUnsupported);
     }
 
     this._delete(queryStr);
@@ -605,8 +604,8 @@ class Conversation extends Container {
    */
   _getParticipantChange(newValue, oldValue) {
     const change = {};
-    change.add = newValue.filter(participant => oldValue.indexOf(participant) === -1);
-    change.remove = oldValue.filter(participant => newValue.indexOf(participant) === -1);
+    change.add = newValue.filter(participant => participant && oldValue.indexOf(participant) === -1);
+    change.remove = oldValue.filter(participant => participant && newValue.indexOf(participant) === -1);
     return change;
   }
 
@@ -789,7 +788,7 @@ class Conversation extends Container {
    * @return {layer.Conversation}
    */
   static create(options) {
-    if (!options.client) throw new Error(LayerError.dictionary.clientMissing);
+    if (!options.client) throw new Error(ErrorDictionary.clientMissing);
     const newOptions = {
       distinct: options.distinct,
       participants: options.client._fixIdentities(options.participants),

@@ -101,7 +101,6 @@ class ProductModel extends MessageTypeModel {
     const body = this._initBodyWithMetadata([
       'name', 'brand',  // naming
       'description', 'imageUrls', // Rendering
-      'options',
       'currency', 'price', 'quantity', // Purchasing
       'url', // Action properties
     ]);
@@ -135,23 +134,6 @@ class ProductModel extends MessageTypeModel {
     this.options = optionParts.map(part => this.getClient().createMessageTypeModel(this.message, part));
   }
 
-
-  // getDescription and getFooter may be used by a ListCardContainer; need to define if this really uses a ListCardContainer though.a
-  getDescription() {
-    const result = [];
-    if (this.brand) result.push(this.brand);
-    if (this.model) result.push(this.model);
-    return result.join(': ');
-  }
-
-  getFooter() {
-    const price = this.getFormattedPrice();
-    const total = new Number(this.price * this.quantity).toLocaleString(navigator.language, {
-      currency: this.currency,
-      style: 'currency',
-    });
-    return (this.quantity > 1 ? `Quantity: ${this.quantity}; Per Unit Cost: ${price}; Total: ${total}` : `Price: ${total}`);
-  }
   getTitle() {
     return this.name;
   }
@@ -163,6 +145,18 @@ class ProductModel extends MessageTypeModel {
     });
   }
 
+  /**
+   * If sending a Response Message concerning this product, come up with a name
+   * to describe this product.
+   *
+   * ```
+   * UserX selected "Red" for "Product Name"
+   * ```
+   *
+   * @method
+   * @protected
+   * @returns {String}
+   */
   getChoiceModelResponseTopic() {
     return this.name;
   }

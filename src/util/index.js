@@ -4,7 +4,11 @@
  * @class layer.ClientUtils
  */
 
-const uuid = require('uuid');
+import uuid from 'uuid';
+import defer from './defer';
+import layerParse from './layer-parser';
+import logger from './logger';
+
 exports.atob = typeof atob === 'undefined' ? global.getNativeSupport('atob') : atob.bind(window);
 exports.btoa = typeof btoa === 'undefined' ? global.getNativeSupport('btoa') : btoa.bind(window);
 const LocalFileReader = typeof FileReader === 'undefined' ? global.getNativeSupport('FileReader') : FileReader;
@@ -218,9 +222,13 @@ exports.isBlob = value => typeof Blob !== 'undefined' && value instanceof Blob;
  * @param {String} callback.result - Your base64 string result
  */
 exports.blobToBase64 = (blob, callback) => {
-  const reader = new LocalFileReader();
-  reader.readAsDataURL(blob);
-  reader.onloadend = () => callback(reader.result.replace(/^.*?,/, ''));
+  if (blob instanceof Blob) {
+    const reader = new LocalFileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => callback(reader.result.replace(/^.*?,/, ''));
+  } else {
+    callback('');
+  }
 };
 
 
@@ -314,7 +322,7 @@ exports.fetchTextFromFile = (file, callback) => {
  * @method defer
  * @param {Function} f
  */
-exports.defer = require('./defer');
+exports.defer = defer;
 
 /**
  * Run the Layer Parser on the request.
@@ -338,7 +346,7 @@ exports.defer = require('./defer');
  * @param {Object[]} request.operations - Array of change operations to perform upon the object
  * @param {layer.Client} request.client
  */
-exports.layerParse = require('./layer-parser');
+exports.layerParse = layerParse;
 
 
 /**
@@ -424,4 +432,4 @@ exports.asciiInit = (version) => {
    -/+++++++++++++++++++:'`;
 };
 
-exports.logger = require('./logger');
+exports.logger = logger;

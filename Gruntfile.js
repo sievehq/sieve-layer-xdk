@@ -27,7 +27,7 @@ module.exports = function (grunt) {
         files: [
           {
             src: ['lib-es6/**/*.js'],
-            dest: 'lib'
+            dest: 'lib-es5'
           }
         ],
         options: {
@@ -43,7 +43,10 @@ module.exports = function (grunt) {
       },
       lib: {
         dirList: ['lib', 'lib-es6']
-      }
+      },
+      libes5: {
+        dirList: ['lib-es5']
+      },
     },
     browserify: {
       options: {
@@ -144,6 +147,13 @@ module.exports = function (grunt) {
         dest: "node_modules/grunt-template-jasmine-istanbul/src/main/js/template.js"
       }
     },
+    move: {
+      lib: {
+        src: 'lib-es5',
+        dest: 'lib'
+      }
+    },
+
     cssmin: {
       build: {
         files: [
@@ -209,12 +219,8 @@ module.exports = function (grunt) {
       build: {
         files: [
           {
-            dest: 'src/index.js',
-            src: 'src/index.js'
-          },
-          {
-            dest: 'src/index-core.js',
-            src: 'src/index-core.js'
+            dest: 'src/version.js',
+            src: 'src/version.js'
           }
         ]
       },
@@ -247,7 +253,7 @@ module.exports = function (grunt) {
     },
     watch: {
       js: {
-        files: ['package.json', 'Gruntfile.js', 'samples/index.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js'],
+        files: ['package.json', 'Gruntfile.js', 'samples/index.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
         tasks: ['debug', 'browserify:samples', 'notify:watch'],
         options: {
           interrupt: true
@@ -354,8 +360,7 @@ module.exports = function (grunt) {
     function replace(fileGroup, version) {
       fileGroup.src.forEach(function(file, index) {
         var contents = grunt.file.read(file);
-        var newContents = contents.replace(/const version = (.*)$/m, "const version = '" + options.version + "';");
-        if (newContents != contents) grunt.file.write(fileGroup.dest, newContents);
+        grunt.file.write(fileGroup.dest, 'module.exports = "' + version + '";');
       });
     }
 
@@ -399,7 +404,8 @@ module.exports = function (grunt) {
           grunt.file.mkdir(outputFolder);
         }
         var babelResult = babel.transform(output, {
-          presets: ["babel-preset-es2015"]
+          presets: ["babel-preset-es2015"],
+          auxiliaryCommentBefore: 'istanbul ignore next'
         });
         var result = babelResult.code;
         grunt.file.write(outputPath, result);
@@ -569,7 +575,6 @@ module.exports = function (grunt) {
       });
     });
 
-
     for (var i = 0; i < specFiles.length; i++) {
       var filePath = specFiles[i].file;
       var contents = specFiles[i].contents;
@@ -632,18 +637,19 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-remove');
+  grunt.loadNpmTasks('grunt-move');
 
   // Testing
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   //grunt.registerTask('phantomtest', ['debug', 'jasmine:debug']);
-  grunt.registerTask('coverage', ['copy:fixIstanbul', 'custom_copy:src', 'custom_babel:dist', 'browserify:coverage']);
+  grunt.registerTask('coverage', ['copy:fixIstanbul', 'custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
   grunt.registerTask("test", ["generate-tests", "connect:saucelabs", "saucelabs-jasmine"]);
 
 
   grunt.registerTask('docs', ['debug', 'jsducktemplates', 'jsduck', 'jsduckfixes']);
 
   // Basic Code/theme building
-  grunt.registerTask('debug', ['version', 'remove:lib', 'webcomponents', 'custom_copy:src', 'custom_babel', 'browserify:build', 'generate-tests']);
+  grunt.registerTask('debug', ['version', 'webcomponents', 'custom_copy:src', 'remove:libes5', 'custom_babel', 'remove:lib', 'move:lib', 'browserify:build', 'generate-tests']);
   grunt.registerTask('build', ['generate-npmignore', 'remove:build', 'debug', 'uglify', 'theme', 'cssmin']);
   grunt.registerTask('prepublish', ['build', 'wait']);
   grunt.registerTask('samples', ['debug', 'browserify:samples']);
@@ -653,4 +659,3 @@ module.exports = function (grunt) {
   // Open a port for running tests and rebuild whenever anything interesting changes
   grunt.registerTask("develop", ["connect:develop", "watch"]);
 };
-

@@ -1,8 +1,7 @@
-const Util = require('../util');
-const logger = Util.logger;
-const LayerEvent = require('./layer-event');
-const LayerError = require('./layer-error');
-const Events = require('backbone-events-standalone/backbone-events-standalone');
+import Util, { logger } from '../util';
+import LayerEvent from './layer-event';
+import { ErrorDictionary } from './layer-error';
+import Events from 'backbone-events-standalone/backbone-events-standalone';
 
 /*
  * Provides a system bus that can be accessed by all components of the system.
@@ -174,7 +173,7 @@ class Root extends EventClass {
    * @method destroy
    */
   destroy() {
-    if (this.isDestroyed) throw new Error(LayerError.dictionary.alreadyDestroyed);
+    if (this.isDestroyed) throw new Error(ErrorDictionary.alreadyDestroyed);
 
     // If anyone is listening, notify them
     this.trigger('destroy');
@@ -297,7 +296,7 @@ class Root extends EventClass {
     if (context) {
       if (context instanceof Root) {
         if (context.isDestroyed) {
-          throw new Error(LayerError.dictionary.isDestroyed);
+          throw new Error(ErrorDictionary.isDestroyed);
         }
       }
       if (context._layerEventSubscriptions) {

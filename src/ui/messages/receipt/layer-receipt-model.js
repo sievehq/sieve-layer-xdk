@@ -18,7 +18,7 @@ new ReceiptModel({
     total_tax: 0.01,
     total_cost: 350.02
   },
-  shippingAddressModel: new LocationModel({
+  shippingAddress: new LocationModel({
     city: 'San Francisco',
     name: 'Layer Inc',
     postalCode: '94107',
@@ -145,7 +145,7 @@ new ReceiptModel({
     total_tax: 0.01,
     total_cost: 350.02
   },
-  shippingAddressModel: new LocationModel({
+  shippingAddress: new LocationModel({
     city: 'San Francisco',
     name: 'Layer Inc',
     postalCode: '94107',
@@ -189,10 +189,10 @@ import Util from '../../../util';
 
 class ReceiptModel extends MessageTypeModel {
   _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['createdAt', 'currency', 'discounts', 'paymentMethod',  'order']);
+    const body = this._initBodyWithMetadata(['createdAt', 'currency', 'discounts', 'paymentMethod', 'order']);
     body.summary = {};
     Object.keys(this.summary).forEach((keyName) => {
-      const newKeyName = Util.hyphenate(keyName);
+      const newKeyName = Util.hyphenate(keyName, '_');
       body.summary[newKeyName] = this.summary[keyName];
     });
 
@@ -226,6 +226,8 @@ class ReceiptModel extends MessageTypeModel {
 
   _parseMessage(payload) {
     super._parseMessage(payload);
+
+    this.createdAt = new Date(this.createdAt);
     if (!this.items) this.items = [];
 
     const summary = payload.summary;
@@ -239,8 +241,8 @@ class ReceiptModel extends MessageTypeModel {
     }
 
     this.items = this.getModelsFromPart('product-items');
-    this.billingAddressModel = this.getModelFromPart('billing-address');
-    this.shippingAddressModel = this.getModelFromPart('shipping-address');
+    this.billingAddress = this.getModelFromPart('billing-address');
+    this.shippingAddress = this.getModelFromPart('shipping-address');
     /*this.merchantModel = this.getModelFromPart('merchant');
     this.recipientModel = this.getModelFromPart('recipient');*/
   }
@@ -250,8 +252,8 @@ class ReceiptModel extends MessageTypeModel {
   }
 }
 
-ReceiptModel.prototype.billingAddressModel = null;
-ReceiptModel.prototype.shippingAddressModel = null;
+ReceiptModel.prototype.billingAddress = null;
+ReceiptModel.prototype.shippingAddress = null;
 ReceiptModel.prototype.createdAt = null;
 ReceiptModel.prototype.currency = 'USD';
 ReceiptModel.prototype.discounts = null;
@@ -273,8 +275,8 @@ ReceiptModel.prototype.title = '';
 ReceiptModel.Label = 'Receipt';
 ReceiptModel.modelSet = [
   { model: 'items', role: 'product-items' },
-  { model: 'shippingAddressModel', role: 'shipping-address' },
-  { model: 'billingAddressModel', role: 'billing-address' },
+  { model: 'shippingAddress', role: 'shipping-address' },
+  { model: 'billingAddress', role: 'billing-address' },
   { model: 'merchantModel', role: 'merchant' },
   { model: 'recipientModel', role: 'recipient' },
 ];

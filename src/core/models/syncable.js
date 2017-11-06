@@ -14,11 +14,10 @@
  * @abstract
  */
 
-const Root = require('../root');
-const LayerError = require('../layer-error');
-const ClientRegistry = require('../client-registry');
-const Constants = require('../../constants');
-const { SYNC_STATE } = Constants;
+import Root from '../root';
+import { ErrorDictionary } from '../layer-error';
+import ClientRegistry from '../client-registry';
+import { SYNC_STATE } from '../../constants';
 
 class Syncable extends Root {
   constructor(options = {}) {
@@ -52,11 +51,11 @@ class Syncable extends Root {
     const client = this.getClient();
 
     // Validatation
-    if (this.isDestroyed) throw new Error(LayerError.dictionary.isDestroyed);
-    if (!client) throw new Error(LayerError.dictionary.clientMissing);
+    if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
+    if (!client) throw new Error(ErrorDictionary.clientMissing);
     if (!this.constructor.enableOpsIfNew &&
       options.method !== 'POST' && options.method !== 'GET' &&
-      this.syncState === Constants.SYNC_STATE.NEW) return this;
+      this.syncState === SYNC_STATE.NEW) return this;
 
     if (!options.url.match(/^http(s):\/\//)) {
       if (options.url && !options.url.match(/^(\/|\?)/)) options.url = '/' + options.url;
@@ -143,7 +142,7 @@ class Syncable extends Root {
    * @return {layer.Syncable} - Returns an empty object that will be populated once data is loaded.
    */
   static load(id, client) {
-    if (!client || !(client instanceof Root)) throw new Error(LayerError.dictionary.clientMissing);
+    if (!client || !(client instanceof Root)) throw new Error(ErrorDictionary.clientMissing);
 
     const obj = {
       id,

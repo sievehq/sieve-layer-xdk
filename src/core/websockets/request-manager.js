@@ -6,9 +6,8 @@
  * And have that callback either called by the correct websocket server response, or
  * be called with a timeout.
  */
-const Util = require('../../util');
-const logger = Util.logger;
-const LayerError = require('../layer-error');
+import Util, { logger } from '../../util';
+import LayerError from '../layer-error';
 
 // Wait 15 seconds for a response and then give up
 const DELAY_UNTIL_TIMEOUT = 15 * 1000;

@@ -8,9 +8,11 @@
  * @private
  */
 
+import { defer } from '../util';
+
 const registry = {};
 const listeners = [];
-const { defer } = require('../util');
+
 /**
  * Register a new Client; will destroy any previous client with the same appId.
  *

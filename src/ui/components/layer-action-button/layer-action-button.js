@@ -16,6 +16,7 @@ registerComponent('layer-action-button', {
   }
   layer-action-button button {
     cursor: pointer;
+    margin: 0px;
   }
   .layer-button-content > * {
     max-width: 100%;
@@ -26,7 +27,7 @@ registerComponent('layer-action-button', {
   properties: {
     text: {
       set(value) {
-        this.nodes.button.innerHTML = value;
+        this.nodes.button.innerText = value;
       },
     },
     tooltip: {
@@ -74,15 +75,17 @@ registerComponent('layer-action-button', {
 
     _onClick(evt) {
       if (!this.event) return;
-      evt.preventDefault();
-      evt.stopPropagation();
+      if (evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+      }
 
       let cardView = this;
       while (cardView.tagName !== 'LAYER-MESSAGE-VIEWER' && cardView.parentComponent) {
         cardView = cardView.parentComponent;
       }
       if (cardView) cardView.runAction({ event: this.event, data: this.data });
-      evt.target.blur();
+      if (evt) evt.target.blur();
     },
   },
 });

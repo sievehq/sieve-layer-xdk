@@ -2,11 +2,12 @@
  * Root class for all Message Models
  *
  */
-const Root = require('../root');
-const Util = require('../../util');
-const Message = require('../models/message');
-const MessagePart = require('../models/message-part');
-const LayerError = require('../layer-error');
+import Util from '../../util';
+import version from '../../version';
+import Root from '../root';
+import Message from '../models/message';
+import MessagePart from '../models/message-part';
+import { ErrorDictionary } from '../layer-error';
 
 // FIXME: this doesn't really need to extend root probably
 class MessageTypeModel extends Root {
@@ -22,7 +23,7 @@ class MessageTypeModel extends Root {
 
     // Message Model UUID should always match the Message ID; there should never be more than one MessageTypeModel for a given Message
     super(options);
-    //if (!this.constructor.isSupportedMessage(this.message)) throw new Error(LayerError.dictionary.unsupportedMessage);
+    //if (!this.constructor.isSupportedMessage(this.message)) throw new Error(ErrorDictionary.unsupportedMessage);
 
     if (!this.customData) this.customData = {};
     this.currentMessageRenderer = this.constructor.messageRenderer;
@@ -38,11 +39,12 @@ class MessageTypeModel extends Root {
   initializeProperties() {}
 
   generateMessage(conversation, callback) {
-    if (!conversation) throw new Error(LayerError.dictionary.conversationMissing);
-    if (!(conversation instanceof Root)) throw new Error(LayerError.dictionary.conversationMissing);
+    if (!conversation) throw new Error(ErrorDictionary.conversationMissing);
+    if (!(conversation instanceof Root)) throw new Error(ErrorDictionary.conversationMissing);
     this._generateParts((parts) => {
       this.childParts = parts;
       this.part.mimeAttributes.role = 'root';
+      this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
       this.message = conversation.createMessage({
         id: Message.prefixUUID + this.id.replace(/\/parts\/.*$/, '').replace(/^.*MessageTypeModels\//, ''),
         parts: this.childParts,

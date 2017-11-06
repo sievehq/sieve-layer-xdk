@@ -28,9 +28,9 @@ registerComponent('layer-choice-view', {
     label: {
       value: 'Choices',
     },
-    messageContainerTagName: {
+    messageViewContainerTagName: {
       noGetterFromSetter: true,
-      value: 'layer-titled-message-container',
+      value: 'layer-titled-display-container',
     },
     widthType: {
       value: 'flex-width',
@@ -46,10 +46,11 @@ registerComponent('layer-choice-view', {
     },
 
     onAfterCreate() {
-      this.nodes.question.innerHTML = this.model.question;
+      this.nodes.question.innerText = this.model.question;
       this.model.choices.forEach((choice) => {
         this.createElement('layer-action-button', {
           text: choice.text,
+          tooltip: choice.tooltip,
           event: 'layer-choice-select',
           data: { id: choice.id },
           icon: choice.icon,
@@ -64,12 +65,9 @@ registerComponent('layer-choice-view', {
       this.model.choices.forEach((choice, index) => {
         const button = this.nodes.answers.childNodes[index];
         button.text = this.model.getText(index);
+        button.tooltip = this.model.getTooltip(index);
         button.selected = this.model.isSelectedIndex(index);
-        if (!this.model.isSelectionEnabled() || !this.model.allowDeselect && button.selected) {
-          button.disabled = true;
-        } else {
-          button.disabled = false;
-        }
+        button.disabled = !this.model.isSelectionEnabledFor(index);
       });
     },
 
@@ -93,3 +91,4 @@ registerComponent('layer-choice-view', {
     },
   },
 });
+

@@ -1,8 +1,7 @@
 import Constants from './constants';
 import Core from './core';
 import Util from './util';
-
-const version = '1.0.0-pre1.11';
+import version from './version';
 
 function init(options) {
   const client = new Core.Client(options);

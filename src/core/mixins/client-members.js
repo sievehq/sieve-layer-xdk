@@ -4,9 +4,9 @@
  * @class layer.mixins.ClientMembership
  */
 
-const Syncable = require('../models/syncable');
-const Membership = require('../models/membership');
-const ErrorDictionary = require('../layer-error').dictionary;
+import Syncable from '../models/syncable';
+import Membership from '../models/membership';
+import { ErrorDictionary } from '../layer-error';
 
 module.exports = {
   events: [

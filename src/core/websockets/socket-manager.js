@@ -14,11 +14,11 @@
  * @extends layer.Root
  * @private
  */
-const Root = require('../root');
-const Util = require('../../util');
-const logger = Util.logger;
-const LayerError = require('../layer-error');
-const { WEBSOCKET_PROTOCOL } = require('../../constants');
+import Root from '../root';
+import Util, { logger } from '../../util';
+import { ErrorDictionary } from '../layer-error';
+import { WEBSOCKET_PROTOCOL } from '../../constants';
+import version from '../../version';
 
 class SocketManager extends Root {
   /**
@@ -357,7 +357,7 @@ class SocketManager extends Root {
    * @param  {Function} [callback] - Optional callback for completion
    */
   resync(timestamp, callback) {
-    if (!timestamp) throw new Error(LayerError.dictionary.valueNotSupported);
+    if (!timestamp) throw new Error(ErrorDictionary.valueNotSupported);
     if (typeof timestamp === 'number') timestamp = new Date(timestamp).toISOString();
 
     // Cancel any prior operation; presumably we lost connection and they're dead anyways,
@@ -694,7 +694,7 @@ class SocketManager extends Root {
     } else {
       this._lastValidateSessionRequest = Date.now();
       this.client.xhr({
-        url: '/?action=validateConnectionForWebsocket&client=' + this.client.constructor.version,
+        url: '/?action=validateConnectionForWebsocket&client=' + version,
         method: 'GET',
         sync: false,
       }, (result) => {

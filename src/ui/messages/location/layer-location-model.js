@@ -60,7 +60,7 @@
  * @class layer.UI.cards.LocationModel
  * @extends layer.model
  */
-import { Client, MessagePart, MessageTypeModel, xhr } from '../../../core';
+import { Client, MessagePart, MessageTypeModel } from '../../../core';
 
 
 class LocationModel extends MessageTypeModel {
@@ -78,7 +78,7 @@ class LocationModel extends MessageTypeModel {
     if (this.description && this.showAddress !== true) {
       return this.description;
     } else if (this.street1 || this.city || this.postalCode) {
-      return this.street1 + (this.street2 ? ' ' + this.street2 : '') + `<br/> ${this.city} ${this.administrativeArea}${this.postalCode ? ', ' + this.postalCode : ''}`;
+      return this.street1 + (this.street2 ? '<br/>' + this.street2 : '') + `<br/>${this.city} ${this.administrativeArea}${this.postalCode ? ', ' + this.postalCode : ''}`;
     }
   }
 }
@@ -86,10 +86,10 @@ class LocationModel extends MessageTypeModel {
 LocationModel.prototype.latitude = 0;
 LocationModel.prototype.longitude = 0;
 LocationModel.prototype.zoom = 16;
-LocationModel.prototype.heading = 0;
-LocationModel.prototype.altitude = 0;
+LocationModel.prototype.heading = null;
+LocationModel.prototype.altitude = null;
 LocationModel.prototype.title = '';
-LocationModel.prototype.accuracy = 0;
+LocationModel.prototype.accuracy = null;
 LocationModel.prototype.createdAt = null;
 LocationModel.prototype.description = '';
 LocationModel.prototype.city = '';

@@ -84,24 +84,34 @@
  * @mixin layer.mixins.ClientMessageModels
  */
 
-const ClientAuth = require('./client-authenticator');
-const Conversation = require('./models/conversation');
-const Channel = require('./models/channel');
-const ErrorDictionary = require('./layer-error').dictionary;
-const ConversationMessage = require('./models/conversation-message');
-const ChannelMessage = require('./models/channel-message');
-const Announcement = require('./models/announcement');
-const MessagePart = require('./models/message-part');
-const Identity = require('./models/identity');
-const Membership = require('./models/membership');
-const TypingIndicatorListener = require('./typing-indicators/typing-indicator-listener');
-const Util = require('../util');
-const logger = Util.logger;
-const Root = require('./root');
-const ClientRegistry = require('./client-registry');
-const TypingListener = require('./typing-indicators/typing-listener');
-const TypingPublisher = require('./typing-indicators/typing-publisher');
-const TelemetryMonitor = require('./telemetry-monitor');
+import ClientAuth from './client-authenticator';
+import Conversation from './models/conversation';
+import Channel from './models/channel';
+import { ErrorDictionary } from './layer-error';
+import ConversationMessage from './models/conversation-message';
+import ChannelMessage from './models/channel-message';
+import Announcement from './models/announcement';
+import MessagePart from './models/message-part';
+import Identity from './models/identity';
+import Membership from './models/membership';
+import TypingIndicatorListener from './typing-indicators/typing-indicator-listener';
+import Util from '../util';
+import version from '../version';
+import logger from '../util/logger';
+import Root from './root';
+import ClientRegistry from './client-registry';
+import TypingListener from './typing-indicators/typing-listener';
+import TypingPublisher from './typing-indicators/typing-publisher';
+import TelemetryMonitor from './telemetry-monitor';
+
+import ClientQueryMixin from './mixins/client-queries';
+import ClientIdentityMixin from './mixins/client-identities';
+import ClientMemberMixin from './mixins/client-members';
+import ClientConversationMixin from './mixins/client-conversations';
+import ClientChannelMixin from './mixins/client-channels';
+import ClientMessageMixin from './mixins/client-messages';
+import ClientOperationsMixin from './mixins/websocket-operations';
+import ClientMessageTypeModelMixin from './mixins/client-message-type-models';
 
 class Client extends ClientAuth {
 
@@ -122,7 +132,7 @@ class Client extends ClientAuth {
 
     this.on('online', this._connectionRestored.bind(this));
 
-    logger.info(Util.asciiInit(Client.version));
+    logger.info(Util.asciiInit(version));
   }
 
   /* See parent method docs */
@@ -216,7 +226,7 @@ class Client extends ClientAuth {
    * @return {layer.Message|layer.Conversation|layer.Core.Query}
    */
   getObject(id, canLoad = false) {
-    switch (Util.typeFromID(id)) {
+    switch (Util.typeFromID(id || '')) {
       case 'messages':
       case 'announcements':
         return this.getMessage(id, canLoad);
@@ -642,14 +652,6 @@ Client.prototype.telemetryEnabled = true;
 Client.prototype.telemetryMonitor = null;
 
 /**
- * Get the version of the Client library.
- *
- * @static
- * @type {String}
- */
-Client.version = '1.0.0-beta1';
-
-/**
  * Any  Message that is part of a Query's results are kept in memory for as long as it
  * remains in that Query.  However, when a websocket event delivers new Messages  that
  * are NOT part of a Query, how long should they stick around in memory?  Why have them stick around?
@@ -693,14 +695,14 @@ Client._supportedEvents = [
 ].concat(ClientAuth._supportedEvents);
 
 Client.mixins = [
-  require('./mixins/client-queries'),
-  require('./mixins/client-identities'),
-  require('./mixins/client-members'),
-  require('./mixins/client-conversations'),
-  require('./mixins/client-channels'),
-  require('./mixins/client-messages'),
-  require('./mixins/websocket-operations'),
-  require('./mixins/client-message-type-models'),
+  ClientQueryMixin,
+  ClientIdentityMixin,
+  ClientMemberMixin,
+  ClientConversationMixin,
+  ClientChannelMixin,
+  ClientMessageMixin,
+  ClientOperationsMixin,
+  ClientMessageTypeModelMixin,
 ];
 Root.initClass.apply(Client, [Client, 'Client']);
 module.exports = Client;

@@ -112,6 +112,32 @@ class ImageModel extends MessageTypeModel {
     }
   }
 
+  _generateParts2() {
+    const body = this._initBodyWithMetadata(['sourceUrl', 'previewUrl', 'artist', 'fileName', 'orientation',
+    'width', 'height', 'previewWidth', 'previewHeight', 'title', 'subtitle']);
+    // Replace the source blob with a source message part
+    if (this.source) this.source = new MessagePart(this.source);
+    if (this.preview instanceof Blob) this.preview = new MessagePart(this.preview);
+
+    this.part = new MessagePart({
+      mimeType: this.constructor.MIMEType,
+      body: JSON.stringify(body),
+    });
+    const parts = [this.part];
+    if (this.source) {
+      parts.push(this.source);
+      this.source.mimeAttributes.role = 'source';
+      this.source.mimeAttributes['parent-node-id'] = this.part.nodeId;
+    }
+    if (this.preview) {
+      parts.push(this.preview);
+      this.preview.mimeAttributes.role = 'preview';
+      this.preview.mimeAttributes['parent-node-id'] = this.part.nodeId;
+    }
+
+    return parts;
+  }
+
   _generateParts(callback) {
     if (this.source && !this.mimeType) this.mimeType = this.source.type;
 
@@ -119,39 +145,13 @@ class ImageModel extends MessageTypeModel {
       if (!this.fileName) this.fileName = this.source.name;
       this._gatherMetadataFromEXIF(this.source.body, () => {
         this._generatePreview(this.source.body, () => {
-          const body = this._initBodyWithMetadata(['sourceUrl', 'previewUrl', 'artist', 'fileName', 'orientation',
-            'width', 'height', 'previewWidth', 'previewHeight', 'title', 'subtitle']);
-          // Replace the source blob with a source message part
-          if (this.source) this.source = new MessagePart(this.source);
-          this.part = new MessagePart({
-            mimeType: this.constructor.MIMEType,
-            body: JSON.stringify(body),
-          });
-          const parts = [this.part];
-          if (this.source) {
-            parts.push(this.source);
-            this.source.mimeAttributes.role = 'source';
-            this.source.mimeAttributes['parent-node-id'] = this.part.nodeId;
-          }
-          if (this.preview) {
-            parts.push(this.preview);
-            this.preview.mimeAttributes.role = 'preview';
-            this.preview.mimeAttributes['parent-node-id'] = this.part.nodeId;
-          }
+          const parts = this._generateParts2();
           callback(parts);
         });
       });
     } else {
-      const body = this._initBodyWithMetadata(['sourceUrl', 'previewUrl', 'artist', 'fileName', 'orientation',
-        'width', 'height', 'previewWidth', 'previewHeight', 'title', 'subtitle']);
-      if (body.source) body.source = new MessagePart(body.source);
-      this.part = new MessagePart({
-        mimeType: this.constructor.MIMEType,
-        body: JSON.stringify(body),
-      });
-      if (!this.title && this.sourceUrl) this.title = this.sourceUrl.replace(/^.*\//, '');
-      if (!this.title && this.previewUrl) this.title = this.previewUrl.replace(/^.*\//, '');
-      callback([this.part]);
+      const parts = this._generateParts2();
+      callback(parts);
     }
   }
 
@@ -270,15 +270,15 @@ ImageModel.prototype.fileName = ''; // Adding this to the model is not according
 ImageModel.prototype.subtitle = '';
 ImageModel.prototype.sourceUrl = '';
 ImageModel.prototype.previewUrl = '';
-ImageModel.prototype.orientation = '';
+ImageModel.prototype.orientation = null;
 ImageModel.prototype.artist = '';
 ImageModel.prototype.preview = null;
 ImageModel.prototype.source = null;
-ImageModel.prototype.width = 0;
-ImageModel.prototype.height = 0;
-ImageModel.prototype.previewWidth = 0;
-ImageModel.prototype.previewHeight = 0;
-ImageModel.prototype.url = '';
+ImageModel.prototype.width = null;
+ImageModel.prototype.height = null;
+ImageModel.prototype.previewWidth = null;
+ImageModel.prototype.previewHeight = null;
+ImageModel.prototype.url = ''; // derived property
 
 ImageModel.Label = 'Picture';
 ImageModel.defaultAction = 'open-url';

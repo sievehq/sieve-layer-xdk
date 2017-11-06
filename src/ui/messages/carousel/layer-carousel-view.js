@@ -104,13 +104,14 @@ registerComponent('layer-carousel-view', {
           parentNode: this.nodes.items,
         });
         const preferedMinWidth = card.nodes.ui.preferredMinWidth;
+        const preferedMaxWidth = Math.min(maxCardWidth, card.nodes.ui.preferredMaxWidth);
         switch (card.widthType) {
           case 'full-width':
-            card.style.width = card.style.minWidth = maxCardWidth + 'px';
+            card.style.width = card.style.minWidth = preferedMaxWidth + 'px';
             break;
           case 'flex-width':
-            if (maxCardWidth < preferedMinWidth) {
-              card.style.maxWidth = card.style.minWidth = card.style.width = maxCardWidth + 'px';
+            if (preferedMaxWidth < preferedMinWidth) {
+              card.style.maxWidth = card.style.minWidth = card.style.width = preferedMaxWidth + 'px';
             } else {
               card.style.maxWidth = card.style.minWidth = card.style.width = preferedMinWidth + 'px';
             }
@@ -133,7 +134,7 @@ registerComponent('layer-carousel-view', {
     _adjustCarouselWidth() {
       const parent = this.parentComponent.parentNode;
       if (!parent || !parent.clientWidth) return 0;
-      const carouselWidth = Math.floor(parent.clientWidth * 0.9);
+      const carouselWidth = parent.clientWidth ? Math.floor(parent.clientWidth - 2) : 0;
       if (carouselWidth) this.messageViewer.style.maxWidth = carouselWidth + 'px';
     },
 
@@ -143,7 +144,7 @@ registerComponent('layer-carousel-view', {
       let width = parent.clientWidth;
       if (width > 600) width = width * 0.6;
       else width = width * 0.8;
-      return Math.min(500, width);
+      return Math.floor(width);
     },
 
     _updateScrollButtons() {

@@ -65,13 +65,12 @@
  * @author Michael Kantor
  */
 
-const Root = require('../root');
-const Content = require('./content');
-const xhr = require('../xhr');
-const ClientRegistry = require('../client-registry');
-const LayerError = require('../layer-error');
-const Util = require('../../util');
-const logger = Util.logger;
+import Root from '../root';
+import Content from './content';
+import xhr from '../xhr';
+import ClientRegistry from '../client-registry';
+import LayerError, { ErrorDictionary } from '../layer-error';
+import Util, { logger } from '../../util';
 
 class MessagePart extends Root {
 
@@ -316,7 +315,7 @@ class MessagePart extends Root {
    * @return {layer.Content} this
    */
   fetchStream(callback) {
-    if (!this._content) throw new Error(LayerError.dictionary.contentRequired);
+    if (!this._content) throw new Error(ErrorDictionary.contentRequired);
     if (this._content.isExpired()) {
       this._content.refreshContent(this._getClient(), url => this._fetchStreamComplete(url, callback));
     } else {
@@ -575,6 +574,9 @@ class MessagePart extends Root {
         // If the body exists and is a blob, extract the data uri for convenience; only really relevant for image and video HTML tags.
         if (part.body) {
           Util.blobToBase64(this.body, (inputBase64) => {
+            if (!inputBase64) {
+              logger.error(`Invalid Blob for ${this.id} ${this.mimeType}  `, this.body);
+            }
             if (inputBase64 !== Util.btoa(part.body)) {
               this.body = new Blob([part.body], { type: this.mimeType });
               if (this.body) this.url = URL.createObjectURL(this.body);

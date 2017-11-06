@@ -52,6 +52,7 @@ docs
 .vscode
 
 samples/build.js
+samples/react/bundle.js*
 
 samples/react/common/LayerConfiguration.json
 

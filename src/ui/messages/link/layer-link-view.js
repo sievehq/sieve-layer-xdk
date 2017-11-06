@@ -50,14 +50,11 @@ registerComponent('layer-link-view', {
       this.onRerender();
     },
 
-
     /**
      *
      * @method
      */
     onRerender() {
-      this.messageViewer.toggleClass('layer-message-as-chat-bubble',
-        !this.model.title && !this.model.author && !this.model.imageUrl && !this.model.description);
       this.nodes.image.src = this.model.imageUrl || '';
       this.nodes.link.src = this.model.url;
       this.nodes.link.innerHTML = this.model.url;
@@ -75,5 +72,5 @@ registerComponent('layer-link-view', {
 
 registerMessageActionHandler('open-url', function openUrlHandler(customData) {
   const url = customData.url || this.model.url;
-  if (url) window.open(url);
+  this.showFullScreen(url);
 });

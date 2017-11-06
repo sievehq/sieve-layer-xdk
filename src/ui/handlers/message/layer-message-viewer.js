@@ -130,7 +130,9 @@ registerMessageComponent('layer-message-viewer', {
 
       const cardUIType = this.model.currentMessageRenderer;
       this.classList.add(cardUIType);
-      if (this.parentComponent) this.parentComponent.classList.add('layer-message-item-' + cardUIType);
+      if (this.parentComponent && this.parentComponent.isMessageListItem) {
+        this.parentComponent.classList.add('layer-message-item-' + cardUIType);
+      }
       const cardUI = this.createElement(cardUIType, {
         model: this.model,
         messageViewer: this,
@@ -140,9 +142,7 @@ registerMessageComponent('layer-message-viewer', {
 
       const cardContainerClass = this.messageViewContainerTagName;
       if (this.messageViewContainerTagName) this.classList.add(this.messageViewContainerTagName);
-      if (cardUI.messageViewContainerTagName === 'layer-standard-display-container') {
-        this.classList.add('layer-card-primitive');
-      }
+
       if (cardContainerClass) {
         const cardContainer = this.createElement(cardContainerClass, {
           model: this.model,
@@ -197,6 +197,10 @@ registerMessageComponent('layer-message-viewer', {
         rootModel,
         data: actionData,
       });
+    },
+
+    showFullScreen(url) {
+      if (url) window.open(url);
     },
   },
 });

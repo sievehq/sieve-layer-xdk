@@ -1,17 +1,12 @@
 
-/*
-layer-carousel-card layer-message-viewer:not(.layer-message-as-chat-bubble) > layer-standard-display-container {
-  width: 250px;
-}
-
-layer-message-viewer.layer-root-card:not(.layer-message-as-chat-bubble) > layer-standard-display-container {
-  width: 350px;
-}
-*/
 
 layer-message-viewer.layer-card-width-flex-width, layer-message-viewer.layer-card-width-full-width {
   & > layer-standard-display-container:not(.layer-card-no-metadata) > .layer-card-body-outer {
-    margin: 8px 12px 8px 12px;
+    margin: 8px 0px;
+
+    .layer-card-title, .layer-card-description, .layer-card-footer {
+      padding: 0px 12px;
+    }
 
     .layer-card-title {
       max-height: 6rem;
@@ -26,13 +21,6 @@ layer-message-viewer.layer-card-width-flex-width, layer-message-viewer.layer-car
 }
 
 layer-standard-display-container {
-  &.layer-message-as-chat-bubble {
-    .layer-card-top {
-        border-radius: 16px;
-    }
-  }
-
-
   .layer-card-body {
     display: flex;
     flex-direction: column;
@@ -40,22 +28,12 @@ layer-standard-display-container {
   }
 }
 
-/*
-layer-message-viewer.layer-root-card:not(.layer-message-as-chat-bubble) > layaer-standard-card-container > .layer-card-top {
-  width: 350px;
-}
-*/
-
-layer-message-viewer:not(.layer-message-as-chat-bubble) > layer-standard-display-container > .layer-card-top {
+layer-message-viewer:not(.layer-card-width-chat-bubble) > layer-standard-display-container > .layer-card-top {
   overflow: hidden; // prevent images from spilling out of bounds
   border-radius: 16px 16px 0px 0px;
   max-height: 450px;
   background-color: @card-container-core-ui-background;
   border-bottom: solid 1px @color-g2;
-
-  .layer-top-content-for-border-radius {
-    border-radius: 16px 16px 0px 0px;
-  }
 }
 
 layer-standard-display-container.layer-no-core-ui > .layer-card-top {

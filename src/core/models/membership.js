@@ -8,10 +8,10 @@
  * @extends layer.Syncable
  */
 
-const Syncable = require('./syncable');
-const Root = require('../root');
-const Constants = require('../../constants');
-const LayerError = require('../layer-error');
+import Syncable from './syncable';
+import Root from '../root';
+import Constants from '../../constants';
+import { ErrorDictionary } from '../layer-error';
 
 class Membership extends Syncable {
   constructor(options = {}) {
@@ -24,7 +24,7 @@ class Membership extends Syncable {
 
     // Make sure we have an clientId property
     if (options.client) options.clientId = options.client.appId;
-    if (!options.clientId) throw new Error(LayerError.dictionary.clientMissing);
+    if (!options.clientId) throw new Error(ErrorDictionary.clientMissing);
 
     super(options);
 

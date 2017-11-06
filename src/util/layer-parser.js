@@ -19,7 +19,7 @@
  * @param {Object[]} request.operations - Array of change operations to perform upon the object
  * @param {layer.Client} request.client
  */
-const LayerParser = require('layer-patch');
+import LayerParser from 'layer-patch';
 
 let parser;
 

@@ -199,13 +199,15 @@ import { uuid } from '../../../util';
 import ChoiceModel from '../choice/layer-choice-model';
 
 class ButtonsModel extends MessageTypeModel {
+  initializeProperties() {
+    this.choices = {};
+  }
   _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['buttons', 'states']);
+    const body = this._initBodyWithMetadata(['buttons']);
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
       body: JSON.stringify(body),
     });
-    this._setupButtonModels();
     if (this.contentModel) {
       this._addModel(this.contentModel, 'content', (parts) => {
         callback([this.part].concat(parts));
@@ -213,6 +215,14 @@ class ButtonsModel extends MessageTypeModel {
     } else {
       callback([this.part]);
     }
+  }
+
+  generateMessage(conversation, callback) {
+    super.generateMessage(conversation, (message) => {
+      // Requires this.message to be set before it can be called
+      this._setupButtonModels();
+      callback(message);
+    });
   }
 
   _parseMessage(payload) {
@@ -224,7 +234,7 @@ class ButtonsModel extends MessageTypeModel {
   }
 
   _setupButtonModels() {
-    if (!this.choices) this.choices = {};
+    if (!this.buttons) return;
     const choices = this.buttons.filter(button => button.type === 'choice');
     choices.forEach((button) => {
       if (!this.choices[button.data.responseName || 'selection']) {
@@ -232,16 +242,16 @@ class ButtonsModel extends MessageTypeModel {
           parentNodeId: this.nodeId,
           choices: button.choices,
           message: this.message,
-          parentId: uuid(this.part.id),
+          parentId: this.nodeId,
           responses: this.responses,
         };
         if ('responseName' in button.data) obj.responseName = button.data.responseName;
         if ('allowDeselect' in button.data) obj.allowDeselect = button.data.allowDeselect;
         if ('allowReselect' in button.data) obj.allowReselect = button.data.allowReselect;
+        if ('allowMultiselect' in button.data) obj.allowMultiselect = button.data.allowMultiselect;
         if ('selectedAnswer' in button.data) obj.selectedAnswer = button.data.selectedAnswer;
         if ('customResponseData' in button.data) obj.customResponseData = button.data.customResponseData;
         if ('enabledFor' in button.data) obj.enabledFor = button.data.enabledFor;
-        if ('states' in button.data) obj.states = button.data.states;
 
         // Generate the model and add it to this.choices[model.responseName]
         const model = new ChoiceModel(obj);
@@ -270,13 +280,14 @@ class ButtonsModel extends MessageTypeModel {
   getOneLineSummary() {
     if (this.contentModel) {
       return this.contentModel.getOneLineSummary();
+    } else {
+      return super.getOneLineSummary();
     }
   }
 }
 ButtonsModel.prototype.buttons = null;
 ButtonsModel.prototype.contentModel = null;
 ButtonsModel.prototype.choices = null;
-ButtonsModel.prototype.states = null;
 
 ButtonsModel.Label = 'Buttons';
 ButtonsModel.messageRenderer = 'layer-buttons-view';

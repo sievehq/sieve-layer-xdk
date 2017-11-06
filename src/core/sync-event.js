@@ -15,7 +15,7 @@
  * @class  layer.SyncEvent
  * @extends layer.Root
  */
-const Util = require('../util');
+import Util from '../util';
 
 class SyncEvent {
   /**

@@ -203,10 +203,9 @@
  * @extends layer.Root
  *
  */
-const Root = require('../root');
-const LayerError = require('../layer-error');
-const Util = require('../../util');
-const logger = Util.logger;
+import Root from '../root';
+import { ErrorDictionary } from '../layer-error';
+import Util, { logger } from '../../util';
 
 class Query extends Root {
 
@@ -233,7 +232,7 @@ class Query extends Root {
 
     this.data = [];
     this._initialPaginationWindow = this.paginationWindow;
-    if (!this.client) throw new Error(LayerError.dictionary.clientMissing);
+    if (!this.client) throw new Error(ErrorDictionary.clientMissing);
     this.client.on('all', this._handleEvents, this);
 
     if (!this.client.isReady) {
@@ -324,7 +323,7 @@ class Query extends Root {
       needsRefresh = true;
     }
     if ('model' in optionsBuilt && this.model !== optionsBuilt.model) {
-      throw new Error(LayerError.dictionary.modelImmutable);
+      throw new Error(ErrorDictionary.modelImmutable);
     }
 
     if ('predicate' in optionsBuilt) {
@@ -353,7 +352,7 @@ class Query extends Root {
    * @private
    */
   _fixPredicate(inValue) {
-    if (inValue) throw new Error(LayerError.dictionary.predicateNotSupported);
+    if (inValue) throw new Error(ErrorDictionary.predicateNotSupported);
     return '';
   }
 

@@ -20,7 +20,8 @@
     url: "https://layer.com/introducing-the-layer-conversation-design-system/",
     title: "Introducing the Layer Conversation Design System",
     imageUrl: "https://layer.com/wp-content/uploads/2017/07/bezier-blog-header-2x.png",
-    description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices."
+    description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices.",
+    author: "layer.com"
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
@@ -94,7 +95,7 @@ class LinkModel extends MessageTypeModel {
   getDescription() { return this.description; }
 
   getOneLineSummary() {
-    return `${this.constructor.Label} ${this.title || this.url}`;
+    return this.title || this.url;
   }
 
   // TODO: This should have a callback so that a message sender can send the message once this has
@@ -130,10 +131,10 @@ class LinkModel extends MessageTypeModel {
   }
 }
 
-LinkModel.prototype.imageUrl = null;
-LinkModel.prototype.author = null;
-LinkModel.prototype.title = null;
-LinkModel.prototype.description = null;
+LinkModel.prototype.imageUrl = '';
+LinkModel.prototype.author = '';
+LinkModel.prototype.title = '';
+LinkModel.prototype.description = '';
 LinkModel.prototype.url = '';
 LinkModel.prototype.html = '';
 

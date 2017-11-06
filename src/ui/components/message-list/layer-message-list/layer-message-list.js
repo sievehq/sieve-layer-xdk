@@ -254,6 +254,9 @@ registerComponent('layer-message-list', {
       value: {
         messageRowLeftSide: function messageRowLeftSide(widget) {
           const item = widget.item;
+          const model = this.client.createMessageTypeModel(item);
+          if (model && model.constructor.messageRenderer === 'layer-carousel-view') return null;
+
           if (item.sender.sessionOwner) {
             return null;
           } else {
@@ -269,6 +272,9 @@ registerComponent('layer-message-list', {
         },
         messageRowRightSide: function messageRowRightSide(widget) {
           const item = widget.item;
+          const model = this.client.createMessageTypeModel(item);
+          if (model && model.constructor.messageRenderer === 'layer-carousel-view') return null;
+
           const div = document.createElement('div');
           div.classList.add('layer-replaceable-inner');
           if (item.sender.sessionOwner) {

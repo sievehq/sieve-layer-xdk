@@ -46,14 +46,14 @@ class FileModel extends MessageTypeModel {
     let sourcePart;
 
     if (source) {
-      if (!this.title) this.title = source.name;
+      if (!this.title && source.name) this.title = source.name;
       if (!this.size) this.size = source.size;
       if (!this.mimeType) this.mimeType = source.type;
       this.size = source.size;
     }
 
-    if (!this.fileExt && this.title) this.fileExt = this.title.replace(/^.*\.(.*)$/, '$1');
-    const body = this._initBodyWithMetadata(['sourceUrl', 'author', 'size', 'title', 'mimeType']);
+    if (!this.fileExt && this.title) this.fileExt = this.title.indexOf('.') !== -1 ? this.title.replace(/^.*\.(.*)$/, '$1') : '';
+    const body = this._initBodyWithMetadata(['sourceUrl', 'author', 'size', 'title', 'mimeType', 'fileExt']);
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
       body: JSON.stringify(body),
@@ -78,14 +78,12 @@ class FileModel extends MessageTypeModel {
     if (!this.mimeType && this.source) this.mimeType = this.source.mimeType;
 
     if (!this.fileExt) {
-      if (this.sourceUrl) {
+      if (this.sourceUrl && this.sourceUrl.indexOf('.') !== -1) {
         this.fileExt = this.sourceUrl.replace(/^.*\.(.*)$/, '$1');
       } else if (this.title.match(/\.\w{2,4}$/)) {
         this.fileExt = this.title.replace(/^.*\./, '');
       } else if (this.source && this.source.url.indexOf('.') !== -1) {
         this.fileExt = this.source.url.replace(/^.*\.(.*)$/, '$1');
-      } else if (this.source) {
-        this.fileExt = this.source.mimeType.replace(/^.*\./, '').substr(0, 3);
       }
     }
 

@@ -46,8 +46,8 @@ registerComponent('layer-file-view', {
 /* Note that this runs with this === <layer-message-viewer /> */
 registerMessageActionHandler('open-file', function openFileHandler(customData) {
   if (customData.url) {
-    window.open(customData.url);
+    this.showFullScreen(customData.url);
   } else {
-    this.model.getSourceUrl(url => window.open(url));
+    this.model.getSourceUrl(url => this.showFullScreen(url));
   }
 });

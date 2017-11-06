@@ -8,9 +8,9 @@
  *
  * @class layer.mixins.ClientMessageTypeModels
  */
-const ErrorDictionary = require('../layer-error').dictionary;
-const uuid = require('../../util').uuid;
-const MessageTypeModel = require('../models/message-type-model');
+import { ErrorDictionary } from '../layer-error';
+import { uuid } from '../../util';
+import MessageTypeModel from '../models/message-type-model';
 
 const MessageTypeModelClasses = [];
 const MessageTypeModelHash = {};
@@ -95,9 +95,11 @@ module.exports = {
      * Create a Card Model for this Message
      *
      * @param {layer.Message} message
-     * @param {layer.MessagePart} part
+     * @param {layer.MessagePart} [part=root]
      */
     createMessageTypeModel(message, part) {
+      if (!part) part = message.getPartsMatchingAttribute({ role: 'root' })[0];
+      if (!part) return null;
       const cardId = part.id.replace(/layer:\/\/\/messages\//, MessageTypeModel.prefixUUID);
       const messageTypeModel = this.getMessageTypeModel(cardId);
       if (messageTypeModel) {

@@ -13,9 +13,10 @@
  * @private
  */
 
-const Root = require('./root');
-const Xhr = require('./xhr');
-const Util = require('../util');
+import Root from './root';
+import Xhr from './xhr';
+import Util from '../util';
+import version from '../version';
 
 class TelemetryMonitor extends Root {
   /**
@@ -158,7 +159,7 @@ class TelemetryMonitor extends Root {
     const environment = {
       platform: 'web',
       locale: (navigator.language || '').replace(/-/g, '_'), // should match the en_us format that mobile devices are using rather than the much nicer en-us
-      layer_sdk_version: this.client.constructor.version,
+      layer_sdk_version: version,
       domain: location.hostname,
     };
 

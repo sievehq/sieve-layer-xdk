@@ -12,10 +12,10 @@
  * @extends layer.Message.ConversationMessage
  */
 
-const ConversationMessage = require('./conversation-message');
-const Syncable = require('./syncable');
-const Root = require('../root');
-const LayerError = require('../layer-error');
+import ConversationMessage from './conversation-message';
+import Syncable from './syncable';
+import Root from '../root';
+import { ErrorDictionary } from '../layer-error';
 
 
 class Announcement extends ConversationMessage {
@@ -48,7 +48,7 @@ class Announcement extends ConversationMessage {
    * @method delete
    */
   delete() {
-    if (this.isDestroyed) throw new Error(LayerError.dictionary.isDestroyed);
+    if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
 
     const id = this.id;
     const client = this.getClient();

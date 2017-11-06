@@ -46,8 +46,8 @@
  */
 
 const INTERVAL = 2500;
-const { STARTED, PAUSED, FINISHED } = require('./typing-indicators');
-const ClientRegistry = require('../client-registry');
+import { STARTED, PAUSED, FINISHED } from './typing-indicators';
+import ClientRegistry from '../client-registry';
 
 class TypingPublisher {
 

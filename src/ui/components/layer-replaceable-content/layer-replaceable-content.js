@@ -71,6 +71,7 @@ registerComponent('layer-replaceable-content', {
           }
         });
       }
+      if (!this.nodes.content.firstChild) this.classList.add('layer-replaceable-content-empty');
     },
     loadContent(parent, generator) {
       let newNode;

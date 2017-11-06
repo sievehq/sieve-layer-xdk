@@ -7,14 +7,13 @@ import { registerComponent } from '../../components/component';
 import '../../components/layer-action-button/layer-action-button';
 import '../../components/layer-url-button/layer-url-button';
 import '../../components/layer-choice-button/layer-choice-button';
-import ChoiceModel from '../choice/layer-choice-model';
 import MessageViewMixin from '../message-view-mixin';
 
 registerComponent('layer-buttons-view', {
   template: `
     <div class="layer-button-content" layer-id="content"></div>
-    <div class="layer-button-list" layer-id="buttons">
-  </div>`,
+    <div class="layer-button-list" layer-id="buttons"></div>
+  `,
   style: `layer-buttons-view {
     display: flex;
     flex-direction: column;
@@ -36,6 +35,11 @@ registerComponent('layer-buttons-view', {
     widthType: {
       get() {
         return this.properties.contentView ? this.properties.contentView.widthType : 'flex-width';
+      },
+    },
+    preferredMaxWidth: {
+      get() {
+        return this.properties.contentView ? this.properties.contentView.nodes.ui.preferredMaxWidth : 350;
       },
     },
   },

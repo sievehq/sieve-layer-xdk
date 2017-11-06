@@ -1,5 +1,5 @@
-const TypingPublisher = require('./typing-publisher');
-const {STARTED, PAUSED, FINISHED} = require('./typing-indicators');
+import TypingPublisher from './typing-publisher';
+import {STARTED, PAUSED, FINISHED} from './typing-indicators';
 
 /**
  * The Typing Listener Class listens to keyboard events on

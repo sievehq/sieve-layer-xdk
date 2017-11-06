@@ -1,6 +1,6 @@
-const { NetInfo } = require('react-native');
-const base64JS = require('base64-js');
-
+import { NetInfo } from 'react-native';
+import base64JS from 'base64-js';
+import Layer from './index';
 /* istanbul ignore next */
 
 global.getNativeSupport = function(module) {
@@ -28,4 +28,4 @@ global.getNativeSupport = function(module) {
       return NetInfo;
   }
 };
-module.exports = require('./index');
+module.exports = Layer;

@@ -53,62 +53,20 @@ describe('Status Message Components', function() {
   });
 
   describe("Model Tests", function() {
-    it("Should create an appropriate Message with metadata", function() {
-      var model = new StatusModel({
-        text: "a",
-        title: "b",
-        author: "c",
-        subtitle: "d"
-      });
-      model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(StatusModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
-          text: "a",
-          title: "b",
-          author: "c",
-          subtitle: "d"
-        });
-      });
-    });
-
-    it("Should create an appropriate Message without metadata", function() {
+    it("Should create an appropriate Message", function() {
       var model = new StatusModel({
         text: "a"
       });
       model.generateMessage(conversation, function(message) {
         expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(StatusModel.MIMEType);
+        expect(message.parts[0].mimeType).toEqual('application/vnd.layer.status+json');
         expect(JSON.parse(message.parts[0].body)).toEqual({
           text: "a"
         });
       });
-
     });
 
     it("Should instantiate a Model from a Message with metadata", function() {
-      var m = conversation.createMessage({
-        parts: [{
-          mimeType: StatusModel.MIMEType + '; role=root',
-          body: JSON.stringify({
-            text: "a",
-            title: "b",
-            author: "c",
-            subtitle: "d"
-          })
-        }]
-      });
-      var m = new StatusModel({
-        message: m,
-        part: m.parts[0]
-      });
-      expect(m.text).toEqual("a");
-      expect(m.title).toEqual("b");
-      expect(m.author).toEqual("c");
-      expect(m.subtitle).toEqual("d");
-    });
-
-    it("Should instantiate a Model from a Message without metadata", function() {
       var m = conversation.createMessage({
         parts: [{
           mimeType: StatusModel.MIMEType + '; role=root',
@@ -122,45 +80,14 @@ describe('Status Message Components', function() {
         part: m.parts[0]
       });
       expect(m.text).toEqual("a");
-      expect(m.title).toEqual("");
-      expect(m.author).toEqual("");
-      expect(m.subtitle).toEqual("");
-    });
-
-    it("Should respond to Standard Message Container calls for metadata", function() {
-      var model1 = new StatusModel({
-        text: "a",
-        title: "b",
-        author: "c",
-        subtitle: "d"
-      });
-      var model2 = new StatusModel({
-        text: "a"
-      });
-
-      expect(model1.getTitle()).toEqual("b");
-      expect(model2.getTitle()).toEqual("");
-
-      expect(model1.getDescription()).toEqual("d");
-      expect(model2.getDescription()).toEqual("");
-
-      expect(model1.getFooter()).toEqual("c");
-      expect(model2.getFooter()).toEqual("");
     });
 
     it("Should have a suitable one line summary", function() {
       var model1 = new StatusModel({
-        text: "a",
-        title: "b",
-        author: "c",
-        subtitle: "d"
-      });
-      var model2 = new StatusModel({
         text: "a"
       });
 
-      expect(model1.getOneLineSummary()).toEqual("b");
-      expect(model2.getOneLineSummary()).toEqual("a");
+      expect(model1.getOneLineSummary()).toEqual("a");
     });
   });
 
@@ -184,6 +111,26 @@ describe('Status Message Components', function() {
       layer.Util.defer.flush();
 
       expect(el.innerHTML).toEqual("<p>hello</p>");
+    });
+
+    it("Should render newline characters", function() {
+      var model = new StatusModel({
+        text: "hello\nthere"
+      });
+      el.model = model;
+      layer.Util.defer.flush();
+
+      expect(el.innerHTML).toEqual("<p>hello</p><p>there</p>");
+    });
+
+    it("Should render links", function() {
+      var model = new StatusModel({
+        text: "hello from https://layer.com"
+      });
+      el.model = model;
+      layer.Util.defer.flush();
+
+      expect(el.innerHTML).toEqual("<p>hello from <a href=\"https://layer.com\" class=\"layer-parsed-url layer-parsed-url-url\" target=\"_blank\" rel=\"noopener noreferrer\">layer.com</a></p>");
     });
   });
 });

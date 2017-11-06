@@ -4,8 +4,9 @@
  * @class layer.mixins.ClientChannels
  */
 
-const Channel = require('../models/channel');
-const ErrorDictionary = require('../layer-error').dictionary;
+import Channel from '../models/channel';
+import { ErrorDictionary } from '../layer-error';
+
 
 module.exports = {
   events: [

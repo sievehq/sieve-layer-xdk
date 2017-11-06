@@ -43,6 +43,41 @@
    });
    model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
+   ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+   model = new ChoiceModel({
+     question: "What is the airspeed velocity of an unladen swallow?",
+     responseName: 'airselection',
+     allowDeselect: true,
+     customResponseData: {
+       hey: "ho"
+     },
+     choices: [
+        {
+          text:  "Zero, it can not get off the ground!",
+          id: "zero",
+          customResponseData: {
+            ho: "hum",
+            hi: "there"
+          }
+        },
+        {
+          text:  "Are we using Imperial or Metric units?", id: "clever bastard",
+          customResponseData: {
+            hey: "hum1",
+            hi: "there2"
+          }
+        },
+        {
+          text:  "What do you mean? African or European swallow?", id: "just a smart ass",
+          customResponseData: {
+            hey: "hum2",
+            hi: "there3"
+          }
+        },
+      ],
+   });
+   model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
 
    ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
    model = new ChoiceModel({
@@ -108,17 +143,30 @@
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
 import ResponseModel from '../response/layer-response-model';
 import TextModel from '../text/layer-text-model';
+import { ErrorDictionary } from '../../../core/layer-error';
 
 class ChoiceModel extends MessageTypeModel {
   initializeProperties() {
     if (!this.enabledFor) this.enabledFor = [];
+    if (this.allowMultiselect) this.allowDeselect = true;
+    if (this.allowDeselect) this.allowReselect = true;
   }
   _generateParts(callback) {
     const body = this._initBodyWithMetadata([
-      'question', 'choices', 'selectedAnswer', 'type', 'responseName',
+      'question', 'selectedAnswer', 'type', 'responseName',
       'allowReselect', 'allowDeselect', 'allowMultiselect',
-      'title', 'customResponseData', 'enabledFor',
+      'title', 'customResponseData',
     ]);
+    body.choices = this.choices.map((choice) => {
+      const obj = {};
+      obj.id = choice.id;
+      obj.text = choice.text;
+      obj.tooltip = choice.tooltip;
+      obj.states = choice.states;
+      if (choice.customResponseData) obj.custom_response_data = choice.customResponseData;
+      return obj;
+    });
+    if (this.enabledFor && this.enabledFor.length) body.enabled_for = this.enabledFor;
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
       body: JSON.stringify(body),
@@ -131,8 +179,12 @@ class ChoiceModel extends MessageTypeModel {
   _parseMessage(payload) {
     if (this.selectedAnswer) delete payload.selected_answer;
     super._parseMessage(payload);
-    if (this.allowMultiselect) this.allowDeselect = true;
-    if (this.allowDeselect) this.allowReselect = true;
+    this.choices.forEach((choice) => {
+      if (choice.custom_response_data) {
+        choice.customResponseData = choice.custom_response_data;
+        delete choice.custom_response_data;
+      }
+    });
     this._buildActionModels();
     if (this.responses) {
       this._processNewResponses();
@@ -160,13 +212,25 @@ class ChoiceModel extends MessageTypeModel {
     // Disable selection if this user is the sender, and other participants have made selections.
     // Rationale: This user was requesting feedback, this user's selections do not get priority
     const data = this.responses ? this.responses.participantData : {};
-    let responseIdentityIds = Object.keys(data).filter(participantId => data[participantId][this.responseName]);
+    const responseIdentityIds = Object.keys(data).filter(participantId => data[participantId][this.responseName]);
     if (responseIdentityIds.length > 1 && this.message.sender === this.getClient().user) return false;
 
     return true;
   }
 
+  isSelectionEnabledFor(index) {
+
+    // This handles alloReselect among other tests
+    if (!this.isSelectionEnabled()) return false;
+
+    if (this.allowDeselect || this.allowMultiselect) return true;
+
+    // if allowDeselect is false, then you may select anything except the selected index
+    return !this.isSelectedIndex(index);
+  }
+
   selectAnswer(answerData) {
+    if (!this.message) throw new Error(ErrorDictionary.messageMissing);
     if (this.enabledFor.length === 0 || this.enabledFor.indexOf(this.getClient().user.id) !== -1) {
       if (this.allowMultiselect) {
         this._selectMultipleAnswers(answerData);
@@ -177,25 +241,31 @@ class ChoiceModel extends MessageTypeModel {
   }
 
   _selectMultipleAnswers(answerData) {
-    let selectionText;
-    const { id, text } = this.getChoiceById(answerData.id);
-    const selectedAnswers = (this.selectedAnswer || '').split(/\s*,\s*/);
+    const { id, text, customResponseData } = this.getChoiceById(answerData.id);
+    const selectedText = text;
+    const selectedAnswers = this.selectedAnswer ? this.selectedAnswer.split(/\s*,\s*/) : [];
     const answerDataIndex = selectedAnswers.indexOf(answerData.id);
+    let action;
 
     // Deselect it
     if (answerDataIndex !== -1) {
       selectedAnswers.splice(answerDataIndex, 1);
-      selectionText = ' deselected ';
+      action = 'deselected';
     } else {
       selectedAnswers.push(id);
-      selectionText = ' selected ';
+      action = 'selected';
     }
 
     const participantData = {
       [this.responseName]: selectedAnswers.join(','),
     };
+
     if (this.customResponseData) {
       Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
+    }
+
+    if (action === 'selected' && customResponseData) {
+      Object.keys(customResponseData).forEach(key => (participantData[key] = customResponseData[key]));
     }
 
     const responseModel = new ResponseModel({
@@ -203,11 +273,11 @@ class ChoiceModel extends MessageTypeModel {
       responseTo: this.message.id,
       responseToNodeId: this.parentId || this.nodeId,
       displayModel: new TextModel({
-        text: this.getClient().user.displayName + selectionText + text,
+        text: this._getSelectionMessageText(action, selectedText),
       }),
     });
     if (!this.message.isNew()) {
-      responseModel.generateMessage(this.message.getConversation(), message => message.send())
+      responseModel.generateMessage(this.message.getConversation(), message => this._sendResponse(message));
     }
     this.selectedAnswer = selectedAnswers.join(',');
     this.trigger('change');
@@ -222,6 +292,14 @@ class ChoiceModel extends MessageTypeModel {
     }, 6000);
   }
 
+  /**
+   * Get a displayable name to label responses to this Choice Model with.
+   *
+   * Example: "User XXX did YYY for ZZZ" where the name of the Choice Model is ZZZ.
+   * @method
+   * @private
+   * @returns {String}
+   */
   _getNameOfChoice() {
     const client = this.getClient();
     if (this.parentId) {
@@ -240,14 +318,14 @@ class ChoiceModel extends MessageTypeModel {
   }
 
   _selectSingleAnswer(answerData) {
+    const { customResponseData } = this.getChoiceById(answerData.id);
     let selectedIndex = this.getChoiceIndexById(answerData.id);
     let selectedId = selectedIndex === -1 ? '' : this.choices[selectedIndex].id;
-    const nameOfChoice = this._getNameOfChoice();
-    if (!this.selectedAnswer || this.allowReselect) {
+    if (!this.selectedAnswer || this.allowReselect && selectedIndex !== -1) {
       let action = 'selected';
       const selectedText = this.getText(selectedIndex);
 
-      if (this.isSelectedIndex(selectedIndex) && this.allowDeselect) {
+      if (this.isSelectionEnabledFor(selectedIndex) && this.isSelectedIndex(selectedIndex)) {
         selectedIndex = -1;
         selectedId = '';
         action = 'deselected';
@@ -260,16 +338,20 @@ class ChoiceModel extends MessageTypeModel {
         Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
       }
 
+      if (action === 'selected' && customResponseData) {
+        Object.keys(customResponseData).forEach(key => (participantData[key] = customResponseData[key]));
+      }
+
       const responseModel = new ResponseModel({
         participantData,
         responseTo: this.message.id,
         responseToNodeId: this.parentId || this.nodeId,
         displayModel: new TextModel({
-          text: `${this.getClient().user.displayName} ${action} "${selectedText}"` + (nameOfChoice ? ` for "${nameOfChoice}"` : ''),
+          text: this._getSelectionMessageText(action, selectedText),
         }),
       });
       if (!this.message.isNew()) {
-        responseModel.generateMessage(this.message.getConversation(), message => message.send());
+        responseModel.generateMessage(this.message.getConversation(), message => this._sendResponse(message));
       }
       this.selectedAnswer = selectedId;
       this.trigger('change');
@@ -283,6 +365,15 @@ class ChoiceModel extends MessageTypeModel {
         if (this._hasPendingResponse) this._processNewResponses();
       }, 6000);
     }
+  }
+
+  _getSelectionMessageText(action, selectedText) {
+    const nameOfChoice = this._getNameOfChoice();
+    return `${this.getClient().user.displayName} ${action} "${selectedText}"` + (nameOfChoice ? ` for "${nameOfChoice}"` : '');
+  }
+  // primarily here to simplify unit testing
+  _sendResponse(message) {
+    message.send();
   }
 
   _processNewResponses() {
@@ -349,7 +440,7 @@ class ChoiceModel extends MessageTypeModel {
     if (choiceIndex >= this.choices.length) return false;
     const indexId = this.choices[choiceIndex].id;
     if (this.allowMultiselect) {
-      const selectedAnswers = (this.selectedAnswer || '').split(/\s*,\s*/);
+      const selectedAnswers = this.selectedAnswer ? this.selectedAnswer.split(/\s*,\s*/) : [];
       return selectedAnswers.indexOf(indexId) !== -1;
     } else {
       return indexId === this.selectedAnswer;
@@ -391,7 +482,7 @@ class ChoiceModel extends MessageTypeModel {
 ChoiceModel.prototype.enabledFor = null;
 ChoiceModel.prototype.pauseUpdateTimeout = 0;
 ChoiceModel.prototype.allowReselect = false;
-ChoiceModel.prototype.allowDeselect = true; // if true, allowReselect is forced to true
+ChoiceModel.prototype.allowDeselect = false; // if true, allowReselect is forced to true
 ChoiceModel.prototype.allowMultiselect = false; // if true, allowReselect is forced to true and allowDeselect is forced to true
 ChoiceModel.prototype.type = 'standard';
 ChoiceModel.prototype.title = 'Choose One';
@@ -400,7 +491,7 @@ ChoiceModel.prototype.choices = null;
 ChoiceModel.prototype.responseName = 'selection';
 ChoiceModel.prototype.responses = null;
 ChoiceModel.prototype.currentMessageRenderer = null;
-ChoiceModel.prototype.selectedAnswer = null;
+ChoiceModel.prototype.selectedAnswer = ''; // allowing this in the Model Constructor introduces various bugs and is not supported at this time
 ChoiceModel.prototype.customResponseData = null;
 
 ChoiceModel.Label = 'Choose One';

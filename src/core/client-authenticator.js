@@ -28,20 +28,19 @@
  *
  */
 
-const xhr = require('./xhr');
-const Root = require('./root');
-const SocketManager = require('./websockets/socket-manager');
-const WebsocketChangeManager = require('./websockets/change-manager');
-const WebsocketRequestManager = require('./websockets/request-manager');
-const LayerError = require('./layer-error');
-const OnlineManager = require('./online-state-manager');
-const SyncManager = require('./sync-manager');
-const DbManager = require('./db-manager');
-const Identity = require('./models/identity');
-const { XHRSyncEvent, WebsocketSyncEvent } = require('./sync-event');
-const { ACCEPT, LOCALSTORAGE_KEYS } = require('../constants');
-const Util = require('../util');
-const logger = Util.logger;
+import xhr from './xhr';
+import Root from './root';
+import SocketManager from './websockets/socket-manager';
+import WebsocketChangeManager from './websockets/change-manager';
+import WebsocketRequestManager from './websockets/request-manager';
+import LayerError, { ErrorDictionary } from './layer-error';
+import OnlineManager from './online-state-manager';
+import SyncManager from './sync-manager';
+import DbManager from './db-manager';
+import Identity from './models/identity';
+import { XHRSyncEvent, WebsocketSyncEvent } from './sync-event';
+import { LOCALSTORAGE_KEYS, ACCEPT } from '../constants';
+import Util, { logger } from '../util';
 
 const MAX_XHR_RETRIES = 3;
 
@@ -78,7 +77,7 @@ class ClientAuthenticator extends Root {
    */
   constructor(options) {
     // Validate required parameters
-    if (!options.appId) throw new Error(LayerError.dictionary.appIdMissing);
+    if (!options.appId) throw new Error(ErrorDictionary.appIdMissing);
 
     super(options);
   }
@@ -315,7 +314,7 @@ class ClientAuthenticator extends Root {
     this.user = null;
     this._lastChallengeTime = 0;
     this._wantsToBeAuthenticated = true;
-    if (!userId || !sessionToken) throw new Error(LayerError.dictionary.sessionAndUserRequired);
+    if (!userId || !sessionToken) throw new Error(ErrorDictionary.sessionAndUserRequired);
     if (!this.isTrustedDevice || this._isPersistedSessionsDisabled() || this._hasUserIdChanged(userId)) {
       this._clearStoredData();
     }
@@ -438,8 +437,8 @@ class ClientAuthenticator extends Root {
   answerAuthenticationChallenge(identityToken) {
     // Report an error if no identityToken provided
     if (!identityToken) {
-      logger.error(LayerError.dictionary.identityTokenMissing);
-      throw new Error(LayerError.dictionary.identityTokenMissing);
+      logger.error(ErrorDictionary.identityTokenMissing);
+      throw new Error(ErrorDictionary.identityTokenMissing);
     } else {
       const userData = Util.decode(identityToken.split('.')[1]);
       const identityObj = JSON.parse(userData);
@@ -452,8 +451,8 @@ class ClientAuthenticator extends Root {
       }
 
       if (this.user.userId && this.user.userId !== identityObj.prn) {
-        logger.error(LayerError.dictionary.invalidUserIdChange);
-        throw new Error(LayerError.dictionary.invalidUserIdChange);
+        logger.error(ErrorDictionary.invalidUserIdChange);
+        throw new Error(ErrorDictionary.invalidUserIdChange);
       }
 
       this.user._setUserId(identityObj.prn);
@@ -509,7 +508,7 @@ class ClientAuthenticator extends Root {
    */
   _authComplete(result, fromPersistence) {
     if (!result || !result.session_token) {
-      throw new Error(LayerError.dictionary.sessionTokenMissing);
+      throw new Error(ErrorDictionary.sessionTokenMissing);
     }
     this.sessionToken = result.session_token;
 
@@ -628,16 +627,20 @@ class ClientAuthenticator extends Root {
       // load the user's full Identity so we have presence;
       this.user._load();
       this.user.once('identities:loaded', () => {
+        this.user.off('identities:loaded-error', null, this);
         if (!this._isPersistedSessionsDisabled()) {
           this._writeSessionOwner();
           this.user.on('identities:change', this._writeSessionOwner, this);
         }
         this._clientReady();
-      })
-      .once('identities:loaded-error', () => {
-        if (!this.user.displayName) this.user.displayName = this.defaultOwnerDisplayName;
-        this._clientReady();
-      });
+      }, this)
+      .once('identities:loaded-error', (evt) => {
+        this.user.off('identities:loaded', null, this);
+        if (evt.error.id !== 'authentication_required') {
+          if (!this.user.displayName) this.user.displayName = this.defaultOwnerDisplayName;
+          this._clientReady();
+        }
+      }, this);
     }
   }
 
@@ -700,8 +703,8 @@ class ClientAuthenticator extends Root {
    */
   logout(callback) {
     this._wantsToBeAuthenticated = false;
-    let callbackCount = 1,
-      counter = 0;
+    let callbackCount = 1;
+    let counter = 0;
     if (this.isAuthenticated) {
       callbackCount++;
       this.xhr({
@@ -845,7 +848,7 @@ class ClientAuthenticator extends Root {
    * @param {string} value - New appId value
    */
   __adjustAppId() {
-    if (this.isConnected) throw new Error(LayerError.dictionary.cantChangeIfConnected);
+    if (this.isConnected) throw new Error(ErrorDictionary.cantChangeIfConnected);
   }
 
   /**
@@ -860,7 +863,7 @@ class ClientAuthenticator extends Root {
    */
   __adjustUser(user) {
     if (this.isConnected) {
-      throw new Error(LayerError.dictionary.cantChangeIfConnected);
+      throw new Error(ErrorDictionary.cantChangeIfConnected);
     }
   }
 
@@ -1096,7 +1099,9 @@ class ClientAuthenticator extends Root {
       if (result.status === 401 && this._wantsToBeAuthenticated) {
         if (this.isAuthenticated) {
           const hasOldSessionToken = result.request.headers && result.request.headers.authorization;
-          const oldSessionToken = hasOldSessionToken ? result.request.headers.authorization.replace(/^.*"(.*)".*$/, "$1") : '';
+          const oldSessionToken = hasOldSessionToken ?
+            result.request.headers.authorization.replace(/^.*"(.*)".*$/, '$1')
+            : '';
 
           // Ignore auth errors if in response to a no longer in use sessionToken
           if (oldSessionToken && this.isReady && this.sessionToken && oldSessionToken !== this.sessionToken) return;
@@ -1502,7 +1507,6 @@ ClientAuthenticator._supportedEvents = [
    * @param {boolean} event.isOnline
    */
   'online',
-
 
   /**
    * State change events are used for internal communications.

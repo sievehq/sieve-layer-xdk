@@ -87,9 +87,13 @@ describe('Text Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message with metadata", function() {
+      var uuid1 = layer.Util.generateUUID();
+      var uuid2 = layer.Util.generateUUID();
       var m = conversation.createMessage({
+        id: 'layer:///messages/' + uuid1,
         parts: [{
-          mimeType: TextModel.MIMEType + '; role=root',
+          id: 'layer:///messages/' + uuid1 + '/parts/' + uuid2,
+          mime_type: TextModel.MIMEType + '; role=root',
           body: JSON.stringify({
             text: "a",
             title: "b",
@@ -109,9 +113,13 @@ describe('Text Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message without metadata", function() {
+      var uuid1 = layer.Util.generateUUID();
+      var uuid2 = layer.Util.generateUUID();
       var m = conversation.createMessage({
+        id: 'layer:///messages/' + uuid1,
         parts: [{
-          mimeType: TextModel.MIMEType + '; role=root',
+          id: 'layer:///messages/' + uuid1 + '/parts/' + uuid2,
+          mime_type: TextModel.MIMEType + '; role=root',
           body: JSON.stringify({
             text: "a"
           })
@@ -184,6 +192,46 @@ describe('Text Message Components', function() {
       layer.Util.defer.flush();
 
       expect(el.innerHTML).toEqual("<p>hello</p>");
+    });
+
+    it("Should render newline characters", function() {
+      var model = new TextModel({
+        text: "hello\nthere"
+      });
+      el.model = model;
+      layer.Util.defer.flush();
+
+      expect(el.innerHTML).toEqual("<p>hello</p><p>there</p>");
+    });
+
+    it("Should render links", function() {
+      var model = new TextModel({
+        text: "hello from https://layer.com"
+      });
+      el.model = model;
+      layer.Util.defer.flush();
+
+      expect(el.innerHTML).toEqual("<p>hello from <a href=\"https://layer.com\" class=\"layer-parsed-url layer-parsed-url-url\" target=\"_blank\" rel=\"noopener noreferrer\">layer.com</a></p>");
+    });
+
+    it("Should render emoji characters", function() {
+      var model = new TextModel({
+        text: "hello :)"
+      });
+      el.model = model;
+      layer.Util.defer.flush();
+
+      expect(el.innerHTML).toMatch("<p>hello <img");
+    });
+    it("Should render emoji codes", function() {
+      var model = new TextModel({
+        text: "hi :smile:"
+      });
+      el.model = model;
+      layer.Util.defer.flush();
+
+      expect(el.innerHTML).toMatch("<p>hi <img");
+
     });
   });
 });

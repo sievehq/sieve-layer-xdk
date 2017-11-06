@@ -12,12 +12,11 @@
  * @protected
  */
 
-const Root = require('./root');
-const SyncEvent = require('./sync-event');
-const Constants = require('../constants');
-const Util = require('../util');
-const logger = Util.logger;
-const Announcement = require('./models/announcement');
+import Root from './root';
+import SyncEvent from './sync-event';
+import Constants from '../constants';
+import Util from '../util';
+import Announcement from './models/announcement';
 
 const DB_VERSION = 5;
 const MAX_SAFE_INTEGER = 9007199254740991;
@@ -162,7 +161,7 @@ class DbManager extends Root {
         // Triggered by Firefox private browsing window
         else {
           this._isOpenError = true;
-          logger.warn('Database Unable to Open (common cause: private browsing window)', evt.target.error);
+          Util.logger.warn('Database Unable to Open (common cause: private browsing window)', evt.target.error);
           this.trigger('error', { error: evt });
         }
       };
@@ -178,7 +177,7 @@ class DbManager extends Root {
           this.isOpen = false;
         };
 
-        this.db.onerror = err => logger.error('db-manager Error: ', err);
+        this.db.onerror = err => Util.logger.error('db-manager Error: ', err);
       };
     }
 
@@ -186,7 +185,7 @@ class DbManager extends Root {
     catch (err) {
       // Safari Private Browsing window will fail on request.onerror
       this._isOpenError = true;
-      logger.error('Database Unable to Open: ', err);
+      Util.logger.error('Database Unable to Open: ', err);
       this.trigger('error', { error: err });
     }
   }
@@ -243,7 +242,7 @@ class DbManager extends Root {
       } catch (e) {
         // Noop
         /* istanbul ignore next */
-        logger.error(`Failed to create object store ${tableDef.name}`, e);
+        Util.logger.error(`Failed to create object store ${tableDef.name}`, e);
       }
     });
   }
@@ -603,7 +602,7 @@ class DbManager extends Root {
           } catch (e) {
             /* istanbul ignore next */
             // Safari throws an error rather than use the onerror event.
-            logger.error(e);
+            Util.logger.error(e);
           }
         });
       });
@@ -1281,7 +1280,7 @@ class DbManager extends Root {
       request.onsuccess = request.onerror = callback;
       delete this.db;
     } catch (e) {
-      logger.error('Failed to delete database', e);
+      Util.logger.error('Failed to delete database', e);
       if (callback) callback(e);
     }
   }

@@ -20,9 +20,9 @@
  * @class  layer.AnnouncementsQuery
  * @extends layer.Core.Query
  */
-const Root = require('../root');
-const Query = require('./query');
-const MessagesQuery = require('./messages-query');
+import Root from '../root';
+import Query from './query';
+import MessagesQuery from './messages-query';
 
 class AnnouncementsQuery extends MessagesQuery {
   _fixPredicate(inValue) {

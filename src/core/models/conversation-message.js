@@ -4,12 +4,12 @@
  * @class layer.Message.ConversationMessage
  * @extends layer.Message
  */
-const Root = require('../root');
-const Message = require('./message');
-const ClientRegistry = require('../client-registry');
-const LayerError = require('../layer-error');
-const Constants = require('../../constants');
-const Util = require('../../util');
+import Root from '../root';
+import Message from './message';
+import ClientRegistry from '../client-registry';
+import { ErrorDictionary } from '../layer-error';
+import Constants from '../../constants';
+import Util from '../../util';
 
 class ConversationMessage extends Message {
   constructor(options) {
@@ -335,7 +335,7 @@ __updateParts(parts) {
    */
   // Abstract Method
   delete(mode) {
-    if (this.isDestroyed) throw new Error(LayerError.dictionary.isDestroyed);
+    if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
     let queryStr;
     switch (mode) {
       case Constants.DELETION_MODE.ALL:
@@ -346,7 +346,7 @@ __updateParts(parts) {
         queryStr = 'mode=my_devices';
         break;
       default:
-        throw new Error(LayerError.dictionary.deletionModeUnsupported);
+        throw new Error(ErrorDictionary.deletionModeUnsupported);
     }
 
     const id = this.id;

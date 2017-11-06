@@ -17,11 +17,10 @@
  * Applications do not typically interact with this class, but may subscribe to its events
  * to get richer detailed information than is available from the layer.Client instance.
  */
-const Root = require('./root');
-const { WebsocketSyncEvent } = require('./sync-event');
-const xhr = require('./xhr');
-const Util = require('../util');
-const logger = Util.logger;
+import Root from './root';
+import { WebsocketSyncEvent } from './sync-event';
+import xhr from './xhr';
+import Util, { logger } from '../util';
 
 const MAX_RECEIPT_CONNECTIONS = 4;
 

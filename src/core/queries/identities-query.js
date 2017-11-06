@@ -20,8 +20,8 @@
  * @class  layer.IdentitiesQuery
  * @extends layer.Core.Query
  */
-const Root = require('../root');
-const Query = require('./query');
+import Root from '../root';
+import Query from './query';
 
 class IdentitiesQuery extends Query {
   _fetchData(pageSize) {

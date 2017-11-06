@@ -12,7 +12,7 @@ module.exports = function(grunt, version) {
 // * -1: Latest - 1 version
 // ** Number: A hardcoded version number
 var supportedBrowsers = {
-  /*'ie11': {
+  'ie11': {
     browserName: 'internet explorer',
     platform: 'Windows 8.1',
     version: '11.0'
@@ -26,7 +26,7 @@ var supportedBrowsers = {
      browserName: 'MicrosoftEdge',
      'platform': 'Windows 10',
      version: 'latest'
-  },*/
+  },
   'safari-1': {
     browserName: 'safari',
     version: '9.0',
@@ -37,7 +37,7 @@ var supportedBrowsers = {
     version: '10.0',
     platform: 'macOS 10.12'
   },
-  'ios-1': {
+/*  'ios-1': {
     browserName: 'iphone',
     version: 'latest-1',
     platform: 'OS X 10.9'
@@ -46,7 +46,7 @@ var supportedBrowsers = {
     browserName: 'iphone',
     version: 'latest',
     platform: 'OS X 10.9'
-  },
+  },*/
   'chrome-1': {
     browserName: 'chrome',
     platform: 'OSX 10.9',
@@ -118,20 +118,21 @@ var unsupportedBrowsers = {
   result.tasks.saucelabs = {
     all: {
       options: {
+        tunnelArgs: ["-B all"],
         browsers: browsers,
         build: "Layer Web XDK <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
-        //urls: ["http://127.0.0.1:9999/test/SpecRunner.html"],
-        urls: [
-          /*"core_client",
+        urls: ["http://localhost:9999/test/SpecRunner.html"],
+        /*urls: [
+          "core_client",
           "core_models_queries",
           "core_services",
           "ui_components",
-          "ui_handlers",*/
-          "ui_messages"/*,
+          "ui_handlers",
+          "ui_messages",
           "ui_mixins",
-        "ui_utils"*/].map(function(testName) {
+        "ui_utils"].map(function(testName) {
             return  "http://127.0.0.1:9999/test/" + testName + ".html?stop=true";
-          }),
+          }),*/
         tunneled: true,
         concurrency: 1,
         throttled: 1,

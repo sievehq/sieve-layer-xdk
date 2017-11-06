@@ -47,12 +47,6 @@ registerComponent('layer-text-view', {
     },
 
     onRerender() {
-      if (this.messageViewer) {
-        this.messageViewer.toggleClass(
-          'layer-message-as-chat-bubble',
-          !this.model.title && !this.model.author
-        );
-      }
       this._processText();
     },
 

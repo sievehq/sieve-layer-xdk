@@ -571,13 +571,6 @@ layerUI.init = function init(settings) {
 };
 
 /**
- * Layer UI for Web version string
- *
- * @type {String}
- */
-layerUI.version = '1.0.0-beta1';
-
-/**
  * This method is shorthand for accessing layer.UI.components.Component.registerComponent
  *
  * Note: This code is actually in components/component.js and is only attached to layerUI

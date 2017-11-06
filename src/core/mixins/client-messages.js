@@ -4,9 +4,9 @@
  * @class layer.mixins.ClientMessages
  */
 
-const Syncable = require('../models/syncable');
-const Message = require('../models/message');
-const ErrorDictionary = require('../layer-error').dictionary;
+import Syncable from '../models/syncable';
+import Message from '../models/message';
+import { ErrorDictionary } from '../layer-error';
 
 module.exports = {
   events: [
