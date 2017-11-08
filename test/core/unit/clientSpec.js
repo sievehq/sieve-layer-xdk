@@ -139,8 +139,8 @@ describe("The Client class", function() {
         it("Should not allow appId to be reset", function() {
             expect(function() {
                 client.appId = "Ray!";
-            }).toThrowError(layer.Core.LayerError.dictionary.appIdImmutable);
-            expect(layer.Core.LayerError.dictionary.appIdImmutable.length > 0).toBe(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.appIdImmutable);
+            expect(layer.Core.LayerError.ErrorDictionary.appIdImmutable.length > 0).toBe(true);
         });
     });
 

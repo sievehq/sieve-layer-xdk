@@ -51,10 +51,6 @@ class IdentitiesQuery extends Query {
     }
   }
 
-  _appendResultsSplice(item) {
-    this.data.push(this._getData(item));
-  }
-
 
   _handleEvents(eventName, evt) {
     switch (eventName) {

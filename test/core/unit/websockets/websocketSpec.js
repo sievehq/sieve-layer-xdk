@@ -562,11 +562,11 @@ describe("The Websocket Socket Manager Class", function() {
         it("Should require a timestamp", function() {
             expect(function() {
                 websocketManager.resync(false);
-            }).toThrowError(layer.Core.LayerError.dictionary.valueNotSupported);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
             expect(function() {
                 websocketManager.resync();
-            }).toThrowError(layer.Core.LayerError.dictionary.valueNotSupported);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
             expect(function() {
                 websocketManager.resync(new Date().toISOString());

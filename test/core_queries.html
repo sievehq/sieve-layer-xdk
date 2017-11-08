@@ -23,26 +23,15 @@
   <!-- include spec files here... -->
     <script type="text/javascript" src="lib/mock-ajax.js"></script>
 
-  <!-- Base Building Block -->
-  <script type="text/javascript" src="core/unit/rootSpec.js"></script>
-
-  <!-- Client -->
-  <script type="text/javascript" src="core/unit/clientAuthenticatorSpec.js"></script>
-  <script type="text/javascript" src="core/unit/clientAuthenticatorRequestSpec.js"></script>
-  <script type="text/javascript" src="core/unit/clientSpec.js"></script>
-  <script type="text/javascript" src="core/unit/mixins/clientIdentitiesMixinSpec.js"></script>
-  <script type="text/javascript" src="core/unit/mixins/clientQueriesMixinSpec.js"></script>
-  <script type="text/javascript" src="core/unit/mixins/clientMessagesMixinSpec.js"></script>
-  <script type="text/javascript" src="core/unit/mixins/clientConversationsMixinSpec.js"></script>
-  <script type="text/javascript" src="core/unit/mixins/clientChannelsMixinSpec.js"></script>
-  <script type="text/javascript" src="core/unit/mixins/clientMembersMixinSpec.js"></script>
-  <script type="text/javascript" src="core/unit/mixins/clientOperationsSpec.js"></script>
-
-  <!-- Utils -->
-  <script type="text/javascript" src="core/unit/utilSpec.js"></script>
-  <script type="text/javascript" src="core/unit/layerErrorSpec.js"></script>
-  <script type="text/javascript" src="core/unit/layerEventSpec.js"></script>
-
+  <!-- Core Objects -->
+  <script type="text/javascript" src="core/unit/queries/queryBuilderSpec.js"></script>
+  <script type="text/javascript" src="core/unit/queries/querySpec.js"></script>
+  <script type="text/javascript" src="core/unit/queries/queryIdentitiesSpec.js"></script>
+  <script type="text/javascript" src="core/unit/queries/queryConversationsSpec.js"></script>
+  <script type="text/javascript" src="core/unit/queries/queryChannelsSpec.js"></script>
+  <script type="text/javascript" src="core/unit/queries/queryMessagesSpec.js"></script>
+  <script type="text/javascript" src="core/unit/queries/queryAnnouncementsSpec.js"></script>
+  <script type="text/javascript" src="core/unit/queries/queryMembersSpec.js"></script>
 
 <script type="text/javascript">
   (function() {
@@ -53,7 +42,7 @@
     reporter.jasmineDone = function(a, b, c) {
       jasmineDone.call(reporter);
       if (jasmine.jsReport.passed) {
-        window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'core_models.html');
+        window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'core_services.html');
       }
     };
     jasmineEnv.addReporter(reporter);

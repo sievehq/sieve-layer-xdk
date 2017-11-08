@@ -35,14 +35,7 @@
   <script type="text/javascript" src="core/unit/models/announcementSpec.js"></script>
   <script type="text/javascript" src="core/unit/models/messagePartSpec.js"></script>
   <script type="text/javascript" src="core/unit/models/contentSpec.js"></script>
-  <script type="text/javascript" src="core/unit/queries/queryBuilderSpec.js"></script>
-  <script type="text/javascript" src="core/unit/queries/querySpec.js"></script>
-  <script type="text/javascript" src="core/unit/queries/queryIdentitiesSpec.js"></script>
-  <script type="text/javascript" src="core/unit/queries/queryConversationsSpec.js"></script>
-  <script type="text/javascript" src="core/unit/queries/queryChannelsSpec.js"></script>
-  <script type="text/javascript" src="core/unit/queries/queryMessagesSpec.js"></script>
-  <script type="text/javascript" src="core/unit/queries/queryAnnouncementsSpec.js"></script>
-  <script type="text/javascript" src="core/unit/queries/queryMembersSpec.js"></script>
+
 
 <script type="text/javascript">
   (function() {
@@ -53,7 +46,7 @@
     reporter.jasmineDone = function(a, b, c) {
       jasmineDone.call(reporter);
       if (jasmine.jsReport.passed) {
-        window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'core_services.html');
+        window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'core_queries.html');
       }
     };
     jasmineEnv.addReporter(reporter);

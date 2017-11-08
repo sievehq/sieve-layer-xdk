@@ -221,8 +221,8 @@ describe("The Channel Class", function() {
         channel.syncState = layer.Constants.SYNC_STATE.SYNCED;
         expect(function() {
           channel.name = "fred";
-        }).toThrowError(layer.Core.LayerError.dictionary.permissionDenied);
-        expect(layer.Core.LayerError.dictionary.permissionDenied).toEqual(jasmine.any(String));
+        }).toThrowError(layer.Core.LayerError.ErrorDictionary.permissionDenied);
+        expect(layer.Core.LayerError.ErrorDictionary.permissionDenied).toEqual(jasmine.any(String));
         expect(channel.name).not.toEqual("fred");
       });
 
@@ -554,7 +554,7 @@ describe("The Channel Class", function() {
           layer.Core.Channel.create({
             name: "Argh"
           });
-        }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
+        }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
 
       });
 

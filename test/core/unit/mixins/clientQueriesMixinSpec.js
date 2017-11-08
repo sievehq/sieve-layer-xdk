@@ -138,8 +138,8 @@ describe("The Client Queries Mixin", function() {
         it("Should throw an error if an invalid id is passed in", function() {
             expect(function() {
                 client.getQuery(5);
-            }).toThrowError(layer.Core.LayerError.dictionary.idParamRequired);
-            expect(layer.Core.LayerError.dictionary.idParamRequired.length > 0).toEqual(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toEqual(true);
         });
 
         it("Should return a Query if it exists", function() {

@@ -133,7 +133,7 @@ function deleteTables(done) {
         it("Should fail if no client or clientId", function() {
           expect(function() {
             new layer.Core.Identity({});
-          }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
         });
 
         it("Should work if client", function() {
@@ -150,7 +150,7 @@ function deleteTables(done) {
 
         it("Should set a userId if none provided", function() {
           expect(new layer.Core.Identity({
-            clientId: client.appId
+            clientId: client.appId,
             id: "layer:///identities/auth0%7Cabc"
           }).userId).toEqual("auth|abc");
         });
@@ -450,15 +450,15 @@ function deleteTables(done) {
         it("Should reject invalid status values", function() {
           expect(function() {
             client.user.setStatus("afraid");
-          }).toThrowError(layer.Core.LayerError.dictionary.valueNotSupported);
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
           expect(function() {
             client.user.setStatus("");
-          }).toThrowError(layer.Core.LayerError.dictionary.valueNotSupported);
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
           expect(function() {
             client.user.setStatus(null);
-          }).toThrowError(layer.Core.LayerError.dictionary.valueNotSupported);
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
         });
 
         it("Should send the specified presence update", function() {

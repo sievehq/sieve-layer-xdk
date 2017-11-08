@@ -1,9 +1,23 @@
 # Web XDK Change Log
 
+# 1.0.0-pre1.14
+
+* Fixes bug in Message Grouping where Status Messages are treated as part of the grouping
+* Adds a `filter` callback to `Layer.Core.Query` and a `filterMessages` property to the `ConversationView`: ```
+render() {
+  return <ConversationView
+    filterMessages={(message) => return isAcceptableMessage(message)} />
+}
+```
+
 ## 1.0.0-pre1.13
 
 * Adds Message Tests for all message types
 * Adds `customResponseData` per choice item for the Choice Model (experimental/risky feature)
+
+## 1.0.0-pre1.11
+
+* Adds `Layer.UI.statusMimeTypes.push(MyCustomModel.MIMEType)` as the way to register a Message Type to be rendered as a Status Message instead of a Sent or Received Message.
 
 ## 1.0.0-pre1.10
 

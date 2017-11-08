@@ -96,6 +96,7 @@ model = new TextModel({
  */
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
 import { registerMessageHandler } from '../../base';
+import { STANDARD_MIME_TYPES } from '../../../constants';
 
 class TextModel extends MessageTypeModel {
   _generateParts(callback) {
@@ -124,7 +125,7 @@ TextModel.prototype.subtitle = '';
 TextModel.prototype.mimeType = 'text/plain';
 
 TextModel.Label = 'Text';
-TextModel.MIMEType = 'application/vnd.layer.text+json';
+TextModel.MIMEType = STANDARD_MIME_TYPES.TEXT;
 TextModel.messageRenderer = 'layer-text-view';
 Root.initClass.apply(TextModel, [TextModel, 'TextModel']);
 

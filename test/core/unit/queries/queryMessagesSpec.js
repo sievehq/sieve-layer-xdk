@@ -120,8 +120,8 @@ describe("The MessagesQuery Class", function() {
                 model: layer.Core.Query.Message,
                 predicate: "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf-hey"
             });
-          }).toThrowError(layer.Core.LayerError.dictionary.invalidPredicate);
-          expect(layer.Core.LayerError.dictionary.invalidPredicate.length > 0).toBe(true);
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+          expect(layer.Core.LayerError.ErrorDictionary.invalidPredicate.length > 0).toBe(true);
         });
     });
 
@@ -134,15 +134,15 @@ describe("The MessagesQuery Class", function() {
         it("Should throw error on ill formed predicate for conversations", function() {
             expect(function() {
                 query._fixPredicate('conversation.id  =    "la:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.dictionary.invalidPredicate);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('conversation.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77b"');
-            }).toThrowError(layer.Core.LayerError.dictionary.invalidPredicate);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('conversation.id  =    "layer:///channels/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.dictionary.invalidPredicate);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
         });
 
         it("Should generate a well formed predicate for conversations from just a UUID", function() {
@@ -160,15 +160,15 @@ describe("The MessagesQuery Class", function() {
         it("Should throw error on ill formed predicate for channels", function() {
             expect(function() {
                 query._fixPredicate('channel.id  =    "la:///channels/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.dictionary.invalidPredicate);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('channel.id  =    "layer:///channels/fb068f9a-3d2b-4fb2-8b04-7efd185e77b"');
-            }).toThrowError(layer.Core.LayerError.dictionary.invalidPredicate);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('channel.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.dictionary.invalidPredicate);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
         });
 
@@ -181,7 +181,7 @@ describe("The MessagesQuery Class", function() {
         it("Should throw an error if neither a conversation nor channel is clearly being queried", function() {
             expect(function() {
                 query._fixPredicate('identity.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.dictionary.invalidPredicate);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
         });
     });
 
@@ -941,7 +941,7 @@ describe("The MessagesQuery Class", function() {
         });
 
         afterEach(function() {
-            query.destroy();
+            if (!query.isDestroyed) query.destroy();
         });
 
         it("Should replace data with a new array containing new results if dataType is object", function() {
@@ -1060,6 +1060,330 @@ describe("The MessagesQuery Class", function() {
 
           // Posttest
           expect(query.totalSize).toEqual(2);
+        });
+
+        var query;
+
+        afterEach(function() {
+            query.destroy();
+        });
+
+        describe("For object type", function() {
+            beforeEach(function() {
+                query = client.createQuery({
+                    client: client,
+                    paginationWindow: 15,
+                    dataType: "object",
+                });
+            });
+
+            it("Should ignore an empty filter property", function() {
+                var data = [
+                    conversation.createMessage("a"),
+                    conversation.createMessage("b"),
+                    conversation.createMessage("c")
+                ];
+                query.filter = null;
+                spyOn(query, '_triggerChange');
+
+                // Run the test
+                query._handleAddEvent('frodos', {
+                    frodos: data,
+                });
+
+                // Posttest
+                expect(query.data).toEqual(data.map(function(item) {return item.toObject();}));
+                expect(query._triggerChange).toHaveBeenCalledWith({
+                    type: 'insert',
+                    index: 0,
+                    target: data[0].toObject(),
+                    query: query,
+                });
+                expect(query._triggerChange).toHaveBeenCalledWith({
+                    type: 'insert',
+                    index: 1,
+                    target: data[1].toObject(),
+                    query: query,
+                });
+                expect(query._triggerChange).toHaveBeenCalledWith({
+                    type: 'insert',
+                    index: 2,
+                    target: data[2].toObject(),
+                    query: query,
+                });
+            });
+
+            it("Should respect the filter property", function() {
+                var data = [
+                    conversation.createMessage("a"),
+                    conversation.createMessage("b"),
+                    conversation.createMessage("c")
+                ];
+                query.filter = function(message) {
+                    return message === data[1].toObject();
+                }
+                spyOn(query, '_triggerChange');
+
+                // Run the test
+                query._handleAddEvent('frodos', {
+                    frodos: data,
+                });
+
+                // Posttest
+                expect(query.data).toEqual([data[1].toObject()]);
+                expect(query._triggerChange).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                    type: 'insert',
+                    target: data[0].toObject(),
+                    query: query,
+                }));
+                expect(query._triggerChange).toHaveBeenCalledWith({
+                    type: 'insert',
+                    index: 0,
+                    target: data[1].toObject(),
+                    query: query,
+                });
+                expect(query._triggerChange).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                    type: 'insert',
+                    target: data[2].toObject(),
+                    query: query,
+                }));
+            });
+        });
+
+        describe("For instance type", function() {
+            beforeEach(function() {
+                query = client.createQuery({
+                    client: client,
+                    paginationWindow: 15,
+                    dataType: "instance",
+                });
+            });
+
+            it("Should ignore an empty filter property", function() {
+                var data = [
+                    conversation.createMessage("a"),
+                    conversation.createMessage("b"),
+                    conversation.createMessage("c")
+                ];
+                query.filter = null;
+                spyOn(query, '_triggerChange');
+
+                // Run the test
+                query._handleAddEvent('frodos', {
+                    frodos: data,
+                });
+
+                // Posttest
+                expect(query.data).toEqual(data);
+                expect(query._triggerChange).toHaveBeenCalledWith({
+                    type: 'insert',
+                    index: 0,
+                    target: data[0],
+                    query: query,
+                });
+                expect(query._triggerChange).toHaveBeenCalledWith({
+                    type: 'insert',
+                    index: 1,
+                    target: data[1],
+                    query: query,
+                });
+                expect(query._triggerChange).toHaveBeenCalledWith({
+                    type: 'insert',
+                    index: 2,
+                    target: data[2],
+                    query: query,
+                });
+            });
+
+            it("Should respect the filter property", function() {
+                var data = [
+                    conversation.createMessage("a"),
+                    conversation.createMessage("b"),
+                    conversation.createMessage("c")
+                ];
+                query.filter = function(message) {
+                    return message === data[1];
+                }
+                spyOn(query, '_triggerChange');
+
+                // Run the test
+                query._handleAddEvent('frodos', {
+                    frodos: data,
+                });
+
+                // Posttest
+                expect(query.data).toEqual([data[1]]);
+                expect(query._triggerChange).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                    type: 'insert',
+                    target: data[0],
+                    query: query,
+                }));
+                expect(query._triggerChange).toHaveBeenCalledWith({
+                    type: 'insert',
+                    index: 0,
+                    target: data[1],
+                    query: query,
+                });
+                expect(query._triggerChange).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                    type: 'insert',
+                    target: data[2],
+                    query: query,
+                }));
+            });
+        });
+
+        describe("Handling the filter property", function() {
+            var query;
+
+            afterEach(function() {
+                query.destroy();
+            });
+
+            describe("For object type", function() {
+                beforeEach(function() {
+                    query = client.createQuery({
+                        client: client,
+                        model: Layer.Core.Query.Message,
+                        paginationWindow: 15,
+                        dataType: "object",
+                        predicate: 'conversation.id = "' + conversation.id + '"'
+                    });
+                    query.data = [];
+                });
+
+                it("Should ignore an empty filter property", function() {
+                    var data = [
+                        conversation.createMessage("a"),
+                        conversation.createMessage("b"),
+                        conversation.createMessage("c")
+                    ];
+                    query.filter = null;
+                    spyOn(query, '_triggerChange');
+
+                    // Run the test
+                    query._handleAddEvent('frodos', {
+                        frodos: data,
+                    });
+
+                    // Posttest
+                    expect(query.data).toEqual(data.map(function(item) {return item.toObject();}));
+                    var insertCallTargets = query._triggerChange.calls.allArgs().map(function(call) {
+                        return call[0].target;
+                    });
+                    expect(insertCallTargets.indexOf(data[0].toObject()) != -1).toBe(true);
+                    expect(insertCallTargets.indexOf(data[1].toObject()) != -1).toBe(true);
+                    expect(insertCallTargets.indexOf(data[2].toObject()) != -1).toBe(true);
+                });
+
+                it("Should respect the filter property", function() {
+                    var data = [
+                        conversation.createMessage("a"),
+                        conversation.createMessage("b"),
+                        conversation.createMessage("c")
+                    ];
+                    query.filter = function(message) {
+                        return message === data[1].toObject();
+                    }
+                    spyOn(query, '_triggerChange');
+
+                    // Run the test
+                    query._handleAddEvent('frodos', {
+                        frodos: data,
+                    });
+
+                    // Posttest
+                    expect(query.data).toEqual([data[1].toObject()]);
+                    expect(query._triggerChange).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                        type: 'insert',
+                        target: data[0].toObject(),
+                        query: query,
+                    }));
+                    expect(query._triggerChange).toHaveBeenCalledWith({
+                        type: 'insert',
+                        index: 0,
+                        target: data[1].toObject(),
+                        query: query,
+                    });
+                    expect(query._triggerChange).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                        type: 'insert',
+                        target: data[2].toObject(),
+                        query: query,
+                    }));
+                });
+            });
+
+            describe("For instance type", function() {
+                beforeEach(function() {
+                    query = client.createQuery({
+                        client: client,
+                        model: Layer.Core.Query.Message,
+                        paginationWindow: 15,
+                        dataType: "instance",
+                        predicate: 'conversation.id = "' + conversation.id + '"'
+                    });
+                    query.data = [];
+                });
+
+                it("Should ignore an empty filter property", function() {
+                    var data = [
+                        conversation.createMessage("a"),
+                        conversation.createMessage("b"),
+                        conversation.createMessage("c")
+                    ];
+                    query.filter = null;
+                    spyOn(query, '_triggerChange');
+
+                    // Run the test
+                    query._handleAddEvent('frodos', {
+                        frodos: data,
+                    });
+
+                    // Posttest
+                    expect(query.data).toEqual(data);
+                    var triggerArgTargets = query._triggerChange.calls.allArgs().map(function(call) {
+                        return call[0].target;
+                    });
+                    expect(triggerArgTargets[0]).toBe(data[0]);
+                    expect(triggerArgTargets[1]).toBe(data[1]);
+                    expect(triggerArgTargets[2]).toBe(data[2]);
+                });
+
+                it("Should respect the filter property", function() {
+                    var data = [
+                        conversation.createMessage("a"),
+                        conversation.createMessage("b"),
+                        conversation.createMessage("c")
+                    ];
+                    query.filter = function(message) {
+                        return message === data[1];
+                    }
+                    spyOn(query, '_triggerChange');
+
+                    // Run the test
+                    query._handleAddEvent('frodos', {
+                        frodos: data,
+                    });
+
+                    // Posttest
+                    expect(query.data).toEqual([data[1]]);
+                    expect(query._triggerChange).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                        type: 'insert',
+                        target: data[0],
+                        query: query,
+                    }));
+                    expect(query._triggerChange).toHaveBeenCalledWith({
+                        type: 'insert',
+                        index: 0,
+                        target: data[1],
+                        query: query,
+                    });
+                    expect(query._triggerChange).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                        type: 'insert',
+                        target: data[2],
+                        query: query,
+                    }));
+                });
+            });
         });
     });
 

@@ -115,8 +115,8 @@ describe("The Client Channel Mixin", function() {
         it("Should fail without id", function() {
             expect(function() {
                 client.getChannel(5);
-            }).toThrowError(layer.Core.LayerError.dictionary.idParamRequired);
-            expect(layer.Core.LayerError.dictionary.idParamRequired.length > 0).toBe(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
         });
     });
 
@@ -472,8 +472,8 @@ describe("The Client Channel Mixin", function() {
             client.isAuthenticated = false;
             expect(function() {
                 client.createChannel({members: [userIdentity, userIdentity2]});
-            }).toThrowError(layer.Core.LayerError.dictionary.clientMustBeReady);
-            expect(layer.Core.LayerError.dictionary.clientMustBeReady.length > 0).toEqual(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMustBeReady);
+            expect(layer.Core.LayerError.ErrorDictionary.clientMustBeReady.length > 0).toEqual(true);
         });
     });
 });

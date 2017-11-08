@@ -564,13 +564,16 @@ registerComponent('layer-message-list', {
      *
      * @method _inSameGroup
      * @private
-     * @param {layer.Message} m1
-     * @param {layer.Message} m2
+     * @param {Layer.UI.Component} message-item1
+     * @param {Layer.UI.Component} message-item2
      */
     _inSameGroup(m1, m2) {
       if (!m1 || !m2) return false;
-      const diff = Math.abs(m1.sentAt.getTime() - m2.sentAt.getTime());
-      return m1.sender === m2.sender && diff < LayerUI.settings.messageGroupTimeSpan;
+      if (m1.tagName !== m2.tagName) return false;
+      const message1 = m1.item;
+      const message2 = m2.item;
+      const diff = Math.abs(message1.sentAt.getTime() - message2.sentAt.getTime());
+      return message1.sender === message2.sender && diff < LayerUI.settings.messageGroupTimeSpan;
     },
 
     /**
@@ -585,7 +588,7 @@ registerComponent('layer-message-list', {
       if (widgets.length === 0) return;
       if (isTopItemNew) widgets[0].firstInSeries = true;
       for (let i = 1; i < widgets.length; i++) {
-        const sameGroup = this._inSameGroup(widgets[i - 1].item, widgets[i].item);
+        const sameGroup = this._inSameGroup(widgets[i - 1], widgets[i]);
         widgets[i].firstInSeries = !sameGroup;
         widgets[i - 1].lastInSeries = !sameGroup;
       }

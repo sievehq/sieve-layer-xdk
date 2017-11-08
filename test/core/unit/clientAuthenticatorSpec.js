@@ -71,8 +71,8 @@ describe("The Client Authenticator Class", function() {
                     appId: "",
                     url: "https://duh.com"
                 });
-            }).toThrowError(layer.Core.LayerError.dictionary.appIdMissing);
-            expect(layer.Core.LayerError.dictionary.appIdMissing.length > 0).toBe(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.appIdMissing);
+            expect(layer.Core.LayerError.ErrorDictionary.appIdMissing.length > 0).toBe(true);
         });
 
          it("Should allow customization of the websocketUrl", function() {
@@ -549,11 +549,11 @@ describe("The Client Authenticator Class", function() {
             it("Should throw errors if no userId or sessionToken", function () {
                 expect(function () {
                     client.connectWithSession('', 'sessionToken');
-                }).toThrowError(layer.Core.LayerError.dictionary.sessionAndUserRequired);
+                }).toThrowError(layer.Core.LayerError.ErrorDictionary.sessionAndUserRequired);
 
                 expect(function () {
                     client.connectWithSession('userId', '');
-                }).toThrowError(layer.Core.LayerError.dictionary.sessionAndUserRequired);
+                }).toThrowError(layer.Core.LayerError.ErrorDictionary.sessionAndUserRequired);
             });
 
             it("Should call _restoreLastUser and set the user with the result", function() {
@@ -838,8 +838,8 @@ describe("The Client Authenticator Class", function() {
             it("Should fail without an identityToken", function () {
                 expect(function () {
                     client.answerAuthenticationChallenge();
-                }).toThrowError(layer.Core.LayerError.dictionary.identityTokenMissing);
-                expect(layer.Core.LayerError.dictionary.identityTokenMissing.length > 0).toBe(true);
+                }).toThrowError(layer.Core.LayerError.ErrorDictionary.identityTokenMissing);
+                expect(layer.Core.LayerError.ErrorDictionary.identityTokenMissing.length > 0).toBe(true);
             });
 
             it("Should accept a userId if it matches the current userId", function () {
@@ -871,8 +871,8 @@ describe("The Client Authenticator Class", function() {
                 // Run
                 expect(function() {
                     client.answerAuthenticationChallenge(identityToken);
-                }).toThrowError(layer.Core.LayerError.dictionary.invalidUserIdChange)
-                expect(layer.Core.LayerError.dictionary.invalidUserIdChange).toEqual(jasmine.any(String));
+                }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidUserIdChange)
+                expect(layer.Core.LayerError.ErrorDictionary.invalidUserIdChange).toEqual(jasmine.any(String));
             });
 
             it("Should call _setUserId", function () {
@@ -1616,8 +1616,8 @@ describe("The Client Authenticator Class", function() {
                 client.isConnected = true;
                 expect(function () {
                     client.appId = "appId2";
-                }).toThrowError(layer.Core.LayerError.dictionary.cantChangeIfConnected);
-                expect(layer.Core.LayerError.dictionary.cantChangeIfConnected.length > 0).toBe(true);
+                }).toThrowError(layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);
+                expect(layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected.length > 0).toBe(true);
             });
 
             it("Should not be possible to change user instances once connected", function () {
@@ -1626,14 +1626,14 @@ describe("The Client Authenticator Class", function() {
                     client.user = new layer.Core.Identity({
                         clientId: client.appId
                     });
-                }).toThrowError(layer.Core.LayerError.dictionary.cantChangeIfConnected);
+                }).toThrowError(layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);
             });
 
             it("Should not be possible to change userIds", function () {
                 expect(client.user.userId.length > 0).toBe(true);
                 expect(function () {
                     client.user.userId = "userId2";
-                }).toThrowError(layer.Core.LayerError.dictionary.cantChangeUserId);
+                }).toThrowError(layer.Core.LayerError.ErrorDictionary.cantChangeUserId);
             });
         });
 

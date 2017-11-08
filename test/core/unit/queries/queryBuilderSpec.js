@@ -59,7 +59,7 @@ describe("The QueryBuilder Classes", function() {
     });
 
 
-    describe("The MessagesQuery Class", function() {
+    describe("The MessagesQueryBuilder Class", function() {
 
         describe("The constructor() method", function() {
             it("Should not require parameters", function() {
@@ -154,7 +154,7 @@ describe("The QueryBuilder Classes", function() {
         });
     });
 
-    describe("The AnnouncementsQuery Class", function() {
+    describe("The AnnouncementsQueryBuilder Class", function() {
 
         describe("The constructor() method", function() {
             it("Should not require parameters", function() {
@@ -198,7 +198,7 @@ describe("The QueryBuilder Classes", function() {
         });
     });
 
-    describe("The IdentitiesQuery Class", function() {
+    describe("The IdentitiesQueryBuilder Class", function() {
 
         describe("The constructor() method", function() {
             it("Should not require parameters", function() {

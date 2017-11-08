@@ -138,9 +138,12 @@ class Conversation extends Container {
     let messageConfig;
     if (typeof options === 'string') {
       // TODO: Get rid of hard coded string; but also do not build in a dependency upon any UI module.
-      messageConfig =  {
-        parts: [{ body: { text: options }, mimeType: 'application/vnd.layer.text+json' }],
-      }
+      messageConfig = {
+        parts: [{
+          body: JSON.stringify({ text: options }),
+          mimeType: Constants.STANDARD_MIME_TYPES.TEXT + ';role=root',
+        }],
+      };
     } else {
       messageConfig = options;
     }

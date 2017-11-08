@@ -320,8 +320,8 @@ describe("The Root Class", function() {
         a.destroy();
         expect(function() {
           a.destroy();
-        }).toThrowError(layer.Core.LayerError.dictionary.alreadyDestroyed);
-        expect(layer.Core.LayerError.dictionary.alreadyDestroyed.length > 0).toBe(true);
+        }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadyDestroyed);
+        expect(layer.Core.LayerError.ErrorDictionary.alreadyDestroyed.length > 0).toBe(true);
       });
 
       it("Should unsubscribe from all events", function() {
@@ -483,8 +483,8 @@ describe("The Root Class", function() {
         b.destroy();
         expect(function() {
           a._prepareOn("destroy", function() {}, b);
-        }).toThrowError(layer.Core.LayerError.dictionary.isDestroyed);
-        expect(layer.Core.LayerError.dictionary.isDestroyed.length > 0).toBe(true);
+        }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
+        expect(layer.Core.LayerError.ErrorDictionary.isDestroyed.length > 0).toBe(true);
       });
 
       it("Should throw an error if a single name isn't supported", function() {

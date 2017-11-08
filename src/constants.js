@@ -90,4 +90,8 @@ module.exports = {
     ALL: 'all_participants',
     MY_DEVICES: 'my_devices',
   },
+
+  STANDARD_MIME_TYPES: {
+    TEXT: 'application/vnd.layer.text+json',
+  },
 };

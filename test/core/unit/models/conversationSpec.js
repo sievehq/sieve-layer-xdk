@@ -296,7 +296,7 @@ describe("The Conversation Class", function() {
         // Run + Posttest
         expect(function() {
             conversation.send();
-        }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
+        }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
       });
 
         it("Should update the lastMessage property", function() {
@@ -990,8 +990,8 @@ describe("The Conversation Class", function() {
             // Run
             expect(function() {
                 conversation.removeParticipants([userIdentity1, userIdentity2, userIdentity3]);
-            }).toThrowError(layer.Core.LayerError.dictionary.moreParticipantsRequired);
-            expect(layer.Core.LayerError.dictionary.moreParticipantsRequired).toEqual(jasmine.any(String));
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.moreParticipantsRequired);
+            expect(layer.Core.LayerError.ErrorDictionary.moreParticipantsRequired).toEqual(jasmine.any(String));
         });
 
         it("Should return this", function() {
@@ -1013,8 +1013,8 @@ describe("The Conversation Class", function() {
             // Run
             expect(function() {
                 conversation.replaceParticipants([]);
-            }).toThrowError(layer.Core.LayerError.dictionary.moreParticipantsRequired);
-            expect(layer.Core.LayerError.dictionary.moreParticipantsRequired).toEqual(jasmine.any(String));
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.moreParticipantsRequired);
+            expect(layer.Core.LayerError.ErrorDictionary.moreParticipantsRequired).toEqual(jasmine.any(String));
         });
 
         it("Should call _patchParticipants", function() {
@@ -1269,7 +1269,7 @@ describe("The Conversation Class", function() {
         conversation.isDestroyed = true;
         expect(function() {
           conversation.leave();
-        }).toThrowError(layer.Core.LayerError.dictionary.isDestroyed);
+        }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
       });
       it("Should call _delete", function() {
         spyOn(conversation, "_delete");
@@ -1283,13 +1283,13 @@ describe("The Conversation Class", function() {
         conversation.isDestroyed = true;
         expect(function() {
           conversation.delete(layer.Constants.DELETION_MODE.ALL);
-        }).toThrowError(layer.Core.LayerError.dictionary.isDestroyed);
+        }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
       });
 
       it("Should fail if invalid deletion mode", function() {
         expect(function() {
           conversation.delete(false);
-        }).toThrowError(layer.Core.LayerError.dictionary.deletionModeUnsupported);
+        }).toThrowError(layer.Core.LayerError.ErrorDictionary.deletionModeUnsupported);
       });
 
       it("Should handle deletion mode true for backwards compatability", function() {
@@ -1927,8 +1927,8 @@ describe("The Conversation Class", function() {
             // Run
             expect(function() {
                 conversation._xhr({});
-            }).toThrowError(layer.Core.LayerError.dictionary.isDestroyed);
-            expect(layer.Core.LayerError.dictionary.isDestroyed).toEqual(jasmine.any(String));
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
+            expect(layer.Core.LayerError.ErrorDictionary.isDestroyed).toEqual(jasmine.any(String));
         });
 
         it("Should throw an error if the conversation does not have a client", function() {
@@ -1938,8 +1938,8 @@ describe("The Conversation Class", function() {
             // Run
             expect(function() {
                 conversation._xhr({});
-            }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
-            expect(layer.Core.LayerError.dictionary.clientMissing).toEqual(jasmine.any(String));
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
+            expect(layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
 
             // Recovery
             conversation.clientId = client.appId;
@@ -2094,7 +2094,7 @@ describe("The Conversation Class", function() {
                 var conversation = layer.Core.Conversation.create({
                     participants: ["a"]
                 });
-            }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
         });
 
         it("Should return a matching distinct conversation", function() {

@@ -81,8 +81,8 @@ class ChannelsQuery extends ConversationsQuery {
   }
 
 
-  _appendResultsSplice(item) {
-    this.data.unshift(this._getData(item));
+  _getInsertIndex(item, data) {
+    return 0;
   }
 
   _handleChangeEvent(name, evt) {
@@ -188,7 +188,8 @@ class ChannelsQuery extends ConversationsQuery {
 
   _handleAddEvent(name, evt) {
     // Filter out any Channels already in our data
-    const list = evt[name].filter(channel => this._getIndex(channel.id) === -1);
+    const list = evt[name].filter(channel => this._getIndex(channel.id) === -1)
+      .filter(obj => !this.filter || this.filter(obj));
 
     if (list.length) {
       const data = this.data;

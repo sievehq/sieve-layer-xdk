@@ -82,8 +82,8 @@ describe("The ConversationsQuery Class", function() {
                     model: layer.Core.Query.Conversation,
                     predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
                 });
-            }).toThrowError(layer.Core.LayerError.dictionary.predicateNotSupported);
-            expect(layer.Core.LayerError.dictionary.predicateNotSupported.length > 0).toBe(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.predicateNotSupported);
+            expect(layer.Core.LayerError.ErrorDictionary.predicateNotSupported.length > 0).toBe(true);
         });
     });
 
@@ -1023,6 +1023,62 @@ describe("The ConversationsQuery Class", function() {
 
             // Posttest
             expect(query.totalSize).toEqual(2);
+        });
+
+        describe("Handling the filter property", function() {
+            it("Should respect the filter property for object type", function() {
+                query.data = [];
+                var data = [
+                    conversation,
+                    conversation2,
+                    client.createConversation({ participants: ["zbdd"] }),
+                ];
+                query.dataType = 'object';
+
+                query.filter = function(conversation) {
+                    return conversation === data[1];
+                }
+                spyOn(query, '_triggerChange');
+
+                // Run the test
+                query._handleAddEvent('frodos', {
+                    frodos: data,
+                });
+
+                // Posttest
+                expect(query.data).toEqual([data[1].toObject()]);
+                var triggerChangeTargets = query._triggerChange.calls.allArgs().map(function(call) {
+                    return call[0].target;
+                });
+                expect(triggerChangeTargets).toEqual([data[1].toObject()]);
+            });
+
+            it("Should respect the filter property for instance type", function() {
+                query.data = [];
+                var data = [
+                    conversation,
+                    conversation2,
+                    client.createConversation({ participants: ["zbdd"] }),
+                ];
+                query.dataType = 'instance';
+
+                query.filter = function(conversation) {
+                    return conversation === data[1];
+                }
+                spyOn(query, '_triggerChange');
+
+                // Run the test
+                query._handleAddEvent('frodos', {
+                    frodos: data,
+                });
+
+                // Posttest
+                expect(query.data).toEqual([data[1]]);
+                var triggerChangeTargets = query._triggerChange.calls.allArgs().map(function(call) {
+                    return call[0].target;
+                });
+                expect(triggerChangeTargets).toEqual([data[1]]);
+            });
         });
     });
 

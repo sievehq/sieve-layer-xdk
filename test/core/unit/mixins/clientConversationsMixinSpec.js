@@ -118,8 +118,8 @@ describe("The Client Conversation Mixin", function() {
         it("Should fail without id", function() {
             expect(function() {
                 client.getConversation(5);
-            }).toThrowError(layer.Core.LayerError.dictionary.idParamRequired);
-            expect(layer.Core.LayerError.dictionary.idParamRequired.length > 0).toBe(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
         });
 
         it("Should not load if not ready", function() {
@@ -483,8 +483,8 @@ describe("The Client Conversation Mixin", function() {
             client.isAuthenticated = false;
             expect(function() {
                 client.createConversation({participants: [userIdentity, userIdentity2]});
-            }).toThrowError(layer.Core.LayerError.dictionary.clientMustBeReady);
-            expect(layer.Core.LayerError.dictionary.clientMustBeReady.length > 0).toEqual(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMustBeReady);
+            expect(layer.Core.LayerError.ErrorDictionary.clientMustBeReady.length > 0).toEqual(true);
         });
     });
 });

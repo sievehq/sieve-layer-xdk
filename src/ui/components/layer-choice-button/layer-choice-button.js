@@ -97,7 +97,7 @@ registerComponent('layer-choice-button', {
       while (cardView.tagName !== 'LAYER-MESSAGE-VIEWER' && cardView.parentComponent) {
         cardView = cardView.parentComponent;
       }
-      if (cardView) cardView.runAction({ event: this.model.responseName, data: this.model });
+      if (cardView !== this) cardView.runAction({ event: this.model.responseName, data: this.model });
       evt.target.blur();
     },
   },

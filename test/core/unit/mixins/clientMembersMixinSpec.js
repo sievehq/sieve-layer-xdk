@@ -104,8 +104,8 @@ describe("The Client Members Mixin", function() {
         it("Should fail without id", function() {
             expect(function() {
                 client.getMember(5);
-            }).toThrowError(layer.Core.LayerError.dictionary.idParamRequired);
-            expect(layer.Core.LayerError.dictionary.idParamRequired.length > 0).toBe(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
         });
     });
 

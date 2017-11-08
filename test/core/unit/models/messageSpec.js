@@ -207,8 +207,8 @@ describe("The Message class", function() {
         it("Should require a Client", function() {
             expect(function() {
                 new layer.Core.Message.ConversationMessage({});
-            }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
-            expect(layer.Core.LayerError.dictionary.clientMissing.length > 0).toBe(true);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
+            expect(layer.Core.LayerError.ErrorDictionary.clientMissing.length > 0).toBe(true);
         });
 
         it("Should call _populateFromServer", function() {
@@ -1289,7 +1289,7 @@ describe("The Message class", function() {
             // Run
             expect(function() {
                 m.presend();
-            }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
         });
 
         it("Should fail if conversationId is missing", function() {
@@ -1298,7 +1298,7 @@ describe("The Message class", function() {
             // Run
             expect(function() {
                 m.presend();
-            }).toThrowError(layer.Core.LayerError.dictionary.conversationMissing);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.conversationMissing);
         });
 
 
@@ -1306,12 +1306,12 @@ describe("The Message class", function() {
             m._setSyncing();
             expect(function() {
                 m.presend();
-            }).toThrowError(layer.Core.LayerError.dictionary.alreadySent);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadySent);
 
             m._setSynced();
             expect(function() {
                 m.presend();
-            }).toThrowError(layer.Core.LayerError.dictionary.alreadySent);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadySent);
         });
 
 
@@ -1359,7 +1359,7 @@ describe("The Message class", function() {
             // Run
             expect(function() {
                 m.send();
-            }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
         });
 
         it("Should fail if conversationId is missing", function() {
@@ -1368,7 +1368,7 @@ describe("The Message class", function() {
             // Run
             expect(function() {
                 m.send();
-            }).toThrowError(layer.Core.LayerError.dictionary.conversationMissing);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.conversationMissing);
         });
 
         it("Should load Conversation if missing", function() {
@@ -1404,19 +1404,19 @@ describe("The Message class", function() {
             m._setSyncing();
             expect(function() {
                 m.send();
-            }).toThrowError(layer.Core.LayerError.dictionary.alreadySent);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadySent);
 
             m._setSynced();
             expect(function() {
                 m.send();
-            }).toThrowError(layer.Core.LayerError.dictionary.alreadySent);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadySent);
         });
 
         it("Should fail if there are no parts", function() {
             m.parts = [];
             expect(function() {
                 m.send();
-            }).toThrowError(layer.Core.LayerError.dictionary.partsMissing);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.partsMissing);
         });
 
         it("Should call _setSyncing", function() {
@@ -1922,14 +1922,14 @@ describe("The Message class", function() {
             // Run
             expect(function() {
                 m.delete();
-            }).toThrowError(layer.Core.LayerError.dictionary.isDestroyed);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
         });
 
         it("Should fail if invalid deletion mode", function() {
             // Run
             expect(function() {
                 m.delete(false);
-            }).toThrowError(layer.Core.LayerError.dictionary.deletionModeUnsupported);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.deletionModeUnsupported);
         });
 
 
@@ -2349,7 +2349,7 @@ describe("The Message class", function() {
             // Run
             expect(function() {
                 m._xhr({});
-            }).toThrowError(layer.Core.LayerError.dictionary.isDestroyed);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
         });
 
         it("Should use resource url", function() {

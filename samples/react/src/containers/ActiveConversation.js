@@ -18,6 +18,7 @@ import { googleMapsKey } from '../../common/identityServices';
 const { ConversationView, SendButton, FileUploadButton, MenuButton }  = LayerReactUI;
 const LayerUIUtil = Layer.UI.utils;
 const QueryBuilder = Layer.Core.QueryBuilder;
+const ResponseModel = Layer.Core.Client.getMessageTypeModelClass('ResponseModel');
 
 /**
  * Copy data from reducers into our properties
@@ -395,6 +396,12 @@ export default class ActiveConversation extends Component {
     ];
   };
 
+  filterMessages(message) {
+    const model = layerClient.createMessageTypeModel(message);
+    if (model && model instanceof ResponseModel && message.sender === layerClient.user) return false;
+    return true;
+  }
+
   /**
    * Render the Right Panel which contains the Header, and the Conversation Panel
    */
@@ -435,6 +442,7 @@ export default class ActiveConversation extends Component {
           onCancelEditConversationTitle={actions.cancelEditConversationTitle}/>
         <ConversationView
           ref='conversationPanel'
+          queryFilter= {this.filterMessages}
           replaceableContent={replaceableContent}
           onRenderListItem={LayerUIUtil.dateSeparator}
           conversationId={activeConversationId}/>

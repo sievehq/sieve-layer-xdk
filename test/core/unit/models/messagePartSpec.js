@@ -364,8 +364,8 @@ describe("The MessageParts class", function() {
         delete part._content;
         expect(function() {
           part.fetchStream();
-        }).toThrowError(layer.Core.LayerError.dictionary.contentRequired);
-        expect(layer.Core.LayerError.dictionary.contentRequired.length > 0).toBe(true);
+        }).toThrowError(layer.Core.LayerError.ErrorDictionary.contentRequired);
+        expect(layer.Core.LayerError.ErrorDictionary.contentRequired.length > 0).toBe(true);
       });
 
       it("Should call refreshContent if expired", function() {

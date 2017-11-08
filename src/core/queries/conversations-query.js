@@ -84,12 +84,6 @@ class ConversationsQuery extends Query {
     }
   }
 
-  _appendResultsSplice(item) {
-    const data = this.data;
-    const index = this._getInsertIndex(item, data);
-    data.splice(index, 0, this._getData(item));
-  }
-
   _handleEvents(eventName, evt) {
     switch (eventName) {
 
@@ -217,7 +211,9 @@ class ConversationsQuery extends Query {
 
   _handleAddEvent(name, evt) {
     // Filter out any Conversations already in our data
-    const list = evt[name].filter(conversation => this._getIndex(conversation.id) === -1);
+    const list = evt[name].filter(conversation => this._getIndex(conversation.id) === -1)
+      .filter(obj => !this.filter || this.filter(obj));
+
 
 
     if (list.length) {

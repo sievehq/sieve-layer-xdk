@@ -63,7 +63,7 @@ class MessagesQuery extends Query {
     // Do nothing if we don't have a conversation to query on
     if (!predicateIds) {
       if (this.predicate && !this.predicate.match(/['"]/)) {
-        Logger.error('This query may need to quote its value');
+        logger.error('This query may need to quote its value');
       }
       return;
     }
@@ -198,12 +198,6 @@ class MessagesQuery extends Query {
     if (channel && !channel.isSaved()) {
       this.pagedToEnd = true;
     }
-  }
-
-  _appendResultsSplice(item) {
-    const data = this.data;
-    const index = this._getInsertIndex(item, data);
-    data.splice(index, 0, this._getData(item));
   }
 
   _getInsertIndex(message, data) {
@@ -371,7 +365,9 @@ class MessagesQuery extends Query {
       })
       // Filter out Messages that are already in our data set
       .filter(message => this._getIndex(message.id) === -1)
-      .map(message => this._getData(message));
+      .map(message => this._getData(message))
+      .filter(message => !this.filter || this.filter(message));
+
 
     // Add them to our result set and trigger an event for each one
     if (list.length) {
@@ -379,7 +375,7 @@ class MessagesQuery extends Query {
       list.forEach((item) => {
         const index = this._getInsertIndex(item, data);
         data.splice(index, 0, item);
-        if (index !== 0) Logger.warn('Index of ' + item.id + ' is ' + index + '; position is ' + item.position + '; compared to ' + data[0].position);
+        if (index !== 0) logger.warn('Index of ' + item.id + ' is ' + index + '; position is ' + item.position + '; compared to ' + data[0].position);
 
         this.totalSize += 1;
 

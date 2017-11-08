@@ -104,9 +104,12 @@ class Channel extends Container {
   createMessage(options = {}) {
     let messageConfig;
     if (typeof options === 'string') {
-      messageConfig =  {
-        parts: [{ body: { text: options }, mimeType: 'application/vnd.layer.text+json' }],
-      }
+      messageConfig = {
+        parts: [{
+          body: JSON.stringify({ text: options }),
+          mimeType: Constants.STANDARD_MIME_TYPES.TEXT + ';role=root',
+        }],
+      };
     } else {
       messageConfig = options;
     }

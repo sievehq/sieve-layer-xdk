@@ -74,8 +74,8 @@ describe("The Syncable Class", function() {
         it("Should throw error if no client", function() {
           expect(function() {
             layer.Core.Message.load(responses.message1.id);
-          }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
-          expect(layer.Core.LayerError.dictionary.clientMissing).toEqual(jasmine.any(String));
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
+          expect(layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
         });
 
         it("Should call dbManager.getObject", function() {
@@ -176,8 +176,8 @@ describe("The Syncable Class", function() {
         it("Should throw error if no client", function() {
           expect(function() {
             layer.Announcement.load(responses.announcement.id);
-          }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
-          expect(layer.Core.LayerError.dictionary.clientMissing).toEqual(jasmine.any(String));
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
+          expect(layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
         });
 
         it("Should populateFromServer and trigger loaded if db has data", function() {
@@ -217,8 +217,8 @@ describe("The Syncable Class", function() {
         it("Should throw error if no client", function() {
           expect(function() {
             layer.Core.Conversation.load(responses.conversation1.id);
-          }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
-          expect(layer.Core.LayerError.dictionary.clientMissing).toEqual(jasmine.any(String));
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
+          expect(layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
         });
 
         it("Should populateFromServer and trigger loaded if db has data", function() {
@@ -258,8 +258,8 @@ describe("The Syncable Class", function() {
         it("Should throw error if no client", function() {
           expect(function() {
             layer.Core.Identity.load(responses.useridentity.id);
-          }).toThrowError(layer.Core.LayerError.dictionary.clientMissing);
-          expect(layer.Core.LayerError.dictionary.clientMissing).toEqual(jasmine.any(String));
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
+          expect(layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
         });
 
         it("Should populateFromServer and trigger loaded if db has data", function() {

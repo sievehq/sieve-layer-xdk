@@ -84,7 +84,7 @@ describe("The Announcement class", function() {
             // Run
             expect(function() {
                 announcement.delete();
-            }).toThrowError(layer.Core.LayerError.dictionary.isDestroyed);
+            }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
         });
 
         it("Should call _xhr", function() {

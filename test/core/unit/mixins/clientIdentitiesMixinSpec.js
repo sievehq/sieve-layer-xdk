@@ -137,7 +137,7 @@ describe("The Client Identities Mixin", function() {
       it("Should require an ID", function() {
           expect(function() {
               client.getIdentity(55);
-          }).toThrowError(layer.Core.LayerError.dictionary.idParamRequired);
+          }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
       });
   });
 

@@ -147,9 +147,14 @@ describe('Choice Message Components', function() {
           body: JSON.stringify({
             question: "hello",
             choices: [
-              {text: "a", id: "aa"},
-              {text: "b", id: "bb"},
-              {text: "c", id: "cc"},
+              {text: "a", id: "aa", states: {
+                selected: {
+                  text: "B",
+                  tooltip: "BBB"
+                }
+              }},
+              {text: "b", id: "bb", custom_response_data: {hey: "ho"}},
+              {text: "c", id: "cc", tooltip: "Tips"},
             ]
           })
         }]
@@ -161,9 +166,14 @@ describe('Choice Message Components', function() {
 
       expect(model.question).toEqual("hello");
       expect(model.choices).toEqual([
-        {text: "a", id: "aa"},
-        {text: "b", id: "bb"},
-        {text: "c", id: "cc"},
+        {text: "a", id: "aa", states: {
+          selected: {
+            text: "B",
+            tooltip: "BBB"
+          }
+        }},
+        {text: "b", id: "bb", customResponseData: {hey: "ho"}},
+        {text: "c", id: "cc", tooltip: "Tips"},
       ]);
 
       expect(model.actionModels).toEqual([
@@ -267,26 +277,24 @@ describe('Choice Message Components', function() {
       });
 
       it("Should enable/disable selection", function() {
-        it("Should enable/disable selection", function() {
-          var model = new ChoiceModel({
-            question: "hello",
-            choices: [
-              {text: "a", id: "aa"},
-              {text: "b", id: "bb"},
-              {text: "c", id: "cc"},
-            ],
-            selectedAnswer: "bb"
-          });
-          expect(model.isSelectionEnabledFor(0)).toBe(false);
-          expect(model.isSelectionEnabledFor(1)).toBe(false);
-          expect(model.isSelectionEnabledFor(2)).toBe(false);
-
-          model.allowReselect = true;
-
-          expect(model.isSelectionEnabledFor(0)).toBe(true);
-          expect(model.isSelectionEnabledFor(1)).toBe(false);
-          expect(model.isSelectionEnabledFor(2)).toBe(true);
+        var model = new ChoiceModel({
+          question: "hello",
+          choices: [
+            {text: "a", id: "aa"},
+            {text: "b", id: "bb"},
+            {text: "c", id: "cc"},
+          ],
+          selectedAnswer: "bb"
         });
+        expect(model.isSelectionEnabledFor(0)).toBe(false);
+        expect(model.isSelectionEnabledFor(1)).toBe(false);
+        expect(model.isSelectionEnabledFor(2)).toBe(false);
+
+        model.allowReselect = true;
+
+        expect(model.isSelectionEnabledFor(0)).toBe(true);
+        expect(model.isSelectionEnabledFor(1)).toBe(false);
+        expect(model.isSelectionEnabledFor(2)).toBe(true);
       });
     });
 
