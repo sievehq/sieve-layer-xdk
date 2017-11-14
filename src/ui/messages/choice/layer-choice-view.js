@@ -1,10 +1,11 @@
 /**
+ * UI for a Choice Message
  *
- *
- *
- * @class layer.UI.handlers.message.ChoiceModel
- * @extends layer.UI.components.Component
+ * @class Layer.UI.messages.ChoiceView
+ * @mixin Layer.UI.messages.MessageViewMixin
+ * @extends Layer.UI.components.Component
  */
+
 import { registerComponent } from '../../components/component';
 
 import MessageViewMixin from '../message-view-mixin';
@@ -23,25 +24,34 @@ registerComponent('layer-choice-view', {
   }
 
   `,
-  //layerCardId: 'layer-choice-view',
   properties: {
-    label: {
-      value: 'Choices',
-    },
+
+    /**
+     * Use a Titled Display Container to render this UI.
+     *
+     * @property {String} [messageViewContainerTagName=layer-titled-display-container]
+     */
     messageViewContainerTagName: {
       noGetterFromSetter: true,
       value: 'layer-titled-display-container',
     },
+
+    // See parent definition
     widthType: {
       value: 'flex-width',
     },
   },
   methods: {
-
-    getIconClass() {
+    /**
+     * Provide a CSS clas to the <layer-titled-display-container />.
+     *
+     * @method _getIconClass
+     * @protected
+     */
+    _getIconClass() {
       return 'layer-poll-view-icon';
     },
-    getTitle() {
+    _getTitle() {
       return this.model.title;
     },
 

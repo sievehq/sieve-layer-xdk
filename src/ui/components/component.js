@@ -934,7 +934,7 @@ function _registerComponent(tagName) {
     value: function createdCallback() {
       if (!layerUI.components[tagName]) return;
 
-      this._initializeProperties();
+      this.__initializeProperties();
       this.nodes = {};
 
 
@@ -1082,12 +1082,12 @@ function _registerComponent(tagName) {
    * for this Object. So we delete the property `appId` from the object so that the getter/setter up the prototype chain can
    * once again function.
    *
-   * @method _initializeProperties
+   * @method __initializeProperties
    * @private
    * @param {Object} prop   A property def whose value should be stashed
    */
-  classDef._initializeProperties = {
-    value: function _initializeProperties() {
+  classDef.__initializeProperties = {
+    value: function __initializeProperties() {
 
       /**
        * Values for all properties of this widget.
@@ -1685,13 +1685,11 @@ const standardClassMethods = {
 
 function registerMessageComponent(tagName, componentDefinition) {
   const handlesMessage = componentDefinition.methods.handlesMessage;
-  const label = componentDefinition.properties.label.value;
   const order = componentDefinition.properties.order;
   registerComponent(tagName, componentDefinition);
   layerUI.registerMessageHandler({
     handlesMessage,
     tagName,
-    label,
     order,
   });
 }

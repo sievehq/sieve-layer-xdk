@@ -1,7 +1,16 @@
 /**
+ * The Message Viewer (`<layer-message-viewer />`) is a Message Handler that handles all standard Messages.
  *
- * @class layer.UI.handlers.message.messageViewer
- * @extends layer.UI.components.Component
+ * A standard message is assumed to have a single Message Part whose `role` is `root` and which represents
+ * a Layer.Core.MessageTypeModel.
+ *
+ * A Message Viewer can be instantiated with *either* a:
+ *
+ * * `message`: A model is generated/retrieved for this message using the Root MessagePart for this Message
+ * * `model`: The model unambiguously specifies what `message` and what `rootPart` are to be used for this Message Viewer
+ *
+ * @class Layer.UI.handlers.message.MessageViewer
+ * @extends Layer.UI.components.Component
  */
 import { registerMessageComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
@@ -22,17 +31,35 @@ registerMessageComponent('layer-message-viewer', {
 
    // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
-    model: {},
-    label: {
-      get() {
-        return this.model.label;
-      },
+
+    /**
+     * The model to be rendered by some UI within this Viewer.
+     *
+     * @type {Layer.Core.MessageTypeModel} model
+     */
+    model: {
+      set(model) {
+        if (model.message !== this.properties.message) {
+          this.message = model.message;
+        }
+      }
     },
-    rootPart: {},
+
+    /**
+     * The message being rendered either in its entirety, or some subtree of content within it.
+     *
+     * The message determines what is being rendered; but the specific
+     * model identifies a Message Part within it that has a position within the Message Part
+     * tree and determines what part of the message this UI Component will render.
+     *
+     * @type {Layer.Core.Message} message
+     */
     message: {
       set(message) {
         this.innerHTML = '';
         if (message) {
+          if (!this.properties.model) this.properties.model = message.createModel();
+          if (!this.properties.model) return;
           if (this.properties._internalState.onAfterCreateCalled) {
             this.setupMessage();
           }
@@ -46,13 +73,17 @@ registerMessageComponent('layer-message-viewer', {
      *
      * Currently can only be used to replace 'layer-standard-view-container' with a custom value.
      *
-     * @type {String}
+     * @type {String} messageViewContainerTagName
      */
     messageViewContainerTagName: {
       noGetterFromSetter: true,
+
+      // If the property is set, indicate that its been explicitly set
       set(inValue) {
         this.properties.messageViewContainerTagNameIsSet = true;
       },
+
+      // Get the UI Node's preferred Display Container... unless this component's messageViewContainerTagName has been set
       get() {
         const result = this.nodes.ui.messageViewContainerTagName;
         if (result === 'layer-standard-view-container' && this.properties.messageViewContainerTagNameIsSet) {
@@ -71,6 +102,8 @@ registerMessageComponent('layer-message-viewer', {
      * * rounded-top: full border, rounded top, square bottom
      * * rounded-bottom: full border, rounded bottom, square top
      * * none: no border
+     *
+     * @type {String} cardBorderStyle
      */
     cardBorderStyle: {
       set(newValue, oldValue) {
@@ -83,10 +116,17 @@ registerMessageComponent('layer-message-viewer', {
       },
     },
 
-    // One of:
-    // "full-width": Uses all available width
-    // "chat-bubble": No minimum, maximum is all available width; generallay does not look like a card
-    // "flex-width": card that has a minimum and a maximum but tries for an optimal size for its contents
+    /**
+     * Describes how the width of this Message Type will be managed.
+     *
+     * One of:
+     *
+     * * "full-width": Uses all available width
+     * * "chat-bubble": No minimum, maximum is all available width; generallay does not look like a card
+     * * "flex-width": card that has a minimum and a maximum but tries for an optimal size for its contents
+     *
+     * @type {String} widthType
+     */
     widthType: {
       set(newValue, oldValue) {
         if (oldValue) this.classList.remove('layer-card-width-' + oldValue);
@@ -102,31 +142,30 @@ registerMessageComponent('layer-message-viewer', {
      * @static
      */
     handlesMessage(message, container) {
-      return Boolean(message.getPartsMatchingAttribute({ role: 'root' })[0]);
+      return Boolean(message.getRootPart());
     },
 
+    // Standard lifecycle event insures that _handleSelection will be called when clicked
     onCreate() {
-      this.addClickHandler('card-click', this, this.handleSelection.bind(this));
+      this.addClickHandler('card-click', this, this._handleSelection.bind(this));
     },
 
+    // Standard lifecycle event insures that setupMessage is called
     onAfterCreate() {
       if (this.message) this.setupMessage();
     },
 
+    /**
+     * Given a message and a model, generate the UI Component and a Display Container.
+     *
+     * @method setupMessage
+     */
     setupMessage() {
-      // The rootPart is typically the Root Part of the message, but the Card View may be asked to render subcards
-      // in which case its rootPart property will be preset
-      const rootPart = this.message.getPartsMatchingAttribute({ role: 'root' })[0];
-      if (!this.rootPart) {
-        this.rootPart = rootPart;
-      }
-      if (!this.rootPart) return;
-
-      // Clearly differentiate a top level Root Part from subparts using the layer-root-card css class
-      if (this.rootPart === rootPart) this.classList.add('layer-root-card');
-
-      if (!this.model) this.model = this.client.createMessageTypeModel(this.message, this.rootPart);
       if (!this.model) return;
+
+      // The rootPart is typically the Root Part of the message, but the Card View may be asked to render subcards
+      // Clearly differentiate a top level Root Part from subparts using the layer-root-card css class
+      if (this.model.part === this.message.getRootPart()) this.classList.add('layer-root-card');
 
       const cardUIType = this.model.currentMessageRenderer;
       this.classList.add(cardUIType);
@@ -162,36 +201,39 @@ registerMessageComponent('layer-message-viewer', {
       CustomElements.takeRecords();
       if (this.nodes.cardContainer) this.nodes.cardContainer._onAfterCreate();
       if (cardUI._onAfterCreate) cardUI._onAfterCreate();
-      if (this.nodes.cardContainer) cardUI.setupContainerClasses();
+      if (this.nodes.cardContainer) cardUI._setupContainerClasses();
     },
 
     /**
+     * When the user taps/clicks/selects this Message, call `runAction()`
      *
-     * @method
+     * @method _handleSelection
+     * @private
+     * @param {Event} evt
      */
-    onRender() {
-
-    },
-
-    onRerender() {
-
-    },
-
-
-    handleSelection(evt) {
+    _handleSelection(evt) {
       evt.stopPropagation();
-      this.runAction({});
+      this._runAction({});
     },
 
-    runAction(options) {
+    /**
+     * Initiates the execution of action handlers upon this Message.
+     *
+     * When called from an actionButton, an options argument is provided with that button's
+     * actionEvent and actionData properties.
+     *
+     * @method _runAction
+     * @private
+     * @param {Object} options
+     */
+    _runAction(options) {
       if (this.nodes.ui.runAction && this.nodes.ui.runAction(options)) return;
 
       const event = options && options.event ? options.event : this.model.actionEvent;
       const actionData = options && options.data ? options.data : this.model.actionData; // TODO: perhaps merge options.data with actionData?
 
       if (messageActionHandlers[event]) return messageActionHandlers[event].apply(this, [actionData]);
-      const rootPart = this.message.getPartsMatchingAttribute({ role: 'root' })[0];
-      const rootModel = this.client.getMessageTypeModel(rootPart.id);
+      const rootModel = this.message.getRootPart().createModel();
       this.nodes.ui.trigger(event, {
         model: this.model,
         rootModel,
@@ -199,6 +241,14 @@ registerMessageComponent('layer-message-viewer', {
       });
     },
 
+    /**
+     * Placeholder for a mechanism for all Message Types to share for showing a zoomed in version of their content.
+     *
+     * Eventually should open an in-app dialog
+     *
+     * @method showFullScreen
+     * @param {String} url
+     */
     showFullScreen(url) {
       if (url) window.open(url);
     },

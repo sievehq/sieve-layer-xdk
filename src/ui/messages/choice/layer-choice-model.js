@@ -146,7 +146,7 @@ import TextModel from '../text/layer-text-model';
 import { ErrorDictionary } from '../../../core/layer-error';
 
 class ChoiceModel extends MessageTypeModel {
-  initializeProperties() {
+  _initializeProperties() {
     if (!this.enabledFor) this.enabledFor = [];
     if (this.allowMultiselect) this.allowDeselect = true;
     if (this.allowDeselect) this.allowReselect = true;
@@ -303,12 +303,9 @@ class ChoiceModel extends MessageTypeModel {
   _getNameOfChoice() {
     const client = this.getClient();
     if (this.parentId) {
-      const parentNode = this.getParentPart();
-      if (parentNode) {
-        const model = client.createMessageTypeModel(this.message, parentNode);
-        if (model && model.getChoiceModelResponseTopic && model.getChoiceModelResponseTopic()) {
-          return model.getChoiceModelResponseTopic();
-        }
+      const model = this.getParentModel();
+      if (model && model.getChoiceModelResponseTopic && model.getChoiceModelResponseTopic()) {
+        return model.getChoiceModelResponseTopic();
       }
     }
 
@@ -402,12 +399,12 @@ class ChoiceModel extends MessageTypeModel {
 
 
   __getCurrentMessageRenderer() {
-    switch (this.type) {
+    switch (this.type.toLowerCase()) {
       case 'standard':
         return 'layer-choice-view';
       // case 'TiledChoices':
       // return 'layer-choice-tiles-view';
-      case 'Label':
+      case 'label':
         return 'layer-choice-label-view';
     }
   }

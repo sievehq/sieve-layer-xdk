@@ -54,13 +54,13 @@ registerComponent('layer-choice-tiles-view', {
       }
     },
 
-    onChoiceSelect(data) {
+    _selectChoice(data) {
       this.model.selectAnswer(data);
     },
 
     runAction({ event, data }) {
       if (event === 'layer-choice-select') {
-        this.onChoiceSelect(data);
+        this._selectChoice(data);
       }
     },
   },

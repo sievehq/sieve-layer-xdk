@@ -41,6 +41,6 @@ layerUI.registerTextHandler({
         return '<br/>';
       }
     });
-    textData.text = '<p>' + body.split('<br/>').join('</p><p>') + '</p>';
+    textData.text = '<p class="layer-line-wrapping-paragraphs">' + body.split('<br/>').join('</p><p class="layer-line-wrapping-paragraphs">') + '</p>';
   },
 });

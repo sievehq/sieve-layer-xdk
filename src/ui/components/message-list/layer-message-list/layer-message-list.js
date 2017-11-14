@@ -254,7 +254,7 @@ registerComponent('layer-message-list', {
       value: {
         messageRowLeftSide: function messageRowLeftSide(widget) {
           const item = widget.item;
-          const model = this.client.createMessageTypeModel(item);
+          const model = item.createModel();
           if (model && model.constructor.messageRenderer === 'layer-carousel-view') return null;
 
           if (item.sender.sessionOwner) {
@@ -272,7 +272,7 @@ registerComponent('layer-message-list', {
         },
         messageRowRightSide: function messageRowRightSide(widget) {
           const item = widget.item;
-          const model = this.client.createMessageTypeModel(item);
+          const model = item.createModel();
           if (model && model.constructor.messageRenderer === 'layer-carousel-view') return null;
 
           const div = document.createElement('div');
@@ -810,26 +810,45 @@ registerComponent('layer-message-list', {
       if (this.properties.insertEvents) this.properties.insertEvents.forEach(anEvt => this._renderInsertedData(anEvt));
       delete this.properties.insertEvents;
 
-      const cards = this.querySelectorAllArray('layer-message-viewer').map(card => card.nodes.ui).filter(ui => ui);
+      // more than just lastMessage
+      if (this.query.data.length > 1) {
+        Util.defer(() => this.onPagedData(firstVisibleItem, evt, initialOffset));
+      }
+    },
 
-      Util.defer(() => {
-        if (this.properties.stuckToBottom) {
-          this.scrollTo(this.scrollHeight - this.clientHeight);
-          let unfinishedCards = cards.filter(card => !card.isHeightAllocated);
-          if (unfinishedCards.length) {
-            const onCardFinished = () => {
-              unfinishedCards = unfinishedCards.filter(card => !card.isHeightAllocated);
-              if (unfinishedCards.length === 0) {
-                this.scrollTo(this.scrollHeight - this.clientHeight);
-                this.removeEventListener('message-height-change', onCardFinished);
-              }
-            };
-            this.addEventListener('message-height-change', onCardFinished);
-          }
-        } else if (firstVisibleItem && evt.type === 'data' && evt.data.length !== 0) {
-          this.scrollTo(firstVisibleItem.offsetTop - this.offsetTop - initialOffset);
+    /**
+     * MIXIN HOOK: Replace this with your own customization if needed
+     */
+    onPagedData(firstVisibleItem, evt, initialOffset) {
+      let needsPagedDataDone = true;
+
+      if (this.properties.stuckToBottom) {
+        const cards = this.querySelectorAllArray('layer-message-viewer').map(card => card.nodes.ui).filter(ui => ui);
+        let unfinishedCards = cards.filter(card => !card.isHeightAllocated);
+        if (unfinishedCards.length) {
+          this.onPagedDataDone(false);
+          const onCardFinished = () => {
+            unfinishedCards = unfinishedCards.filter(card => !card.isHeightAllocated);
+            if (unfinishedCards.length === 0) {
+              this.removeEventListener('message-height-change', onCardFinished);
+              setTimeout(() => this.onPagedDataDone(true), 10);
+            }
+          };
+          this.addEventListener('message-height-change', onCardFinished);
+          needsPagedDataDone = false;
         }
-      });
+      } else if (firstVisibleItem && evt.type === 'data' && evt.data.length !== 0) {
+        this.scrollTo(firstVisibleItem.offsetTop - this.offsetTop - initialOffset);
+      }
+      if (needsPagedDataDone) this.onPagedDataDone(true);
+    },
+
+    onPagedDataDone(isDoneSizingContent) {
+      if (isDoneSizingContent) debugger;
+      if (this.properties.stuckToBottom) {
+        console.log(isDoneSizingContent + ': ' + (this.scrollHeight - this.clientHeight));
+        this.scrollTo(this.scrollHeight - this.clientHeight);
+      }
     },
   },
 });

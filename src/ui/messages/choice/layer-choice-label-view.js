@@ -1,9 +1,11 @@
 /**
+ * Alternate UI for a Choice Message.
  *
+ * This View is used when the model's `type` is `label`.
  *
- *
- * @class layer.UI.handlers.message.ChoiceModel
- * @extends layer.UI.components.Component
+ * @class Layer.UI.messages.ChoiceLabelView
+ * @mixin Layer.UI.messages.MessageViewMixin
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
 
@@ -25,17 +27,19 @@ registerComponent('layer-choice-label-view', {
     flex-grow: 1;
   }
   `,
-  properties: {
-    label: {
-      value: 'Choices',
-    },
-  },
   methods: {
+
+    /**
+     * Whenever this view is initialized or the view updated, rerender it.
+     *
+     * @method onRerender
+     */
     onRerender() {
       this.nodes.question.innerHTML = this.model.question;
-      const selectedChoice = this.model.choices.filter(choice => choice.id === this.model.selectedAnswer)[0];
-      this.nodes.answer.innerHTML = selectedChoice ? selectedChoice.text : '';
-      this.toggleClass('layer-choice-no-selection', !Boolean(selectedChoice));
+      const selectedIndex = this.model.getChoiceIndexById(this.model.selectedAnswer);
+
+      this.nodes.answer.innerHTML = selectedIndex !== -1 ? this.model.getText(selectedIndex) : '';
+      this.toggleClass('layer-choice-no-selection', selectedIndex === -1);
     },
   },
 });

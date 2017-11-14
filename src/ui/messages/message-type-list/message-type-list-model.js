@@ -46,7 +46,7 @@ class MessageTypeListModel extends MessageTypeModel {
     // Gather all of the parts that represent a high level list element (ignoring any subparts they may bring with them)
     // Exclucde our main list part that defines the list rather than its list items
     const parts = this.childParts.filter(part => part.mimeAttributes.role === 'message-item');
-    this.items = parts.map(part => this.getClient().createMessageTypeModel(this.message, part));
+    this.items = parts.map(part => part.createModel());
     this.items.forEach(item => item._mergeAction(this.action));
   }
 

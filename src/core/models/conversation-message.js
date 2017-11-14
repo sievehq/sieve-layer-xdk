@@ -29,6 +29,8 @@ class ConversationMessage extends Message {
       if (status && status !== Constants.RECEIPT_STATE.READ && status !== Constants.RECEIPT_STATE.DELIVERED) {
         Util.defer(() => this._sendReceipt('delivery'));
       }
+    } else {
+      this.parts.forEach(part => { part._message = this });
     }
   }
 

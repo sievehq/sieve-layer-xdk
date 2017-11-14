@@ -102,13 +102,20 @@ layer-message-viewer {
 
   text-align: left;
 
-  & > * {
+  & > layer-standard-display-container, & > layer-titled-display-container {
     max-width: 100%;
     width: 100%;
   }
 
   &:not(.layer-root-card) {
     width: 100%;
+  }
+
+  p.layer-line-wrapping-paragraphs {
+    margin: 0px;
+  }
+  p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
+    margin-top: 1rem;
   }
 }
 /*

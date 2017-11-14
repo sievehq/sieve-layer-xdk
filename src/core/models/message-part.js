@@ -191,7 +191,7 @@ class MessagePart extends Root {
    * @return {layer.Message}
    */
   _getMessage() {
-    return this._getClient().getMessage(this.id.replace(/\/parts.*$/, ''));
+    return this._message || this._getClient().getMessage(this.id.replace(/\/parts.*$/, ''));
   }
 
   /**
@@ -627,6 +627,17 @@ class MessagePart extends Root {
     return false;
   }
 
+  createModel() {
+    if (!this._messageTypeModel) {
+      const client = this._getClient();
+      const message = this._getMessage();
+      if (client && message) {
+        this._messageTypeModel = client.createMessageTypeModel(message, this);
+      }
+    }
+    return this._messageTypeModel;
+  }
+
   /**
    * This method is automatically called any time the body is changed.
    *
@@ -866,6 +877,12 @@ MessagePart.prototype.size = 0;
 MessagePart.prototype.parentId = '';
 MessagePart.prototype.nodeId = '';
 MessagePart.prototype.role = '';
+
+MessagePart.prototype._messageTypeModel = null;
+
+// We want to avoid setting this as it creates circular references.
+// however, we need to set this until the message has been registered
+MessagePart.prototype._message = null;
 
 /**
  * Array of mime types that should be treated as text.

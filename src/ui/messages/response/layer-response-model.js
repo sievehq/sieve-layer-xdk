@@ -29,7 +29,7 @@ class ResponseModel extends MessageTypeModel {
 
     const messagePart = this.childParts.filter(part => part.mimeAttributes.role === 'message')[0];
     if (messagePart) {
-      this.displayModel = this.getClient().createMessageTypeModel(this.message, messagePart);
+      this.displayModel = messagePart.createModel();
     }
   }
 

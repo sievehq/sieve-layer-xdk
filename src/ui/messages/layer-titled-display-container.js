@@ -15,6 +15,9 @@ registerComponent('layer-titled-display-container', {
     layer-titled-display-container.layer-title-icon-empty .layer-card-title-bar-icon {
       display: none;
     }
+    layer-titled-display-container.layer-no-title .layer-card-title-bar {
+      display: none;
+    }
     layer-titled-display-container .layer-card-title-bar {
       display: flex;
       flex-direction: row;
@@ -44,6 +47,7 @@ registerComponent('layer-titled-display-container', {
     title: {
       set(title) {
         this.nodes.title.innerHTML = title;
+        this.toggleClass('layer-no-title', !title);
       },
     },
     icon: {
@@ -69,8 +73,8 @@ registerComponent('layer-titled-display-container', {
     },
 
     onRerender() {
-       this.icon = this.properties.ui.getIconClass();
-       this.title = this.properties.ui.getTitle();
+       this.icon = this.properties.ui._getIconClass();
+       this.title = this.properties.ui._getTitle();
     },
   },
 });

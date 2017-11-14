@@ -226,7 +226,7 @@ export default class ActiveConversation extends Component {
               totalTax: 0.01,
               totalCost: 350.02
             },
-            shippingAddressModel: new LocationModel({
+            shippingAddress: new LocationModel({
               city: 'San Francisco',
               name: 'Layer Inc',
               postalCode: '94107',
@@ -280,7 +280,7 @@ export default class ActiveConversation extends Component {
                       new ChoiceModel({
                         question: 'Size',
                         type: 'Label',
-                        selectedAnswer: 'small',
+                        selectedAnswer: '',
                         choices: [
                           {text:  'Small', id: 'small'},
                           {text:  'Medium', id: 'medium'},
@@ -290,7 +290,7 @@ export default class ActiveConversation extends Component {
                       new ChoiceModel({
                         question: 'Color',
                         type: 'Label',
-                        selectedAnswer: 'white',
+                        selectedAnswer: 'gold',
                         choices: [
                           {text:  'White', id: 'white'},
                           {text:  'Black', id: 'black'},
@@ -312,7 +312,7 @@ export default class ActiveConversation extends Component {
                     new ChoiceModel({
                       question: 'Size',
                       type: 'Label',
-                      selectedAnswer: 'small',
+                      selectedAnswer: 'medium',
                       choices: [
                         {text:  'Small', id: 'small'},
                         {text:  'Medium', id: 'medium'},
@@ -322,7 +322,6 @@ export default class ActiveConversation extends Component {
                     new ChoiceModel({
                       question: 'Color',
                       type: 'Label',
-                      selectedAnswer: 'white',
                       choices: [
                         {text:  'White', id: 'white'},
                         {text:  'Black', id: 'black'},
@@ -433,7 +432,7 @@ export default class ActiveConversation extends Component {
       composerButtonPanelRight: () => {
         return (<div>
           <SendButton />
-          <FileUploadButton />
+          <FileUploadButton multiple="true" />
           <MenuButton
           getMenuOptions={this.getMenuOptions.bind(this)}
           />

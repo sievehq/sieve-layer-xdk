@@ -93,12 +93,14 @@ registerComponent('layer-choice-button', {
       this.model.selectAnswer(choice);
 
       // Trigger any other customized events as though this were an action button
-      let cardView = this;
-      while (cardView.tagName !== 'LAYER-MESSAGE-VIEWER' && cardView.parentComponent) {
-        cardView = cardView.parentComponent;
+      let node = this;
+      while (!node.isMessageTypeView && node.parentComponent) {
+        node = node.parentComponent;
       }
-      if (cardView !== this) cardView.runAction({ event: this.model.responseName, data: this.model });
-      evt.target.blur();
+      if (node.messageViewer) {
+        node.messageViewer._runAction({ event: this.model.responseName, data: this.model });
+      }
+      if (evt) evt.target.blur();
     },
   },
 });

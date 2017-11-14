@@ -199,7 +199,7 @@ import { uuid } from '../../../util';
 import ChoiceModel from '../choice/layer-choice-model';
 
 class ButtonsModel extends MessageTypeModel {
-  initializeProperties() {
+  _initializeProperties() {
     this.choices = {};
   }
   _generateParts(callback) {
@@ -229,7 +229,7 @@ class ButtonsModel extends MessageTypeModel {
     super._parseMessage(payload);
 
     const contentPart = this.childParts.filter(part => part.mimeAttributes.role === 'content')[0];
-    if (contentPart) this.contentModel = this.getClient().createMessageTypeModel(this.message, contentPart);
+    if (contentPart) this.contentModel = contentPart.createModel();
     this._setupButtonModels();
   }
 

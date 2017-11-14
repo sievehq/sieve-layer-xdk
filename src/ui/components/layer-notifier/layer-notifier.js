@@ -390,8 +390,7 @@ registerComponent('layer-notifier', {
      */
     desktopNotify(message) {
       try {
-        const rootPart = message.getPartsMatchingAttribute({ role: 'root' })[0];
-        const model = rootPart ? this.client.createMessageTypeModel(message, rootPart) : null;
+        const model = message.createModel();
         const text = model ? model.text || model.title : '';
         if (this.properties.desktopNotify) this.closeDesktopNotify();
 
@@ -452,7 +451,7 @@ registerComponent('layer-notifier', {
     toastNotify(message) {
       this.closeToast();
       const placeholder = this.querySelector('.layer-message-item-placeholder');
-      const rootPart = message.getPartsMatchingAttribute({ role: 'root' })[0];
+      const rootPart = message.getRootPart();
 
       if (rootPart) {
         this.nodes.avatar.users = [message.sender];

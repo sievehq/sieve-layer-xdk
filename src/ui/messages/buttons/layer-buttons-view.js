@@ -48,8 +48,8 @@ registerComponent('layer-buttons-view', {
     onAfterCreate() {
       if (this.model.contentModel) {
         this.properties.contentView = this.createElement('layer-message-viewer', {
-          message: this.model.message,
-          rootPart: this.model.contentModel.part,
+          //message: this.model.message,
+          //rootPart: this.model.contentModel.part,
           model: this.model.contentModel,
           parentNode: this.nodes.content,
           name: 'subcard',
@@ -114,7 +114,7 @@ registerComponent('layer-buttons-view', {
 
     runAction(options) {
       if (this.nodes.subcard) {
-        this.nodes.subcard.runAction(options);
+        this.nodes.subcard._runAction(options);
         return true;
       }
     },

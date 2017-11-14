@@ -746,6 +746,28 @@ class Message extends Syncable {
     return results;
   }
 
+  getRootPart() {
+    if (!this._rootPart) {
+      this._rootPart = this.getPartsMatchingAttribute({ role: 'root' })[0] || null;
+    }
+    return this._rootPart;
+  }
+
+  createModel() {
+    if (!this._messageTypeModel) {
+      const rootPart = this.getRootPart();
+      if (rootPart) {
+        this._messageTypeModel = rootPart.createModel();
+      }
+    }
+    return this._messageTypeModel;
+  }
+
+  getModelName() {
+    const model = this.createModel();
+    return model.constructor.name;
+  }
+
   /**
    * If there is a single message part that has the named attribute, return its value.
    *
@@ -1012,6 +1034,9 @@ Message.prototype._mimeAttributeMap = null;
 Message.prototype.updatedAt = null;
 
 Message.prototype._toObject = null;
+
+Message.prototype._rootPart = null;
+Message.prototype._messageTypeModel = null;
 
 Message.prototype._inPopulateFromServer = false;
 

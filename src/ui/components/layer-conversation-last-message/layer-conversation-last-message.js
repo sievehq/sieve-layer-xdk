@@ -48,6 +48,10 @@ registerComponent('layer-conversation-last-message', {
       value: '<div class="layer-custom-mime-type">Message</div>',
     },
 
+    filterLastMessage: {
+      type: Function,
+    },
+
     /**
      * Provide a function to determine if the last message is rendered in the Conversation List.
      *
@@ -92,17 +96,17 @@ registerComponent('layer-conversation-last-message', {
      */
     onRerender(evt) {
       if (!evt || evt.hasProperty('lastMessage')) {
-        this.innerHTML = this.summarizeLastMessage();
+        if (!this.filterLastMessage || this.filterLastMessage(this.item.lastMessage)) {
+          this.innerHTML = this.summarizeLastMessage();
+        }
       }
     },
 
     summarizeLastMessage() {
       const message = this.item.lastMessage;
       if (!message) return '';
-      const rootPart = message.getPartsMatchingAttribute({ role: 'root' })[0];
-      if (!rootPart) return this.unknownHTML;
 
-      const model = message.getClient().createMessageTypeModel(message, rootPart);
+      const model = message.createModel();
       const result = model ? model.getOneLineSummary() : null;
       return result || this.unknownHTML;
     },

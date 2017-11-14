@@ -350,6 +350,10 @@ registerComponent('layer-conversation-list', {
       value: ['tiny', 'small', 'medium', 'large'],
     },
 
+    filterLastMessage: {
+      type: Function,
+    },
+
     replaceableContent: {
       value: {
         conversationRowLeftSide(widget) {
@@ -395,6 +399,7 @@ registerComponent('layer-conversation-list', {
       conversationWidget.canFullyRenderLastMessage = this.canFullyRenderLastMessage;
       conversationWidget.item = conversation;
       conversationWidget.size = this.size;
+      conversationWidget.filterLastMessage = this.filterLastMessage;
       if (this.getMenuOptions) conversationWidget.getMenuOptions = this.getMenuOptions;
       if (this.dateFormat) conversationWidget.dateFormat = this.dateFormat;
 

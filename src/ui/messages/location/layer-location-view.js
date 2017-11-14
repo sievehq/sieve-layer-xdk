@@ -1,15 +1,11 @@
-/* m = $("layer-conversation-view").conversation.createMessage({parts: [
-  {
-    mimeType: "application/vnd.layer.location+json; role=root",
-    body: '{"latitude": 37.7734858, "longitude": -122.3916087, "title": "Réveille Coffee Co.", "description": "Good coffee, but pricey, and when you hear people say the name, you know that they just reviled the place."}'
-  }]}).send();
-  */
-
 /**
+ * UI for a Location Message
+ *
  * You must set your Google Maps API key in `window.googleMapsAPIKey`
  *
- * @class ???
- * @extends layer.UI.components.Component
+ * @class Layer.UI.messages.LocationView
+ * @mixin Layer.UI.messages.MessageViewMixin
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
@@ -27,19 +23,42 @@ registerComponent('layer-location-view', {
   }
   `,
   properties: {
+
+    /**
+     * Height of the map in pixels.
+     *
+     * Should be set during initialization; not used to modify the map after rendering.
+     *
+     * @property {Number} [type=300]
+     */
     mapHeight: {
       value: 300,
     },
+
+    /**
+     * Set to `true` to tell the Component to hide the map.
+     *
+     * @property {Boolean} [hideMap=false]
+     */
     hideMap: {
       value: false,
+      type: Boolean,
       set(value) {
         this.toggleClass('layer-location-view-address-only', value);
-        this.setupContainerClasses();
+        this._setupContainerClasses();
       },
     },
+
+    // See parent class
     widthType: {
       value: 'full-width',
     },
+
+    /**
+     * Use a Standard Display Container to render this UI.
+     *
+     * @property {String} [messageViewContainerTagName=layer-standard-display-container]
+     */
     messageViewContainerTagName: {
       noGetterFromSetter: true,
       value: 'layer-standard-display-container',
@@ -47,10 +66,18 @@ registerComponent('layer-location-view', {
   },
   methods: {
 
+    // See parent class for definition
     onAttach() {
+      // Once added to the DOM structure, we should be able to determine an optimal width for the map.
       if (!this.hideMap) this._updateImageSrc();
     },
 
+    /**
+     * Deterimne the image dimensions and fetch them from google maps service by setting an `<img src />` property.
+     *
+     * @method
+     * @private
+     */
     _updateImageSrc() {
       if (this.parentNode && this.parentNode.clientWidth) {
         const marker = this.model.latitude ? this.model.latitude + ',' + this.model.longitude : escape(this.model.street1 + (this.model.street2 ? ' ' + this.model.street2 : '') + ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
@@ -59,19 +86,20 @@ registerComponent('layer-location-view', {
       }
     },
 
-    onRender() {
-      this.onRerender();
-    },
-
-    /**
-     *
-     * @method
-     */
+    // See parent class definition
     onRerender() {
       this._updateImageSrc();
     },
 
-    setupContainerClasses() {
+    /**
+     * As part of the Message UI lifecycle, this is called to update the <layer-standard-display-container /> CSS classes.
+     *
+     * Adds an optional "Next Arrow" to the metadata, and optionally hides itself.
+     *
+     * @method _setupContainerClasses
+     * @protected
+     */
+    _setupContainerClasses() {
       this.parentComponent.toggleClass('layer-arrow-next-container', this.hideMap);
       this.parentComponent.toggleClass('layer-no-core-ui', this.hideMap);
     },
@@ -82,7 +110,8 @@ registerMessageActionHandler('open-map', function openMapHandler(customData) {
   let url;
   if (this.model.street1) {
     url = 'http://www.google.com/maps/?q=' +
-      escape(this.model.street1 + (this.model.street2 ? ' ' + this.model.street2 : '') + ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
+      escape(this.model.street1 + (this.model.street2 ? ' ' + this.model.street2 : '') +
+      ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
   } else if (this.model.latitude) {
     url = `https://www.google.com/maps/search/?api=1&query=${this.model.latitude},${this.model.longitude}&zoom=${this.model.zoom}`;
   }

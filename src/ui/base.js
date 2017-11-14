@@ -71,8 +71,6 @@ const layerUI = {};
  * @property {Object} [settings.defaultHandler]    The default message renderer for messages not matching any other handler
  * @property {String[]} [settings.textHandlers=['autolinker', 'emoji', 'newline']] Specify which text handlers you want
  *    Note that any custom handlers you add do not need to be in the settings, they can be called after calling `init()` using layerUI.registerTextHandler.
- * @property {Object} [settings.verticalMessagePadding=0]  Message handlers that must hard code a height into their dom nodes can be
- *     hard to add borders and padding around.  Use this property to offset any hardcoded height by this number of pixels
  */
 layerUI.settings = {
   appId: '',
@@ -83,8 +81,6 @@ layerUI.settings = {
     tagName: 'layer-message-unknown',
   },
   textHandlers: ['autolinker', 'emoji', 'newline'],
-  maxSizes: { width: 512, height: 512 },
-  verticalMessagePadding: 0,
 };
 
 /**
@@ -102,6 +98,52 @@ layerUI.handlers = [];
  * @private
  */
 layerUI.textHandlers = {};
+
+ /**
+ * Order the Text handlers if they haven't previously been sorted.
+ *
+ * @method _setupOrderedHandlers
+ * @private
+ */
+layerUI._setupOrderedHandlers = function() {
+  layerUI.textHandlersOrdered = Object.keys(layerUI.textHandlers).filter(handlerName =>
+    layerUI.textHandlers[handlerName].enabled)
+  .map(handlerName => layerUI.textHandlers[handlerName])
+  .sort((a, b) => {
+    if (a.order > b.order) return 1;
+    if (b.order > a.order) return -1;
+    return 0;
+  });
+};
+
+/**
+ * Transform text into HTML with any processing and decorations needed.
+ *
+ * Uses the textHandlers to process the text
+ *
+ * @method processText
+ * @param {String} text
+ * @returns {String}
+ */
+layerUI.processText = function(text) {
+  if (!layerUI.textHandlersOrdered) this._setupOrderedHandlers();
+
+  const processedText = (text || '')
+    .trim()
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  const textData = {
+    originalText: text,
+    text: processedText,
+  };
+
+  // Iterate over each handler, calling each handler.
+  layerUI.textHandlersOrdered.forEach((handlerDef) => {
+    handlerDef.handler(textData);
+  });
+  return textData.text;
+};
 
 
 /**
@@ -299,8 +341,6 @@ layerUI.adapters = {
  *                                                          layerUI.MessageList or layerUI.ConversationItem.
  * @param {Boolean} options.handlesMessage.returns          Return true to signal that this handler accepts this Message.
  * @param {String} options.tagName                          Dom node to create if this handler accepts the Message.
- * @param {String} options.label                            Label to show when we can't render the whole message.
- *                                                          Typically identifies the type of content to the user.
  * @param {Number} [options.order=0]                        Some handlers may need to be tested before other handlers to control which one gets
  *                                                          selected; Defaults to order=0, this handler is first
  */
@@ -361,7 +401,7 @@ layerUI.getHandler = (message, container) => {
  * layerUI.registerTextHandler({
  *    name: 'youtube',
  *    order: 200,
- *    handler: function(textData, message) {
+ *    handler: function(textData) {
  *       textData.text = textData.text.replace(/https:\/\/(www\.)?(youtu\.be|youtube\.com)\/(watch\?.*v=)?([a-zA-Z0-9\-]+)/g, function(ignore1, ignore2, ignore3, ignore4, videoId) {
  *       return '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen></iframe>';
  *   });
@@ -377,14 +417,7 @@ layerUI.getHandler = (message, container) => {
  * @param {Function} options.handler
  * @param {Object} options.handler.textData
  * @param {String} options.handler.textData.text          Use this to read the current text value and write an update to it
- * @param {String[]} options.handler.textData.afterText   Append elements to this array to add stuff to be rendered below the text.
- *      Anything that goes into `afterText` should NOT be parsed by any text handler.
- * @param {layer.Message} options.handler.message         If your text processor needs access to the original message, this is it, but should be treated as a read-only object in this context.
- * @param {Boolean} [requiresEnable=false]                If provided, this registers the handler but won't use the handler
- *       without a separate call to opt in.  Opt in later using with `layerUI.registerTextHandler({name: handlerName})`
- *       and no handler function.  (For Internal use only)
- * @param {Boolean} options.handler.isMessageListItem     If rendering the results in a MessageList, returns true, else we may be rendering this in a Toast popup, Conversation List Last Message, or elsewhere.  Emojis you may want in all places, but `afterText` will be ignored if its not in a Message List
-
+ * @param {String} options.handler.textData.originalText  Text before any processing was done
  */
 layerUI.registerTextHandler = function registerTextHandler(options) {
   if (layerUI.textHandlers[options.name]) {

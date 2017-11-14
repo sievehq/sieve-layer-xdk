@@ -45,6 +45,21 @@ registerComponent('layer-file-upload-button', {
         this.nodes.input.accept = newValue;
       },
     },
+
+    /**
+     * Allow multiple files to be selected.
+     *
+     * Note that some older browsers that are supported by this framework do not support `multiple`,
+     * see https://caniuse.com/#feat=input-file-multiple
+     *
+     * @property {Boolean} [multiple=false]
+     */
+    multiple: {
+      type: Boolean,
+      set(newValue) {
+        this.nodes.input.multiple = newValue;
+      }
+    },
   },
   methods: {
 
@@ -81,14 +96,14 @@ registerComponent('layer-file-upload-button', {
       const FileModel = Layer.Client.getMessageTypeModelClass('FileModel');
 
       const models = files.map((file) => {
+        const options = { source: file };
+        if (files.length > 1 && file.name) {
+          options.title = file.name;
+        }
         if (imageTypes.indexOf(file.type) !== -1) {
-          return new ImageModel({
-            source: file,
-          });
+          return new ImageModel(options);
         } else {
-          return new FileModel({
-            source: file,
-          });
+          return new FileModel(options);
         }
       });
 

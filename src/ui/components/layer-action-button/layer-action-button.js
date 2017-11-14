@@ -80,11 +80,11 @@ registerComponent('layer-action-button', {
         evt.stopPropagation();
       }
 
-      let cardView = this;
-      while (cardView.tagName !== 'LAYER-MESSAGE-VIEWER' && cardView.parentComponent) {
-        cardView = cardView.parentComponent;
+      let node = this;
+      while (!node.isMessageTypeView && node.parentComponent) {
+        node = node.parentComponent;
       }
-      if (cardView) cardView.runAction({ event: this.event, data: this.data });
+      if (node.messageViewer) node.messageViewer._runAction({ event: this.event, data: this.data });
       if (evt) evt.target.blur();
     },
   },

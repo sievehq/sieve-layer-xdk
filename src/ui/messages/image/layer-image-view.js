@@ -1,7 +1,9 @@
 /**
+ * UI for a Image Message
  *
- * @class layer.UI.handlers.message.messageViewer
- * @extends layer.UI.components.Component
+ * @class Layer.UI.messages.ImageView
+ * @mixin Layer.UI.messages.MessageViewMixin
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
 import { settings as UISettings } from '../../base';
@@ -28,52 +30,80 @@ registerComponent('layer-image-view', {
     }
  `,
   properties: {
+
+    // definied in component.js; any time this is changed, rerender as sizing information may have changed.
     parentComponent: {
       set() {
         this.onRerender();
       },
     },
+
+    // See parent class; uses a chat-bubble style width if there is no metadata.
     widthType: {
       get() {
         return this.parentComponent.isShowingMetadata ? 'flex-width' : 'chat-bubble';
       },
     },
+
+    /**
+     * Fix the maximum image height.
+     *
+     * This can be changed, but needs to be changed at intiialization time, not runtime.
+     *
+     * @property {Nuber} [maxHeight=300]
+     */
     maxHeight: {
       value: 300,
     },
+
+    /**
+     * Use a Standard Display Container to render this UI.
+     *
+     * @property {String} [messageViewContainerTagName=layer-standard-display-container]
+     */
     messageViewContainerTagName: {
       noGetterFromSetter: true,
       value: 'layer-standard-display-container',
     },
   },
   methods: {
+    // See parent component for definition
     onCreate() {
+      // Image Message heights aren't known until the metadata has been parsed; default to false.
       this.isHeightAllocated = false;
     },
 
+    // See parent component for definition
     onAttach: {
       mode: registerComponent.MODES.AFTER,
       value() {
+        // Any time the widget is re-added to the DOM, update its dimensions and rerender
         this.onRerender();
       },
     },
 
     /**
-     * Render the Message.
+     * Every time the model changes, or after initialization, rerender the image.
      *
-     * Primarily, this method determines whether to call _renderCanvas on the preview or the image.
+     * TODO: Currently uses an img tag for sourceUrl/previewUrl and a canvas for
+     * source/preview. This should consistently use a canvas.
      *
-     * @method
-     * @private
+     * @method onRerender
      */
     onRerender() {
       // wait until the parentComponent is a Message Display Container
       if (!this.properties._internalState.onAttachCalled) return;
+
+      // Determine the maximum width for this Image in its current space.
       const maxCardWidth = this._getMaxMessageWidth();
 
+      // Get the blob and render as a canvas
       if (this.model.source || this.model.preview) {
         this.model.getBlob(blob => this._renderCanvas(blob, maxCardWidth));
       } else {
+
+        // Else get the imageUrl/previewUrl and stick it in the image src property.
+        // TODO: Re-assess if we should just use Canvas for consistency.
         while (this.firstChild) this.removeChild(this.firstChild);
         const img = this.createElement('img', {
           parentNode: this,
@@ -85,6 +115,15 @@ registerComponent('layer-image-view', {
       }
     },
 
+    /**
+     * Called when the image has finished loading via `sourceUrl` or `previewUrl`.
+     *
+     * Set the `isHeightAllocated` property to `true` as its height is now fixed and known.
+     *
+     * Set the width if the width is too great.
+     *
+     * @param {HTMLElement} img
+     */
     _imageLoaded(img) {
       this.isHeightAllocated = true;
       const minWidth = this.parentComponent.getPreferredMinWidth();
@@ -92,6 +131,20 @@ registerComponent('layer-image-view', {
       if (img.width > minWidth) this.messageViewer.style.width = (img.width + 2) + 'px';
     },
 
+    /**
+     * Lookup the maximum allowed width for this Image.
+     *
+     * If its NOT a Root Model, then its width should fill all available space in the parent.
+     *
+     * If it IS a Root Model, then we execute upon rules that use 60% of available width or 80% of width
+     * based on the total available width.
+     *
+     * Note that even if there is a large amount of available width, there is still a maximum allowed height
+     * that may prevent us from using the full width.
+     *
+     * method _getMaxMessageWidth
+     * @private
+     */
     _getMaxMessageWidth() {
       if (this.messageViewer.classList.contains('layer-root-card')) {
         const parent = this.messageViewer.parentNode;
@@ -110,6 +163,8 @@ registerComponent('layer-image-view', {
 
 
     /**
+     * Generate a Canvas to render our image.
+     *
      * Rendering Rules:
      *
      * * Images whose height is less than width and width is less than 192px are scaled to 192px
@@ -118,7 +173,9 @@ registerComponent('layer-image-view', {
      * * Images between 192-350 are sized as-is
      * * However, if there is metadata, scale images up to 350px
      *
-     * @param {*} blob
+     * @method _renderCanvas
+     * @private
+     * @param {Blob} blob
      */
     _renderCanvas(blob, maxCardWidth) {
       let width = this.model.previewWidth || this.model.width || maxCardWidth;
@@ -162,15 +219,6 @@ registerComponent('layer-image-view', {
           }, options);
         },
       );
-    },
-
-    handleContainerEvent(name, evt) {
-      switch (name) {
-        case 'click':
-        case 'tap':
-          this.model.getBestQualityUrl(url => window.open(url));
-          break;
-      }
     },
   },
 });

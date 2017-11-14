@@ -98,7 +98,7 @@ module.exports = {
      * @param {layer.MessagePart} [part=root]
      */
     createMessageTypeModel(message, part) {
-      if (!part) part = message.getPartsMatchingAttribute({ role: 'root' })[0];
+      if (!part) part = message.getRootPart();
       if (!part) return null;
       const cardId = part.id.replace(/layer:\/\/\/messages\//, MessageTypeModel.prefixUUID);
       const messageTypeModel = this.getMessageTypeModel(cardId);

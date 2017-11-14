@@ -332,7 +332,6 @@ describe('layer-message-item', function() {
     it("Should propagate the message handlers height to the content node", function() {
       layer.UI.registerMessageHandler({
         tagName: 'test-handler-height',
-        label: 'Test',
         handlesMessage: function(message, container) {return message.parts[0].mimeType=='text/height-test';}
       });
       layer.UI.registerComponent('test-handler-height', {

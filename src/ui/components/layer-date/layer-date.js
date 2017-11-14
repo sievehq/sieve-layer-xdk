@@ -6,22 +6,18 @@
  * using layer.UI.components.ConversationPanel.dateRenderer.
  *
  * ```
- * layer.UI.registerComponent('layer-date', {
- *    properties: {
- *      date: {
- *        set: function(value) {
- *           // Render a random date value that is related to but not exactly the provided value
- *           var newDate = new Date(value);
- *           newDate.setHours(newDate.getHours() + Math.random() * 10);
- *           this.innerHTML = newDate.toISOString();
- *        }
+ * Layer.init({
+ *     mixins: {
+ *         'layer-date', {
+ *             methods: {
+ *                 onRender: {
+ *                     modes: Layer.UI.registerComponent.MODES.OVERWRITE,
+ *                     value: function() {
+ *                         this.value = this.date.toISOString();
+ *                     }
+ *              }
+ *          }
  *      }
- *    }
- * });
- *
- * // Call init after custom components are defined
- * layer.init({
- *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
  *

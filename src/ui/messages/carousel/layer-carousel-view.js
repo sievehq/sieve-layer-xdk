@@ -1,7 +1,9 @@
 /**
+ * UI for a Carousel Message.
  *
- * @class
- * @extends layer.UI.components.Component
+ * @class Layer.UI.messages.CarouselView
+ * @mixin Layer.UI.messages.MessageViewMixin
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
 import { animatedScrollLeftTo } from '../../base';
@@ -52,21 +54,38 @@ registerComponent('layer-carousel-view', {
 
   // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
+
+    /**
+     * Use a Titled Display Container to render this UI if there is a title; not supported on mobile devices
+     *
+     * @experimental
+     * @property {String} [messageViewContainerTagName=layer-titled-display-container]
+     */
     messageViewContainerTagName: {
       noGetterFromSetter: true,
       get() {
         return this.model.title ? 'layer-titled-display-container' : null;
       },
     },
+
+    // See parent class
     widthType: {
       value: 'flex-width',
     },
   },
   methods: {
-    getIconClass() {
+
+    /**
+     * @experimental
+     */
+    _getIconClass() {
       return '';
     },
-    getTitle() {
+
+    /**
+     * @experimental
+     */
+    _getTitle() {
       return this.model.title;
     },
 
@@ -74,6 +93,15 @@ registerComponent('layer-carousel-view', {
       window.removeEventListener('resize', this.properties.onResize);
     },
 
+    /**
+     * On creating this component, wire up all the event handlers and initial property values.
+     *
+     * * Wire up click-next/click-prev buttons for scrolling through carousel items.
+     * * Wire up touch events for touch scrolling the carousel
+     * * Wire up the window.resize event to resize the carousel
+     *
+     * @method onCreate
+     */
     onCreate() {
       this.addClickHandler('click-next', this.nodes.next, this._scroll.bind(this, true));
       this.addClickHandler('click-prev', this.nodes.prev, this._scroll.bind(this, false));
@@ -87,22 +115,52 @@ registerComponent('layer-carousel-view', {
       this.properties.onResize = this._onResize.bind(this);
       window.addEventListener('resize', this.properties.onResize);
     },
+
+    /**
+     * Whenever there is a change of state in the model, or during intitializtion, rerender each carousel item.
+     *
+     * There are not currently any relevant states.
+     *
+     * @method onRerender
+     */
     onRerender() {
       if (!this.properties._internalState.onAttachCalled) return;
       this._adjustCarouselWidth();
 
-      // console.log("CAROUSEL onRERENDER");
-      // TODO: Assign items ids so we don't need to blow away and then recreate them
+      // Cache all of the items so we can resuse them
+      const itemUIs = Array.prototype.slice.call(this.nodes.items.childNodes);
+
+      // Clear the DOM
       this.nodes.items.innerHTML = '';
+
+      // Calculate a maximum allowed Carousel Item Width
       const maxCardWidth = this._getMaxMessageWidth();
+
+      // Generate/reuse each Carousel Item
       this.model.items.forEach((item) => {
-        // console.log('GENERATE: ' + item.id + '    ' + item.title);
-        const card = this.createElement('layer-message-viewer', {
-          message: this.model.message,
-          rootPart: item.part,
-          model: item,
-          parentNode: this.nodes.items,
-        });
+        let card;
+
+        // See if we've already generated the Carousel Item UI and add it back into the DOM if so.
+        for (let i = 0; i < itemUIs.length; i++) {
+          if (itemUIs[i].model === item) {
+            card = itemUIs[i];
+            this.nodes.items.appendChild(card);
+            break;
+          }
+        }
+
+        // Generate the Carousel Item UI Component if not cached
+        if (!card) {
+          card = this.createElement('layer-message-viewer', {
+            //message: this.model.message,
+            //rootPart: item.part,
+            model: item,
+            parentNode: this.nodes.items,
+          });
+        }
+
+        // Apply some appropiate widths based on the cards preferences and behaviors and our Maximum
+        // Carousel Item Width calculated above.
         const preferedMinWidth = card.nodes.ui.preferredMinWidth;
         const preferedMaxWidth = Math.min(maxCardWidth, card.nodes.ui.preferredMaxWidth);
         switch (card.widthType) {
@@ -118,9 +176,18 @@ registerComponent('layer-carousel-view', {
             break;
         }
       });
+
+      // Rerender the scroll buttons after rendering of the carousel has settled
       setTimeout(this._updateScrollButtons.bind(this), 10);
     },
 
+    /**
+     * After being added to the DOM structure (lifecycle method), rerender.
+     *
+     * Component gets key sizing information once its on the DOM.
+     *
+     * @method onAttach
+     */
     onAttach: {
       mode: registerComponent.MODES.AFTER,
       value() {
@@ -128,9 +195,23 @@ registerComponent('layer-carousel-view', {
         this.onRerender();
       },
     },
+
+    /**
+     * Call Layer.UI.messages.CarouselView._adjustCarouselWidth any time the window resizes.
+     *
+     * @method _onResize
+     * @private
+     */
     _onResize() {
       this._throttler(() => this._adjustCarouselWidth());
     },
+
+    /**
+     * Any time the width changes (or might have changed) recalculate the Carousel's width.
+     *
+     * @method _adjustCarouselWidth
+     * @private
+     */
     _adjustCarouselWidth() {
       const parent = this.parentComponent.parentNode;
       if (!parent || !parent.clientWidth) return 0;
@@ -138,6 +219,15 @@ registerComponent('layer-carousel-view', {
       if (carouselWidth) this.messageViewer.style.maxWidth = carouselWidth + 'px';
     },
 
+    /**
+     * Get the maximum allowed width for individual (generic) Carousel Items.
+     *
+     * Individual Carousel Items may have their own preferences, but they should not excede this value.
+     *
+     * @method _getMaxMessageWidth
+     * @returns {Number}
+     * @private
+     */
     _getMaxMessageWidth() {
       const parent = this.parentComponent.parentNode;
       if (!parent || !parent.clientWidth) return 350;
@@ -147,6 +237,14 @@ registerComponent('layer-carousel-view', {
       return Math.floor(width);
     },
 
+    /**
+     * Update whether the Scroll Back and Scroll Forwards buttons are visible.
+     *
+     * Bases decision on available width, and current scroll state.
+     *
+     * @method _updateScrollButtons
+     * @private
+     */
     _updateScrollButtons() {
       const root = this.nodes.items;
       if (!root.childNodes.length) return;
@@ -157,10 +255,13 @@ registerComponent('layer-carousel-view', {
       this.toggleClass('layer-carousel-end', lastVisible === children[children.length - 1]);
     },
 
-    // TODO:
-    // 1. animated scroll
-    // 2. scroll at 50-100% of width,
-    // 3. Stop scrolling when a card is flush to the left or 100% is reached
+    /**
+     * Scroll to the next/previous set of carousel items in response to clicking the next/prev buttons.
+     *
+     * @param {Boolean} isForward     Scroll to the end of the carousel-items (true) or start of the carousel-items (false)
+     * @param {Event} evt
+     * @private
+     */
     _scroll(isForward, evt) {
       evt.preventDefault();
       evt.stopPropagation();
@@ -236,14 +337,6 @@ registerComponent('layer-carousel-view', {
         const node = nodes[i];
         if (node.offsetLeft + node.clientWidth >= root.offsetLeft + root.scrollLeft) return node;
       }
-    },
-
-    /**
-     *
-     * @method
-     */
-    onRender() {
-
     },
 
     touchstart(evt) {

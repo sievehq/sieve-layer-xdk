@@ -21,6 +21,8 @@ class ChannelMessage extends Message {
     this.isInitializing = false;
     if (options && options.fromServer) {
       client._addMessage(this);
+    } else {
+      this.parts.forEach(part => { part._message = this });
     }
   }
 

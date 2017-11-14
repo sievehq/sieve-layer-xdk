@@ -131,7 +131,7 @@ class ProductModel extends MessageTypeModel {
     if (!this.imageUrls) this.imageUrls = [];
 
     const optionParts = this.childParts.filter(part => part.mimeAttributes.role === 'options');
-    this.options = optionParts.map(part => this.getClient().createMessageTypeModel(this.message, part));
+    this.options = optionParts.map(part => part.createModel());
   }
 
   getTitle() {
