@@ -386,7 +386,7 @@ class Container extends Syncable {
     const evtName = `${this.constructor.eventPrefix}:loaded`;
     const hasLoadedEvt = name === evtName || (name && typeof name === 'object' && name[evtName]);
 
-    if (hasLoadedEvt && !this.isLoading) {
+    if (hasLoadedEvt && !this.isLoading && (this.isSynced() || this.isSaving())) {
       const callNow = name === evtName ? callback : name[evtName];
       Util.defer(() => callNow.apply(context));
     }
