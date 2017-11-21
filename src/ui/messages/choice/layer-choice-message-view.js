@@ -1,0 +1,148 @@
+/**
+ * UI for a Choice Message
+ *
+ * @class Layer.UI.messages.ChoiceMessageView
+ * @mixin Layer.UI.messages.MessageViewMixin
+ * @extends Layer.UI.components.Component
+ */
+
+import { registerComponent } from '../../components/component';
+
+import MessageViewMixin from '../message-view-mixin';
+import '../../components/layer-action-button/layer-action-button';
+
+registerComponent('layer-choice-message-view', {
+  mixins: [MessageViewMixin],
+  template: `
+    <div layer-id='label' class='layer-choice-message-view-label'></div>
+    <div layer-id='choices' class='layer-choice-message-view-choices'></div>
+  `,
+  style: `
+  layer-choice-message-view .layer-choice-message-view-choices {
+    display: flex;
+    flex-direction: column;
+  }
+
+  `,
+  properties: {
+
+    /**
+     * Use a Titled Display Container to render this UI.
+     *
+     * @property {String} [messageViewContainerTagName=layer-titled-message-view-container]
+     */
+    messageViewContainerTagName: {
+      noGetterFromSetter: true,
+      value: 'layer-titled-message-view-container',
+    },
+
+    // See parent definition
+    widthType: {
+      value: 'flex-width',
+    },
+  },
+  methods: {
+    /**
+     * Provide a CSS class to the <layer-titled-message-view-container /> to help it select an image to render.
+     *
+     * @method _getIconClass
+     * @protected
+     */
+    _getIconClass() {
+      return 'layer-poll-view-icon';
+    },
+
+    /**
+     * Provide a title to the <layer-titled-message-view-container />.
+     *
+     * @method _getTitle
+     * @protected
+     */
+    _getTitle() {
+      return this.model.title;
+    },
+
+    /**
+     * After the UI Component has been created (lifecycle method) generate all necessary `<layer-action-button />` components.
+     *
+     * Note that this may need to be moved to onRerender to handle Message Editing that could add/remove choices.
+     *
+     * @method onAfterCreate
+     */
+    onAfterCreate() {
+      this.nodes.label.innerText = this.model.label;
+      this.model.choices.forEach((choice) => {
+        this.createElement('layer-action-button', {
+          text: choice.text,
+          tooltip: choice.tooltip,
+          event: 'layer-choice-select',
+          data: { id: choice.id },
+          //icon: choice.icon,
+          parentNode: this.nodes.choices,
+        });
+      });
+    },
+
+    /**
+     * Whenever the component changes (lifecycle method), update all choices.
+     *
+     * The model supports the notion that text and tooltip may vary based on the Choice's selection state, so any change
+     * in state may require an update to the text and tooltip.  Obviously changes in state can also impact
+     * a given choice's selected and disabled states.
+     *
+     * @method onRerender
+     */
+    onRerender() {
+      if (!this.model.allowReselect) {
+        this.toggleClass('layer-choice-message-view-complete', this.model.selectedAnswer);
+      }
+
+      this.model.choices.forEach((choice, index) => {
+        const button = this.nodes.choices.childNodes[index];
+        button.text = this.model.getText(index);
+        button.tooltip = this.model.getTooltip(index);
+        button.selected = this.model.isSelectedIndex(index);
+        button.disabled = !this.model.isSelectionEnabledFor(index);
+      });
+    },
+
+    /**
+     * Select the specified Choice.
+     *
+     * @param {Object} data
+     * @param {String} data.id   ID of the selected Choice
+     * @method _selectChoice
+     * @private
+     */
+    _selectChoice(data) {
+      this.model.selectAnswer(data);
+    },
+
+    /**
+     * When the user selects a `<layer-action-button />` representing a choice, it calls this `runAction` method to handle the selection event.
+     *
+     * Selecting a choice should result in:
+     *
+     * * a call to this.model.selectAnswer()
+     * * Triggering a UI event that the application can intercept
+     *
+     * @param {Sring} event   The actionEvent for the choice; all choices are "layer-choice-select"
+     * @param {Object} data   Data to run this action with; of the form `{id: answerId}`
+     */
+    runAction({ event, data }) {
+      if (event === 'layer-choice-select') {
+        if (!this.model.isSelectionEnabled()) return;
+        this._selectChoice(data);
+
+        const rootPart = this.model.message.getPartsMatchingAttribute({ role: 'root' })[0];
+        const rootModel = this.client.getMessageTypeModel(rootPart.id);
+        this.trigger(this.model.responseName, {
+          model: this.model,
+          data: this.model,
+          rootModel,
+        });
+      }
+    },
+  },
+});
+

@@ -94,7 +94,7 @@ describe('Status Message Components', function() {
   describe("View Tests", function() {
     var el;
     beforeEach(function() {
-      el = document.createElement('layer-status-view');
+      el = document.createElement('layer-status-message-view');
       testRoot.appendChild(el);
     });
     afterEach(function() {
@@ -110,7 +110,7 @@ describe('Status Message Components', function() {
       el.model = model;
       layer.Util.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p>hello</p>");
+      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p>");
     });
 
     it("Should render newline characters", function() {
@@ -120,7 +120,7 @@ describe('Status Message Components', function() {
       el.model = model;
       layer.Util.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p>hello</p><p>there</p>");
+      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p><p class=\"layer-line-wrapping-paragraphs\">there</p>");
     });
 
     it("Should render links", function() {
@@ -130,7 +130,7 @@ describe('Status Message Components', function() {
       el.model = model;
       layer.Util.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p>hello from <a href=\"https://layer.com\" class=\"layer-parsed-url layer-parsed-url-url\" target=\"_blank\" rel=\"noopener noreferrer\">layer.com</a></p>");
+      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello from <a href=\"https://layer.com\" class=\"layer-parsed-url layer-parsed-url-url\" target=\"_blank\" rel=\"noopener noreferrer\">layer.com</a></p>");
     });
   });
 });

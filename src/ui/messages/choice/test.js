@@ -6,7 +6,7 @@ describe('Choice Message Components', function() {
   var styleNode;
   beforeAll(function() {
     styleNode = document.createElement('style');
-    styleNode.innerHTML = 'layer-message-viewer.layer-choice-view  {width: 300px; height: 150px;}';
+    styleNode.innerHTML = 'layer-message-viewer.layer-choice-message-view  {width: 300px; height: 150px;}';
     document.body.appendChild(styleNode);
   });
 
@@ -67,7 +67,7 @@ describe('Choice Message Components', function() {
   describe("Model Tests", function() {
     it("Should create an appropriate Basic Model with suitable properties and defaults", function() {
       var model = new ChoiceModel({
-        question: "hello",
+        label: "hello",
         choices: [
           {text: "a", id: "aa"},
           {text: "b", id: "bb"},
@@ -75,11 +75,11 @@ describe('Choice Message Components', function() {
         ]
       });
 
-      expect(model.question).toEqual("hello");
+      expect(model.label).toEqual("hello");
       expect(model.choices).toEqual([
-        {text: "a", id: "aa"},
-        {text: "b", id: "bb"},
-        {text: "c", id: "cc"},
+        jasmine.objectContaining({text: "a", id: "aa"}),
+        jasmine.objectContaining({text: "b", id: "bb"}),
+        jasmine.objectContaining({text: "c", id: "cc"}),
       ]);
       expect(model.allowReselect).toBe(false);
       expect(model.allowDeselect).toBe(false);
@@ -90,7 +90,7 @@ describe('Choice Message Components', function() {
 
     it("Should create an appropriate Basic Message", function() {
       var model = new ChoiceModel({
-        question: "hello",
+        label: "hello",
         choices: [
           {text: "a", id: "aa"},
           {text: "b", id: "bb"},
@@ -104,7 +104,7 @@ describe('Choice Message Components', function() {
       expect(message.parts.length).toEqual(1);
       expect(message.parts[0].mimeType).toEqual('application/vnd.layer.choice+json');
       expect(JSON.parse(message.parts[0].body)).toEqual({
-        question: "hello",
+        label: "hello",
         choices: [
           {text: "a", id: "aa"},
           {text: "b", id: "bb"},
@@ -145,7 +145,7 @@ describe('Choice Message Components', function() {
           id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
           mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
-            question: "hello",
+            label: "hello",
             choices: [
               {text: "a", id: "aa", states: {
                 selected: {
@@ -164,16 +164,16 @@ describe('Choice Message Components', function() {
         part: m.parts[0],
       });
 
-      expect(model.question).toEqual("hello");
+      expect(model.label).toEqual("hello");
       expect(model.choices).toEqual([
-        {text: "a", id: "aa", states: {
+        jasmine.objectContaining({text: "a", id: "aa", states: {
           selected: {
             text: "B",
             tooltip: "BBB"
           }
-        }},
-        {text: "b", id: "bb", customResponseData: {hey: "ho"}},
-        {text: "c", id: "cc", tooltip: "Tips"},
+        }}),
+        jasmine.objectContaining({text: "b", id: "bb", customResponseData: {hey: "ho"}}),
+        jasmine.objectContaining({text: "c", id: "cc", tooltip: "Tips"}),
       ]);
 
       expect(model.actionModels).toEqual([
@@ -201,7 +201,7 @@ describe('Choice Message Components', function() {
 
     it("Should have a suitable one line summary", function() {
       var model = new ChoiceModel({
-        question: "hello",
+        label: "hello",
         title: "hey",
         choices: [
           {text: "a", id: "aa"},
@@ -236,7 +236,7 @@ describe('Choice Message Components', function() {
       it("Should correctly initialize Message with allowReselect", function() {
         var model = new ChoiceModel({
           allowReselect: true,
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
@@ -259,7 +259,7 @@ describe('Choice Message Components', function() {
             mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
             body: JSON.stringify({
               allow_reselect: true,
-              question: "hello",
+              label: "hello",
               choices: [
                 {text: "a", id: "aa"},
                 {text: "b", id: "bb"},
@@ -278,13 +278,13 @@ describe('Choice Message Components', function() {
 
       it("Should enable/disable selection", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
             {text: "c", id: "cc"},
           ],
-          selectedAnswer: "bb"
+          preselectedChoice: "bb"
         });
         expect(model.isSelectionEnabledFor(0)).toBe(false);
         expect(model.isSelectionEnabledFor(1)).toBe(false);
@@ -303,7 +303,7 @@ describe('Choice Message Components', function() {
       it("Should correctly initialize Message with allowDeselect", function() {
         var model = new ChoiceModel({
           allowDeselect: true,
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
@@ -329,7 +329,7 @@ describe('Choice Message Components', function() {
             mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
             body: JSON.stringify({
               allow_deselect: true,
-              question: "hello",
+              label: "hello",
               choices: [
                 {text: "a", id: "aa"},
                 {text: "b", id: "bb"},
@@ -338,6 +338,7 @@ describe('Choice Message Components', function() {
             })
           }]
         });
+        debugger;
         var model = new ChoiceModel({
           message: m,
           part: m.parts[0],
@@ -349,14 +350,14 @@ describe('Choice Message Components', function() {
 
       it("Should enable/disable selection", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
             {text: "c", id: "cc"},
           ],
           allowReselect: true,
-          selectedAnswer: "bb"
+          preselectedChoice: "bb"
         });
         expect(model.isSelectionEnabledFor(0)).toBe(true);
         expect(model.isSelectionEnabledFor(1)).toBe(false);
@@ -374,7 +375,7 @@ describe('Choice Message Components', function() {
       it("Should correctly initialize Message with allowMultiselect", function() {
         var model = new ChoiceModel({
           allowMultiselect: true,
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
@@ -401,7 +402,7 @@ describe('Choice Message Components', function() {
             mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
             body: JSON.stringify({
               allow_multiselect: true,
-              question: "hello",
+              label: "hello",
               choices: [
                 {text: "a", id: "aa"},
                 {text: "b", id: "bb"},
@@ -422,13 +423,13 @@ describe('Choice Message Components', function() {
 
       it("Should enable selection", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
             {text: "c", id: "cc"},
           ],
-          selectedAnswer: "bb",
+          preselectedChoice: "bb",
           allowReselect: true
         });
         expect(model.isSelectionEnabledFor(0)).toBe(true);
@@ -445,13 +446,13 @@ describe('Choice Message Components', function() {
 
       it("Should route calls to selectAnswer", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
             {text: "c", id: "cc"},
           ],
-          selectedAnswer: "bb",
+          preselectedChoice: "bb",
           allowReselect: true
         });
         model.generateMessage(conversation, function(m) {
@@ -476,13 +477,13 @@ describe('Choice Message Components', function() {
     describe("The _selectSingleAnswer() method", function() {
       it("Will depend upon getChoiceIndexById()", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
             {text: "c", id: "cc"},
           ],
-          selectedAnswer: "bb"
+          preselectedChoice: "bb"
         });
         expect(model.getChoiceIndexById(model.selectedAnswer)).toBe(1);
 
@@ -492,20 +493,20 @@ describe('Choice Message Components', function() {
 
       it("Will depend upon _getNameOfChoice()", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
             {text: "c", id: "cc"},
           ],
-          selectedAnswer: "bb"
+          preselectedChoice: "bb"
         });
         expect(model._getNameOfChoice()).toEqual("hello");
       });
 
       it("Will handle standard selection", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
@@ -547,14 +548,14 @@ describe('Choice Message Components', function() {
 
       it("Will handle standard deselection", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
             {text: "c", id: "cc"},
           ],
           allowDeselect: true,
-          selectedAnswer: "bb",
+          preselectedChoice: "bb",
         });
         model.generateMessage(conversation, function(m) {
           message = m;
@@ -591,7 +592,7 @@ describe('Choice Message Components', function() {
 
       it("Will handle responseName", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
@@ -621,7 +622,7 @@ describe('Choice Message Components', function() {
 
       it("Will allow and disallow edit with enabledFor", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
@@ -652,13 +653,13 @@ describe('Choice Message Components', function() {
     describe("The _selectMultipleAnswer() method", function() {
       it("Will handle standard selection", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
             {text: "c", id: "cc"},
           ],
-          selectedAnswer: "cc",
+          preselectedChoice: "cc",
           allowMultiselect: true
         });
         model.generateMessage(conversation, function(m) {
@@ -696,13 +697,13 @@ describe('Choice Message Components', function() {
 
       it("Will handle standard deselection", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
             {text: "c", id: "cc"},
           ],
-          selectedAnswer: "bb,cc",
+          preselectedChoice: "bb,cc",
           allowMultiselect: true
         });
         model.generateMessage(conversation, function(m) {
@@ -741,13 +742,13 @@ describe('Choice Message Components', function() {
 
     it("Will handle responseName", function() {
       var model = new ChoiceModel({
-        question: "hello",
+        label: "hello",
         choices: [
           {text: "a", id: "aa"},
           {text: "b", id: "bb"},
           {text: "c", id: "cc"},
         ],
-        selectedAnswer: "cc",
+        preselectedChoice: "cc",
         allowMultiselect: true,
         responseName: "frodo"
       });
@@ -773,7 +774,7 @@ describe('Choice Message Components', function() {
 
     it("Will allow and disallow edit with enabledFor", function() {
       var model = new ChoiceModel({
-        question: "hello",
+        label: "hello",
         choices: [
           {text: "a", id: "aa"},
           {text: "b", id: "bb"},
@@ -804,7 +805,7 @@ describe('Choice Message Components', function() {
     describe("Text and Tooltip state", function() {
       it("Should return the same text if no state settings", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", tooltip: "aaa", id: "aa"},
             {text: "b", tooltip: "bbb", id: "bb"},
@@ -821,7 +822,7 @@ describe('Choice Message Components', function() {
 
       it("Should apply selected state text", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", tooltip: "aaa", id: "aa"},
             {text: "b", tooltip: "bbb", id: "bb", states: {
@@ -843,7 +844,7 @@ describe('Choice Message Components', function() {
 
       it("Should apply default state text", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", tooltip: "aaa", id: "aa"},
             {text: "b", tooltip: "bbb", id: "bb", states: {
@@ -867,7 +868,7 @@ describe('Choice Message Components', function() {
     describe("Should send customResponseData", function() {
       it("Should send with singleSelect", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
@@ -902,7 +903,7 @@ describe('Choice Message Components', function() {
       });
       it("Should send with multiSelect", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa"},
             {text: "b", id: "bb"},
@@ -939,7 +940,7 @@ describe('Choice Message Components', function() {
 
       it("Should send with singleSelect and custom item data", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           choices: [
             {text: "a", id: "aa", customResponseData: {hey: "ho5", a: "aaa"}},
             {text: "b", id: "bb", customResponseData: {hey: "ho10", a: "bbb"}},
@@ -976,9 +977,9 @@ describe('Choice Message Components', function() {
 
       it("Should send with deselected and custom item data", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           allowDeselect: true,
-          selectedAnswer: "bb",
+          preselectedChoice: "bb",
           choices: [
             {text: "a", id: "aa", customResponseData: {hey: "ho5", a: "aaa"}},
             {text: "b", id: "bb", customResponseData: {hey: "ho10", a: "bbb"}},
@@ -1015,7 +1016,7 @@ describe('Choice Message Components', function() {
 
       it("Should send with multiSelect and custom item data", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           allowMultiselect: true,
           choices: [
             {text: "a", id: "aa", customResponseData: {hey: "ho5", a: "aaa"}},
@@ -1053,9 +1054,9 @@ describe('Choice Message Components', function() {
 
       it("Should send with deselected multiSelect and custom item data", function() {
         var model = new ChoiceModel({
-          question: "hello",
+          label: "hello",
           allowMultiselect: true,
-          selectedAnswer: "bb",
+          preselectedChoice: "bb",
           choices: [
             {text: "a", id: "aa", customResponseData: {hey: "ho5", a: "aaa"}},
             {text: "b", id: "bb", customResponseData: {hey: "ho10", a: "bbb"}},
@@ -1089,6 +1090,183 @@ describe('Choice Message Components', function() {
         });
       });
     });
+
+    describe("Event Tests", function() {
+      it("Should use the gather-custom-response-data event", function() {
+        var model = new ChoiceModel({
+          label: "hello",
+          allowMultiselect: true,
+          choices: [
+            {text: "a", id: "aa", customResponseData: {hey: "ho5", a: "aaa"}},
+            {text: "b", id: "bb", customResponseData: {hey: "ho10", a: "bbb"}},
+            {text: "c", id: "cc"},
+          ],
+          customResponseData: {
+            hey: "ho",
+            there: "goes"
+          }
+        });
+        model.generateMessage(conversation, function(m) {
+          message = m;
+          message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
+        });
+
+        var called = false;
+        model.once('gather-custom-response-data', function(evt) {
+          called = true;
+
+          // Posttest
+          expect(evt).toEqual(jasmine.objectContaining({
+            choice: jasmine.objectContaining({ id: 'bb' }),
+            choiceCustomResponseData: {hey: "ho10", a: "bbb"},
+            fullCustomResponseData:  {
+              hey: "ho",
+              there: "goes"
+            },
+            action: 'selected'
+          }));
+        });
+
+        model.selectAnswer({ id: "bb" });
+        expect(called).toBe(true);
+
+        // Test 2:
+        called = false;
+        model.once('gather-custom-response-data', function(evt) {
+          called = true;
+          expect(evt).toEqual(jasmine.objectContaining({
+            choice: jasmine.objectContaining({ id: 'bb' }),
+            choiceCustomResponseData: {hey: "ho10", a: "bbb"},
+            fullCustomResponseData:  {
+              hey: "ho",
+              there: "goes"
+            },
+            action: 'deselected'
+          }));
+        });
+        model.selectAnswer({ id: "bb" });
+        expect(called).toBe(true);
+      });
+
+      it("Should use the generate-text-message event", function() {
+        var model = new ChoiceModel({
+          label: "hello",
+          choices: [
+            {text: "a", id: "aa"},
+            {text: "b", id: "bb"},
+            {text: "c", id: "cc"},
+          ],
+        });
+        model.generateMessage(conversation, function(m) {
+          message = m;
+          message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
+        });
+        spyOn(model, "_sendResponse");
+        var called = false;
+        model.on('generate-text-message', function(evt) {
+          called = true;
+          expect(evt.data.text.length > 0).toBe(true);
+          expect(evt.data.choice).toBe(model.choices[1]);
+          expect(evt.data.action).toEqual('selected');
+
+          evt.data.text = 'hey ho';
+        });
+
+        model.selectAnswer({id: "bb"});
+        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
+        var textPart = responseMessage.parts[1];
+
+        expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
+        expect(JSON.parse(textPart.body)).toEqual({
+          text: 'hey ho'
+        });
+      });
+    });
+
+    describe("The expandedType property", function() {
+      it("Should return its own value or type if no value", function() {
+        var model = new ChoiceModel({
+          label: "hello",
+          choices: [
+            {text: "c", id: "cc"},
+          ],
+          type: 'label',
+          expandedType: 'standard'
+        });
+        expect(model.expandedType).toEqual('standard');
+        model.expandedType = 'label';
+        expect(model.expandedType).toEqual('label');
+        model.expandedType = '';
+        expect(model.expandedType).toEqual('label'); // returns type value
+
+        var model2 = new ChoiceModel({
+          label: "hello",
+          choices: [
+            {text: "c", id: "cc"},
+          ],
+          type: 'label'
+        });
+        expect(model2.expandedType).toEqual('label'); // returns type value
+      });
+    });
+
+    describe("The preselectedChoice property", function() {
+      it("Should set the selectedAnswer property", function() {
+        var model = new ChoiceModel({
+          label: "hello",
+          choices: [
+            {text: "b", id: "bb"},
+            {text: "c", id: "cc"},
+          ],
+          preselectedChoice: "cc"
+        });
+        expect(model.selectedAnswer).toEqual("cc");
+      });
+
+      it("Should ignore the preselectedChoice property if there is a response", function() {
+        var model = new ChoiceModel({
+          label: "hello",
+          choices: [
+            {text: "b", id: "bb"},
+            {text: "c", id: "cc"},
+          ],
+          preselectedChoice: "cc",
+          responseName: "hey"
+        });
+        model.generateMessage(conversation);
+        model.responses = {
+            participantData: {
+            "layer:///identities/heyho": {
+              "hey": "bb"
+            }
+          }
+        };
+        model._processNewResponses();
+        expect(model.selectedAnswer).toEqual("bb");
+      });
+
+      it("Should ignore the preselectedChoice property if there is an empty response", function() {
+        var model = new ChoiceModel({
+          label: "hello",
+          choices: [
+            {text: "b", id: "bb"},
+            {text: "c", id: "cc"},
+          ],
+          preselectedChoice: "cc",
+          responseName: "hey"
+        });
+        model.generateMessage(conversation);
+        model.responses = {
+          participantData: {
+            "layer:///identities/heyho": {
+              "hey": ""
+            }
+          }
+        };
+        model._processNewResponses();
+        expect(model.selectedAnswer).toEqual("");
+      });
+    });
   });
 
 
@@ -1106,7 +1284,7 @@ describe('Choice Message Components', function() {
 
     it("Should render 3 action buttons", function() {
       var model = new ChoiceModel({
-        question: "hello",
+        label: "hello",
         choices: [
           {text: "a", tooltip: "aaa", id: "aa"},
           {text: "b", tooltip: "bbb", id: "bb"},
@@ -1125,31 +1303,31 @@ describe('Choice Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
       // Message UI:
-      expect(el.nodes.ui.nodes.question.innerHTML).toEqual("hello");
-      expect(el.nodes.ui.nodes.answers.childNodes[0].tagName).toEqual('LAYER-ACTION-BUTTON');
-      expect(el.nodes.ui.nodes.answers.childNodes[1].tagName).toEqual('LAYER-ACTION-BUTTON');
-      expect(el.nodes.ui.nodes.answers.childNodes[2].tagName).toEqual('LAYER-ACTION-BUTTON');
+      expect(el.nodes.ui.nodes.label.innerHTML).toEqual("hello");
+      expect(el.nodes.ui.nodes.choices.childNodes[0].tagName).toEqual('LAYER-ACTION-BUTTON');
+      expect(el.nodes.ui.nodes.choices.childNodes[1].tagName).toEqual('LAYER-ACTION-BUTTON');
+      expect(el.nodes.ui.nodes.choices.childNodes[2].tagName).toEqual('LAYER-ACTION-BUTTON');
 
-      expect(el.nodes.ui.nodes.answers.childNodes[0].text).toEqual("a");
-      expect(el.nodes.ui.nodes.answers.childNodes[1].text).toEqual("b");
-      expect(el.nodes.ui.nodes.answers.childNodes[2].text).toEqual("c");
+      expect(el.nodes.ui.nodes.choices.childNodes[0].text).toEqual("a");
+      expect(el.nodes.ui.nodes.choices.childNodes[1].text).toEqual("b");
+      expect(el.nodes.ui.nodes.choices.childNodes[2].text).toEqual("c");
 
-      expect(el.nodes.ui.nodes.answers.childNodes[0].tooltip).toEqual("aaa");
-      expect(el.nodes.ui.nodes.answers.childNodes[1].tooltip).toEqual("bbb");
-      expect(el.nodes.ui.nodes.answers.childNodes[2].tooltip).toEqual("ccc");
+      expect(el.nodes.ui.nodes.choices.childNodes[0].tooltip).toEqual("aaa");
+      expect(el.nodes.ui.nodes.choices.childNodes[1].tooltip).toEqual("bbb");
+      expect(el.nodes.ui.nodes.choices.childNodes[2].tooltip).toEqual("ccc");
 
-      expect(el.nodes.ui.nodes.answers.childNodes[0].event).toEqual("layer-choice-select");
-      expect(el.nodes.ui.nodes.answers.childNodes[1].event).toEqual("layer-choice-select");
-      expect(el.nodes.ui.nodes.answers.childNodes[2].event).toEqual("layer-choice-select");
+      expect(el.nodes.ui.nodes.choices.childNodes[0].event).toEqual("layer-choice-select");
+      expect(el.nodes.ui.nodes.choices.childNodes[1].event).toEqual("layer-choice-select");
+      expect(el.nodes.ui.nodes.choices.childNodes[2].event).toEqual("layer-choice-select");
 
-      expect(el.nodes.ui.nodes.answers.childNodes[0].data).toEqual({ id: "aa" });
-      expect(el.nodes.ui.nodes.answers.childNodes[1].data).toEqual({ id: "bb" });
-      expect(el.nodes.ui.nodes.answers.childNodes[2].data).toEqual({ id: "cc" });
+      expect(el.nodes.ui.nodes.choices.childNodes[0].data).toEqual({ id: "aa" });
+      expect(el.nodes.ui.nodes.choices.childNodes[1].data).toEqual({ id: "bb" });
+      expect(el.nodes.ui.nodes.choices.childNodes[2].data).toEqual({ id: "cc" });
     });
 
     it("Selection of an action button should update model and UI state", function() {
       var model = new ChoiceModel({
-        question: "hello",
+        label: "hello",
         choices: [
           {text: "a", tooltip: "aaa", id: "aa"},
           {text: "b", tooltip: "bbb", id: "bb"},
@@ -1164,7 +1342,7 @@ describe('Choice Message Components', function() {
 
       layer.Util.defer.flush();
 
-      el.nodes.ui.nodes.answers.childNodes[1]._onClick({
+      el.nodes.ui.nodes.choices.childNodes[1]._onClick({
         preventDefault: function() {},
         stopPropagation: function() {},
         target: {
@@ -1173,12 +1351,12 @@ describe('Choice Message Components', function() {
       });
 
       expect(model.selectedAnswer).toEqual("bb");
-      expect(el.nodes.ui.nodes.answers.childNodes[1].selected).toBe(true);
+      expect(el.nodes.ui.nodes.choices.childNodes[1].selected).toBe(true);
     });
 
     it("Should update text based on state", function() {
       var model = new ChoiceModel({
-        question: "hello",
+        label: "hello",
         choices: [
           {text: "a", tooltip: "aaa", id: "aa"},
           {text: "b", tooltip: "bbb", id: "bb", states: {
@@ -1198,14 +1376,14 @@ describe('Choice Message Components', function() {
 
       layer.Util.defer.flush();
 
-      expect(el.nodes.ui.nodes.answers.childNodes[1].text).toEqual("b");
+      expect(el.nodes.ui.nodes.choices.childNodes[1].text).toEqual("b");
       model.selectAnswer({id: "bb" });
-      expect(el.nodes.ui.nodes.answers.childNodes[1].text).toEqual("B");
+      expect(el.nodes.ui.nodes.choices.childNodes[1].text).toEqual("B");
     });
 
     it("Should trigger an event based on the responseName", function() {
       var model = new ChoiceModel({
-        question: "hello",
+        label: "hello",
         choices: [
           {text: "a", tooltip: "aaa", id: "aa"},
           {text: "b", tooltip: "bbb", id: "bb"},
@@ -1224,7 +1402,7 @@ describe('Choice Message Components', function() {
 
       layer.Util.defer.flush();
 
-      el.nodes.ui.nodes.answers.childNodes[1]._onClick({
+      el.nodes.ui.nodes.choices.childNodes[1]._onClick({
         preventDefault: function() {},
         stopPropagation: function() {},
         target: {

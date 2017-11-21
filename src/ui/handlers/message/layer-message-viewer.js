@@ -224,13 +224,15 @@ registerMessageComponent('layer-message-viewer', {
      *
      * @method _runAction
      * @private
-     * @param {Object} options
+     * @param {Object} action
+     * @param {String} action.event   Event name
+     * @param {Object} action.data    Data to use when processing the event, in addition to the model's data
      */
-    _runAction(options) {
-      if (this.nodes.ui.runAction && this.nodes.ui.runAction(options)) return;
+    _runAction(action) {
+      if (this.nodes.ui.runAction && this.nodes.ui.runAction(action)) return;
 
-      const event = options && options.event ? options.event : this.model.actionEvent;
-      const actionData = options && options.data ? options.data : this.model.actionData; // TODO: perhaps merge options.data with actionData?
+      const event = action && action.event ? action.event : this.model.actionEvent;
+      const actionData = action && action.data ? action.data : this.model.actionData; // TODO: perhaps merge action.data with actionData?
 
       if (messageActionHandlers[event]) return messageActionHandlers[event].apply(this, [actionData]);
       const rootModel = this.message.getRootPart().createModel();

@@ -5,9 +5,9 @@ import 'blueimp-load-image/js/load-image-exif';
 import Layer, { MessagePart } from '../../core';
 import { settings } from '../base';
 import normalizeSize from '../utils/sizing';
-import ImageModel from '../messages/image/layer-image-model';
-import FileModel from '../messages/file/layer-file-model';
-import CarouselModel from '../messages/carousel/layer-carousel-model';
+import ImageModel from '../messages/image/layer-image-message-model';
+import FileModel from '../messages/file/layer-file-message-model';
+import CarouselModel from '../messages/carousel/layer-carousel-message-model';
 
 const Files = {};
 module.exports = Files;

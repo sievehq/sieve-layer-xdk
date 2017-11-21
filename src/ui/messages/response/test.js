@@ -179,7 +179,7 @@ describe('Response Message Components', function() {
   describe("View Tests", function() {
     var el;
     beforeEach(function() {
-      el = document.createElement('layer-response-view');
+      el = document.createElement('layer-response-message-view');
       testRoot.appendChild(el);
     });
     afterEach(function() {

@@ -117,6 +117,22 @@ layerUI._setupOrderedHandlers = function() {
 };
 
 /**
+ * Removes tags from strings before rendering.
+ *
+ * This prevents <script /> tags from being added via a Message.
+ *
+ * @method sanitizeText
+ * @param {String} text
+ * @returns {String}
+ */
+layerUI.sanitizeText = function(text) {
+  return (text || '')
+    .trim()
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
  * Transform text into HTML with any processing and decorations needed.
  *
  * Uses the textHandlers to process the text
@@ -128,10 +144,7 @@ layerUI._setupOrderedHandlers = function() {
 layerUI.processText = function(text) {
   if (!layerUI.textHandlersOrdered) this._setupOrderedHandlers();
 
-  const processedText = (text || '')
-    .trim()
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  const processedText = layerUI.sanitizeText(text);
 
   const textData = {
     originalText: text,

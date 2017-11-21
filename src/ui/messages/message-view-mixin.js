@@ -106,6 +106,9 @@ module.exports = {
     },
   },
   methods: {
+    onCreate() {
+      this.classList.add('layer-message-type-view');
+    },
 
     /**
      * Core part of the UI Lifecycle, called after onAfterCreate.

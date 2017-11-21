@@ -83,7 +83,6 @@ describe('File Message Components', function() {
         author: "c",
         sourceUrl: "e",
         size: 55,
-        fileExt: "jpg",
         mimeType: "image/jpeg",
       });
       model.generateMessage(conversation, function(message) {
@@ -94,7 +93,6 @@ describe('File Message Components', function() {
           author: "c",
           source_url: "e",
           size: 55,
-          file_ext: "jpg",
           mime_type: "image/jpeg",
         });
       });
@@ -154,7 +152,6 @@ describe('File Message Components', function() {
             author: "c",
             source_url: "e",
             size: 55,
-            file_ext: "jpg",
             mime_type: "image/jpeg",
           })
         }, {
@@ -171,7 +168,6 @@ describe('File Message Components', function() {
       expect(m.title).toEqual("b");
       expect(m.author).toEqual("c");
       expect(m.sourceUrl).toEqual("e");
-      expect(m.fileExt).toEqual("jpg");
       expect(m.mimeType).toEqual("image/jpeg");
       expect(m.source.body).toBe(blob);
     });
@@ -192,7 +188,6 @@ describe('File Message Components', function() {
       expect(m.title).toEqual("");
       expect(m.author).toEqual("");
       expect(m.sourceUrl).toEqual("a");
-      expect(m.fileExt).toEqual("");
       expect(m.mimeType).toEqual("");
     });
 
@@ -202,7 +197,6 @@ describe('File Message Components', function() {
         author: "c",
         sourceUrl: "e",
         size: 55,
-        fileExt: "jpg",
         mimeType: "image/jpeg",
       });
       var model2 = new FileModel({
@@ -226,12 +220,14 @@ describe('File Message Components', function() {
         subtitle: "d",
         sourceUrl: "e"
       });
+      model1.generateMessage(conversation);
       var model2 = new FileModel({
         sourceUrl: "e"
       });
+      model2.generateMessage(conversation);
 
       expect(model1.getOneLineSummary()).toEqual("b");
-      expect(model2.getOneLineSummary()).toEqual("File");
+      expect(model2.getOneLineSummary()).toEqual("File sent");
     });
   });
 
@@ -312,7 +308,7 @@ describe('File Message Components', function() {
 
       // Container: show metadata
       expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(false);
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('Picture here');
+      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('Picture here');
 
       // Message UI: contains anchor tag
       expect(el.nodes.ui.classList.contains('layer-file-image-png')).toBe(true);
@@ -332,7 +328,7 @@ describe('File Message Components', function() {
       layer.Util.defer.flush();
 
       expect(model.actionEvent).toEqual('open-file');
-      el.runAction({});
+      el._runAction({});
       expect(el.showFullScreen).toHaveBeenCalledWith("https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png");
     });
 

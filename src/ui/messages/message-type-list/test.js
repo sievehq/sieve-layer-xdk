@@ -6,7 +6,7 @@ describe('Carousel Message Components', function() {
   var styleNode;
   beforeAll(function() {
     styleNode = document.createElement('style');
-    styleNode.innerHTML = 'layer-message-viewer.layer-carousel-view  {width: 300px; height: 150px;}';
+    styleNode.innerHTML = 'layer-message-viewer.layer-carousel-message-view  {width: 300px; height: 150px;}';
     document.body.appendChild(styleNode);
   });
 

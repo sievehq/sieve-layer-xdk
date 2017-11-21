@@ -272,12 +272,14 @@ describe('Image Message Components', function() {
         subtitle: "d",
         sourceUrl: "e"
       });
+      model1.generateMessage(conversation);
       var model2 = new ImageModel({
         sourceUrl: "e"
       });
+      model2.generateMessage(conversation);
 
       expect(model1.getOneLineSummary()).toEqual("b");
-      expect(model2.getOneLineSummary()).toEqual("Picture");
+      expect(model2.getOneLineSummary()).toEqual("Picture sent");
     });
 
     it("Should get the correct url value", function() {
@@ -393,7 +395,7 @@ describe('Image Message Components', function() {
 
       // Container: show metadata
       expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(false);
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('Picture here');
+      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('Picture here');
 
       // Message UI: contains anchor tag
       expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
@@ -422,7 +424,7 @@ describe('Image Message Components', function() {
 
               // Container: show metadata
               expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(false);
-              expect(el.querySelector('.layer-card-title').innerHTML).toEqual('Picture here');
+              expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('Picture here');
 
               // Message UI: contains anchor tag
               expect(el.nodes.ui.firstChild.tagName).toEqual('CANVAS');
@@ -455,7 +457,7 @@ describe('Image Message Components', function() {
       layer.Util.defer.flush();
 
       expect(model.actionEvent).toEqual('open-url');
-      el.runAction({});
+      el._runAction({});
       expect(el.showFullScreen).toHaveBeenCalledWith("https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png");
     });
 

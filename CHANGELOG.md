@@ -7,6 +7,19 @@
 * JSDuck on Message Type UIs
 * Layer.Core.Query.ConversationQuery and other queries can not be explicitly accessed to modify the `MaxPageSize` static property
 * Message Type Model now has a `getParticipantResponse()` method for extracting participant responses to a Model.
+* Adds `message.createModel()` to get the Message Type Model representing the `layer.Core.Message` instance
+* Adds `part.createModel()` to get the Message Type Model representing the `layer.Core.MessagePart` instance
+* Adds `message.getRootPart()` to get the root MessagePart for the Message
+* Adds `model.getParentModel()` to get the Parent Model of the current Model (or `null` if its already the root model)
+* API Reference for Message Type Models
+* Renamed ReceiptModel property  `shippingAddressModel` => `shippingAddress` and `billingAddressModel` => `billingAddress`
+* Renamed:
+    * `<layer-standard-display-container />` to `<layer-standard-message-view-container />`
+    * `<layer-titled-display-container />` to `<layer-titled-message-view-container />`
+    * `<layer-text-view />` to `<layer-text-message-view />`
+    * `<layer-status-view />` to `<layer-status-message-view />`
+    * `<layer-response-view />` to `<layer-response-message-view />`
+* Removed support for putting a `selectedAnswer` in the constructor for a Choice Model.  Instead use the `preselectedChoice` property.
 
 ## 1.0.0-pre1.15
 
@@ -20,12 +33,6 @@
 
 ## 1.0.0-pre1.14
 
-* Adds `message.createModel()` to get the Message Type Model representing the `layer.Core.Message` instance
-* Adds `part.createModel()` to get the Message Type Model representing the `layer.Core.MessagePart` instance
-* Adds `message.getRootPart()` to get the root MessagePart for the Message
-* Adds `model.getParentModel()` to get the Parent Model of the current Model (or `null` if its already the root model)
-* API Reference for Message Type Models
-* Renamed ReceiptModel property  `shippingAddressModel` => `shippingAddress` and `billingAddressModel` => `billingAddress`
 * Fixes bug in Message Grouping where Status Messages are treated as part of the grouping
 * Adds a `filter` callback to `Layer.Core.Query` and a `queryFilter` property to the `ConversationView`: ```
 render() {

@@ -156,8 +156,12 @@ describe('Product Message Components', function() {
       expect(m.url).toEqual("https://layer.com/about");
       expect(m.actionEvent).toEqual("open-product");
 
-      expect(m.options[0].choices).toEqual([{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]);
-      expect(m.options[1].choices).toEqual([{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]);
+      expect(m.options[0].choices).toEqual([
+        jasmine.objectContaining({text: "c-one", id: "c1"}),
+        jasmine.objectContaining({text: "c-two", id: "c2"})]);
+      expect(m.options[1].choices).toEqual([
+        jasmine.objectContaining({text: "d-one", id: "d1"}),
+        jasmine.objectContaining({text: "d-two", id: "d2"})]);
     });
 
   });
@@ -205,10 +209,10 @@ describe('Product Message Components', function() {
       expect(el.classList.contains('layer-card-width-full-width')).toBe(true);
 
       // Message UI: contains simple properties
-      expect(el.nodes.ui.nodes.name.innerHTML).toEqual("a");
-      expect(el.nodes.ui.nodes.brand.innerHTML).toEqual("b");
-      expect(el.nodes.ui.nodes.price.innerHTML).toEqual("€33.00");
-      expect(el.nodes.ui.nodes.description.innerHTML).toEqual("e");
+      expect(el.nodes.ui.nodes.name.innerText.trim()).toEqual("a");
+      expect(el.nodes.ui.nodes.brand.innerText.trim()).toEqual("b");
+      expect(el.nodes.ui.nodes.price.innerText.trim()).toEqual("€33.00");
+      expect(el.nodes.ui.nodes.description.innerText.trim()).toEqual("e");
       expect(el.nodes.ui.nodes.image.src).toEqual("https://layer.com/about/c");
 
       expect(el.nodes.ui.classList.contains("layer-no-image")).toBe(false);
@@ -245,7 +249,7 @@ describe('Product Message Components', function() {
       expect(el.nodes.ui.nodes.choices.childNodes[1].model).toBe(model.options[1]);
       expect(el.nodes.ui.nodes.choices.childNodes[0].tagName).toEqual("LAYER-MESSAGE-VIEWER");
       expect(el.nodes.ui.nodes.choices.childNodes[1].tagName).toEqual("LAYER-MESSAGE-VIEWER");
-      expect(el.nodes.ui.nodes.choices.childNodes[0].nodes.ui.tagName).toEqual("LAYER-CHOICE-LABEL-VIEW");
+      expect(el.nodes.ui.nodes.choices.childNodes[0].nodes.ui.tagName).toEqual("LAYER-CHOICE-LABEL-MESSAGE-VIEW");
     });
   });
 });

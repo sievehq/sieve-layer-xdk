@@ -45,57 +45,56 @@ import './handlers/text/newline';
 import './utils/date-separator';
 
 // Load standard cards
-import './messages/text/layer-text-model';
-import './messages/text/layer-text-view';
 
-import './messages/status/layer-status-model';
-import './messages/status/layer-status-view';
+import './messages/status/layer-status-message-model';
+import './messages/status/layer-status-message-view';
 
-import './messages/response/layer-response-model';
-import './messages/response/layer-response-view';
+import './messages/response/layer-response-message-model';
+import './messages/response/layer-response-message-view';
 
-import './messages/receipt/layer-receipt-model';
-import './messages/receipt/layer-receipt-view';
+import './messages/receipt/layer-receipt-message-model';
+import './messages/receipt/layer-receipt-message-view';
 
-import './messages/choice/layer-choice-model';
-import './messages/choice/layer-choice-view';
-import './messages/choice/layer-choice-tiles-view';
-import './messages/choice/layer-choice-label-view';
+import './messages/choice/layer-choice-message-model';
+import './messages/choice/layer-choice-message-view';
+import './messages/choice/layer-choice-tiles-message-view';
+import './messages/choice/layer-choice-label-message-view';
 
 
-import './messages/layer-standard-display-container';
-import './messages/layer-titled-display-container';
-import './messages/layer-dialog-display-container';
+import './messages/layer-standard-view-container';
+import './messages/layer-titled-view-container';
+import './messages/layer-dialog-view-container';
+
 //import './messages/layer-list-item-container';
-import './messages/text/layer-text-view';
-import './messages/text/layer-text-model';
+import './messages/text/layer-text-message-view';
+import './messages/text/layer-text-message-model';
 
-import './messages/image/layer-image-model';
-import './messages/image/layer-image-view';
+import './messages/image/layer-image-message-model';
+import './messages/image/layer-image-message-view';
 
 // import './messages/list/list-model';
 // import './messages/list/layer-list-view';
 
-import './messages/carousel/layer-carousel-model';
-import './messages/carousel/layer-carousel-view';
+import './messages/carousel/layer-carousel-message-model';
+import './messages/carousel/layer-carousel-message-view';
 
-import './messages/buttons/layer-buttons-model';
-import './messages/buttons/layer-buttons-view';
+import './messages/buttons/layer-buttons-message-model';
+import './messages/buttons/layer-buttons-message-view';
 
-import './messages/file/layer-file-model';
-import './messages/file/layer-file-view';
+import './messages/file/layer-file-message-model';
+import './messages/file/layer-file-message-view';
 
-import './messages/link/layer-link-model';
-import './messages/link/layer-link-view';
+import './messages/link/layer-link-message-model';
+import './messages/link/layer-link-message-view';
 
-import './messages/location/layer-location-model';
-import './messages/location/layer-location-view';
+import './messages/location/layer-location-message-model';
+import './messages/location/layer-location-message-view';
 
 // import './messages/address/address-model';
 // import './messages/address/layer-address-view';
 
-import './messages/product/layer-product-model';
-import './messages/product/layer-product-view';
+import './messages/product/layer-product-message-model';
+import './messages/product/layer-product-message-view';
 
 import './messages/models/layer-person-model';
 import './messages/models/layer-organization-model';

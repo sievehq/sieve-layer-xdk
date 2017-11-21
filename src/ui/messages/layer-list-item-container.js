@@ -1,4 +1,4 @@
-/**
+/* NOT SUPPORTED
  *
  * @class layer.UI.handlers.message.messageViewer
  * @extends layer.UI.components.Component

@@ -6,7 +6,7 @@ describe('Button Message Components', function() {
   var styleNode;
   beforeAll(function() {
     styleNode = document.createElement('style');
-    styleNode.innerHTML = 'layer-message-viewer.layer-choice-view  {width: 300px; height: 150px;}';
+    styleNode.innerHTML = 'layer-message-viewer.layer-choice-message-view  {width: 300px; height: 150px;}';
     document.body.appendChild(styleNode);
   });
 
@@ -251,19 +251,15 @@ describe('Button Message Components', function() {
       expect(isstarred.allowMultiselect).toBe(false);
       expect(isstarred.allowDeselect).toBe(true);
       expect(isstarred.customResponseData).toEqual({hey: "ho"});
-      expect(isstarred.choices).toEqual([
-        {"text": "Favorite", "id": "fav", "tooltip": "star"}
-      ]);
+      expect(isstarred.choices.length).toEqual(1);
+      expect(isstarred.choices[0].id).toEqual("fav");
 
       var isliked = model.choices.isliked;
       expect(isliked.allowMultiselect).toBe(false);
       expect(isliked.allowDeselect).toBe(false);
       expect(isliked.allowReselect).toBe(true);
       expect(isliked.enabledFor).toEqual(["layer:///identities/a"]);
-      expect(isliked.choices).toEqual([
-        {"text": "Like", "id": "l", "tooltip": "like"},
-        {"text": "Dislike", "id": "d", "tooltip": "dislike"}
-      ]);
+      expect(isliked.choices.map(function(choice) {return choice.id;})).toEqual(["l", "d"]);
 
       expect(issuperstarred).toEqual(jasmine.any(ChoiceModel));
       expect(isstarred).toEqual(jasmine.any(ChoiceModel));
@@ -390,7 +386,8 @@ describe('Button Message Components', function() {
       expect(model.contentModel.text).toEqual("howdy");
       expect(model.choices.isstarred.allowDeselect).toBe(true);
       expect(model.choices.isstarred.allowMultiselect).toBe(false);
-      expect(model.choices.isstarred.choices).toEqual([{"text": "Favorite", "id": "fav", "tooltip": "star"}]);
+      expect(model.choices.isstarred.choices.length).toEqual(1);
+      expect(model.choices.isstarred.choices[0].id).toEqual("fav");
     });
 
 
@@ -400,14 +397,16 @@ describe('Button Message Components', function() {
           {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
         ]
       });
-      expect(model.getOneLineSummary()).toEqual("Buttons");
+      model.generateMessage(conversation);
+      expect(model.getOneLineSummary()).toEqual("Buttons sent");
 
       model = new ButtonsModel({
         buttons: [
           {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
         ],
-        contentModel: new TextModel({ text: "Howdy" }),
+        contentModel: new TextModel({ text: "Howdy" })
       });
+      model.generateMessage(conversation);
       expect(model.getOneLineSummary()).toEqual("Howdy");
     });
   });

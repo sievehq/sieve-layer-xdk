@@ -139,7 +139,7 @@ registerComponent('layer-compose-bar', {
 
       // Event handlers
       this.addEventListener('layer-file-selected', this._handleAttachments.bind(this));
-      this.addEventListener('layer-send-click', this.send.bind(this, null));
+      this.addEventListener('layer-send-click', this._handleSendClick.bind(this, null));
     },
 
     /**
@@ -194,6 +194,19 @@ registerComponent('layer-compose-bar', {
      */
     _setTypingListenerConversation() {
       this.properties.typingListener.setConversation(this.conversation);
+    },
+
+    /**
+     * Insure that if a SEND button is used, that focus remains on the text input,
+     * and that mobile devices keep the keyboard open.
+     *
+     * @method _handleSendClick
+     * @private
+     */
+    _handleSendClick() {
+      this.send();
+      this.focus();
+      this.nodes.input.click();
     },
 
     /**

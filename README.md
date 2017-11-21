@@ -127,3 +127,11 @@ via dom manipulation; even in the case of `ConversationPanel.composeButtons` one
 put them in an array and then set `composeButtons` to refer to them.  This is especially bad in React.  A better mechanism should be discussed,
 and implemented.
 * Inclusion of standard dom nodes that go between messages, such as Date headers, Headers indicating "read up to here", etc...  For now we just include the capability to build your own.
+
+## Development Notes
+
+JSDuck is used to document this system.  Properties and Methods are flagged as public/protected/private according to rules somewhat different from standard:
+
+* Public: Part of the public API; Public methods whose names follow the form `onXXX` are not for calling publicly, but rather for customizing with mixins.  They are public in the sense that they have been explicitly exposed for customization.
+* Protected: Any method that is not part of the Public API developers building apps would use, but which developers building custom Message Types would use are defined to be `@protected`.  These will not always strictly follow rules for what it means to be Protected in Object Oriented terminology
+* Private: Any method that is neither intended as a public API, nor for developers building Custom Messages are treated as Private. They may in fact be accessed by other components, and are only Private in the sense that they are for internal framework use only.

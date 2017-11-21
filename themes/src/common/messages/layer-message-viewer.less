@@ -40,11 +40,11 @@ layer-message-viewer:not(.layer-card-width-chat-bubble) {
 }
 
 
-.layer-root-card.layer-card-width-chat-bubble > layer-standard-display-container {
+.layer-root-card.layer-card-width-chat-bubble > layer-standard-message-view-container {
   padding-bottom: 0px;
 }
 
-layer-message-item-received .layer-root-card.layer-card-width-chat-bubble > layer-standard-display-container > .layer-card-top {
+layer-message-item-received .layer-root-card.layer-card-width-chat-bubble > layer-standard-message-view-container > .layer-card-top {
   background-color: @message-item-bubble-received-background-color;
   color: @message-item-bubble-received-color;
   font-size: @font-medium;
@@ -56,7 +56,7 @@ layer-message-item-received .layer-root-card.layer-card-width-chat-bubble > laye
   }
 }
 
-layer-message-item-sent .layer-root-card.layer-card-width-chat-bubble > layer-standard-display-container > .layer-card-top {
+layer-message-item-sent .layer-root-card.layer-card-width-chat-bubble > layer-standard-message-view-container > .layer-card-top {
   background-color: @message-item-bubble-sent-background-color;
   color: @message-item-bubble-text-sent-color;
   font-size: @font-medium;
@@ -83,7 +83,7 @@ layer-message-viewer {
     overflow: hidden;
   }
   &.layer-card-border-standard {
-    border-radius: 18px;
+    border-radius: 16px;
   }
 
   &.layer-card-border-list {
@@ -102,7 +102,7 @@ layer-message-viewer {
 
   text-align: left;
 
-  & > layer-standard-display-container, & > layer-titled-display-container {
+  & > layer-standard-message-view-container, & > layer-titled-message-view-container, & > .layer-message-type-view {
     max-width: 100%;
     width: 100%;
   }

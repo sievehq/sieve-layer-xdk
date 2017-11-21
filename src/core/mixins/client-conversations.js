@@ -21,7 +21,7 @@ module.exports = {
      *          });
      *      });
      *
-     * @event conversations_add
+     * @event conversations:add
      * @param {layer.Core.LayerEvent} evt
      * @param {layer.Conversation[]} evt.conversations - Array of conversations added
      */

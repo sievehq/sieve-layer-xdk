@@ -255,7 +255,7 @@ registerComponent('layer-message-list', {
         messageRowLeftSide: function messageRowLeftSide(widget) {
           const item = widget.item;
           const model = item.createModel();
-          if (model && model.constructor.messageRenderer === 'layer-carousel-view') return null;
+          if (model && model.constructor.messageRenderer === 'layer-carousel-message-view') return null;
 
           if (item.sender.sessionOwner) {
             return null;
@@ -273,7 +273,7 @@ registerComponent('layer-message-list', {
         messageRowRightSide: function messageRowRightSide(widget) {
           const item = widget.item;
           const model = item.createModel();
-          if (model && model.constructor.messageRenderer === 'layer-carousel-view') return null;
+          if (model && model.constructor.messageRenderer === 'layer-carousel-message-view') return null;
 
           const div = document.createElement('div');
           div.classList.add('layer-replaceable-inner');
@@ -844,7 +844,6 @@ registerComponent('layer-message-list', {
     },
 
     onPagedDataDone(isDoneSizingContent) {
-      if (isDoneSizingContent) debugger;
       if (this.properties.stuckToBottom) {
         console.log(isDoneSizingContent + ': ' + (this.scrollHeight - this.clientHeight));
         this.scrollTo(this.scrollHeight - this.clientHeight);

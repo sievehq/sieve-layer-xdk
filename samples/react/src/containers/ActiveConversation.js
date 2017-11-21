@@ -159,6 +159,45 @@ export default class ActiveConversation extends Component {
         }.bind(this),
       },
       {
+        text: 'Create Button Message with Choices',
+        method: function() {
+          const ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
+          const TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+
+          const model = new ButtonsModel({
+            buttons: [
+              {
+                "type": "choice",
+                "choices": [
+                  {"text": "Kill Arthur", "id": "kill"},
+                  {"text": "Give Holy Grail", "id": "grail"}
+                ],
+                "data": {
+                  "responseName": "deal-with-arthur"
+                }
+              }
+            ],
+            contentModel: new TextModel({
+              text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
+              title: 'The Holy Hand Grenade',
+              author: 'King Arthur'
+            })
+          });
+          model.generateMessage(conversation, message => message.send());
+
+          if (!this.buttonSampleSetup) {
+            this.buttonSampleSetup = true;
+            document.body.addEventListener('kill-arthur', function() {
+              alert('Hah! Tis only a flesh wound!');
+            });
+
+            document.body.addEventListener('grant-grail', function() {
+              alert('We\'ve already got one!');
+            });
+          }
+        }.bind(this),
+      },
+      {
         text: 'Create Product Message',
         method: function() {
           const ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel');

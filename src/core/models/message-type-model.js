@@ -95,7 +95,7 @@ class MessageTypeModel extends Root {
         parts: this.childParts,
       });
       this._setupMessage(true);
-      callback(this.message);
+      if (callback) callback(this.message);
     });
   }
 
@@ -247,6 +247,10 @@ class MessageTypeModel extends Root {
 
   /**
    * This method parses the message to extract the information managed by the model.
+   *
+   * `_parseMessage` is called for intialization, and is also recalled
+   * whenever the Message itself is modified.  Any subclass providing an implementation should
+   * take steps to determine whether changes from the server should overwrite properties that are already setup.
    *
    * The payload represents the Message's Root Message Part's JSON properties.
    *
@@ -437,7 +441,7 @@ class MessageTypeModel extends Root {
   /* MANAGE METADATA */
 
   /**
-   * Returns the title metadata; used by the `<layer-standard-display-container />`
+   * Returns the title metadata; used by the `<layer-standard-message-view-container />`
    *
    * @method
    * @returns {String}
@@ -447,7 +451,7 @@ class MessageTypeModel extends Root {
   }
 
   /**
-   * Returns the description metadata; used by the `<layer-standard-display-container />`
+   * Returns the description metadata; used by the `<layer-standard-message-view-container />`
    *
    * @method
    * @returns {String}
@@ -457,7 +461,7 @@ class MessageTypeModel extends Root {
   }
 
   /**
-   * Returns the footer metadata; used by the `<layer-standard-display-container />`
+   * Returns the footer metadata; used by the `<layer-standard-message-view-container />`
    *
    * @method
    * @returns {String}
@@ -475,7 +479,12 @@ class MessageTypeModel extends Root {
    * @returns {String}
    */
   getOneLineSummary() {
-    return this.getTitle() || this.constructor.Label;
+    const title = this.getTitle();
+    if (title) {
+      return title;
+    } else {
+      return this.constructor.Label + ' ' + (this.getClient().user === this.message.sender ? 'sent' : 'received');
+    }
   }
 
   /**
@@ -751,18 +760,23 @@ MessageTypeModel.prototype.role = null;
 //MessageTypeModel.prototype.locked = false;
 
 /**
- * Stores all user responses indexed by Identity ID
+ * Stores all user responses indexed by Identity ID within the `participant_data` subproperty
  *
  * ```
  * {
- *     'layer:///identities/user_a': {
- *        selection: 'item1'
- *      },
- *      'layer:///identities/user_b': {
- *        vote: 'approved'
+ *     participant_data: {
+ *         'layer:///identities/user_a': {
+ *            selection: 'item1'
+ *          },
+ *          'layer:///identities/user_b': {
+ *            vote: 'approved'
+ *          }
  *      }
  * }
  * ```
+ *
+ * TODO: should normalize to `participantData`
+ * TODO: should represent this with a custom class and not Object.
  *
  * @type {Object}
  */

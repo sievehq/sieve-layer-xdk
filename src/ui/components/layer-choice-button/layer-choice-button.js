@@ -70,7 +70,9 @@ registerComponent('layer-choice-button', {
      * @method
      */
     onRerender() {
-      this.toggleClass('layer-choice-view-complete', this.model.selectedAnswer);
+      if (!this.model.allowReselect) {
+        this.toggleClass('layer-choice-message-view-complete', this.model.selectedAnswer);
+      }
 
       for (let i = 0; i < this.childNodes.length; i++) {
         const child = this.childNodes[i];

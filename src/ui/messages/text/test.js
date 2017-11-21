@@ -175,7 +175,7 @@ describe('Text Message Components', function() {
   describe("View Tests", function() {
     var el;
     beforeEach(function() {
-      el = document.createElement('layer-text-view');
+      el = document.createElement('layer-text-message-view');
       testRoot.appendChild(el);
     });
     afterEach(function() {
@@ -191,7 +191,7 @@ describe('Text Message Components', function() {
       el.model = model;
       layer.Util.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p>hello</p>");
+      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p>");
     });
 
     it("Should render newline characters", function() {
@@ -201,7 +201,7 @@ describe('Text Message Components', function() {
       el.model = model;
       layer.Util.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p>hello</p><p>there</p>");
+      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p><p class=\"layer-line-wrapping-paragraphs\">there</p>");
     });
 
     it("Should render links", function() {
@@ -211,7 +211,7 @@ describe('Text Message Components', function() {
       el.model = model;
       layer.Util.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p>hello from <a href=\"https://layer.com\" class=\"layer-parsed-url layer-parsed-url-url\" target=\"_blank\" rel=\"noopener noreferrer\">layer.com</a></p>");
+      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello from <a href=\"https://layer.com\" class=\"layer-parsed-url layer-parsed-url-url\" target=\"_blank\" rel=\"noopener noreferrer\">layer.com</a></p>");
     });
 
     it("Should render emoji characters", function() {
@@ -221,7 +221,7 @@ describe('Text Message Components', function() {
       el.model = model;
       layer.Util.defer.flush();
 
-      expect(el.innerHTML).toMatch("<p>hello <img");
+      expect(el.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hello <img");
     });
     it("Should render emoji codes", function() {
       var model = new TextModel({
@@ -230,7 +230,7 @@ describe('Text Message Components', function() {
       el.model = model;
       layer.Util.defer.flush();
 
-      expect(el.innerHTML).toMatch("<p>hi <img");
+      expect(el.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hi <img");
 
     });
   });

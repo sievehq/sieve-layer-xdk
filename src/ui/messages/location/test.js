@@ -233,14 +233,16 @@ describe('Location Message Components', function() {
         description: "a",
         title: "b",
       });
+      model1.generateMessage(conversation);
       var model2 = new LocationModel({
         latitude: 37.7734858,
         longitude: -122.3916087,
         description: "a",
       });
+      model2.generateMessage(conversation);
 
       expect(model1.getOneLineSummary()).toEqual("b");
-      expect(model2.getOneLineSummary()).toEqual("Location");
+      expect(model2.getOneLineSummary()).toEqual("Location sent");
     });
   });
 
@@ -305,7 +307,7 @@ describe('Location Message Components', function() {
       layer.Util.defer.flush();
 
       el.nodes.ui.hideMap = true;
-      expect(el.nodes.ui.classList.contains('layer-location-view-address-only')).toEqual(true);
+      expect(el.nodes.ui.classList.contains('layer-location-message-view-address-only')).toEqual(true);
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
       expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(true);
     });
@@ -326,7 +328,7 @@ describe('Location Message Components', function() {
 
       expect(model.actionEvent).toEqual('open-map');
 
-      el.runAction({});
+      el._runAction({});
       expect(el.showFullScreen).toHaveBeenCalledWith('https://www.google.com/maps/search/?api=1&query=37.7734858,-122.3916087&zoom=16');
 
     });
@@ -355,7 +357,7 @@ describe('Location Message Components', function() {
       var expectedUrl = 'http://www.google.com/maps/?q=';
       expectedUrl += escape(model.street1 + (model.street2 ? ' ' + model.street2 : '') + ' ' + `${model.city} ${model.administrativeArea}, ${model.postalCode} ${model.country}`);
 
-      el.runAction({});
+      el._runAction({});
       expect(el.showFullScreen).toHaveBeenCalledWith(expectedUrl);
     });
   });

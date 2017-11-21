@@ -253,7 +253,7 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title is rendered
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('hello');
+      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('hello');
     });
 
     it("Should render url, title and image", function() {
@@ -283,7 +283,7 @@ describe('Link Message Components', function() {
       expect(el.querySelector('img').src).toMatch(/^data\:image\/png/);
 
       // Title is rendered
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('hello');
+      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('hello');
     });
 
     it("Should render url, title, description and author", function() {
@@ -310,9 +310,9 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title, description and author are rendered
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('hello');
-      expect(el.querySelector('.layer-card-description').innerHTML).toEqual('there');
-      expect(el.querySelector('.layer-card-footer').innerHTML).toEqual('all');
+      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('hello');
+      expect(el.querySelector('.layer-card-description').innerText.trim()).toEqual('there');
+      expect(el.querySelector('.layer-card-footer').innerText.trim()).toEqual('all');
     });
 
     it("Should render url, title, description, author and image", function() {
@@ -340,9 +340,9 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title, description and author are rendered
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('hello');
-      expect(el.querySelector('.layer-card-description').innerHTML).toEqual('there');
-      expect(el.querySelector('.layer-card-footer').innerHTML).toEqual('all');
+      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('hello');
+      expect(el.querySelector('.layer-card-description').innerText.trim()).toEqual('there');
+      expect(el.querySelector('.layer-card-footer').innerText.trim()).toEqual('all');
 
       // Message UI: contains image tag
       expect(el.querySelector('img').src).toMatch(/^data\:image\/png/);
@@ -361,7 +361,7 @@ describe('Link Message Components', function() {
       layer.Util.defer.flush();
 
       expect(model.actionEvent).toEqual('open-url');
-      el.runAction({});
+      el._runAction({});
       expect(el.showFullScreen).toHaveBeenCalledWith("http://layer.com/about");
     });
 
@@ -384,7 +384,7 @@ describe('Link Message Components', function() {
       layer.Util.defer.flush();
 
       expect(model.actionEvent).toEqual('open-url');
-      el.runAction({});
+      el._runAction({});
       expect(el.showFullScreen).toHaveBeenCalledWith("https://layer.com/aboutface");
     });
   });
