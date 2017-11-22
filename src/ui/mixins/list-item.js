@@ -108,7 +108,7 @@ module.exports = {
     /**
      * The item of data in a list of data that this List Item will render.
      *
-     * @property {layer.Root} [item=null]
+     * @property {Layer.Core.Root} [item=null]
      */
     item: {
       propagateToChildren: true,

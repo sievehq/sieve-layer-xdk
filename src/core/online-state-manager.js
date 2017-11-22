@@ -22,7 +22,7 @@
  *
  * @class  layer.OnlineStateManager
  * @private
- * @extends layer.Root
+ * @extends Layer.Core.Root
  *
  */
 import Root from './root';

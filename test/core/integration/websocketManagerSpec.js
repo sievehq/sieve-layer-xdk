@@ -15,7 +15,7 @@ describe("Websocket tests", function() {
           "object": {
               "type": "Conversation",
               "id": convId1,
-              "url": layer.Core.Client.prototype.url + convId1.replace(/layer\:\/\//, "")
+              "url": Layer.Core.Client.prototype.url + convId1.replace(/layer\:\/\//, "")
           },
           "data": {
             "id": convId1,
@@ -42,7 +42,7 @@ describe("Websocket tests", function() {
           "object": {
               "type": "Message",
               id: messId2,
-              "url": layer.Core.Client.prototype.url + messId2.replace(/layer\:\/\//, "")
+              "url": Layer.Core.Client.prototype.url + messId2.replace(/layer\:\/\//, "")
           },
           "data": {
             "position": 15032697020,
@@ -81,11 +81,11 @@ describe("Websocket tests", function() {
         requests = jasmine.Ajax.requests;
         jasmine.clock().install();
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: "Client1"
         });
 
-        var identity = new layer.Core.Identity({
+        var identity = new Layer.Core.Identity({
           clientId: client.appId,
           userId: "c",
           id: "layer:///identities/" + "c",
@@ -151,7 +151,7 @@ describe("Websocket tests", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("Should route events to the right handler", function() {
@@ -265,12 +265,12 @@ describe("Websocket tests", function() {
                 // Setup
                 var conv = client.getConversation(c1.id, false);
                 spyOn(conv, "_trigger");
-                var fred = new layer.Core.Identity({
+                var fred = new Layer.Core.Identity({
                     id: "layer:///identities/fred",
                     userId: "fred",
                     client: client
                 });
-                var joe = new layer.Core.Identity({
+                var joe = new Layer.Core.Identity({
                     id: "layer:///identities/joe",
                     userId: "joe",
                     client: client

@@ -4,7 +4,7 @@
  * A basic File Message can be created with:
  *
  * ```
- * FileModel = layer.Core.Client.getMessageTypeModelClass('FileModel')
+ * FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel')
  * model = new FileModel({
  *    sourceUrl: "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg",
  *    title: "My new jacket",
@@ -18,7 +18,7 @@
  * Layer.UI.messages.FileMessageModel.source property:
  *
  * ```
- * FileModel = layer.Core.Client.getMessageTypeModelClass('FileModel')
+ * FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel')
  * model = new FileModel({
  *    source: FileBlob
  * });

@@ -185,8 +185,8 @@ registerComponent('layer-conversation-view', {
    * @property {Function} onTypingIndicatorChange
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Core.Identity[]} evt.detail.typing
-   * @param {layer.Core.Identity[]} evt.detail.paused
+   * @param {Layer.Core.Identity[]} evt.detail.typing
+   * @param {Layer.Core.Identity[]} evt.detail.paused
    */
 
   /**
@@ -214,8 +214,8 @@ registerComponent('layer-conversation-view', {
    * @event layer-typing-indicator-change
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Core.Identity[]} evt.detail.typing
-   * @param {layer.Core.Identity[]} evt.detail.paused
+   * @param {Layer.Core.Identity[]} evt.detail.typing
+   * @param {Layer.Core.Identity[]} evt.detail.paused
    */
 
   /**

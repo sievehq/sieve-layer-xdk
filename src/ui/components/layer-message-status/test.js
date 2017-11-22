@@ -7,10 +7,10 @@ describe('layer-message-status', function() {
   });
 
   beforeEach(function() {
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -33,7 +33,7 @@ describe('layer-message-status', function() {
   });
   afterEach(function() {
     document.body.removeChild(testRoot);
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   it('Should call rerender on any message change events', function() {
@@ -42,7 +42,7 @@ describe('layer-message-status', function() {
     el.onRerender.calls.reset();
 
     message.trigger('messages:change', {});
-    expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+    expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
   });
 
   it('Should not call rerender on any message change events once its no longer the right message', function() {

@@ -3,7 +3,7 @@
  *
  * @class  layer.Container
  * @abstract
- * @extends layer.Syncable
+ * @extends Layer.Core.Syncable
  * @author  Michael Kantor
  */
 import Syncable from './syncable';
@@ -26,7 +26,7 @@ class Container extends Syncable {
    * @method constructor
    * @protected
    * @param  {Object} options
-   * @param {string[]/layer.Core.Identity[]} options.participants - Array of Participant IDs or layer.Core.Identity instances
+   * @param {string[]/Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity instances
    * @param {boolean} [options.distinct=true] - Is the conversation distinct
    * @param {Object} [options.metadata] - An object containing Conversation Metadata.
    * @return {layer.Conversation}
@@ -211,7 +211,7 @@ class Container extends Syncable {
    * 1. Updates the metadata property of the local object
    * 2. Triggers a conversations:change event
    * 3. Submits a request to be sent to the server to update the server's object
-   * 4. If there is an error, no errors are fired except by layer.SyncManager, but another
+   * 4. If there is an error, no errors are fired except by Layer.Core.SyncManager, but another
    *    conversations:change event is fired as the change is rolled back.
    *
    * @method setMetadataProperties
@@ -279,7 +279,7 @@ class Container extends Syncable {
    * 1. Updates the metadata property of the local object
    * 2. Triggers a conversations:change event
    * 3. Submits a request to be sent to the server to update the server's object
-   * 4. If there is an error, no errors are fired except by layer.SyncManager, but another
+   * 4. If there is an error, no errors are fired except by Layer.Core.SyncManager, but another
    *    conversations:change event is fired as the change is rolled back.
    *
    * @method deleteMetadataProperties
@@ -363,7 +363,7 @@ class Container extends Syncable {
   }
 
   /**
-   * Standard `on()` provided by layer.Root.
+   * Standard `on()` provided by Layer.Core.Root.
    *
    * Adds some special handling of 'conversations:loaded' so that calls such as
    *
@@ -511,7 +511,7 @@ Container.prototype.isCurrentParticipant = true;
  * specific events detailing the results.  Results
  * may be determined locally or on the server, but same Event may be needed.
  *
- * @type {layer.Core.LayerEvent}
+ * @type {Layer.Core.LayerEvent}
  * @private
  */
 Container.prototype._sendDistinctEvent = null;

@@ -21,10 +21,10 @@ describe('Response Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -45,8 +45,8 @@ describe('Response Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    ResponseModel = layer.Core.Client.getMessageTypeModelClass("ResponseModel");
-    TextModel = layer.Core.Client.getMessageTypeModelClass("TextModel");
+    ResponseModel = Layer.Core.Client.getMessageTypeModelClass("ResponseModel");
+    TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
 
     responseToMessage = conversation.createMessage("hello");
     responseToMessage.presend();
@@ -57,7 +57,7 @@ describe('Response Message Components', function() {
 
 
   afterEach(function() {
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
     layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
   });
 
@@ -184,7 +184,7 @@ describe('Response Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
     });
 

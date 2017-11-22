@@ -14,13 +14,13 @@ describe("The IdentitiesQuery Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
@@ -67,7 +67,7 @@ describe("The IdentitiesQuery Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     it("Should be an MembershipQuery", function() {
@@ -252,7 +252,7 @@ describe("The IdentitiesQuery Class", function() {
         });
 
         it("Should not touch data array if dataType is object but item not in the data", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',
@@ -272,7 +272,7 @@ describe("The IdentitiesQuery Class", function() {
             // Setup
             query.dataType = "instance";
             var data = query.data = [membership];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',
@@ -287,7 +287,7 @@ describe("The IdentitiesQuery Class", function() {
         });
 
         it("Should change data array if dataType is object and item is in the data", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',
@@ -304,7 +304,7 @@ describe("The IdentitiesQuery Class", function() {
 
         it("Should trigger change event if the Member is in the data", function() {
             var data = query.data = [membership.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',
@@ -331,7 +331,7 @@ describe("The IdentitiesQuery Class", function() {
 
         it("Should not trigger change event if Member is NOT in the data", function() {
             var data = query.data = [membership.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',

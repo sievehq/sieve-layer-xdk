@@ -7,13 +7,13 @@ describe("The Websocket Change Manager Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
             clientId: client.appId,
             userId: client.userId,
             id: "layer:///identities/" + client.userId,
@@ -53,7 +53,7 @@ describe("The Websocket Change Manager Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -78,7 +78,7 @@ describe("The Websocket Change Manager Class", function() {
             client.socketManager.trigger("message", {data: {body: {}}});
 
             // Posttest
-            expect(layer.Websockets.ChangeManager.prototype._handleChange).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(layer.Websockets.ChangeManager.prototype._handleChange).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
             layer.Websockets.ChangeManager.prototype._handleChange = tmp;

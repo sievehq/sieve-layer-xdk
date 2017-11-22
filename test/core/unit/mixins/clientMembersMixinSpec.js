@@ -13,13 +13,13 @@ describe("The Client Members Mixin", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
+        client.user = userIdentity = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
@@ -46,7 +46,7 @@ describe("The Client Members Mixin", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -96,7 +96,7 @@ describe("The Client Members Mixin", function() {
             var m1 = client.getMember(membership.id, true);
 
             // Posttest
-            expect(m1 instanceof layer.Membership).toBe(true);
+            expect(m1 instanceof Layer.Core.Membership).toBe(true);
             expect(m1.id).toEqual(responses.membership1.id);
             expect(requests.mostRecent().url).toEqual(responses.membership1.url);
         });

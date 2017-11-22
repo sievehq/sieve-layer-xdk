@@ -8,10 +8,10 @@ describe('layer-channel-item', function() {
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -20,7 +20,7 @@ describe('layer-channel-item', function() {
       sessionOwner: true
     });
 
-    user = new layer.Core.Identity({
+    user = new Layer.Core.Identity({
       client: client,
       userId: 'GandalfTheGruesome',
       displayName: 'Gandalf the Gruesome',
@@ -47,7 +47,7 @@ describe('layer-channel-item', function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
     client.destroy();
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   describe('The item property', function() {
@@ -64,7 +64,7 @@ describe('layer-channel-item', function() {
       el.item = channel;
       el.onRerender.calls.reset();
       channel.trigger('channels:change', {property: 'unreadCount', oldValue: 5, newValue: 6});
-      expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+      expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
     });
 
     it("Should unwire up the onRerender event if prior channel", function() {
@@ -76,7 +76,6 @@ describe('layer-channel-item', function() {
       expect(el.onRerender).not.toHaveBeenCalled();
     });
   });
-
 
 
   describe("The onRerender() method", function() {

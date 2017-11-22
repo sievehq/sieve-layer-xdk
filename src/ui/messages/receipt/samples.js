@@ -3,7 +3,7 @@ LocationModel = client.getMessageTypeModelClassForMimeType('application/vnd.laye
 ListModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.list+json')
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
-ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 
 new ReceiptModel({
   currency: 'USD',

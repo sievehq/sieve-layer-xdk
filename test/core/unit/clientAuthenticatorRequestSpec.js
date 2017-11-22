@@ -29,12 +29,12 @@ describe("The Client Authenticator Requests", function() {
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://duh.com"
         });
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: userId,
           id: "layer:///identities/" + userId,
@@ -68,7 +68,7 @@ describe("The Client Authenticator Requests", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The sendSocketRequest() method", function() {
@@ -89,7 +89,7 @@ describe("The Client Authenticator Requests", function() {
                 body: "Hey!",
                 sync: {}
             });
-            expect(client.syncManager.request).toHaveBeenCalledWith(jasmine.any(layer.WebsocketSyncEvent));
+            expect(client.syncManager.request).toHaveBeenCalledWith(jasmine.any(Layer.Core.WebsocketSyncEvent));
         });
 
         it("Should create a SyncEvent with specified callback if sync is empty", function() {
@@ -494,7 +494,7 @@ describe("The Client Authenticator Requests", function() {
             var callback = jasmine.createSpy('callback');
             spyOn(client.syncManager, "request");
             client._syncXhr({url: "test"}, callback, 0);
-            expect(client.syncManager.request.calls.argsFor(0)[0] instanceof layer.XHRSyncEvent).toBe(true);
+            expect(client.syncManager.request.calls.argsFor(0)[0] instanceof Layer.Core.XHRSyncEvent).toBe(true);
             expect(client.syncManager.request.calls.argsFor(0)[0].url).toEqual("test");
         });
 
@@ -567,7 +567,7 @@ describe("The Client Authenticator Requests", function() {
             expect(headers).toEqual({
                 "hey-ho": "Doh",
                 "content-type": "application/json",
-                accept: "application/vnd.layer+json; version=2.0"
+                accept: "application/vnd.layer+json; version=3.0"
             });
         });
 
@@ -582,7 +582,7 @@ describe("The Client Authenticator Requests", function() {
             expect(headers).toEqual({
                 "hey-ho": "Doh",
                 "content-type": "application/json",
-                accept: "application/vnd.layer+json; version=2.0"
+                accept: "application/vnd.layer+json; version=3.0"
             });
         });
 
@@ -596,7 +596,7 @@ describe("The Client Authenticator Requests", function() {
             // Posttest
             expect(headers).toEqual({
                 "content-type": "text/mountain",
-                accept: "application/vnd.layer+json; version=2.0"
+                accept: "application/vnd.layer+json; version=3.0"
             });
         });
     });
@@ -672,6 +672,9 @@ describe("The Client Authenticator Requests", function() {
             client._xhrResult({
                 success: false,
                 status: 401,
+                request: {
+                    headers: {}
+                },
                 data: {
                     id: "fred",
                     data: {
@@ -691,6 +694,9 @@ describe("The Client Authenticator Requests", function() {
           client._xhrResult({
               success: false,
               status: 401,
+              request: {
+                headers: {}
+            },
               data: {
                   id: "fred",
                   data: {
@@ -712,6 +718,9 @@ describe("The Client Authenticator Requests", function() {
             client._xhrResult({
                 success: false,
                 status: 401,
+                request: {
+                    headers: {}
+                },
                 data: {
                     id: "fred",
                     data: {
@@ -743,6 +752,9 @@ describe("The Client Authenticator Requests", function() {
             client._xhrResult({
                 success: false,
                 status: 401,
+                request: {
+                    headers: {}
+                },
                 data: {
                     id: "fred",
                     data: {
@@ -762,6 +774,9 @@ describe("The Client Authenticator Requests", function() {
             client._xhrResult({
                 success: false,
                 status: 401,
+                request: {
+                    headers: {}
+                },
                 data: {
                     id: "fred",
                     data: {
@@ -788,7 +803,7 @@ describe("The Client Authenticator Requests", function() {
             client._generateError(results);
 
             // Posttest
-            expect(results.data).toEqual(jasmine.any(layer.Core.LayerEvent));
+            expect(results.data).toEqual(jasmine.any(Layer.Core.LayerError));
             expect(results.data.id).toEqual("fred");
         });
     });

@@ -15,13 +15,13 @@ describe("The Message class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://doh.com"
         });
 
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: "999",
           id: "layer:///identities/999",
@@ -37,25 +37,25 @@ describe("The Message class", function() {
           isFullIdentity: true,
           sessionOwner: true
         });
-        userIdentity1 = new layer.Core.Identity({
+        userIdentity1 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "1",
             userId: "1"
         });
-        userIdentity2 = new layer.Core.Identity({
+        userIdentity2 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/2",
             displayName: "2",
             userId: "2"
         });
-        userIdentity3 = new layer.Core.Identity({
+        userIdentity3 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/3",
             displayName: "3",
             userId: "3"
         });
-        userIdentity4 = new layer.Core.Identity({
+        userIdentity4 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/4",
             displayName: "4",
@@ -86,7 +86,7 @@ describe("The Message class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -1604,11 +1604,13 @@ describe("The Message class", function() {
             });
             m.parts[0].trigger("parts:send", {
                 mime_type: "actor/mime",
-                body: "I am a Mime"
+                body: "I am a Mime",
+                id: "parta",
             });
             m.parts[1].trigger("parts:send", {
                 mime_type: "actor/mimic",
-                body: "I am a Mimic"
+                body: "I am a Mimic",
+                id: "partb",
             });
 
             // Posttest
@@ -1616,10 +1618,12 @@ describe("The Message class", function() {
                 id: m.id,
                 parts: [{
                     mime_type: "actor/mime",
-                    body: "I am a Mime"
+                    body: "I am a Mime",
+                    id: "parta",
                 }, {
                     mime_type: "actor/mimic",
-                    body: "I am a Mimic"
+                    body: "I am a Mimic",
+                    id: "partb",
                 }]
             });
         });
@@ -2224,7 +2228,7 @@ describe("The Message class", function() {
                 client: client
             });
             var data = JSON.parse(JSON.stringify(responses.message1));
-            expect(client.getIdentity(data.sender.user_id)).toEqual(jasmine.any(layer.Core.Identity));
+            expect(client.getIdentity(data.sender.user_id)).toEqual(jasmine.any(Layer.Core.Identity));
 
             m._populateFromServer(data);
 
@@ -2244,7 +2248,7 @@ describe("The Message class", function() {
             m._populateFromServer(data);
 
             // Posttest
-            expect(m.sender).toEqual(jasmine.any(layer.Core.Identity));
+            expect(m.sender).toEqual(jasmine.any(Layer.Core.Identity));
             expect(m.sender.userId).toEqual(data.sender.user_id);
             expect(m.sender.id).toEqual(data.sender.id);
         });
@@ -2263,7 +2267,7 @@ describe("The Message class", function() {
             expect(m.sender.userId).toEqual("");
             expect(m.sender.id).toEqual("");
             expect(m._events).toEqual({});
-            expect(m.sender).toEqual(jasmine.any(layer.Core.Identity));
+            expect(m.sender).toEqual(jasmine.any(Layer.Core.Identity));
             expect(client._models.identities).toEqual({});
         });
 

@@ -13,13 +13,13 @@ describe("The AnnouncementsQuery Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
@@ -65,7 +65,7 @@ describe("The AnnouncementsQuery Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     it("Should be an AnnouncementQuery", function() {

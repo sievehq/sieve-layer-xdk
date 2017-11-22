@@ -26,10 +26,10 @@ describe("Video Handler", function() {
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -65,7 +65,7 @@ describe("Video Handler", function() {
     jasmine.clock().uninstall();
     el.onDestroy();
     client.destroy();
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   describe("The handlesMessage() method", function() {

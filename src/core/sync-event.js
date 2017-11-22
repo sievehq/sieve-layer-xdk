@@ -1,9 +1,9 @@
 /**
  * A Sync Event represents a request to the server.
- * A Sync Event may fire immediately, or may wait in the layer.SyncManager's
+ * A Sync Event may fire immediately, or may wait in the Layer.Core.SyncManager's
  * queue for a long duration before firing.
  *
- * DO NOT confuse this with layer.Core.LayerEvent which represents a change notification
+ * DO NOT confuse this with Layer.Core.LayerEvent which represents a change notification
  * to your application.  layer.SyncEvent represents a request to the server that
  * is either in progress or in queue.
  *
@@ -13,13 +13,13 @@
  * Applications typically do not interact with these objects.
  *
  * @class  layer.SyncEvent
- * @extends layer.Root
+ * @extends Layer.Core.Root
  */
 import Util from '../util';
 
 class SyncEvent {
   /**
-   * Create a layer.SyncEvent.  See layer.Core.ClientAuthenticator for examples of usage.
+   * Create a layer.SyncEvent.  See Layer.Core.ClientAuthenticator for examples of usage.
    *
    * @method  constructor
    * @private
@@ -92,7 +92,7 @@ SyncEvent.prototype.createdAt = 0;
  * Indicates whether this request currently in-flight.
  *
  * * Set to true by _xhr() method,
- * * set to false on completion by layer.SyncManager.
+ * * set to false on completion by Layer.Core.SyncManager.
  * * set to false automatically after 2 minutes
  *
  * @property {Boolean}
@@ -131,7 +131,7 @@ SyncEvent.prototype.id = '';
 /**
  * Indicates whether the request completed successfully.
  *
- * Set by layer.SyncManager.
+ * Set by Layer.Core.SyncManager.
  * @type {Boolean}
  */
 SyncEvent.prototype.success = null;
@@ -152,7 +152,7 @@ SyncEvent.prototype.callback = null;
  * Number of retries on this request.
  *
  * Retries are only counted if its a 502 or 503
- * error.  Set and managed by layer.SyncManager.
+ * error.  Set and managed by Layer.Core.SyncManager.
  * @type {Number}
  */
 SyncEvent.prototype.retryCount = 0;
@@ -161,7 +161,7 @@ SyncEvent.prototype.retryCount = 0;
  * The target of the request.
  *
  * Any Component; typically a Conversation or Message.
- * @type {layer.Root}
+ * @type {Layer.Core.Root}
  */
 SyncEvent.prototype.target = null;
 
@@ -172,7 +172,7 @@ SyncEvent.prototype.target = null;
  * Conversation fails to get created.
  *
  * NOTE: May prove redundant with the target property and needs further review.
- * @type {layer.Root[]}
+ * @type {Layer.Core.Root[]}
  */
 SyncEvent.prototype.depends = null;
 

@@ -4,10 +4,10 @@ describe("List Selection Mixin", function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -49,7 +49,7 @@ describe("List Selection Mixin", function() {
     try {
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
     } catch(e) {}
   });

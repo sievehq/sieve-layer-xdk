@@ -60,7 +60,7 @@ class WebsocketRequestManager {
    *
    * @method _handleResponse
    * @private
-   * @param  {layer.Core.LayerEvent} evt
+   * @param  {Layer.Core.LayerEvent} evt
    */
   _handleResponse(evt) {
     if (evt.data.type === 'response') {

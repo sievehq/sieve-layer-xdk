@@ -342,7 +342,7 @@ registerComponent('layer-notifier', {
      * Triggers an event so the app can confirm/block the notification.
      *
      * @method _notify
-     * @param {layer.Core.LayerEvent} evt
+     * @param {Layer.Core.LayerEvent} evt
      * @private
      */
     _notify(evt) {
@@ -456,11 +456,12 @@ registerComponent('layer-notifier', {
       if (rootPart) {
         this.nodes.avatar.users = [message.sender];
         this.nodes.title.innerHTML = message.sender.displayName;
+        this.nodes.viewer.message = message;
 
         if (this.properties._toastTimeout) clearTimeout(this.properties._toastTimeout);
 
-        this.nodes.rootPart = rootPart;
-        this.nodes.message = message;
+        this.properties.rootPart = rootPart;
+        this.properties.message = message;
         this.classList.add('layer-notifier-toast-fade');
         this.classList.add('layer-notifier-toast');
         this.properties._toastTimeout = setTimeout(this.closeToast.bind(this), this.timeoutSeconds * 1000);
@@ -480,15 +481,15 @@ registerComponent('layer-notifier', {
      * @method closeToast
      */
     closeToast() {
-      if (this.nodes.model) {
+      if (this.properties.model) {
         this.classList.add('layer-notifier-toast-fade');
         this.classList.remove('layer-notifier-toast');
-        this.nodes.message.off(null, null, this);
-        this.nodes.model.off(null, null, this);
-        this.nodes.message = null;
-        this.nodes.model = null;
-        this.nodes.rootPart = null;
-        this.nodes.innerHTML = '';
+        this.properties.message.off(null, null, this);
+        this.properties.model.off(null, null, this);
+        this.properties.message = null;
+        this.properties.model = null;
+        this.properties.rootPart = null;
+        this.nodes.viewer.innerHTML = '';
 
         clearTimeout(this.properties._toastTimeout);
         this.properties._toastTimeout = 0;

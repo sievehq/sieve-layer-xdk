@@ -8,16 +8,16 @@ describe('layer-conversation-title', function() {
 
   afterEach(function() {
     jasmine.clock().uninstall();
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -25,7 +25,7 @@ describe('layer-conversation-title', function() {
       isFullIdentity: true,
       sessionOwner: true
     });
-    user2 = new layer.Core.Identity({
+    user2 = new Layer.Core.Identity({
       client: client,
       userId: 'SaurumanTheMildlyAged',
       displayName: 'Sauruman the Mildly Aged',
@@ -33,7 +33,7 @@ describe('layer-conversation-title', function() {
       id: 'layer:///identities/SaurumanTheMildlyAged',
       isFullIdentity: true
     });
-    user3 = new layer.Core.Identity({
+    user3 = new Layer.Core.Identity({
       client: client,
       userId: 'GandalfTheGruesome',
       displayName: 'Gandalf the Gruesome',
@@ -69,7 +69,7 @@ describe('layer-conversation-title', function() {
       el.item = conversation;
       el.onRerender.calls.reset();
       conversation.trigger('conversations:change', {property: 'unreadCount', oldValue: 5, newValue: 6});
-      expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+      expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
     });
 
     it("Should unwire up the onRerender event if prior Conversation", function() {
@@ -98,7 +98,7 @@ describe('layer-conversation-title', function() {
     });
 
     it("Should use displayName or firstName or lastName if one-on-one conversation", function() {
-      conversation.participants = [new layer.Core.Identity({
+      conversation.participants = [new Layer.Core.Identity({
         client: client,
         userId: 'AAA',
         displayName: 'display',
@@ -154,24 +154,24 @@ describe('layer-conversation-title', function() {
     beforeEach(function() {
       conversation.participants = [
         client.user,
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'A',
           id: 'layer:///identities/A',
         }),
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'B',
           id: 'layer:///identities/B',
           displayName: "B"
         }),
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'bot',
           id: 'layer:///identities/bot',
           firstName: "bot"
         }),
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'D',
           id: 'layer:///identities/D',

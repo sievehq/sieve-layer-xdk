@@ -2,7 +2,7 @@
 describe("The LayerEvent Class", function() {
     describe("The constructor() method", function() {
         it("Should copy in object parameters", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 target: "target",
                 fred: "flinstone",
                 friday: "saturday"
@@ -14,7 +14,7 @@ describe("The LayerEvent Class", function() {
         });
 
         it("Should copy in changes parameters", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 target: "target",
                 fred: "flinstone",
                 friday: "saturday",
@@ -30,7 +30,7 @@ describe("The LayerEvent Class", function() {
 
     describe("The hasProperty() method", function() {
         it("Should return true if its a changes event with the specified property name", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 target: "target",
                 fred: "flinstone",
                 friday: "saturday",
@@ -40,7 +40,7 @@ describe("The LayerEvent Class", function() {
             expect(evt.hasProperty("sunday1")).toBe(false);
         });
         it("Should return false if its NOT a changes event", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 target: "target",
                 changes: [{
                     fred: "flinstone",
@@ -54,7 +54,7 @@ describe("The LayerEvent Class", function() {
 
     describe("The getChangesFor() method", function() {
         it("Should return true if its a changes event with the specified property name", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 target: "target",
                 fred: "flinstone",
                 friday: "saturday",
@@ -68,7 +68,7 @@ describe("The LayerEvent Class", function() {
             expect(evt.getChangesFor("sunday1")).toEqual([]);
         });
         it("Should return false if its NOT a changes event", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 target: "target",
                 changes: [{
                     fred: "flinstone",
@@ -82,7 +82,7 @@ describe("The LayerEvent Class", function() {
 
     describe("The _mergeChanges() method", function() {
         it("Should add changes from the new event to the old event", function() {
-            var evt1 = new layer.Core.LayerEvent({
+            var evt1 = new Layer.Core.LayerEvent({
                 target: "target",
                 changes: [{
                     fred: "flinstone",
@@ -90,7 +90,7 @@ describe("The LayerEvent Class", function() {
                     property: "sunday"
                 }]
             }, "eventName");
-            var evt2 = new layer.Core.LayerEvent({
+            var evt2 = new Layer.Core.LayerEvent({
                 target: "target",
                 changes: [{
                     fred: "frodo",

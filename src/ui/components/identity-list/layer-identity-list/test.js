@@ -13,10 +13,10 @@ describe('layer-identity-list', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -37,7 +37,7 @@ describe('layer-identity-list', function() {
     query.data = [client.user];
     for (i = 0; i < 100; i++) {
       query.data.push(
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'user' + i,
           id: 'layer:///identities/user' + i,
@@ -59,7 +59,7 @@ describe('layer-identity-list', function() {
       jasmine.clock().uninstall();
       layerUI.settings.appId = null;
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
     } catch(e) {}
   });
@@ -325,7 +325,7 @@ describe('layer-identity-list', function() {
       expect(el.querySelectorAllArray('layer-identity-item').length).toEqual(0);
       for (i = 0; i < 10; i++) {
         query.data.push(
-          new layer.Core.Identity({
+          new Layer.Core.Identity({
             client: client,
             userId: 'user' + i,
             id: 'layer:///identities/user' + i,

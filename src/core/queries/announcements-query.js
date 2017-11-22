@@ -16,7 +16,7 @@
  *
  *      query.destroy();
  *
- * @class  layer.AnnouncementsQuery
+ * @class  Layer.Core.AnnouncementsQuery
  * @extends layer.Core.Query
  */
 import Root from '../root';

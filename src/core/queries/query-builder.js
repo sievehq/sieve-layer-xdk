@@ -485,7 +485,7 @@ const QueryBuilder = {
   },
 
   /**
-   * Create a new layer.AnnouncementsQuery instance.
+   * Create a new Layer.Core.AnnouncementsQuery instance.
    *
    * @method announcements
    * @static

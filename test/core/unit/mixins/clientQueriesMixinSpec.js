@@ -19,19 +19,19 @@ describe("The Client Queries Mixin", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
+        client.user = userIdentity = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
-        userIdentity2 = new layer.Core.Identity({
+        userIdentity2 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "UserIdentity",
@@ -40,7 +40,7 @@ describe("The Client Queries Mixin", function() {
 
           client.isTrustedDevice = true;
           delete client._models.identities['layer:///identities/Frodo'];
-          client.user = new layer.Core.Identity({
+          client.user = new Layer.Core.Identity({
               userId: client.userId,
               displayName: "Frodo2",
               syncState: layer.Constants.SYNC_STATE.LOADING,
@@ -65,7 +65,7 @@ describe("The Client Queries Mixin", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {

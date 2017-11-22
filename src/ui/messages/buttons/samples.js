@@ -1,5 +1,5 @@
-TextModel = layer.Core.Client.getMessageTypeModelClass('TextModel')
-ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 
 model = new ButtonModel({
  buttons: [
@@ -17,7 +17,7 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-  ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+  ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
    {"type": "choice", "choices": [{"text": "like", "id": "like", "tooltip": "like"}, {"text": "dislike", "id": "dislike", "tooltip": "dislike"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
@@ -27,7 +27,7 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-  ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+  ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
    {"type": "choice", "choices": [{"text": "like", "id": "like", "tooltip": "like"}, {"text": "dislike", "id": "dislike", "tooltip": "dislike"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true, enabledFor: $("layer-conversation-view").conversation.participants.filter(user => user !== client.user).map(user => user.id)}},
@@ -42,7 +42,7 @@ model.generateMessage($("layer-conversation-view").conversation, message => mess
 
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
-ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
    {
@@ -76,7 +76,7 @@ model.generateMessage($("layer-conversation-view").conversation, message => mess
 
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
-ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
    {
@@ -108,7 +108,7 @@ model.generateMessage($("layer-conversation-view").conversation, message => mess
 
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
-ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
    {

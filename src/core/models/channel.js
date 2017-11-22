@@ -128,9 +128,9 @@ class Channel extends Container {
   /**
    * Gets the data for a Create request.
    *
-   * The layer.SyncManager needs a callback to create the Conversation as it
+   * The Layer.Core.SyncManager needs a callback to create the Conversation as it
    * looks NOW, not back when `send()` was called.  This method is called
-   * by the layer.SyncManager to populate the POST data of the call.
+   * by the Layer.Core.SyncManager to populate the POST data of the call.
    *
    * @method _getSendData
    * @private
@@ -212,7 +212,7 @@ class Channel extends Container {
    *
    * Unlike Conversations, Channels do not maintain state information about their members.
    * As such, if the operation fails there is no actual state change
-   * for the channel.  Currently the only errors exposed are from the layer.Core.Client.SyncManager.
+   * for the channel.  Currently the only errors exposed are from the Layer.Core.Client.SyncManager.
    *
    * @method addMembers
    * @param {String[]} members   Identity IDs of users to add to this Channel
@@ -332,7 +332,7 @@ class Channel extends Container {
    * ```
    * @method getMember
    * @param {String} identityId
-   * @returns {layer.Membership}
+   * @returns {Layer.Core.Membership}
    */
   getMember(identityId) {
     identityId = this.getClient()._fixIdentities([identityId])[0].id;
@@ -459,7 +459,7 @@ class Channel extends Container {
    * @protected
    * @param  {Object} options
    * @param  {layer.Client} options.client
-   * @param  {string[]/layer.Core.Identity[]} options.members - Array of Participant IDs or layer.Core.Identity objects to create a channel with.
+   * @param  {string[]/Layer.Core.Identity[]} options.members - Array of Participant IDs or Layer.Core.Identity objects to create a channel with.
    * @param {boolean} [options.private=false] - Create a private channel
    * @param {Object} [options.metadata={}] - Initial metadata for Channel
    * @return {layer.Channel}
@@ -545,7 +545,7 @@ Channel._supportedEvents = [
    * * Channel.FOUND: A matching named Channel has been found
    *
    * @event
-   * @param {layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event
    * @param {string} event.result
    */
   'channels:sent',
@@ -553,8 +553,8 @@ Channel._supportedEvents = [
   /**
    * An attempt to send this channel to the server has failed.
    * @event
-   * @param {layer.Core.LayerEvent} event
-   * @param {layer.Core.LayerEvent} event.error
+   * @param {Layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event.error
    */
   'channels:sent-error',
 
@@ -564,7 +564,7 @@ Channel._supportedEvents = [
    * Note that this is only used in response to the layer.Channel.load() method.
    * from the server.
    * @event
-   * @param {layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event
    */
   'channels:loaded',
 
@@ -573,8 +573,8 @@ Channel._supportedEvents = [
    *
    * Note that this is only used in response to the layer.Channel.load() method.
    * @event
-   * @param {layer.Core.LayerEvent} event
-   * @param {layer.Core.LayerEvent} event.error
+   * @param {Layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event.error
    */
   'channels:loaded-error',
 
@@ -584,7 +584,7 @@ Channel._supportedEvents = [
    * Caused by either a successful call to delete() on this instance
    * or by a remote user.
    * @event
-   * @param {layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event
    */
   'channels:delete',
 
@@ -592,7 +592,7 @@ Channel._supportedEvents = [
    * This channel has changed.
    *
    * @event
-   * @param {layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event
    * @param {Object[]} event.changes - Array of changes reported by this event
    * @param {Mixed} event.changes.newValue
    * @param {Mixed} event.changes.oldValue

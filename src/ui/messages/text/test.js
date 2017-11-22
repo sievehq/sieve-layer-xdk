@@ -16,10 +16,10 @@ describe('Text Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -40,7 +40,7 @@ describe('Text Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    TextModel = layer.Core.Client.getMessageTypeModelClass("TextModel");
+    TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
 
     layer.Util.defer.flush();
     jasmine.clock().tick(800);
@@ -49,7 +49,7 @@ describe('Text Message Components', function() {
 
   afterEach(function() {
     layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   describe("Model Tests", function() {
@@ -180,7 +180,7 @@ describe('Text Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
     });
 

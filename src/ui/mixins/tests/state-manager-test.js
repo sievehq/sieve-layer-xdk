@@ -16,7 +16,7 @@ describe("State property", function() {
     try {
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
     } catch(e) {}
   });
 

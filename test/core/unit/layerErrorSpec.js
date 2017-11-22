@@ -83,7 +83,7 @@ describe("The LayerError Class", function() {
         });
 
         it("Should not fail when logging is disabled", function() {
-            layer.Core.LayerEvent.disableLogging = true;
+            Layer.Core.LayerEvent.disableLogging = true;
             var err = new layer.Core.LayerError({
                 url: "url",
                 httpStatus: "status",
@@ -96,7 +96,7 @@ describe("The LayerError Class", function() {
             expect(function() {
                 err.log();
             }).not.toThrow();
-            layer.Core.LayerEvent.disableLogging = false;
+            Layer.Core.LayerEvent.disableLogging = false;
         });
     });
 

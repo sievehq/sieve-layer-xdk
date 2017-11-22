@@ -1,5 +1,5 @@
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
-ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 
 model = new ProductModel({
    customData: {
@@ -41,8 +41,8 @@ model = new ProductModel({
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
   ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
-ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
-ButtonsModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonsModel({
 buttons: [
  {

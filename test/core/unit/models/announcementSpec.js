@@ -10,14 +10,14 @@ describe("The Announcement class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://doh.com"
         });
         client.userId = "999";
 
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
@@ -58,7 +58,7 @@ describe("The Announcement class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The send() method", function() {
@@ -102,8 +102,8 @@ describe("The Announcement class", function() {
         });
 
         it("Should load a new copy if deletion fails from something other than not_found", function() {
-          var tmp = layer.Syncable.load;
-          spyOn(layer.Syncable, "load");
+          var tmp = Layer.Core.Syncable.load;
+          spyOn(Layer.Core.Syncable, "load");
           spyOn(announcement, "_xhr").and.callFake(function(args, callback) {
             callback({success: false});
           });
@@ -114,15 +114,15 @@ describe("The Announcement class", function() {
 
           // Posttest
           expect(announcement.isDestroyed).toBe(true);
-          expect(layer.Syncable.load).toHaveBeenCalledWith(announcement.id, client);
+          expect(Layer.Core.Syncable.load).toHaveBeenCalledWith(announcement.id, client);
 
           // Cleanup
-          layer.Syncable.load = tmp;
+          Layer.Core.Syncable.load = tmp;
         })
 
         it("Should NOT load a new copy if deletion fails from not_found", function() {
-          var tmp = layer.Announcement.load;
-          spyOn(layer.Announcement, "load");
+          var tmp = Layer.Core.Announcement.load;
+          spyOn(Layer.Core.Announcement, "load");
           spyOn(announcement, "_xhr").and.callFake(function(args, callback) {
             callback({success: false, data: {id: 'not_found'}});
           });
@@ -133,10 +133,10 @@ describe("The Announcement class", function() {
 
           // Posttest
           expect(announcement.isDestroyed).toBe(true);
-          expect(layer.Announcement.load).not.toHaveBeenCalled();
+          expect(Layer.Core.Announcement.load).not.toHaveBeenCalled();
 
           // Cleanup
-          layer.Announcement.load = tmp;
+          Layer.Core.Announcement.load = tmp;
         })
     });
 });

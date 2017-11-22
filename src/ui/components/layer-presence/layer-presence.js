@@ -53,7 +53,7 @@ registerComponent('layer-presence', {
    * @event layer-presence-click
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Core.Identity} evt.detail.item - The user rendered by this Presence Widget
+   * @param {Layer.Core.Identity} evt.detail.item - The user rendered by this Presence Widget
    */
 
   /**
@@ -62,7 +62,7 @@ registerComponent('layer-presence', {
    * @property {Function} onPresenceClick
    * @param {Event} onPresenceClick.evt
    * @param {Object} onPresenceClick.evt.detail
-   * @param {layer.Core.Identity} onPresenceClick.evt.detail.item - The user rendered by this Presence Widget
+   * @param {Layer.Core.Identity} onPresenceClick.evt.detail.item - The user rendered by this Presence Widget
    */
   events: ['layer-presence-click'],
   properties: {
@@ -70,9 +70,9 @@ registerComponent('layer-presence', {
     /**
      * User whose status is represented here
      *
-     * Typically this only has one user represented with a layer.Core.Identity.
+     * Typically this only has one user represented with a Layer.Core.Identity.
      *
-     * @property {layer.Core.Identity}
+     * @property {Layer.Core.Identity}
      */
     item: {
       set(value) {

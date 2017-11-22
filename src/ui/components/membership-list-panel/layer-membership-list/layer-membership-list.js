@@ -1,5 +1,5 @@
 /**
- * The Layer Membership List renders a pagable list of layer.Membership objects, and allows the user to
+ * The Layer Membership List renders a pagable list of Layer.Core.Membership objects, and allows the user to
  * see who else is in the Channel with them.
  *
  * This Component can be added to your project directly in the HTML file:
@@ -60,7 +60,7 @@ registerComponent('layer-membership-list', {
    * @event layer-membership-selected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Membership} evt.detail.item
+   * @param {Layer.Core.Membership} evt.detail.item
    */
   /**
    * A membership selection change has occurred
@@ -70,7 +70,7 @@ registerComponent('layer-membership-list', {
    * @property {Function} onMembershipSelected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Membership} evt.detail.item
+   * @param {Layer.Core.Membership} evt.detail.item
    */
 
   events: ['layer-membership-selected'],
@@ -165,7 +165,7 @@ registerComponent('layer-membership-list', {
      * Append a layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
      *
      * @method _generateItem
-     * @param {layer.Membership} membership
+     * @param {Layer.Core.Membership} membership
      * @private
      */
     _generateItem(membership) {

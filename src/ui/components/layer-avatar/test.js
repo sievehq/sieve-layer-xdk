@@ -7,10 +7,10 @@ describe('layer-avatar', function() {
   });
 
   beforeEach(function() {
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -28,7 +28,7 @@ describe('layer-avatar', function() {
     layer.Util.defer.flush();
   });
   afterEach(function() {
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
     //document.body.removeChild(testRoot);
   });
 
@@ -87,13 +87,13 @@ describe('layer-avatar', function() {
 
   it("Should generate multiple spans for multiple users", function() {
     el.users = [
-      new layer.Core.Identity({
+      new Layer.Core.Identity({
           client: client,
           userId: 'AA',
           id: 'layer:///identities/AA',
           displayName: "Abby"
         }),
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'BB',
           id: 'layer:///identities/BB',
@@ -188,30 +188,30 @@ describe('layer-avatar', function() {
     beforeEach(function() {
       el.users = [
         client.user,
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'A',
           id: 'layer:///identities/A',
         }),
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'B',
           id: 'layer:///identities/B',
           displayName: "B"
         }),
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'C',
           id: 'layer:///identities/C',
           avatarUrl: "C"
         }),
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'bot',
           id: 'layer:///identities/bot',
           firstName: "bot"
         }),
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'D',
           id: 'layer:///identities/D',

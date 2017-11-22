@@ -9,7 +9,7 @@
  * This is currently setup to run once per hour, sending hourly updates to the server.
  *
  * @class layer.TelemetryMonitor
- * @extends layer.Root
+ * @extends Layer.Core.Root
  * @private
  */
 
@@ -421,7 +421,7 @@ TelemetryMonitor.prototype.enabled = true;
 TelemetryMonitor.prototype.client = null;
 
 /**
- * The presence of this causes layer.Root to automatically generate an id if one isn't present.
+ * The presence of this causes Layer.Core.Root to automatically generate an id if one isn't present.
  *
  * This id is written to localStorage so that it can persist across sessions.
  *

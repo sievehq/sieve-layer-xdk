@@ -36,8 +36,8 @@
  * @event layer-typing-indicator-change
  * @param {Event} evt
  * @param {Object} evt.detail
- * @param {layer.Core.Identity[]} evt.detail.typing
- * @param {layer.Core.Identity[]} evt.detail.paused
+ * @param {Layer.Core.Identity[]} evt.detail.typing
+ * @param {Layer.Core.Identity[]} evt.detail.paused
  */
 import { registerComponent } from '../component';
 
@@ -115,7 +115,7 @@ registerComponent('layer-typing-indicator', {
      * Whenever there is a typing indicator event, rerender our UI
      *
      * @method onRerender
-     * @param {layer.Core.LayerEvent} evt
+     * @param {Layer.Core.LayerEvent} evt
      */
     onRerender(evt) {
       // We receive typing indicator events for ALL Conversations; ignore them if they don't apply to the current Conversation

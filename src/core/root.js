@@ -119,7 +119,7 @@ const eventSplitter = /\s+/;
  *     C. Updating the UI to match the new property value
  *
  *
- * @class layer.Root
+ * @class Layer.Core.Root
  * @abstract
  * @author Michael Kantor
  */
@@ -130,7 +130,7 @@ class Root extends EventClass {
    *
    * @method constructor
    * @param  {Object} options - a hash of properties and event handlers
-   * @return {layer.Root}
+   * @return {Layer.Core.Root}
    */
   constructor(options = {}) {
     super();
@@ -338,9 +338,9 @@ class Root extends EventClass {
    * @method on
    * @param  {String} name - Name of the event
    * @param  {Function} handler - Event handler
-   * @param  {layer.Core.LayerEvent} handler.event - Event object delivered to the handler
+   * @param  {Layer.Core.LayerEvent} handler.event - Event object delivered to the handler
    * @param  {Object} context - This pointer AND link to help with cleanup
-   * @return {layer.Root} this
+   * @return {Layer.Core.Root} this
    */
   on(name, handler, context) {
     this._prepareOn(name, handler, context);
@@ -352,7 +352,7 @@ class Root extends EventClass {
    * Subscribe to the first occurance of the specified event.
    *
    * @method once
-   * @return {layer.Root} this
+   * @return {Layer.Core.Root} this
    */
   once(name, handler, context) {
     this._prepareOn(name, handler, context);
@@ -379,7 +379,7 @@ class Root extends EventClass {
    * @param  {String} name - Name of the event; null for all event names
    * @param  {Function} handler - Event handler; null for all functions
    * @param  {Object} context - The context from the `on()` call to search for; null for all contexts
-   * @return {layer.Root} this
+   * @return {Layer.Core.Root} this
    */
 
 
@@ -390,8 +390,8 @@ class Root extends EventClass {
    *
    * @method trigger
    * @param {string} eventName    Name of the event that one should subscribe to in order to receive this event
-   * @param {Mixed} arg           Values that will be placed within a layer.Core.LayerEvent
-   * @return {layer.Root} this
+   * @param {Mixed} arg           Values that will be placed within a Layer.Core.LayerEvent
+   * @return {Layer.Core.Root} this
    */
   trigger(...args) {
     if (this._disableEvents) return this;
@@ -404,7 +404,7 @@ class Root extends EventClass {
    * @method trigger
    * @private
    * @param {string} eventName    Name of the event that one should subscribe to in order to receive this event
-   * @param {Mixed} arg           Values that will be placed within a layer.Core.LayerEvent
+   * @param {Mixed} arg           Values that will be placed within a Layer.Core.LayerEvent
    */
   _trigger(...args) {
     if (!Util.includes(this.constructor._supportedEvents, args[0])) {
@@ -427,16 +427,16 @@ class Root extends EventClass {
   }
 
   /**
-   * Generates a layer.Core.LayerEvent from a trigger call's arguments.
+   * Generates a Layer.Core.LayerEvent from a trigger call's arguments.
    *
-   * * If parameter is already a layer.Core.LayerEvent, we're done.
+   * * If parameter is already a Layer.Core.LayerEvent, we're done.
    * * If parameter is an object, a `target` property is added to that object and its delivered to all subscribers
    * * If the parameter is non-object value, it is added to an object with a `target` property, and the value is put in
    *   the `data` property.
    *
    * @method _getTriggerArgs
    * @private
-   * @return {Mixed[]} - First element of array is eventName, second element is layer.Core.LayerEvent.
+   * @return {Mixed[]} - First element of array is eventName, second element is Layer.Core.LayerEvent.
    */
   _getTriggerArgs(...args) {
     const computedArgs = Array.prototype.slice.call(args);
@@ -479,8 +479,8 @@ class Root extends EventClass {
    * @method _triggerAsync
    * @private
    * @param {string} eventName    Name of the event that one should subscribe to in order to receive this event
-   * @param {Mixed} arg           Values that will be placed within a layer.Core.LayerEvent
-   * @return {layer.Root} this
+   * @param {Mixed} arg           Values that will be placed within a Layer.Core.LayerEvent
+   * @return {Layer.Core.Root} this
    */
   _triggerAsync(...args) {
     const computedArgs = this._getTriggerArgs(...args);
@@ -536,9 +536,9 @@ class Root extends EventClass {
    *
    * @method _foldEvents
    * @private
-   * @param  {layer.Core.LayerEvent[]} events
+   * @param  {Layer.Core.LayerEvent[]} events
    * @param  {string} name      Name of the property (i.e. 'customName')
-   * @param  {layer.Root}    newTarget Value of the target for the folded resulting event
+   * @param  {Layer.Core.Root}    newTarget Value of the target for the folded resulting event
    */
   _foldEvents(events, name, newTarget) {
     const firstEvt = events.length ? events[0][1] : null;
@@ -557,7 +557,7 @@ class Root extends EventClass {
    *
    * Given a set change events on this component,
    * fold all change events into a single event via
-   * the layer.Core.LayerEvent's changes array.
+   * the Layer.Core.LayerEvent's changes array.
    *
    * @method _foldChangeEvents
    * @private
@@ -669,7 +669,7 @@ function initClass(newClass, className) {
   }
 
   // Generate a list of properties for this class; we don't include any
-  // properties from layer.Root
+  // properties from Layer.Core.Root
   const keys = Object.keys(newClass.prototype).filter(key =>
     newClass.prototype.hasOwnProperty(key) &&
     !Root.prototype.hasOwnProperty(key) &&
@@ -713,7 +713,7 @@ Root.prototype.isInitializing = true;
 /**
  * Objects that this object is listening for events from.
  *
- * @type {layer.Root[]}
+ * @type {Layer.Core.Root[]}
  * @private
  */
 Root.prototype._layerEventSubscriptions = null;

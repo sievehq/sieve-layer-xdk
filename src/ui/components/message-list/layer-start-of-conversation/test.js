@@ -13,7 +13,7 @@ describe('layer-start-of-conversation', function() {
   });
 
   afterEach(function() {
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   it('Should accept a date parameter', function() {

@@ -5,7 +5,7 @@
  * It may be extended to report on internal errors... but typically internal errors
  * are reported via `throw new Error(...);`
  *
- * Layer Error is passed as part of the layer.Core.LayerEvent's data property.
+ * Layer Error is passed as part of the Layer.Core.LayerEvent's data property.
  *
  * Throw an error:
  *
@@ -20,7 +20,7 @@
  *        console.error(error.message);
  *     });
  *
- * @class layer.Core.LayerEvent
+ * @class Layer.Core.LayerEvent
  */
 import { logger } from '../util';
 

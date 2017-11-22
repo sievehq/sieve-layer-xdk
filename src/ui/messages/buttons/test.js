@@ -27,10 +27,10 @@ describe('Button Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -51,9 +51,9 @@ describe('Button Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    ButtonsModel = layer.Core.Client.getMessageTypeModelClass("ButtonsModel");
-    TextModel = layer.Core.Client.getMessageTypeModelClass("TextModel");
-    ChoiceModel = layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
+    ButtonsModel = Layer.Core.Client.getMessageTypeModelClass("ButtonsModel");
+    TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
+    ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
 
     layer.Util.defer.flush();
     jasmine.clock().tick(800);
@@ -63,7 +63,7 @@ describe('Button Message Components', function() {
 
   afterEach(function() {
     layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   describe("Model Tests", function() {
@@ -419,7 +419,7 @@ describe('Button Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
     });
 

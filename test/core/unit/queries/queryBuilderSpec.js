@@ -8,7 +8,7 @@ describe("The QueryBuilder Classes", function() {
     beforeEach(function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
@@ -23,7 +23,7 @@ describe("The QueryBuilder Classes", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The fromQueryObject() method", function() {

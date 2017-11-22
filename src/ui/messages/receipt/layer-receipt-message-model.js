@@ -4,8 +4,8 @@
  * A Receipt Message contains one or more Products, as well as billing information.
  *
  * ```
- * ReceiptModel = layer.Core.Client.getMessageTypeModelClass('ReceiptModel');
- * ProductModel = layer.Core.Client.getMessageTypeModelClass('ProductModel');
+ * ReceiptModel = Layer.Core.Client.getMessageTypeModelClass('ReceiptModel');
+ * ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel');
  * model = new ReceiptModel({
  *    currency: 'USD',
  *    order: { number: 'FRODO-DODO-ONE'  },

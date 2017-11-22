@@ -7,12 +7,12 @@ describe("The SyncManager Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
             clientId: client.appId,
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
@@ -69,7 +69,7 @@ describe("The SyncManager Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -80,14 +80,14 @@ describe("The SyncManager Class", function() {
                 socketManager: client.socketManager,
                 requestManager: client.socketRequestManager
             });
-            expect(syncManager).toEqual(jasmine.any(layer.SyncManager));
+            expect(syncManager).toEqual(jasmine.any(Layer.Core.SyncManager));
             syncManager.destroy();
         });
 
         it("Should listen for client.ready", function() {
-            var tmp = layer.SyncManager.prototype._processNextRequest;
-            spyOn(layer.SyncManager.prototype , "_processNextRequest");
-            spyOn(layer.SyncManager.prototype , "_loadPersistedQueue");
+            var tmp = Layer.Core.SyncManager.prototype._processNextRequest;
+            spyOn(Layer.Core.SyncManager.prototype , "_processNextRequest");
+            spyOn(Layer.Core.SyncManager.prototype , "_loadPersistedQueue");
 
             var syncManager = new layer.Core.SyncManager({
                 client: client,
@@ -105,13 +105,13 @@ describe("The SyncManager Class", function() {
             expect(syncManager._loadPersistedQueue).toHaveBeenCalledWith();
 
             // Restore
-            layer.SyncManager.prototype._processNextRequest = tmp;
+            Layer.Core.SyncManager.prototype._processNextRequest = tmp;
             syncManager.destroy();
         });
 
         it("Should listen for onlineManager.connected", function() {
-            var tmp = layer.SyncManager.prototype._onlineStateChange;
-            spyOn(layer.SyncManager.prototype, "_onlineStateChange");
+            var tmp = Layer.Core.SyncManager.prototype._onlineStateChange;
+            spyOn(Layer.Core.SyncManager.prototype, "_onlineStateChange");
             var syncManager = new layer.Core.SyncManager({
                 client: client,
                 onlineManager: client.onlineManager,
@@ -122,16 +122,16 @@ describe("The SyncManager Class", function() {
             client.onlineManager.trigger("disconnected");
 
             // Posttest
-            expect(syncManager._onlineStateChange).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(syncManager._onlineStateChange).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
-            layer.SyncManager.prototype._onlineStateChange = tmp;
+            Layer.Core.SyncManager.prototype._onlineStateChange = tmp;
             syncManager.destroy();
         });
 
         it("Should listen for socketManager.connected", function() {
-            var tmp = layer.SyncManager.prototype._onlineStateChange;
-            spyOn(layer.SyncManager.prototype, "_onlineStateChange");
+            var tmp = Layer.Core.SyncManager.prototype._onlineStateChange;
+            spyOn(Layer.Core.SyncManager.prototype, "_onlineStateChange");
             var syncManager = new layer.Core.SyncManager({
                 client: client,
                 onlineManager: client.onlineManager,
@@ -142,16 +142,16 @@ describe("The SyncManager Class", function() {
             client.socketManager.trigger("connected");
 
             // Posttest
-            expect(syncManager._onlineStateChange).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(syncManager._onlineStateChange).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
-            layer.SyncManager.prototype._onlineStateChange = tmp;
+            Layer.Core.SyncManager.prototype._onlineStateChange = tmp;
             syncManager.destroy();
         });
 
         it("Should listen for socketManager.disconnected", function() {
-            var tmp = layer.SyncManager.prototype._onlineStateChange;
-            spyOn(layer.SyncManager.prototype, "_onlineStateChange");
+            var tmp = Layer.Core.SyncManager.prototype._onlineStateChange;
+            spyOn(Layer.Core.SyncManager.prototype, "_onlineStateChange");
             var syncManager = new layer.Core.SyncManager({
                 client: client,
                 onlineManager: client.onlineManager,
@@ -162,10 +162,10 @@ describe("The SyncManager Class", function() {
             client.socketManager.trigger("disconnected");
 
             // Posttest
-            expect(syncManager._onlineStateChange).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(syncManager._onlineStateChange).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
-            layer.SyncManager.prototype._onlineStateChange = tmp;
+            Layer.Core.SyncManager.prototype._onlineStateChange = tmp;
             syncManager.destroy();
         });
     });
@@ -752,11 +752,11 @@ describe("The SyncManager Class", function() {
 
         it("Should return validateOnlineAndRetry if its a 408 no-response", function() {
             expect(syncManager._getErrorState({status: 408}, {retryCount: 0}, true)).toEqual("validateOnlineAndRetry");
-            expect(syncManager._getErrorState({status: 408}, {retryCount: layer.SyncManager.MAX_RETRIES - 1}, true)).toEqual("validateOnlineAndRetry");
+            expect(syncManager._getErrorState({status: 408}, {retryCount: Layer.Core.SyncManager.MAX_RETRIES - 1}, true)).toEqual("validateOnlineAndRetry");
         });
 
         it("Should return tooManyFailuresWhileOnline if too many 408s", function() {
-            expect(syncManager._getErrorState({status: 408}, {retryCount: layer.SyncManager.MAX_RETRIES }, true)).toEqual("tooManyFailuresWhileOnline");
+            expect(syncManager._getErrorState({status: 408}, {retryCount: Layer.Core.SyncManager.MAX_RETRIES }, true)).toEqual("tooManyFailuresWhileOnline");
         });
 
         it("Should return serverUnavailable for server unavailable errors", function() {
@@ -767,15 +767,15 @@ describe("The SyncManager Class", function() {
         });
 
         it("Should return tooManyFailuresWhileOnline if too many service unavailables", function() {
-            expect(syncManager._getErrorState({status: 503}, {retryCount: layer.SyncManager.MAX_RETRIES }, true)).toEqual("tooManyFailuresWhileOnline");
+            expect(syncManager._getErrorState({status: 503}, {retryCount: Layer.Core.SyncManager.MAX_RETRIES }, true)).toEqual("tooManyFailuresWhileOnline");
         });
 
         it("Should return notFound if server returns not_found", function() {
-            expect(syncManager._getErrorState({status: 404, data: {id: 'not_found'}}, {retryCount: layer.SyncManager.MAX_RETRIES }, true)).toEqual("notFound");
+            expect(syncManager._getErrorState({status: 404, data: {id: 'not_found'}}, {retryCount: Layer.Core.SyncManager.MAX_RETRIES }, true)).toEqual("notFound");
         });
 
          it("Should return invalidId if server returns id_in_use", function() {
-            expect(syncManager._getErrorState({status: 404, data: {id: 'id_in_use'}}, {retryCount: layer.SyncManager.MAX_RETRIES }, true)).toEqual("invalidId");
+            expect(syncManager._getErrorState({status: 404, data: {id: 'id_in_use'}}, {retryCount: Layer.Core.SyncManager.MAX_RETRIES }, true)).toEqual("invalidId");
         });
 
         it("Should return reauthorize if there is a nonce", function() {

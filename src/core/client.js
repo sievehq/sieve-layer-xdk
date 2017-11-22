@@ -1,7 +1,7 @@
 /**
  * The Layer Client; this is the top level component for any Layer based application.
 
-    var client = new layer.Core.Client({
+    var client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff',
       challenge: function(evt) {
         myAuthenticator({
@@ -16,7 +16,7 @@
  *
  * You can also initialize this as
 
-    var client = new layer.Core.Client({
+    var client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff'
     });
 
@@ -40,18 +40,18 @@
  *
  * ### Properties:
  *
- * * layer.Core.Client.userId: User ID of the authenticated user
- * * layer.Core.Client.appId: The ID for your application
+ * * Layer.Core.Client.userId: User ID of the authenticated user
+ * * Layer.Core.Client.appId: The ID for your application
  *
  *
  * ### Methods:
  *
- * * layer.Core.Client.createConversation(): Create a new layer.Conversation.
- * * layer.Core.Client.createQuery(): Create a new layer.Core.Query.
- * * layer.Core.Client.getMessage(): Input a Message ID, and output a layer.Message or layer.Announcement from cache.
- * * layer.Core.Client.getConversation(): Input a Conversation ID, and output a layer.Conversation from cache.
- * * layer.Core.Client.on() and layer.Conversation.off(): event listeners
- * * layer.Core.Client.destroy(): Cleanup all resources used by this client, including all Messages and Conversations.
+ * * Layer.Core.Client.createConversation(): Create a new Layer.Core.Conversation.
+ * * Layer.Core.Client.createQuery(): Create a new Layer.Core.Query.
+ * * Layer.Core.Client.getMessage(): Input a Message ID, and output a Layer.Core.Message or Layer.Core.Announcement from cache.
+ * * Layer.Core.Client.getConversation(): Input a Conversation ID, and output a Layer.Core.Conversation from cache.
+ * * Layer.Core.Client.on() and Layer.Core.Conversation.off(): event listeners
+ * * Layer.Core.Client.destroy(): Cleanup all resources used by this client, including all Messages and Conversations.
  *
  * ### Events:
  *
@@ -63,25 +63,25 @@
  *
  * There are two ways to change the log level for Layer's logger:
  *
- *     layer.Core.Client.prototype.logLevel = layer.Constants.LOG.INFO;
+ *     Layer.Core.Client.prototype.logLevel = Layer.Constants.LOG.INFO;
  *
  * or
  *
- *     var client = new layer.Core.Client({
+ *     var client = new Layer.Core.Client({
  *        appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff',
- *        logLevel: layer.Constants.LOG.INFO
+ *        logLevel: Layer.Constants.LOG.INFO
  *     });
  *
- * @class  layer.Client
- * @extends layer.Core.ClientAuthenticator
- * @mixin layer.mixins.ClientIdentities
- * @mixin layer.mixins.ClientMembership
- * @mixin layer.mixins.ClientConversations
- * @mixin layer.mixins.ClientChannels
- * @mixin layer.mixins.ClientMessages
- * @mixin layer.mixins.ClientQueries
- * @mixin layer.mixin.WebsocketOperations
- * @mixin layer.mixins.ClientMessageModels
+ * @class  Layer.Core.Client
+ * @extends Layer.Core.ClientAuthenticator
+ * @mixin Layer.Core.mixins.ClientIdentities
+ * @mixin Layer.Core.mixins.ClientMembership
+ * @mixin Layer.Core.mixins.ClientConversations
+ * @mixin Layer.Core.mixins.ClientChannels
+ * @mixin Layer.Core.mixins.ClientMessages
+ * @mixin Layer.Core.mixins.ClientQueries
+ * @mixin Layer.mixin.WebsocketOperations
+ * @mixin Layer.Core.mixins.ClientMessageModels
  */
 
 import ClientAuth from './client-authenticator';
@@ -191,7 +191,7 @@ class Client extends ClientAuth {
    * @method _fixIdentities
    * @private
    * @param {Mixed[]} identities - Something that tells us what Identity to return
-   * @return {layer.Core.Identity[]}
+   * @return {Layer.Core.Identity[]}
    */
   _fixIdentities(identities) {
     return identities.map((identity) => {
@@ -223,7 +223,7 @@ class Client extends ClientAuth {
    * @param  {string} id - Message, Conversation or Query id
    * @param  {boolean} [canLoad=false] - Pass true to allow loading a object from
    *                                     the server if not found (not supported for all objects)
-   * @return {layer.Message|layer.Conversation|layer.Core.Query}
+   * @return {Layer.Core.Message|Layer.Core.Conversation|Layer.Core.Query}
    */
   getObject(id, canLoad = false) {
     switch (Util.typeFromID(id || '')) {
@@ -288,11 +288,11 @@ class Client extends ClientAuth {
   }
 
   /**
-   * When a layer.Container's ID changes, we need to update
+   * When a Layer.Core.Container's ID changes, we need to update
    * a variety of things and trigger events.
    *
    * @method _updateContainerId
-   * @param {layer.Container} container
+   * @param {Layer.Core.Container} container
    * @param {String} oldId
    */
   _updateContainerId(container, oldId) {
@@ -398,7 +398,7 @@ class Client extends ClientAuth {
    *
    * @method _checkAndPurgeCache
    * @private
-   * @param  {layer.Root[]} objects - Array of Messages or Conversations
+   * @param  {Layer.Core.Root[]} objects - Array of Messages or Conversations
    */
   _checkAndPurgeCache(objects) {
     this._inCheckAndPurgeCache = true;
@@ -421,7 +421,7 @@ class Client extends ClientAuth {
    *
    * @method _scheduleCheckAndPurgeCache
    * @private
-   * @param {layer.Root} object
+   * @param {Layer.Core.Root} object
    */
   _scheduleCheckAndPurgeCache(object) {
     if (object.isSaved()) {
@@ -453,7 +453,7 @@ class Client extends ClientAuth {
    *
    * @method _isCachedObject
    * @private
-   * @param  {layer.Root} obj - A Message or Conversation Instance
+   * @param  {Layer.Core.Root} obj - A Message or Conversation Instance
    * @return {Boolean}
    */
   _isCachedObject(obj) {
@@ -468,7 +468,7 @@ class Client extends ClientAuth {
   /**
    * On restoring a connection, determine what steps need to be taken to update our data.
    *
-   * A reset boolean property is passed; set based on  layer.Core.ClientAuthenticator.ResetAfterOfflineDuration.
+   * A reset boolean property is passed; set based on  Layer.Core.ClientAuthenticator.ResetAfterOfflineDuration.
    *
    * Note it is possible for an application to have logic that causes queries to be created/destroyed
    * as a side-effect of layer.Core.Query.reset destroying all data. So we must test to see if queries exist.
@@ -491,19 +491,19 @@ class Client extends ClientAuth {
   }
 
   /**
-   * Creates a layer.TypingIndicators.TypingListener instance
+   * Creates a Layer.Core.TypingIndicators.TypingListener instance
    * bound to the specified dom node.
    *
    *      var typingListener = client.createTypingListener(document.getElementById('myTextBox'));
    *      typingListener.setConversation(mySelectedConversation);
    *
    * Use this method to instantiate a listener, and call
-   * layer.TypingIndicators.TypingListener.setConversation every time you want to change which Conversation
+   * Layer.Core.TypingIndicators.TypingListener.setConversation every time you want to change which Conversation
    * it reports your user is typing into.
    *
    * @method createTypingListener
    * @param  {HTMLElement} inputNode - Text input to watch for keystrokes
-   * @return {layer.TypingIndicators.TypingListener}
+   * @return {Layer.Core.TypingIndicators.TypingListener}
    */
   createTypingListener(inputNode) {
     return new TypingListener({
@@ -513,27 +513,27 @@ class Client extends ClientAuth {
   }
 
   /**
-   * Creates a layer.TypingIndicators.TypingPublisher.
+   * Creates a Layer.Core.TypingIndicators.TypingPublisher.
    *
    * The TypingPublisher lets you manage your Typing Indicators without using
-   * the layer.TypingIndicators.TypingListener.
+   * the Layer.Core.TypingIndicators.TypingListener.
    *
    *      var typingPublisher = client.createTypingPublisher();
    *      typingPublisher.setConversation(mySelectedConversation);
-   *      typingPublisher.setState(layer.TypingIndicators.STARTED);
+   *      typingPublisher.setState(Layer.Core.TypingIndicators.STARTED);
    *
    * Use this method to instantiate a listener, and call
-   * layer.TypingIndicators.TypingPublisher.setConversation every time you want to change which Conversation
+   * Layer.Core.TypingIndicators.TypingPublisher.setConversation every time you want to change which Conversation
    * it reports your user is typing into.
    *
-   * Use layer.TypingIndicators.TypingPublisher.setState to inform other users of your current state.
+   * Use Layer.Core.TypingIndicators.TypingPublisher.setState to inform other users of your current state.
    * Note that the `STARTED` state only lasts for 2.5 seconds, so you
    * must repeatedly call setState for as long as this state should continue.
    * This is typically done by simply calling it every time a user hits
    * a key.
    *
    * @method createTypingPublisher
-   * @return {layer.TypingIndicators.TypingPublisher}
+   * @return {Layer.Core.TypingIndicators.TypingPublisher}
    */
   createTypingPublisher() {
     return new TypingPublisher({
@@ -579,7 +579,7 @@ class Client extends ClientAuth {
    * can use this to get called when the client exists.
    *
    * ```
-   * layer.Core.Client.addListenerForNewClient(function(client) {
+   * Layer.Core.Client.addListenerForNewClient(function(client) {
    *    mycomponent.setClient(client);
    * });
    * ```
@@ -600,10 +600,10 @@ class Client extends ClientAuth {
    * ```
    * var f = function(client) {
    *    mycomponent.setClient(client);
-   *    layer.Core.Client.removeListenerForNewClient(f);
+   *    Layer.Core.Client.removeListenerForNewClient(f);
    * };
    *
-   * layer.Core.Client.addListenerForNewClient(f);
+   * Layer.Core.Client.addListenerForNewClient(f);
    * ```
    *
    * Calling with null will remove all listeners.
@@ -621,7 +621,7 @@ class Client extends ClientAuth {
  * Array of items to be checked to see if they can be uncached.
  *
  * @private
- * @type {layer.Root[]}
+ * @type {Layer.Core.Root[]}
  */
 Client.prototype._scheduleCheckAndPurgeCacheItems = null;
 
@@ -684,7 +684,7 @@ Client._supportedEvents = [
    *      });
    *
    * @event
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @param {string} conversationId - ID of the Conversation users are typing into
    * @param {string[]} typing - Array of user IDs who are currently typing
    * @param {string[]} paused - Array of user IDs who are currently paused;
@@ -706,4 +706,3 @@ Client.mixins = [
 ];
 Root.initClass.apply(Client, [Client, 'Client']);
 module.exports = Client;
-

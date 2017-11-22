@@ -8,10 +8,10 @@ if (window.Notification) {
     });
 
     beforeEach(function() {
-      client = new layer.Core.Client({
+      client = new Layer.Core.Client({
         appId: 'Fred'
       });
-      client.user = new layer.Core.Identity({
+      client.user = new Layer.Core.Identity({
         client: client,
         userId: 'FrodoTheDodo',
         id: 'layer:///identities/FrodoTheDodo',
@@ -34,7 +34,7 @@ if (window.Notification) {
     afterEach(function() {
       layer.Util.defer.reset();
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
     });
 
     describe('Event Handling', function() {

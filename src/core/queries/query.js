@@ -106,7 +106,7 @@
  *
  * A new Conversation or Message was created. It may have been created locally by your user, or it may have been remotely created, received via websocket, and added to the Query's results.
  *
- * The layer.Core.LayerEvent.target property contains the newly inserted object.
+ * The Layer.Core.LayerEvent.target property contains the newly inserted object.
  *
  * ```javascript
  *  query.on('change', function(evt) {
@@ -123,7 +123,7 @@
  *
  * A Conversation or Message was deleted. This may have been deleted locally by your user, or it may have been remotely deleted, a notification received via websocket, and removed from the Query results.
  *
- * The layer.Core.LayerEvent.target property contains the removed object.
+ * The Layer.Core.LayerEvent.target property contains the removed object.
  *
  * ```javascript
  * query.on('change', function(evt) {
@@ -155,9 +155,9 @@
  *
  * If any properties change in any of the objects listed in your layer.Core.Query.data property, a `property` event will be fired.
  *
- * The layer.Core.LayerEvent.target property contains object that was modified.
+ * The Layer.Core.LayerEvent.target property contains object that was modified.
  *
- * See layer.Core.LayerEvent.changes for details on how changes are reported.
+ * See Layer.Core.LayerEvent.changes for details on how changes are reported.
  *
  * ```javascript
  * query.on('change', function(evt) {
@@ -198,7 +198,7 @@
  * Note that `query.on('change:move', function(evt) {}` is also supported.
  *
  * @class  layer.Core.Query
- * @extends layer.Root
+ * @extends Layer.Core.Root
  *
  */
 import Root from '../root';
@@ -535,7 +535,7 @@ class Query extends Root {
    *
    * @method _getData
    * @private
-   * @param  {layer.Root} item - Conversation, Message, etc... instance
+   * @param  {Layer.Core.Root} item - Conversation, Message, etc... instance
    * @return {Object} - Conversation, Message, etc... instance or Object
    */
   _getData(item) {
@@ -549,8 +549,8 @@ class Query extends Root {
    * Returns an instance regardless of whether the input is instance or object
    * @method _getInstance
    * @private
-   * @param {layer.Root|Object} item - Conversation, Message, etc... object/instance
-   * @return {layer.Root}
+   * @param {Layer.Core.Root|Object} item - Conversation, Message, etc... object/instance
+   * @return {Layer.Core.Root}
    */
   _getInstance(item) {
     if (item instanceof Root) return item;
@@ -588,7 +588,7 @@ class Query extends Root {
   }
 
   /**
-   * Handle any change event received from the layer.Core.Client.
+   * Handle any change event received from the Layer.Core.Client.
    *
    * These can be caused by websocket events, as well as local
    * requests to create/delete/modify Conversations and Messages.
@@ -599,7 +599,7 @@ class Query extends Root {
    * @method _handleEvents
    * @private
    * @param {string} eventName - "messages:add", "conversations:change"
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   _handleEvents(eventName, evt) {
     // Noop
@@ -609,7 +609,7 @@ class Query extends Root {
    * Handle a change event... for models that don't require custom handling
    *
    * @method _handleChangeEvent
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @private
    */
   _handleChangeEvent(name, evt) {
@@ -843,7 +843,7 @@ Query.prototype.client = null;
 /**
  * Query results.
  *
- * Array of data resulting from the Query; either a layer.Root subclass.
+ * Array of data resulting from the Query; either a Layer.Core.Root subclass.
  *
  * or plain Objects
  * @type {Object[]}

@@ -7,13 +7,13 @@ describe("SyncManager Integration Tests", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com",
             isTrustedDevice: false
         });
         client.sessionToken = "sessionToken";
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
             clientId: client.appId,
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
@@ -60,7 +60,7 @@ describe("SyncManager Integration Tests", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     it("Should schedule a retry after a service unavailable error", function() {
@@ -83,7 +83,7 @@ describe("SyncManager Integration Tests", function() {
         expect(request.retryCount).toEqual(1);
         expect(syncManager.queue).toEqual([request]);
 
-        while(request.retryCount < layer.SyncManager.MAX_RETRIES) {
+        while(request.retryCount < Layer.Core.SyncManager.MAX_RETRIES) {
             syncManager._xhrError({
                 success: false,
                 status: 503,

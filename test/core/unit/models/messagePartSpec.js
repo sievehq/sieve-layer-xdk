@@ -9,7 +9,7 @@ describe("The MessageParts class", function() {
 
     afterAll(function() {
         if (oldBlob) window.Blob = oldBlob;
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     beforeAll(function() {
@@ -19,13 +19,13 @@ describe("The MessageParts class", function() {
     beforeEach(function() {
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://doh.com"
         });
         client.userId = "999";
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
@@ -519,7 +519,8 @@ describe("The MessageParts class", function() {
             // Posttest
             expect(part.trigger).toHaveBeenCalledWith("parts:send", {
                 body: "hey",
-                mime_type: "text/ho"
+                mime_type: "text/ho",
+                id: part.id
             });
         });
 
@@ -540,12 +541,12 @@ describe("The MessageParts class", function() {
     describe("The _sendWithContent() method", function() {
         it("Should trigger parts:send", function() {
             var content = new layer.Core.Content({
-                id: "fred"
+                id: "fred",
+                size: 500
             });
             var part = new layer.Core.MessagePart({
                 _content: content,
-                mimeType: "ho",
-                size: 500
+                mimeType: "ho"
             });
             spyOn(part, "trigger");
 
@@ -558,7 +559,8 @@ describe("The MessageParts class", function() {
                     id: "fred",
                     size: 500
                 },
-                mime_type: "ho"
+                mime_type: "ho",
+                id: part.id
             });
         });
     });
@@ -575,6 +577,7 @@ describe("The MessageParts class", function() {
                 expect(data).toEqual({
                     encoding: "base64",
                     mime_type: "fred",
+                    id: part.id,
                     body: jasmine.any(String)
                 });
                 expect(data.body.length > 0).toBe(true);
@@ -751,7 +754,8 @@ describe("The MessageParts class", function() {
 
         it("Should trigger parts:send", function() {
             var content = new layer.Core.Content({
-                id: "layer:///content/fred"
+                id: "layer:///content/fred",
+                size: new Array(5000).join("hello").length
             });
             var part = new layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
@@ -772,7 +776,8 @@ describe("The MessageParts class", function() {
                     id: "layer:///content/fred",
                     size: part.body.length
                 },
-                mime_type: "text/plain"
+                mime_type: "text/plain",
+                id: part.id
             });
         });
 
@@ -795,7 +800,7 @@ describe("The MessageParts class", function() {
             client.onlineManager.trigger("connected");
 
             // Posttest
-            expect(part._processContentResponse).toHaveBeenCalledWith({id: "doh"}, client, jasmine.any(layer.Core.LayerEvent));
+            expect(part._processContentResponse).toHaveBeenCalledWith({id: "doh"}, client, jasmine.any(Layer.Core.LayerEvent));
         });
 
         it("Should call _processContentResponse on error", function() {
@@ -837,39 +842,10 @@ describe("The MessageParts class", function() {
 
             // Posttest
             expect(message.trigger).toHaveBeenCalledWith('messages:sent-error', {
-                error: jasmine.any(layer.Core.LayerEvent),
+                error: jasmine.any(Layer.Core.LayerError),
                 part: part
             });
             expect(part._processContentResponse).not.toHaveBeenCalled();
-        });
-    });
-
-    describe("The getText() method", function(){
-        it("Should return part.body if its text/plain", function() {
-            var part = new layer.Core.MessagePart({
-                body: "hey",
-                mimeType: "text/plain"
-            });
-            expect(part.getText()).toEqual("hey");
-        });
-
-        it("Should return part.body if in MessagePart.TextualMimeTypes", function() {
-            layer.Core.MessagePart.TextualMimeTypes.push("hey/ho");
-            var part = new layer.Core.MessagePart({
-                body: "hey",
-                mimeType: "hey/ho"
-            });
-            expect(part.getText()).toEqual("hey");
-            layer.Core.MessagePart.TextualMimeTypes.pop();
-        });
-
-        it("Should return empty string if its not text/plain", function() {
-            var part = new layer.Core.MessagePart({
-                body: "hey",
-                mimeType: "text/plain2"
-            });
-            spyOn(part, "isTextualMimeType").and.returnValue(false);
-            expect(part.getText()).toEqual("");
         });
     });
 

@@ -6,8 +6,8 @@
  * a simple TextModel for the Content Model, and a couple of simple action buttons.
  *
  * ```
- * TextModel = layer.Core.Client.getMessageTypeModelClass('TextModel');
- * ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
+ * TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+ * ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
  * model = new ButtonModel({
  *   buttons: [
  *     {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"},
@@ -25,7 +25,7 @@
  * You can also create Action Buttons to use existing event definitions such as `open-url`:
  *
  * ```
- * ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
+ * ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
  * model = new ButtonModel({
  *   buttons: [
  *     {"type": "action", "text": "Open Page", "event": "open-url", data: {url: "https://layer.com" }}
@@ -37,8 +37,8 @@
  * Finally, you can use Choice Buttons instead of or in addition to Action Buttons:
  *
  * ```
- * TextModel = layer.Core.Client.getMessageTypeModelClass('TextModel');
- * ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
+ * TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+ * ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
  * model = new ButtonModel({
  *   buttons: [
  *     {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"},

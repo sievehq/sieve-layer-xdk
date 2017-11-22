@@ -14,13 +14,13 @@ describe("The Query Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-              client.user = new layer.Core.Identity({
+              client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
@@ -66,7 +66,7 @@ describe("The Query Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -160,7 +160,7 @@ describe("The Query Class", function() {
             client.trigger("conversations:add", {conversations: [conversation]});
 
             // Posttest
-            expect(spy).toHaveBeenCalledWith("conversations:add", jasmine.any(layer.Core.LayerEvent));
+            expect(spy).toHaveBeenCalledWith("conversations:add", jasmine.any(Layer.Core.LayerEvent));
         });
 
         it("Should force paginationWindow to acceptable value", function() {
@@ -1229,7 +1229,7 @@ describe("The Query Class", function() {
         query._triggerChange({
           type: 'insert'
         });
-        expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
         expect(spy).toHaveBeenCalledWith(jasmine.objectContaining({
           type: 'insert'
         }));
@@ -1241,7 +1241,7 @@ describe("The Query Class", function() {
         query._triggerChange({
           type: 'insert'
         });
-        expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
         expect(spy).toHaveBeenCalledWith(jasmine.objectContaining({
           type: 'insert'
         }));

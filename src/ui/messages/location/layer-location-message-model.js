@@ -7,7 +7,7 @@
  * For a Model that uses lat/lon:
  *
  * ```
- * LocationModel = layer.Core.Client.getMessageTypeModelClass('LocationModel')
+ * LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel')
  * model = new LocationModel({
  *     latitude: 37.7734858,
  *     longitude: -122.3916087,
@@ -24,7 +24,7 @@
  * For a model that uses an address:
  *
  * ```
- * LocationModel = layer.Core.Client.getMessageTypeModelClass('LocationModel');
+ * LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel');
  * model = new LocationModel({
  *   city: 'San Francisco',
  *   title: 'Layer Inc',
@@ -98,7 +98,7 @@ LocationModel.prototype.latitude = 0;
 LocationModel.prototype.longitude = 0;
 
 /**
- * What zoom level to use.
+ * Zoom level from 1 - 18; defaults to 16
  *
  * Note that this uses Google Maps definition of Zoom which may not be available on all devices.
  *

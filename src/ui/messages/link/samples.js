@@ -1,4 +1,4 @@
-LinkModel = layer.Core.Client.getMessageTypeModelClass('LinkModel')
+LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel')
 
   model = new LinkModel({
     url: "https://layer.com/introducing-the-layer-conversation-design-system/",
@@ -57,7 +57,7 @@ LinkModel = layer.Core.Client.getMessageTypeModelClass('LinkModel')
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-  LinkModel = layer.Core.Client.getMessageTypeModelClass('LinkModel')
+  LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel')
 
   model = new LinkModel({
     url: "https://layer.com/introducing-the-layer-conversation-design-system/",

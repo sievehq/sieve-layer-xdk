@@ -29,11 +29,11 @@
  *          });
  *      });
  *
- * The `layer.Core.LayerEvent.getChangesFor()` and `layer.Core.LayerEvent.hasProperty()` methods
+ * The `Layer.Core.LayerEvent.getChangesFor()` and `Layer.Core.LayerEvent.hasProperty()` methods
  * simplify working with xxx:change events so you don't need
  * to iterate over the `changes` array.
  *
- * @class layer.Core.LayerEvent
+ * @class Layer.Core.LayerEvent
  */
 
 class LayerEvent {
@@ -43,7 +43,7 @@ class LayerEvent {
    * @method
    * @param  {Object} args - Properties to mixin to the event
    * @param  {string} eventName - Name of the event that generated this LayerEvent.
-   * @return {layer.Core.LayerEvent}
+   * @return {Layer.Core.LayerEvent}
    */
   constructor(args, eventName) {
     let ptr = this;
@@ -120,7 +120,7 @@ class LayerEvent {
    *
    * @method _mergeChanges
    * @protected
-   * @param  {layer.Core.LayerEvent} evt
+   * @param  {Layer.Core.LayerEvent} evt
    */
   _mergeChanges(evt) {
     this.changes = this.changes.concat(evt.changes);
@@ -132,7 +132,7 @@ class LayerEvent {
  *
  * If the event name ends with ':change' then
  * it is treated as a change event;  such
- * events are assumed to come with `newValue`, `oldValue` and `property` in the layer.Core.LayerEvent.changes property.
+ * events are assumed to come with `newValue`, `oldValue` and `property` in the Layer.Core.LayerEvent.changes property.
  * @type {Boolean}
  */
 LayerEvent.prototype.isChange = false;
@@ -159,7 +159,7 @@ LayerEvent.prototype.changes = null;
  *      obj.trigger('event');
  *
  * then obj will be the target.
- * @type {layer.Root}
+ * @type {Layer.Core.Root}
  */
 LayerEvent.prototype.target = null;
 

@@ -5,7 +5,7 @@
  * A basic Link Message can be created with:
  *
  * ```
- * LinkModel = layer.Core.Client.getMessageTypeModelClass('LinkModel')
+ * LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel')
  * model = new LinkModel({
  *    url: "https://layer.com/introducing-the-layer-conversation-design-system/",
  *    title: "Introducing the Layer Conversation Design System",
@@ -21,7 +21,7 @@
  * A Link Message with some tracking can be done using:
  *
  * ```
- * LinkModel = layer.Core.Client.getMessageTypeModelClass('LinkModel')
+ * LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel')
  * model = new LinkModel({
  *    url: "https://layer.com/introducing-the-layer-conversation-design-system/",
  *    title: "Introducing the Layer Conversation Design System",
@@ -82,7 +82,7 @@ class LinkModel extends MessageTypeModel {
    * Before sending a Link Message you may want to load the article and populate this Model's proerties from it.
    *
    * ```
-   * LinkModel = layer.Core.Client.getMessageTypeModelClass('LinkModel')
+   * LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel')
    * model = new LinkModel({
    *     url: "http://www.cnn.com/2017/11/17/health/dog-owners-heart-disease-and-death/index.html",
    * });

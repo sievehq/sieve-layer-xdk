@@ -1,4 +1,4 @@
-ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
    responseName: 'airselection',
@@ -12,7 +12,7 @@ model = new ChoiceModel({
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
- ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
    responseName: 'airselection',
@@ -26,7 +26,7 @@ model = new ChoiceModel({
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
- ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
    responseName: 'airselection',
@@ -42,7 +42,7 @@ model = new ChoiceModel({
  });
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
- ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
    responseName: 'airselection',
@@ -78,7 +78,7 @@ model = new ChoiceModel({
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
- ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "Pick a color",
    responseName: 'color',
@@ -108,7 +108,7 @@ model = new ChoiceModel({
  });
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "Pick a color",
    responseName: 'color',

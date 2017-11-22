@@ -16,10 +16,10 @@ describe('Link Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -40,7 +40,7 @@ describe('Link Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    LinkModel = layer.Core.Client.getMessageTypeModelClass("LinkModel");
+    LinkModel = Layer.Core.Client.getMessageTypeModelClass("LinkModel");
 
     layer.Util.defer.flush();
     jasmine.clock().tick(800);
@@ -49,7 +49,7 @@ describe('Link Message Components', function() {
 
   afterEach(function() {
     layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   describe("Model Tests", function() {
@@ -176,7 +176,7 @@ describe('Link Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
     });
 

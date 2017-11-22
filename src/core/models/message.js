@@ -114,7 +114,7 @@
  *   this event from the layer.Client which is usually simpler.
  *
  * @class  layer.Message
- * @extends layer.Syncable
+ * @extends Layer.Core.Syncable
  */
 
 import Root from '../root';
@@ -287,7 +287,7 @@ class Message extends Syncable {
    *
    * @method _onMessagePartChange
    * @private
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   _onMessagePartChange(evt) {
     evt.changes.forEach((change) => {
@@ -566,7 +566,7 @@ class Message extends Syncable {
   }
 
   /* NOT FOR JSDUCK
-   * Standard `on()` provided by layer.Root.
+   * Standard `on()` provided by Layer.Core.Root.
    *
    * Adds some special handling of 'messages:loaded' so that calls such as
    *
@@ -958,7 +958,7 @@ Message.prototype.receivedAt = null;
  *        {message.sender.displayName || message.sender.name}
  *      </span>
  *
- * @type {layer.Core.Identity}
+ * @type {Layer.Core.Identity}
  * @readonly
  */
 Message.prototype.sender = null;
@@ -1073,7 +1073,7 @@ Message._supportedEvents = [
    * ```
    *
    * @event
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   'messages:loaded',
 
@@ -1082,7 +1082,7 @@ Message._supportedEvents = [
    *
    * Note that this is only used in response to the layer.Message.load() method.
    * @event
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   'messages:loaded-error',
 
@@ -1090,7 +1090,7 @@ Message._supportedEvents = [
    * Message deleted from the server.
    *
    * Caused by a call to layer.Message.delete() or a websocket event.
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @event
    */
   'messages:delete',
@@ -1108,7 +1108,7 @@ Message._supportedEvents = [
    * which would trigger before sending ANY Messages.
    *
    * @event
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   'messages:sending',
 
@@ -1120,7 +1120,7 @@ Message._supportedEvents = [
    * It does NOT indicate messages sent by other users.
    *
    * @event
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   'messages:sent',
 
@@ -1130,8 +1130,8 @@ Message._supportedEvents = [
    * Message will be deleted immediately after firing this event.
    *
    * @event
-   * @param {layer.Core.LayerEvent} evt
-   * @param {layer.Core.LayerEvent} evt.error
+   * @param {Layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt.error
    */
   'messages:sent-error',
 
@@ -1142,7 +1142,7 @@ Message._supportedEvents = [
    * from the server... but is also caused by marking the current user as having read
    * or received the message.
    * @event
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   'messages:change',
 
@@ -1150,7 +1150,7 @@ Message._supportedEvents = [
    * A new Message Part has been added
    *
    * @event
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @param {layer.MessagePart} evt.part
    */
   'messages:part-added',
@@ -1159,7 +1159,7 @@ Message._supportedEvents = [
    * A new Message Part has been removed
    *
    * @event
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @param {layer.MessagePart} evt.part
    */
   'messages:part-removed',

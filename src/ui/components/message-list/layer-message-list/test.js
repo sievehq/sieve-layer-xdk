@@ -19,10 +19,10 @@ describe('layer-message-list', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -52,7 +52,7 @@ describe('layer-message-list', function() {
       query.data.push(conversation.createMessage("m " + i).send());
     }
 
-    user1 = new layer.Core.Identity({
+    user1 = new Layer.Core.Identity({
       client: client,
       userId: 'SaurumanTheMildlyAged',
       displayName: 'Sauruman the Mildly Aged',
@@ -72,7 +72,7 @@ describe('layer-message-list', function() {
     document.body.removeChild(testRoot);
     if (el) el.onDestroy();
     jasmine.clock().uninstall();
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
 

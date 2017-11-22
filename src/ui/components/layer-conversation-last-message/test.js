@@ -9,16 +9,16 @@ describe('layer-conversation-last-message', function() {
   afterEach(function() {
     layer.Util.defer.reset();
     jasmine.clock().uninstall();
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -57,7 +57,7 @@ describe('layer-conversation-last-message', function() {
       el.item = conversation;
       el.onRerender.calls.reset();
       conversation.trigger('conversations:change', {});
-      expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+      expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
     });
 
     it("Should unwire up the onRerender event if prior Conversation", function() {

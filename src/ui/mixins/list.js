@@ -66,8 +66,8 @@ module.exports = {
      * Typical actions on receiving a widget is to set its customNodeAbove and/or customNodeBelow to either a DOM node or an HTML String.
      *
      * @property {Function} [onRenderListItem=null]      Function to call on each rendered item.
-     * @property {layer.Root} onRenderListItem.widget    Current user/message/conversation/list-item widget that has been created from the Query.
-     * @property {layer.Root[]} onRenderListItem.items   Full set of users/messages/conversations have been/will be rendered
+     * @property {Layer.Core.Root} onRenderListItem.widget    Current user/message/conversation/list-item widget that has been created from the Query.
+     * @property {Layer.Core.Root[]} onRenderListItem.items   Full set of users/messages/conversations have been/will be rendered
      * @property {Number} onRenderListItem.index         Index of the user/message/conversation in the items array
      * @property {Boolean} onRenderListItem.isTopItemNew If the top item is index 0, and its newly added rather than just affected by changes
      *           around it, this is often useful to know.
@@ -192,7 +192,7 @@ module.exports = {
      * scrolling to an item not in the list will return `false`.
      *
      * @method scrollToItem
-     * @param {layer.Root} item
+     * @param {Layer.Core.Root} item
      * @param {Number} [animateSpeed=0]   Number of miliseconds of animated scrolling; 0 for no animation
      * @param {Function} [animateCallback] Function to call when animation completes
      * @return {Boolean}                  Returns true if operation was successful,

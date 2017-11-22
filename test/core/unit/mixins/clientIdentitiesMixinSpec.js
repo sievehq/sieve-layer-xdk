@@ -19,19 +19,19 @@ describe("The Client Identities Mixin", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
+        client.user = userIdentity = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
-        userIdentity2 = new layer.Core.Identity({
+        userIdentity2 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "UserIdentity",
@@ -40,7 +40,7 @@ describe("The Client Identities Mixin", function() {
 
           client.isTrustedDevice = true;
           delete client._models.identities['layer:///identities/Frodo'];
-          client.user = new layer.Core.Identity({
+          client.user = new Layer.Core.Identity({
               userId: client.userId,
               displayName: "Frodo2",
               syncState: layer.Constants.SYNC_STATE.LOADING,
@@ -65,7 +65,7 @@ describe("The Client Identities Mixin", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -84,7 +84,7 @@ describe("The Client Identities Mixin", function() {
 
       it("Should destroy all Identities", function() {
         // Setup
-        var userIdentity4 = new layer.Core.Identity({
+        var userIdentity4 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/2",
             displayName: "userIdentity4"
@@ -103,7 +103,7 @@ describe("The Client Identities Mixin", function() {
     describe("The getIdentity() method", function() {
       var userIdentity3;
       beforeEach(function() {
-          userIdentity3 = new layer.Core.Identity({
+          userIdentity3 = new Layer.Core.Identity({
               clientId: client.appId,
               id: "layer:///identities/2",
               displayName: "userIdentity3"
@@ -180,7 +180,7 @@ describe("The Client Identities Mixin", function() {
       it("Should not add an Identity only a display_name", function() {
           // Setup
           client._models.identities = {};
-          userIdentity  = new layer.Core.Identity({
+          userIdentity  = new Layer.Core.Identity({
               client: client,
               fromServer: {
                   display_name: "Fred"
@@ -195,7 +195,7 @@ describe("The Client Identities Mixin", function() {
       });
 
       it("Should queue up the Identity in _loadPresenceIds", function() {
-        userIdentity  = new layer.Core.Identity({
+        userIdentity  = new Layer.Core.Identity({
               client: client,
               fromServer: {
                   id: "layer:///identities/fred",
@@ -208,7 +208,7 @@ describe("The Client Identities Mixin", function() {
       it("Should schedule call to _loadPresence if _loadPresenceIds is empty", function() {
         spyOn(client, "_loadPresence");
         expect(client._loadPresenceIds).toEqual([]);
-        userIdentity  = new layer.Core.Identity({
+        userIdentity  = new Layer.Core.Identity({
               client: client,
               fromServer: {
                   display_name: "Fred"
@@ -223,21 +223,21 @@ describe("The Client Identities Mixin", function() {
       it("Should schedule not call to _loadPresence if _loadPresenceIds is not empty", function() {
         spyOn(client, "_loadPresence");
         expect(client._loadPresenceIds).toEqual([]);
-        userIdentity  = new layer.Core.Identity({
+        userIdentity  = new Layer.Core.Identity({
             client: client,
             fromServer: {
                 display_name: "Fred"
             }
         });
         jasmine.clock().tick(10);
-        var userIdentity2  = new layer.Core.Identity({
+        var userIdentity2  = new Layer.Core.Identity({
             client: client,
             fromServer: {
                 display_name: "Fred2"
             }
         });
         jasmine.clock().tick(10);
-        var userIdentity2  = new layer.Core.Identity({
+        var userIdentity2  = new Layer.Core.Identity({
             client: client,
             fromServer: {
                 display_name: "Fred3"
@@ -253,7 +253,7 @@ describe("The Client Identities Mixin", function() {
   describe("The _removeIdentity() method", function() {
       var userIdentity4;
       beforeEach(function() {
-          userIdentity4 = new layer.Core.Identity({
+          userIdentity4 = new Layer.Core.Identity({
               clientId: client.appId,
               id: "layer:///identities/2",
               displayName: "userIdentity4"
@@ -264,7 +264,7 @@ describe("The Client Identities Mixin", function() {
       });
 
       it("Should ignore IDS not cached", function() {
-          var ident = new layer.Core.Identity({
+          var ident = new Layer.Core.Identity({
               id: "layer:///identities/fooled-you",
               clientId: client.appId
           });
@@ -299,7 +299,7 @@ describe("The Client Identities Mixin", function() {
         spyOn(client.syncManager, 'request');
         client._loadPresenceIds = ['a','b','c'];
         client._loadPresence();
-        expect(client.syncManager.request).toHaveBeenCalledWith(jasmine.any(layer.WebsocketSyncEvent));
+        expect(client.syncManager.request).toHaveBeenCalledWith(jasmine.any(Layer.Core.WebsocketSyncEvent));
         var syncEvent = client.syncManager.request.calls.allArgs()[0][0];
         expect(syncEvent.returnChangesArray).toBe(true);
         expect(syncEvent.data).toEqual({
@@ -328,14 +328,14 @@ describe("The Client Identities Mixin", function() {
         });
 
         it("Should call follow() on a new Identity", function() {
-            var tmp = layer.Core.Identity.prototype.follow;
-            spyOn(layer.Core.Identity.prototype, "follow");
+            var tmp = Layer.Core.Identity.prototype.follow;
+            spyOn(Layer.Core.Identity.prototype, "follow");
 
             // Run
             var result1 = client.followIdentity("123");
 
             // Posttest
-            expect(layer.Core.Identity.prototype.follow.calls.count()).toEqual(1);
+            expect(Layer.Core.Identity.prototype.follow.calls.count()).toEqual(1);
             expect(result1.id).toEqual("layer:///identities/123");
         });
     });
@@ -356,14 +356,14 @@ describe("The Client Identities Mixin", function() {
         });
 
         it("Should call unfollow() on a new Identity", function() {
-            var tmp = layer.Core.Identity.prototype.unfollow;
-            spyOn(layer.Core.Identity.prototype, "unfollow");
+            var tmp = Layer.Core.Identity.prototype.unfollow;
+            spyOn(Layer.Core.Identity.prototype, "unfollow");
 
             // Run
             var result1 = client.unfollowIdentity("321");
 
             // Posttest
-            expect(layer.Core.Identity.prototype.unfollow.calls.count()).toEqual(1);
+            expect(Layer.Core.Identity.prototype.unfollow.calls.count()).toEqual(1);
             expect(result1.id).toEqual("layer:///identities/321");
         });
 

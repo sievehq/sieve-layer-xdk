@@ -232,7 +232,7 @@ var compareObj = function(a, b) {
 }
 
 var responseTest =  function(a, b) {
-        if (a instanceof layer.Core.LayerEvent && b instanceof layer.Core.LayerEvent) {
+        if (a instanceof Layer.Core.LayerEvent && b instanceof Layer.Core.LayerEvent) {
             if (a.code != b.code) {
                 debugger;
                 return false;

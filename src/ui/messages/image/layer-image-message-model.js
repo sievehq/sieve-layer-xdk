@@ -6,7 +6,7 @@
  * A basic Image Message can be created with:
  *
  * ```
- * ImageModel = layer.Core.Client.getMessageTypeModelClass('ImageModel')
+ * ImageModel = Layer.Core.Client.getMessageTypeModelClass('ImageModel')
  * model = new ImageModel({
  *    sourceUrl: "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg",
  *    title: "My new jacket",
@@ -21,7 +21,7 @@
  * within the Message List, and source is opened when the user clicks for more detail:
  *
  * ```
- * ImageModel = layer.Core.Client.getMessageTypeModelClass('ImageModel')
+ * ImageModel = Layer.Core.Client.getMessageTypeModelClass('ImageModel')
  * model = new ImageModel({
  *    sourceUrl: "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg",
  *    previewUrl: "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg",
@@ -34,7 +34,7 @@
  * and `preview` refer to the MessagePart with the data:
  *
  * ```
- * ImageModel = layer.Core.Client.getMessageTypeModelClass('ImageModel')
+ * ImageModel = Layer.Core.Client.getMessageTypeModelClass('ImageModel')
  * model = new ImageModel({
  *    source: blob1,
  *    preview: blob2,

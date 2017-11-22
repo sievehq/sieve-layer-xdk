@@ -8,13 +8,13 @@ describe("Conversation Integration Tests", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com",
             isTrustedDevice: false
         });
         client.sessionToken = "sessionToken";
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: "Frodo",
           id: "layer:///identities/" + "Frodo",
@@ -48,7 +48,7 @@ describe("Conversation Integration Tests", function() {
             readyState: WebSocket.OPEN
         };
 
-        userIdentity = new layer.Core.Identity({
+        userIdentity = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/6",
             displayName: "6",
@@ -69,7 +69,7 @@ describe("Conversation Integration Tests", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
 

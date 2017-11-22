@@ -15,20 +15,20 @@ describe("The Client Channel Mixin", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
+        client.user = userIdentity = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
 
-        userIdentity2 = new layer.Core.Identity({
+        userIdentity2 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "UserIdentity",
@@ -54,7 +54,7 @@ describe("The Client Channel Mixin", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -429,7 +429,8 @@ describe("The Client Channel Mixin", function() {
             expect(layer.Core.Channel.create).toHaveBeenCalledWith({
                 members: ["a", "z"],
                 private: false,
-                client: client
+                client: client,
+                _loadType: "websocket"
             });
         });
 
@@ -441,7 +442,8 @@ describe("The Client Channel Mixin", function() {
             expect(layer.Core.Channel.create).toHaveBeenCalledWith({
                 members: [userIdentity, userIdentity2],
                 private: false,
-                client: client
+                client: client,
+                _loadType: "websocket"
             });
         });
 
@@ -456,7 +458,8 @@ describe("The Client Channel Mixin", function() {
             expect(layer.Core.Channel.create).toHaveBeenCalledWith({
                 members: ["a", "z"],
                 private: true,
-                client: client
+                client: client,
+                _loadType: "websocket"
             });
         });
 

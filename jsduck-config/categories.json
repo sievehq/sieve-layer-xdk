@@ -17,20 +17,20 @@
         "classes": [
           "layer.Core.QueryBuilder.ConversationsQuery",
           "layer.Core.QueryBuilder.MessagesQuery",
-          "layer.Core.LayerEvent",
-          "layer.Core.LayerEvent",
+          "Layer.Core.LayerEvent",
+          "Layer.Core.LayerEvent",
           "layer.ClientUtils",
-          "layer.Root",
+          "Layer.Core.Root",
           "layer.Constants"
         ]
       },
       {
         "name": "Services",
         "classes": [
-          "layer.TypingIndicators.TypingPublisher",
-          "layer.TypingIndicators.TypingListener",
-          "layer.TypingIndicators.TypingIndicatorListener",
-          "layer.SyncManager"
+          "Layer.Core.TypingIndicators.TypingPublisher",
+          "Layer.Core.TypingIndicators.TypingListener",
+          "Layer.Core.TypingIndicators.TypingIndicatorListener",
+          "Layer.Core.SyncManager"
         ]
       }
     ]

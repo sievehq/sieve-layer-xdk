@@ -8,16 +8,16 @@ describe('layer-message-item', function() {
 
   afterEach(function() {
     jasmine.clock().uninstall();
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -26,7 +26,7 @@ describe('layer-message-item', function() {
       sessionOwner: true
     });
 
-    user1 = new layer.Core.Identity({
+    user1 = new Layer.Core.Identity({
       client: client,
       userId: 'SaurumanTheMildlyAged',
       displayName: 'Sauruman the Mildly Aged',
@@ -71,7 +71,7 @@ describe('layer-message-item', function() {
 
       el.item = message;
       message.trigger("messages:change", {});
-      expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+      expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
     });
 
     it("Should unwire any prior Message", function() {
@@ -83,7 +83,7 @@ describe('layer-message-item', function() {
       el.item = message;
 
       m2.trigger("messages:change", {});
-      expect(el.onRerender).not.toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+      expect(el.onRerender).not.toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
     });
   });
 

@@ -72,7 +72,7 @@ class Conversation extends Container {
    * @method constructor
    * @protected
    * @param  {Object} options
-   * @param {string[]/layer.Core.Identity[]} [options.participants] - Array of Participant IDs or layer.Core.Identity instances
+   * @param {string[]/Layer.Core.Identity[]} [options.participants] - Array of Participant IDs or Layer.Core.Identity instances
    * @param {boolean} [options.distinct=true] - Is the conversation distinct
    * @param {Object} [options.metadata] - An object containing Conversation Metadata.
    * @return {layer.Conversation}
@@ -261,9 +261,9 @@ class Conversation extends Container {
   /**
    * Gets the data for a Create request.
    *
-   * The layer.SyncManager needs a callback to create the Conversation as it
+   * The Layer.Core.SyncManager needs a callback to create the Conversation as it
    * looks NOW, not back when `send()` was called.  This method is called
-   * by the layer.SyncManager to populate the POST data of the call.
+   * by the Layer.Core.SyncManager to populate the POST data of the call.
    *
    * @method _getSendData
    * @private
@@ -361,7 +361,7 @@ class Conversation extends Container {
    * TODO WEB-967: Roll participants back on getting a server error
    *
    * @method addParticipants
-   * @param  {string[]/layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
+   * @param  {string[]/Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
    * @returns {layer.Conversation} this
    */
   addParticipants(participants) {
@@ -386,7 +386,7 @@ class Conversation extends Container {
    * TODO  WEB-967: Roll participants back on getting a server error
    *
    * @method removeParticipants
-   * @param  {string[]/layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
+   * @param  {string[]/Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
    * @returns {layer.Conversation} this
    */
   removeParticipants(participants) {
@@ -415,7 +415,7 @@ class Conversation extends Container {
    * TODO WEB-967: Roll participants back on getting a server error
    *
    * @method replaceParticipants
-   * @param  {string[]/layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
+   * @param  {string[]/Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
    * @returns {layer.Conversation} this
    */
   replaceParticipants(participants) {
@@ -439,7 +439,7 @@ class Conversation extends Container {
    * 1. Updates the participants property of the local object
    * 2. Triggers a conversations:change event
    * 3. Submits a request to be sent to the server to update the server's object
-   * 4. If there is an error, no errors are fired except by layer.SyncManager, but another
+   * 4. If there is an error, no errors are fired except by Layer.Core.SyncManager, but another
    *    conversations:change event is fired as the change is rolled back.
    *
    * @method _patchParticipants
@@ -489,8 +489,8 @@ class Conversation extends Container {
    * @method _applyParticipantChange
    * @private
    * @param  {Object} change
-   * @param  {layer.Core.Identity[]} change.add - Array of userids to add
-   * @param  {layer.Core.Identity[]} change.remove - Array of userids to remove
+   * @param  {Layer.Core.Identity[]} change.add - Array of userids to add
+   * @param  {Layer.Core.Identity[]} change.remove - Array of userids to remove
    */
   _applyParticipantChange(change) {
     const participants = [].concat(this.participants);
@@ -534,7 +534,7 @@ class Conversation extends Container {
    *
    * 1. Submits a request to be sent to the server to delete the server's object
    * 2. Delete's the local object
-   * 3. If there is an error, no errors are fired except by layer.SyncManager, but the Conversation will be reloaded from the server,
+   * 3. If there is an error, no errors are fired except by Layer.Core.SyncManager, but the Conversation will be reloaded from the server,
    *    triggering a conversations:add event.
    *
    * @method delete
@@ -601,8 +601,8 @@ class Conversation extends Container {
    *
    * @method _getParticipantChange
    * @private
-   * @param  {layer.Core.Identity[]} newValue
-   * @param  {layer.Core.Identity[]} oldValue
+   * @param  {Layer.Core.Identity[]} newValue
+   * @param  {Layer.Core.Identity[]} oldValue
    * @return {Object} Returns changes in the form of `{add: [...], remove: [...]}`
    */
   _getParticipantChange(newValue, oldValue) {
@@ -785,7 +785,7 @@ class Conversation extends Container {
    * @protected
    * @param  {Object} options
    * @param  {layer.Client} options.client
-   * @param  {string[]/layer.Core.Identity[]} options.participants - Array of Participant IDs or layer.Core.Identity objects to create a conversation with.
+   * @param  {string[]/Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity objects to create a conversation with.
    * @param {boolean} [options.distinct=true] - Create a distinct conversation
    * @param {Object} [options.metadata={}] - Initial metadata for Conversation
    * @return {layer.Conversation}
@@ -817,7 +817,7 @@ class Conversation extends Container {
    * @method _createDistinct
    * @static
    * @private
-   * @param  {Object} options - See layer.Conversation.create options; participants must be layer.Core.Identity[]
+   * @param  {Object} options - See layer.Conversation.create options; participants must be Layer.Core.Identity[]
    * @return {layer.Conversation}
    */
   static _createDistinct(options) {
@@ -857,7 +857,7 @@ class Conversation extends Container {
  * use addParticipants, removeParticipants and replaceParticipants
  * to manipulate the array.
  *
- * @type {layer.Core.Identity[]}
+ * @type {Layer.Core.Identity[]}
  */
 Conversation.prototype.participants = null;
 
@@ -948,7 +948,7 @@ Conversation._supportedEvents = [
    * longer be its initial value; it may be the value found on the server.
    *
    * @event
-   * @param {layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event
    * @param {string} event.result
    */
   'conversations:sent',
@@ -956,8 +956,8 @@ Conversation._supportedEvents = [
   /**
    * An attempt to send this conversation to the server has failed.
    * @event
-   * @param {layer.Core.LayerEvent} event
-   * @param {layer.Core.LayerEvent} event.error
+   * @param {Layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event.error
    */
   'conversations:sent-error',
 
@@ -967,7 +967,7 @@ Conversation._supportedEvents = [
    * Note that this is only used in response to the layer.Conversation.load() method.
    * from the server.
    * @event
-   * @param {layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event
    */
   'conversations:loaded',
 
@@ -976,8 +976,8 @@ Conversation._supportedEvents = [
    *
    * Note that this is only used in response to the layer.Conversation.load() method.
    * @event
-   * @param {layer.Core.LayerEvent} event
-   * @param {layer.Core.LayerEvent} event.error
+   * @param {Layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event.error
    */
   'conversations:loaded-error',
 
@@ -987,7 +987,7 @@ Conversation._supportedEvents = [
    * Caused by either a successful call to delete() on this instance
    * or by a remote user.
    * @event
-   * @param {layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event
    */
   'conversations:delete',
 
@@ -995,7 +995,7 @@ Conversation._supportedEvents = [
    * This conversation has changed.
    *
    * @event
-   * @param {layer.Core.LayerEvent} event
+   * @param {Layer.Core.LayerEvent} event
    * @param {Object[]} event.changes - Array of changes reported by this event
    * @param {Mixed} event.changes.newValue
    * @param {Mixed} event.changes.oldValue

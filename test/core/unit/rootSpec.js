@@ -270,7 +270,7 @@ describe("The Root Class", function() {
           doh: spy
         });
         a.trigger('doh');
-        expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
       });
 
       it("Should copy in properties", function() {
@@ -309,7 +309,7 @@ describe("The Root Class", function() {
           destroy: spy
         });
         a.destroy();
-        expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
       });
 
       it("Should not fire twice", function() {
@@ -539,7 +539,7 @@ describe("The Root Class", function() {
       it("Should accept a single string event name", function() {
         a.on("ray", spy);
         a.trigger("ray");
-        expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
       });
 
       it("Should accept a list of strings as event names", function() {
@@ -691,7 +691,7 @@ describe("The Root Class", function() {
       it("Should handle one argument by creating a LayerEvent with no extra properties", function() {
         var args = a._getTriggerArgs("doh");
         expect(args[0]).toEqual("doh");
-        expect(args[1]).toEqual(jasmine.any(layer.Core.LayerEvent));
+        expect(args[1]).toEqual(jasmine.any(Layer.Core.LayerEvent));
         expect(args[1].target).toBe(a);
         expect(args[1].changes).toBe(null);
         expect(args[1].isChange).toBe(false);
@@ -701,7 +701,7 @@ describe("The Root Class", function() {
       });
 
       it("Should return LayerEvent arguments as-is", function() {
-        var evt = new layer.Core.LayerEvent({}, "doh");
+        var evt = new Layer.Core.LayerEvent({}, "doh");
         var args = a._getTriggerArgs("doh", evt);
         expect(args[0]).toEqual("doh");
         expect(args[1]).toBe(evt);
@@ -710,7 +710,7 @@ describe("The Root Class", function() {
       it("Should pass literal arguments into data property", function() {
         var args = a._getTriggerArgs("doh", 555);
         expect(args[0]).toEqual("doh");
-        expect(args[1]).toEqual(jasmine.any(layer.Core.LayerEvent));
+        expect(args[1]).toEqual(jasmine.any(Layer.Core.LayerEvent));
         expect(args[1].data).toEqual(555);
         expect(args[1].target).toBe(a);
       });
@@ -722,7 +722,7 @@ describe("The Root Class", function() {
           y: 20
         });
         expect(args[0]).toEqual("doh");
-        expect(args[1]).toEqual(jasmine.any(layer.Core.LayerEvent));
+        expect(args[1]).toEqual(jasmine.any(Layer.Core.LayerEvent));
         expect(args[1].target).toEqual("fred");
         expect(args[1].x).toEqual(5);
         expect(args[1].y).toEqual(20);
@@ -804,10 +804,10 @@ describe("The Root Class", function() {
         spy = jasmine.createSpy('test');
         a = new A();
         events = [
-          ["doh", new layer.Core.LayerEvent({hey: ["ho"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["hum"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["ardvark"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["Doh!"]}, "doh")]
+          ["doh", new Layer.Core.LayerEvent({hey: ["ho"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["hum"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["ardvark"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["Doh!"]}, "doh")]
         ];
       });
 
@@ -838,22 +838,22 @@ describe("The Root Class", function() {
         spy = jasmine.createSpy('test');
         a = new A();
         events = [
-          ["A:change", new layer.Core.LayerEvent({
+          ["A:change", new Layer.Core.LayerEvent({
             property: "a",
             oldValue: "b",
             newValue: "c"
           }, "A:change")],
-          ["A:change", new layer.Core.LayerEvent({
+          ["A:change", new Layer.Core.LayerEvent({
             property: "a",
             oldValue: "c",
             newValue: "d"
           }, "A:change")],
-          ["A:change", new layer.Core.LayerEvent({
+          ["A:change", new Layer.Core.LayerEvent({
             property: "b",
             oldValue: "x",
             newValue: "y"
           }, "A:change")],
-          ["A:change", new layer.Core.LayerEvent({
+          ["A:change", new Layer.Core.LayerEvent({
             property: "c",
             oldValue: "m",
             newValue: "n"
@@ -897,7 +897,7 @@ describe("The Root Class", function() {
       });
 
       it("Should filter out non-change events", function() {
-        var moreEvents = events.concat([["doh", new layer.Core.LayerEvent({}, "doh")]]);
+        var moreEvents = events.concat([["doh", new Layer.Core.LayerEvent({}, "doh")]]);
          moreEvents.forEach(function(evt) {
           a._triggerAsync(evt[0], evt[1]);
         });
@@ -918,10 +918,10 @@ describe("The Root Class", function() {
         spy = jasmine.createSpy('test');
         a = new A();
         events = [
-          ["doh", new layer.Core.LayerEvent({hey: ["ho"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["hum"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["ardvark"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["Doh!"]}, "doh")]
+          ["doh", new Layer.Core.LayerEvent({hey: ["ho"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["hum"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["ardvark"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["Doh!"]}, "doh")]
         ];
 
         events.forEach(function(evt) {

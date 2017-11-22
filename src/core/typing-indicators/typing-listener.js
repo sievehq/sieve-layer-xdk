@@ -25,7 +25,7 @@ import {STARTED, PAUSED, FINISHED} from './typing-indicators';
  *        typingListener.setInput(null);
  *        typingListener.setInput(newInput);
  *
- * @class  layer.TypingIndicators.TypingListener
+ * @class  Layer.Core.TypingIndicators.TypingListener
  */
 class TypingListener {
 
@@ -167,7 +167,7 @@ class TypingListener {
    *
    *      function send() {
    *        message.send();
-   *        typingIndicators.send(layer.TypingIndicators.FINISHED);
+   *        typingIndicators.send(Layer.Core.TypingIndicators.FINISHED);
    *      }
    *
    * @method send

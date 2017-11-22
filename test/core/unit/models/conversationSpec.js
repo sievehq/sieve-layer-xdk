@@ -16,13 +16,13 @@ describe("The Conversation Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: "Frodo",
           id: "layer:///identities/" + "Frodo",
@@ -38,37 +38,37 @@ describe("The Conversation Class", function() {
           isFullIdentity: true,
           sessionOwner: true
         });
-        userIdentity1 = new layer.Core.Identity({
+        userIdentity1 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "1",
             userId: "1"
         });
-        userIdentity2 = new layer.Core.Identity({
+        userIdentity2 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/2",
             displayName: "2",
             userId: "2"
         });
-        userIdentity3 = new layer.Core.Identity({
+        userIdentity3 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/3",
             displayName: "3",
             userId: "3"
         });
-        userIdentity4 = new layer.Core.Identity({
+        userIdentity4 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/4",
             displayName: "4",
             userId: "4"
         });
-        userIdentity5 = new layer.Core.Identity({
+        userIdentity5 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/5",
             displayName: "5",
             userId: "5"
         });
-        userIdentity6 = new layer.Core.Identity({
+        userIdentity6 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/6",
             displayName: "6",
@@ -99,7 +99,7 @@ describe("The Conversation Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -2072,7 +2072,7 @@ describe("The Conversation Class", function() {
            participants.forEach(function(participant) {
               expect(participant.userId).toEqual(jasmine.any(String));
               expect(participant.url).toEqual(jasmine.any(String));
-              expect(participant).not.toEqual(jasmine.any(layer.Core.Identity));
+              expect(participant).not.toEqual(jasmine.any(Layer.Core.Identity));
            });
            expect(conversation.participants[0].toObject()).toBe(participants[0]);
         });

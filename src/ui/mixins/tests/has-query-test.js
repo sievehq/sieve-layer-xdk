@@ -18,10 +18,10 @@ describe("Has Query Mixin", function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -42,7 +42,7 @@ describe("Has Query Mixin", function() {
     query.data = [client.user];
     for (i = 0; i < 100; i++) {
       query.data.push(
-        new layer.Core.Identity({
+        new Layer.Core.Identity({
           client: client,
           userId: 'user' + i,
           id: 'layer:///identities/user' + i,
@@ -61,7 +61,7 @@ describe("Has Query Mixin", function() {
     jasmine.clock().uninstall();
     client.destroy();
     document.body.removeChild(testRoot);
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
 

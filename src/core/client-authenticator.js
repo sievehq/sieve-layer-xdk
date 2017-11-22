@@ -2,7 +2,7 @@
  * Layer Client.  Access the layer by calling create and receiving it
  * from the "ready" callback.
 
-  var client = new layer.Core.Client({
+  var client = new Layer.Core.Client({
     appId: "layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff",
     isTrustedDevice: false,
     challenge: function(evt) {
@@ -21,9 +21,9 @@
  * 1. ClientAuthenticator: Manages all authentication and connectivity related issues
  * 2. Client: Manages access to Conversations, Queries, Messages, Events, etc...
  *
- * @class layer.Core.ClientAuthenticator
+ * @class Layer.Core.ClientAuthenticator
  * @private
- * @extends layer.Root
+ * @extends Layer.Core.Root
  * @author Michael Kantor
  *
  */
@@ -68,11 +68,11 @@ class ClientAuthenticator extends Root {
    * @param  {string} options.appId           - "layer:///apps/production/uuid"; Identifies what
    *                                            application we are connecting to.
    * @param  {string} [options.url=https://api.layer.com] - URL to log into a different REST server
-   * @param {number} [options.logLevel=ERROR] - Provide a log level that is one of layer.Constants.LOG.NONE, layer.Constants.LOG.ERROR,
-   *                                            layer.Constants.LOG.WARN, layer.Constants.LOG.INFO, layer.Constants.LOG.DEBUG
+   * @param {number} [options.logLevel=ERROR] - Provide a log level that is one of Layer.Constants.LOG.NONE, Layer.Constants.LOG.ERROR,
+   *                                            Layer.Constants.LOG.WARN, Layer.Constants.LOG.INFO, Layer.Constants.LOG.DEBUG
    * @param {boolean} [options.isTrustedDevice=false] - If this is not a trusted device, no data will be written to indexedDB nor localStorage,
-   *                                            regardless of any values in layer.Core.Client.persistenceFeatures.
-   * @param {Object} [options.isPersistenceEnabled=false] If layer.Core.Client.isPersistenceEnabled is true, then indexedDB will be used to manage a cache
+   *                                            regardless of any values in Layer.Core.Client.persistenceFeatures.
+   * @param {Object} [options.isPersistenceEnabled=false] If Layer.Core.Client.isPersistenceEnabled is true, then indexedDB will be used to manage a cache
    *                                            allowing Query results, messages sent, and all local modifications to be persisted between page reloads.
    */
   constructor(options) {
@@ -175,7 +175,7 @@ class ClientAuthenticator extends Root {
    *
    * @method _restoreLastSession
    * @private
-   * @return {layer.Core.Identity}
+   * @return {Layer.Core.Identity}
    */
   _restoreLastUser() {
     try {
@@ -239,13 +239,13 @@ class ClientAuthenticator extends Root {
    * or if no sessionToken, will call /nonces to start process of getting a new one.
    *
    * ```javascript
-   * var client = new layer.Core.Client({appId: myAppId});
+   * var client = new Layer.Core.Client({appId: myAppId});
    * client.connect('Frodo-the-Dodo');
    * ```
    *
    * @method connect
    * @param {string} userId - User ID of the user you are logging in as
-   * @returns {layer.Core.ClientAuthenticator} this
+   * @returns {Layer.Core.ClientAuthenticator} this
    */
   connect(userId = '') {
     if (this.isAuthenticated) return this;
@@ -297,14 +297,14 @@ class ClientAuthenticator extends Root {
    * NOTE: The `connected` event will not be triggered on this path.
    *
    * ```javascript
-   * var client = new layer.Core.Client({appId: myAppId});
+   * var client = new Layer.Core.Client({appId: myAppId});
    * client.connectWithSession('Frodo-the-Dodo', mySessionToken);
    * ```
    *
    * @method connectWithSession
    * @param {String} userId
    * @param {String} sessionToken
-   * @returns {layer.Core.ClientAuthenticator} this
+   * @returns {Layer.Core.ClientAuthenticator} this
    */
   connectWithSession(userId, sessionToken) {
     if (this.isAuthenticated) return this;
@@ -386,7 +386,7 @@ class ClientAuthenticator extends Root {
    *
    * @method _connectionError
    * @private
-   * @param  {layer.Core.LayerEvent} err
+   * @param  {Layer.Core.LayerEvent} err
    *
    * @fires connected-error
    */
@@ -534,7 +534,7 @@ class ClientAuthenticator extends Root {
    *
    * @method _authError
    * @private
-   * @param  {layer.Core.LayerEvent} result
+   * @param  {Layer.Core.LayerEvent} result
    * @param  {string} identityToken Not currently used
    *
    * @fires authenticated-error
@@ -699,7 +699,7 @@ class ClientAuthenticator extends Root {
    *
    * @method logout
    * @param {Function} callback
-   * @return {layer.Core.ClientAuthenticator} this
+   * @return {Layer.Core.ClientAuthenticator} this
    */
   logout(callback) {
     this._wantsToBeAuthenticated = false;
@@ -773,7 +773,7 @@ class ClientAuthenticator extends Root {
    * @param {string} options.token - Your Apple APNS Token
    * @param {string} [options.bundleId] - Your Apple APNS Bundle ID ("com.layer.bundleid")
    * @param {Function} [callback=null] - Optional callback
-   * @param {layer.Core.LayerEvent} callback.error - LayerError if there was an error; null if successful
+   * @param {Layer.Core.LayerEvent} callback.error - LayerError if there was an error; null if successful
    */
   registerIOSPushToken(options, callback) {
     this.xhr({
@@ -800,7 +800,7 @@ class ClientAuthenticator extends Root {
    * @param {string} options.token - Your GCM push Token
    * @param {string} options.senderId - Your GCM Sender ID/Project Number
    * @param {Function} [callback=null] - Optional callback
-   * @param {layer.Core.LayerEvent} callback.error - LayerError if there was an error; null if successful
+   * @param {Layer.Core.LayerEvent} callback.error - LayerError if there was an error; null if successful
    */
   registerAndroidPushToken(options, callback) {
     this.xhr({
@@ -823,7 +823,7 @@ class ClientAuthenticator extends Root {
    * @method unregisterPushToken
    * @param {string} deviceId - Your IOS device's device ID
    * @param {Function} [callback=null] - Optional callback
-   * @param {layer.Core.LayerEvent} callback.error - LayerError if there was an error; null if successful
+   * @param {Layer.Core.LayerEvent} callback.error - LayerError if there was an error; null if successful
    */
   unregisterPushToken(deviceId, callback) {
     this.xhr({
@@ -906,7 +906,7 @@ class ClientAuthenticator extends Root {
    *
    * @method _handleOnlineChange
    * @private
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   _handleOnlineChange(evt) {
     if (!this._wantsToBeAuthenticated) return;
@@ -933,12 +933,12 @@ class ClientAuthenticator extends Root {
    * @param  {string}   options.url - URL relative client's url: "/conversations"
    * @param  {Function} callback
    * @param  {Object}   callback.result
-   * @param  {Mixed}    callback.result.data - If an error occurred, this is a layer.Core.LayerEvent;
+   * @param  {Mixed}    callback.result.data - If an error occurred, this is a Layer.Core.LayerEvent;
    *                                          If the response was application/json, this will be an object
    *                                          If the response was text/empty, this will be text/empty
    * @param  {XMLHttpRequest} callback.result.xhr - Native xhr request object for detailed analysis
    * @param  {Object}         callback.result.Links - Hash of Link headers
-   * @return {layer.Core.ClientAuthenticator} this
+   * @return {Layer.Core.ClientAuthenticator} this
    */
   xhr(options, callback) {
     if (!options.sync || !options.sync.target) {
@@ -1123,7 +1123,7 @@ class ClientAuthenticator extends Root {
   }
 
   /**
-   * Transforms xhr error response into a layer.Core.LayerEvent instance.
+   * Transforms xhr error response into a Layer.Core.LayerEvent instance.
    *
    * Adds additional information to the result object including
    *
@@ -1200,7 +1200,7 @@ ClientAuthenticator.prototype.appId = '';
 /**
  * Identity information about the authenticated user.
  *
- * @type {layer.Core.Identity}
+ * @type {Layer.Core.Identity}
  */
 ClientAuthenticator.prototype.user = null;
 
@@ -1238,31 +1238,31 @@ ClientAuthenticator.prototype.websocketUrl = 'wss://websockets.layer.com';
 
 /**
  * Web Socket Manager
- * @type {layer.Websockets.SocketManager}
+ * @type {Layer.Core.Websockets.SocketManager}
  */
 ClientAuthenticator.prototype.socketManager = null;
 
 /**
  * Web Socket Request Manager
- * @type {layer.Websockets.RequestManager}
+ * @type {Layer.Core.Websockets.RequestManager}
  */
 ClientAuthenticator.prototype.socketRequestManager = null;
 
 /**
  * Web Socket Manager
- * @type {layer.Websockets.ChangeManager}
+ * @type {Layer.Core.Websockets.ChangeManager}
  */
 ClientAuthenticator.prototype.socketChangeManager = null;
 
 /**
  * Service for managing online as well as offline server requests
- * @type {layer.SyncManager}
+ * @type {Layer.Core.SyncManager}
  */
 ClientAuthenticator.prototype.syncManager = null;
 
 /**
  * Service for managing online/offline state and events
- * @type {layer.OnlineStateManager}
+ * @type {Layer.Core.OnlineStateManager}
  */
 ClientAuthenticator.prototype.onlineManager = null;
 
@@ -1280,7 +1280,7 @@ ClientAuthenticator.prototype.isTrustedDevice = false;
 ClientAuthenticator.prototype.isPersistenceEnabled = false;
 
 /**
- * If this layer.Core.Client.isTrustedDevice is true, then you can control which types of data are persisted.
+ * If this Layer.Core.Client.isTrustedDevice is true, then you can control which types of data are persisted.
  *
  * Note that values here are ignored if `isPersistenceEnabled` hasn't been set to `true`.
  *
@@ -1294,7 +1294,7 @@ ClientAuthenticator.prototype.isPersistenceEnabled = false;
  *              to complete sending messages after being relaunched.
  * * sessionToken: Write the session token to localStorage for quick reauthentication on relaunching the app.
  *
- *      new layer.Core.Client({
+ *      new Layer.Core.Client({
  *        isTrustedDevice: true,
  *        persistenceFeatures: {
  *          conversations: true,
@@ -1311,7 +1311,7 @@ ClientAuthenticator.prototype.persistenceFeatures = null;
 
 /**
  * Database Manager for read/write to IndexedDB
- * @type {layer.Core.DbManager}
+ * @type {Layer.Core.DbManager}
  */
 ClientAuthenticator.prototype.dbManager = null;
 
@@ -1341,11 +1341,11 @@ Object.defineProperty(ClientAuthenticator.prototype, 'isOnline', {
 /**
  * Log levels; one of:
  *
- *    * layer.Constants.LOG.NONE
- *    * layer.Constants.LOG.ERROR
- *    * layer.Constants.LOG.WARN
- *    * layer.Constants.LOG.INFO
- *    * layer.Constants.LOG.DEBUG
+ *    * Layer.Constants.LOG.NONE
+ *    * Layer.Constants.LOG.ERROR
+ *    * Layer.Constants.LOG.WARN
+ *    * Layer.Constants.LOG.INFO
+ *    * Layer.Constants.LOG.DEBUG
  *
  * @type {number}
  */
@@ -1422,7 +1422,7 @@ ClientAuthenticator._supportedEvents = [
    * Not recommended for typical applications.
    * @event connected-error
    * @param {Object} event
-   * @param {layer.Core.LayerEvent} event.error
+   * @param {Layer.Core.LayerEvent} event.error
    */
   'connected-error',
 
@@ -1441,12 +1441,12 @@ ClientAuthenticator._supportedEvents = [
    *
    * @event authenticated-error
    * @param {Object} event
-   * @param {layer.Core.LayerEvent} event.error
+   * @param {Layer.Core.LayerEvent} event.error
    */
   'authenticated-error',
 
   /**
-   * This event fires when a session has expired or when `layer.Core.Client.logout` is called.
+   * This event fires when a session has expired or when `Layer.Core.Client.logout` is called.
    * Typically, it is enough to subscribe to the challenge event
    * which will let you reauthenticate; typical applications do not need
    * to subscribe to this.

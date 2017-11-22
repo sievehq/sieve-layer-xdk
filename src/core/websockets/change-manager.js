@@ -36,7 +36,7 @@ class WebsocketChangeManager {
    *
    * @method _handleChange
    * @private
-   * @param  {layer.Core.LayerEvent} evt
+   * @param  {Layer.Core.LayerEvent} evt
    */
   _handleChange(evt) {
     if (evt.data.type === 'change') {
@@ -151,7 +151,7 @@ class WebsocketChangeManager {
    * @method getObject
    * @private
    * @param  {Object} msg
-   * @return {layer.Root}
+   * @return {Layer.Core.Root}
    */
   getObject(msg) {
     return this.client.getObject(msg.object.id);

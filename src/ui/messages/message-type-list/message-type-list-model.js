@@ -1,6 +1,6 @@
 /*
-TextModel = layer.Core.Client.getMessageTypeModelClass('TextModel');
-MessageTypeListModel = layer.Core.Client.getMessageTypeModelClass('MessageTypeListModel');
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+MessageTypeListModel = Layer.Core.Client.getMessageTypeModelClass('MessageTypeListModel');
   model = new MessageTypeListModel({
     items: [
       new TextModel({text: "Hello world", "title": "This is a Welcome"}),

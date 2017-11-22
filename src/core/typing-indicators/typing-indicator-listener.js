@@ -12,8 +12,8 @@
  *        }
  *      });
  *
- * @class layer.TypingIndicators.TypingIndicatorListener
- * @extends {layer.Root}
+ * @class Layer.Core.TypingIndicators.TypingIndicatorListener
+ * @extends {Layer.Core.Root}
  */
 
 import Root from '../root';
@@ -81,7 +81,7 @@ class TypingIndicatorListener extends Root {
    *
    * @method _handleSocketEvent
    * @private
-   * @param {layer.Core.LayerEvent} evtIn - All websocket events
+   * @param {Layer.Core.LayerEvent} evtIn - All websocket events
    */
   _handleSocketEvent(evtIn) {
     const evt = evtIn.data;
@@ -255,9 +255,9 @@ TypingIndicatorListener._supportedEvents = [
   /**
    * There has been a change in typing indicator state of other users.
    * @event change
-   * @param {layer.Core.LayerEvent} evt
-   * @param {layer.Core.Identity[]} evt.typing - Array of Identities of people who are typing
-   * @param {layer.Core.Identity[]} evt.paused - Array of Identities of people who are paused
+   * @param {Layer.Core.LayerEvent} evt
+   * @param {Layer.Core.Identity[]} evt.typing - Array of Identities of people who are typing
+   * @param {Layer.Core.Identity[]} evt.paused - Array of Identities of people who are paused
    * @param {string} evt.conversationId - ID of the Conversation that has changed typing indicator state
    */
   'typing-indicator-change',

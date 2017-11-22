@@ -7,9 +7,9 @@
  * * layer.UI.components.ConversationsListPanel.Item.Conversation: Represents the participants of a Conversation
  * * layer.UI.components.IdentitiesListPanel.Item: Represents a user in a User List
  *
- * Rendering is done using data from the `layer.Core.Identity` object for each user, using the layer.Core.Identity.avatarUrl if available to
- * add an image, or first initials from layer.Core.Identity.firstName, layer.Core.Identity.lastName if no avatarUrl is available.
- * layer.Core.Identity.displayName is used as a fallback.
+ * Rendering is done using data from the `Layer.Core.Identity` object for each user, using the Layer.Core.Identity.avatarUrl if available to
+ * add an image, or first initials from Layer.Core.Identity.firstName, Layer.Core.Identity.lastName if no avatarUrl is available.
+ * Layer.Core.Identity.displayName is used as a fallback.
  *
  * The simplest way to customize this widget is to replace it with your own implementation of the `<layer-avatar />` tag.
  *
@@ -68,9 +68,9 @@ registerComponent('layer-avatar', {
     /**
      * Array of users to be represented by this Avatar.
      *
-     * Typically this only has one user represented with a layer.Core.Identity.
+     * Typically this only has one user represented with a Layer.Core.Identity.
      *
-     * @property {layer.Core.Identity[]} [users=[]}
+     * @property {Layer.Core.Identity[]} [users=[]}
      */
     users: {
       value: [],
@@ -207,7 +207,7 @@ registerComponent('layer-avatar', {
      * ```
      *
      * @method
-     * @param {layer.Core.Identity} user
+     * @param {Layer.Core.Identity} user
      * @returns {String}
      */
     onGenerateInitials(user) {

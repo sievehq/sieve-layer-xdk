@@ -5,7 +5,7 @@
  *
  * ```
  * ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
- * ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+ * ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  *
  * model = new ProductModel({
  *   customData: {

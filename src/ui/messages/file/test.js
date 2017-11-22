@@ -39,10 +39,10 @@ describe('File Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -63,7 +63,7 @@ describe('File Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    FileModel = layer.Core.Client.getMessageTypeModelClass("FileModel");
+    FileModel = Layer.Core.Client.getMessageTypeModelClass("FileModel");
 
     layer.Util.defer.flush();
     jasmine.clock().tick(800);
@@ -73,7 +73,7 @@ describe('File Message Components', function() {
 
   afterEach(function() {
     layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   describe("Model Tests", function() {
@@ -239,7 +239,7 @@ describe('File Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
     });
 

@@ -8,10 +8,10 @@ describe('layer-membership-list', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -37,7 +37,7 @@ describe('layer-membership-list', function() {
     query.data = [];
     for (i = 0; i < 100; i++) {
 
-        var ident = new layer.Core.Identity({
+        var ident = new Layer.Core.Identity({
           client: client,
           userId: 'user' + i,
           id: 'layer:///identities/user' + i,
@@ -45,7 +45,7 @@ describe('layer-membership-list', function() {
           isFullIdentity: true
         })
       query.data.push(
-        new layer.Membership({
+        new Layer.Core.Membership({
           client: client,
           identity: ident
         })
@@ -64,7 +64,7 @@ describe('layer-membership-list', function() {
       jasmine.clock().uninstall();
       layerUI.settings.appId = null;
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
     } catch(e) {}
   });

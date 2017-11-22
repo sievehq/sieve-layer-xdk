@@ -87,7 +87,7 @@ class DbManager extends Root {
         enabled = false;
       }
 
-      // If Client is a layer.Core.ClientAuthenticator, it won't support these events; this affects Unit Tests
+      // If Client is a Layer.Core.ClientAuthenticator, it won't support these events; this affects Unit Tests
       if (enabled && this.client.constructor._supportedEvents.indexOf('conversations:add') !== -1) {
         this.client.on('conversations:add', evt => this.writeConversations(evt.conversations), this);
         this.client.on('conversations:change', evt => this._updateConversation(evt.target, evt.changes), this);
@@ -375,7 +375,7 @@ class DbManager extends Root {
    *
    * @method _getIdentityData
    * @private
-   * @param {layer.Core.Identity[]} identities
+   * @param {Layer.Core.Identity[]} identities
    * @param {boolean} writeBasicIdentity - Forces output as a Basic Identity
    * @return {Object[]} identities
    */
@@ -424,7 +424,7 @@ class DbManager extends Root {
    * Writes an array of Identities to the Database.
    *
    * @method writeIdentities
-   * @param {layer.Core.Identity[]} identities - Array of Identities to write
+   * @param {Layer.Core.Identity[]} identities - Array of Identities to write
    * @param {Function} [callback]
    */
   writeIdentities(identities, callback) {
@@ -756,7 +756,7 @@ class DbManager extends Root {
    * @param {string} [fromId=]    - For pagination, provide the messageId to get Announcements after
    * @param {number} [pageSize=]  - To limit the number of results, provide a number for how many results to return.
    * @param {Function} [callback]
-   * @param {layer.Announcement[]} callback.result
+   * @param {Layer.Core.Announcement[]} callback.result
    */
   loadAnnouncements(fromId, pageSize, callback) {
     if (!this['_permission_messages'] || this._isOpenError) return callback([]);
@@ -811,7 +811,7 @@ class DbManager extends Root {
    *
    * @method loadIdentities
    * @param {Function} callback
-   * @param {layer.Core.Identity[]} callback.result
+   * @param {Layer.Core.Identity[]} callback.result
    */
   loadIdentities(callback) {
     this._loadAll('identities', (data) => {
@@ -820,13 +820,13 @@ class DbManager extends Root {
   }
 
   /**
-   * Assemble all LastMessages and Identityy POJOs into layer.Message and layer.Core.Identityy instances.
+   * Assemble all LastMessages and Identityy POJOs into layer.Message and Layer.Core.Identityy instances.
    *
    * @method _loadIdentitiesResult
    * @private
    * @param {Object[]} identities
    * @param {Function} callback
-   * @param {layer.Core.Identity[]} callback.result
+   * @param {Layer.Core.Identity[]} callback.result
    */
   _loadIdentitiesResult(identities, callback) {
     // Instantiate and Register each Identity.
@@ -917,12 +917,12 @@ class DbManager extends Root {
   /**
    * Instantiate and Register the Identity from an identities DB Entry.
    *
-   * If the layer.Core.Identity already exists, then its presumed that whatever is in
+   * If the Layer.Core.Identity already exists, then its presumed that whatever is in
    * javascript cache is more up to date than whats in IndexedDB cache.
    *
    * @method _createIdentity
    * @param {Object} identity
-   * @returns {layer.Core.Identity}
+   * @returns {Layer.Core.Identity}
    */
   _createIdentity(identity) {
     if (!this.client.getIdentity(identity.id)) {
@@ -1269,7 +1269,7 @@ class DbManager extends Root {
   /**
    * Delete all data from all tables.
    *
-   * This should be called from layer.Core.Client.logout()
+   * This should be called from Layer.Core.Client.logout()
    *
    * @method deleteTables
    * @param {Function} [calllback]

@@ -15,13 +15,13 @@ describe("The MessagesQuery Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
@@ -69,7 +69,7 @@ describe("The MessagesQuery Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     it("Should be an MessagesQuery", function() {
@@ -627,7 +627,7 @@ describe("The MessagesQuery Class", function() {
             spyOn(query, "_run");
 
             // Run
-            query._handleConvIdChangeEvent(new layer.Core.LayerEvent({
+            query._handleConvIdChangeEvent(new Layer.Core.LayerEvent({
                 property: "id",
                 oldValue: conversation.id,
                 newValue: conversation.id + "1",
@@ -645,7 +645,7 @@ describe("The MessagesQuery Class", function() {
             spyOn(query, "_run");
 
             // Run
-            query._handleConvIdChangeEvent(new layer.Core.LayerEvent({
+            query._handleConvIdChangeEvent(new Layer.Core.LayerEvent({
                 property: "id",
                 oldValue: conversation.id + "1",
                 newValue: conversation.id,
@@ -673,7 +673,7 @@ describe("The MessagesQuery Class", function() {
 
             var oldPosition = 5;
             var newPosition = message.position = 15;
-            evt = new layer.Core.LayerEvent({
+            evt = new Layer.Core.LayerEvent({
                 property: "position",
                 oldValue: oldPosition,
                 newValue: newPosition,
@@ -768,7 +768,7 @@ describe("The MessagesQuery Class", function() {
             var newPosition = message.position = 10;
             spyOn(query, "_handlePositionChange").and.returnValue(true);
             spyOn(query, "_getIndex").and.returnValue(0);
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "position",
                 oldValue: oldPosition,
                 newValue: newPosition,
@@ -792,7 +792,7 @@ describe("The MessagesQuery Class", function() {
             spyOn(query, "_handlePositionChange").and.returnValue(true);
             spyOn(query, "_getIndex").and.returnValue(0);
             spyOn(query, "_triggerChange");
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "position",
                 oldValue: oldPosition,
                 newValue: newPosition,
@@ -826,7 +826,7 @@ describe("The MessagesQuery Class", function() {
             // Setup
             spyOn(query, "_handlePositionChange").and.returnValue(true);
             spyOn(query, "_getIndex").and.returnValue(0);
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "position",
                 oldValue: 10,
                 newValue: 10,
@@ -845,7 +845,7 @@ describe("The MessagesQuery Class", function() {
 
 
         it("Should not touch data array if dataType is object but item not in the data", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "recipientStatus",
                 oldValue: [{}],
                 newValue: [{a: "read"}],
@@ -865,7 +865,7 @@ describe("The MessagesQuery Class", function() {
             // Setup
             query.dataType = "instance";
             var data = query.data = [message];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "recipientStatus",
                 oldValue: [{}],
                 newValue: [{a: "read"}],
@@ -881,7 +881,7 @@ describe("The MessagesQuery Class", function() {
 
         it("Should trigger change event if the Message is in the data", function() {
             var data = query.data = [message.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "recipientStatus",
                 oldValue: [{}],
                 newValue: [{a: "read"}],
@@ -908,7 +908,7 @@ describe("The MessagesQuery Class", function() {
 
         it("Should not trigger change event if Message is NOT in the data", function() {
             var data = query.data = [message.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "participants",
                 oldValue: ["a"],
                 newValue: ["a", "b"],

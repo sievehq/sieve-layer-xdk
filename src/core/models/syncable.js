@@ -9,8 +9,8 @@
  *  * layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
  *  * layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
  *
- * @class layer.Syncable
- * @extends layer.Root
+ * @class Layer.Core.Syncable
+ * @extends Layer.Core.Root
  * @abstract
  */
 
@@ -38,11 +38,11 @@ class Syncable extends Root {
   /**
    * Fire an XHR request using the URL for this resource.
    *
-   * For more info on xhr method parameters see {@link layer.Core.ClientAuthenticator#xhr}
+   * For more info on xhr method parameters see {@link Layer.Core.ClientAuthenticator#xhr}
    *
    * @method _xhr
    * @protected
-   * @return {layer.Syncable} this
+   * @return {Layer.Core.Syncable} this
    */
   _xhr(options, callback) {
     // initialize
@@ -139,7 +139,7 @@ class Syncable extends Root {
    * @static
    * @param {string} id - `layer:///messages/UUID`
    * @param {layer.Client} client
-   * @return {layer.Syncable} - Returns an empty object that will be populated once data is loaded.
+   * @return {Layer.Core.Syncable} - Returns an empty object that will be populated once data is loaded.
    */
   static load(id, client) {
     if (!client || !(client instanceof Root)) throw new Error(ErrorDictionary.clientMissing);
@@ -194,7 +194,7 @@ class Syncable extends Root {
   /**
    * Load this resource from the server.
    *
-   * Called from the static layer.Syncable.load() method
+   * Called from the static Layer.Core.Syncable.load() method
    *
    * @method _load
    * @private

@@ -16,7 +16,7 @@ describe('Components', function() {
     try {
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+      Layer.Core.Client.removeListenerForNewClient();
     } catch(e) {}
   });
 
@@ -752,7 +752,7 @@ describe('Components', function() {
       layer.Util.defer.flush();
 
       // Run
-      var client = new layer.Core.Client({appId: "fred53"});
+      var client = new Layer.Core.Client({appId: "fred53"});
       el1.client = client
 
       // Posttest
@@ -766,7 +766,7 @@ describe('Components', function() {
       expect(el1.nodes.composer.nodes.buttonPanelLeft.client).toBe(client);
 
       // Run Test 2
-      var client2 = new layer.Core.Client({appId: "fred55"});
+      var client2 = new Layer.Core.Client({appId: "fred55"});
       el1.client = client2;
 
       // Posttest 2
@@ -781,8 +781,8 @@ describe('Components', function() {
     });
 
     it("Should propagate propagateToChildren properties to list items", function() {
-      var client = new layer.Core.Client({appId: "fred53"});
-      client.user = new layer.Core.Identity({
+      var client = new Layer.Core.Client({appId: "fred53"});
+      client.user = new Layer.Core.Identity({
         client: client,
         userId: 'FrodoTheDodo',
         displayName: 'Frodo the Dodo',

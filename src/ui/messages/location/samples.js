@@ -1,4 +1,4 @@
-LocationModel = layer.Core.Client.getMessageTypeModelClass('LocationModel');
+LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel');
 
    model = new LocationModel({
      latitude: 37.7734858,
@@ -12,7 +12,7 @@ LocationModel = layer.Core.Client.getMessageTypeModelClass('LocationModel');
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-  LocationModel = layer.Core.Client.getMessageTypeModelClass('LocationModel');
+  LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel');
   model = new LocationModel({
     city: 'San Francisco',
     title: 'Layer Inc',
@@ -28,8 +28,8 @@ LocationModel = layer.Core.Client.getMessageTypeModelClass('LocationModel');
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-  LocationModel = layer.Core.Client.getMessageTypeModelClass('LocationModel');
-  ButtonsModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
+  LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel');
+  ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
   model = new ButtonsModel({
     buttons: [{"type": "action", "text": "Navigate", "event": "open-map"}],
     contentModel: new LocationModel({
@@ -45,7 +45,7 @@ LocationModel = layer.Core.Client.getMessageTypeModelClass('LocationModel');
   });
   model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-  LocationModel = layer.Core.Client.getMessageTypeModelClass('LocationModel');
+  LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel');
   new LocationModel({
       city: 'San Francisco',
       title: 'Layer Inc',

@@ -6,7 +6,7 @@
  * someone's or something's state.
  *
  * ```
- * StatusModel = layer.Core.Client.getMessageTypeModelClass('StatusModel')
+ * StatusModel = Layer.Core.Client.getMessageTypeModelClass('StatusModel')
  * model = new StatusModel({text: "Your brains have been eaten."})
  * model.generateMessage(conversation, message => message.send())
  * ```

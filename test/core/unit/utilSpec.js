@@ -333,9 +333,9 @@ describe("The Util Library", function() {
     describe("The layerParse() method", function() {
         var client, conversation, config, message;
         beforeEach(function() {
-            client = new layer.Core.Client({appId: "fred"});
+            client = new Layer.Core.Client({appId: "fred"});
 
-            client.user = new layer.Core.Identity({
+            client.user = new Layer.Core.Identity({
                 clientId: client.appId,
                 userId: "c",
                 id: "layer:///identities/c",

@@ -21,14 +21,14 @@ describe("The Client Authenticator Class", function() {
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
 
-        client = new layer.Core.ClientAuthenticator({
+        client = new Layer.Core.ClientAuthenticator({
             appId: appId,
             reset: true,
             url: "https://duh.com"
         });
         spyOn(layer.Core.Syncable.prototype, "getClient").and.returnValue(client);
 
-        userIdentity = new layer.Core.Identity({
+        userIdentity = new Layer.Core.Identity({
           clientId: client.appId,
           userId: userId,
           id: "layer:///identities/" + userId,
@@ -52,22 +52,22 @@ describe("The Client Authenticator Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor method", function() {
         it("Should return a new client", function() {
-            var clientLocal = new layer.Core.ClientAuthenticator({
+            var clientLocal = new Layer.Core.ClientAuthenticator({
                 appId: appId,
                 url: "https://duh.com"
             });
 
-            expect(clientLocal instanceof layer.Core.ClientAuthenticator).toBe(true);
+            expect(clientLocal instanceof Layer.Core.ClientAuthenticator).toBe(true);
         });
 
         it("Should require an appId", function() {
             expect(function() {
-                var clientLocal = new layer.Core.ClientAuthenticator({
+                var clientLocal = new Layer.Core.ClientAuthenticator({
                     appId: "",
                     url: "https://duh.com"
                 });
@@ -76,7 +76,7 @@ describe("The Client Authenticator Class", function() {
         });
 
          it("Should allow customization of the websocketUrl", function() {
-            expect( new layer.Core.ClientAuthenticator({
+            expect( new Layer.Core.ClientAuthenticator({
                 appId: appId,
                 url: "https://duh.com",
                 websocketUrl: "https://frodo-the-dodo.dodocom"
@@ -103,9 +103,9 @@ describe("The Client Authenticator Class", function() {
             spyOn(client, "_handleOnlineChange");
             client._initComponents();
             client.onlineManager.trigger('connected');
-            expect(client._handleOnlineChange).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(client._handleOnlineChange).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
             client.onlineManager.trigger('disconnected');
-            expect(client._handleOnlineChange).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(client._handleOnlineChange).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
         });
 
         it("Should initialize the syncManager", function() {
@@ -161,7 +161,7 @@ describe("The Client Authenticator Class", function() {
                });
 
                var result = client._restoreLastUser();
-               expect(result).toEqual(jasmine.any(layer.Core.Identity));
+               expect(result).toEqual(jasmine.any(Layer.Core.Identity));
                expect(result.userId).toEqual('FrodoTheDodo');
                expect(result.displayName).toEqual('Frodo is a Dodo');
                expect(result.avatarUrl).toEqual('https://frodo-the-dodo.com');
@@ -409,7 +409,7 @@ describe("The Client Authenticator Class", function() {
                 client.connect('MyUserId');
 
                 // Posttest
-                expect(client.user).toEqual(jasmine.any(layer.Core.Identity));
+                expect(client.user).toEqual(jasmine.any(Layer.Core.Identity));
                 expect(client.user.toObject()).toEqual(jasmine.objectContaining({
                     userId: 'MyUserId',
                     id: 'layer:///identities/MyUserId',
@@ -426,7 +426,7 @@ describe("The Client Authenticator Class", function() {
                 client.connect();
 
                 // Posttest
-                expect(client.user).toEqual(jasmine.any(layer.Core.Identity));
+                expect(client.user).toEqual(jasmine.any(Layer.Core.Identity));
                 expect(client.user.userId).toEqual('');
                 expect(client.user.id).toEqual('');
                 expect(client.user.url).toEqual('');
@@ -456,7 +456,7 @@ describe("The Client Authenticator Class", function() {
                 client.connect('MyUserId');
 
                 // Posttest
-                expect(client.user).toEqual(jasmine.any(layer.Core.Identity));
+                expect(client.user).toEqual(jasmine.any(Layer.Core.Identity));
                 expect(client.user.userId).toEqual('MyUserId');
                 expect(client.user.id).toEqual('layer:///identities/MyUserId');
             });
@@ -476,7 +476,7 @@ describe("The Client Authenticator Class", function() {
                     url: client.url + "/nonces",
                     requestHeaders: {
                         "content-type": "application/json",
-                        "accept": "application/vnd.layer+json; version=2.0"
+                        "accept": "application/vnd.layer+json; version=3.0"
                     },
                     method: "POST"
                 });
@@ -578,7 +578,7 @@ describe("The Client Authenticator Class", function() {
                 client.connectWithSession('MyUserId', 'MySession');
 
                 // Posttest
-                expect(client.user).toEqual(jasmine.any(layer.Core.Identity));
+                expect(client.user).toEqual(jasmine.any(Layer.Core.Identity));
                 expect(client.user.toObject()).toEqual(jasmine.objectContaining({
                     userId: 'MyUserId',
                     id: 'layer:///identities/MyUserId',
@@ -609,7 +609,7 @@ describe("The Client Authenticator Class", function() {
                 client.connectWithSession('MyUserId', 'MySession');
 
                 // Posttest
-                expect(client.user).toEqual(jasmine.any(layer.Core.Identity));
+                expect(client.user).toEqual(jasmine.any(Layer.Core.Identity));
                 expect(client.user.userId).toEqual('MyUserId');
                 expect(client.user.id).toEqual('layer:///identities/MyUserId');
             });
@@ -1377,7 +1377,7 @@ describe("The Client Authenticator Class", function() {
 
                 // Run
                 client._loadUser();
-                client.user.trigger('identities:loaded-error');
+                client.user.trigger('identities:loaded-error', {error: new Layer.Core.LayerError({})});
 
                 // Posttest
                 expect(client._clientReady).toHaveBeenCalledWith();
@@ -1391,7 +1391,7 @@ describe("The Client Authenticator Class", function() {
 
                 // Run
                 client._loadUser();
-                client.user.trigger('identities:loaded-error');
+                client.user.trigger('identities:loaded-error', {error: new Layer.Core.LayerError({})});
 
                 // Posttest
                 expect(client.user.displayName).toEqual('You');
@@ -1405,7 +1405,7 @@ describe("The Client Authenticator Class", function() {
 
                 // Run
                 client._loadUser();
-                client.user.trigger('identities:loaded-error');
+                client.user.trigger('identities:loaded-error', {error: new Layer.Core.LayerError({})});
 
                 // Posttest
                 expect(client.user.displayName).toEqual('Me');
@@ -1623,7 +1623,7 @@ describe("The Client Authenticator Class", function() {
             it("Should not be possible to change user instances once connected", function () {
                 client.isConnected = true;
                 expect(function () {
-                    client.user = new layer.Core.Identity({
+                    client.user = new Layer.Core.Identity({
                         clientId: client.appId
                     });
                 }).toThrowError(layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);

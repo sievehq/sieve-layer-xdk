@@ -61,7 +61,7 @@
  * NOTE: `layer.MessagePart.url` should have a value when the message is first received, and will only fail `if (!part.url)` once the url has expired.
  *
  * @class  layer.MessagePart
- * @extends layer.Root
+ * @extends Layer.Core.Root
  * @author Michael Kantor
  */
 
@@ -238,7 +238,7 @@ class MessagePart extends Root {
    *
    * @private
    * @method _fetchContentCallback
-   * @param {layer.Core.LayerEvent} err
+   * @param {Layer.Core.LayerEvent} err
    * @param {Object} result
    * @param {Function} callback
    */

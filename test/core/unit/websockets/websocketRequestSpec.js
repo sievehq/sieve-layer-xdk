@@ -7,13 +7,13 @@ describe("The Websocket Request Manager Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
             clientId: client.appId,
             userId: 'Frodo',
             id: "layer:///identities/" + 'Frodo',
@@ -55,7 +55,7 @@ describe("The Websocket Request Manager Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -83,7 +83,7 @@ describe("The Websocket Request Manager Class", function() {
             client.socketManager.trigger("message", {data: {body: {}}});
 
             // Posttest
-            expect(layer.Websockets.RequestManager.prototype._handleResponse).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(layer.Websockets.RequestManager.prototype._handleResponse).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
             layer.Websockets.RequestManager.prototype._handleResponse = tmp;
@@ -103,7 +103,7 @@ describe("The Websocket Request Manager Class", function() {
             client.socketManager.trigger("disconnected");
 
             // Posttest
-            expect(layer.Websockets.RequestManager.prototype._reset).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(layer.Websockets.RequestManager.prototype._reset).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
             layer.Websockets.RequestManager.prototype._reset = tmp;
@@ -132,7 +132,7 @@ describe("The Websocket Request Manager Class", function() {
                 data: {hey: "ho"},
                 callback: spy,
             });
-            expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
             expect(spy).toHaveBeenCalledWith(jasmine.objectContaining({
               success: false,
               data: {

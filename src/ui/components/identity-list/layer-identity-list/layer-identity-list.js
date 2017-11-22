@@ -1,5 +1,5 @@
 /**
- * The Layer User List renders a pagable list of layer.Core.Identity objects, and allows the user to select people to talk with.
+ * The Layer User List renders a pagable list of Layer.Core.Identity objects, and allows the user to select people to talk with.
  *
  * This is typically used for creating/updating Conversation participant lists.
  *
@@ -83,7 +83,7 @@ registerComponent('layer-identity-list', {
    * @event layer-identity-selected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Core.Identity} evt.detail.item
+   * @param {Layer.Core.Identity} evt.detail.item
    */
   /**
    * A identity selection change has occurred
@@ -93,7 +93,7 @@ registerComponent('layer-identity-list', {
    * @property {Function} onIdentitySelected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Core.Identity} evt.detail.item
+   * @param {Layer.Core.Identity} evt.detail.item
    */
 
   /**
@@ -122,7 +122,7 @@ registerComponent('layer-identity-list', {
    * @event layer-identity-deselected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Core.Identity} evt.detail.item
+   * @param {Layer.Core.Identity} evt.detail.item
    */
   /**
    * A identity selection change has occurred
@@ -132,14 +132,14 @@ registerComponent('layer-identity-list', {
    * @property {Function} onIdentityDeselected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Core.Identity} evt.detail.item
+   * @param {Layer.Core.Identity} evt.detail.item
    */
 
   events: ['layer-identity-selected', 'layer-identity-deselected'],
   properties: {
 
     /**
-     * Array of layer.Core.Identity objects representing the identities who should be rendered as Selected.
+     * Array of Layer.Core.Identity objects representing the identities who should be rendered as Selected.
      *
      * This property can be used both get and set the selected identities; however, if setting you should not be manipulating
      * the existing array, but rather setting a new array:
@@ -164,7 +164,7 @@ registerComponent('layer-identity-list', {
      * list.selectedIdentities = [];
      * ```
      *
-     * @property {layer.Core.Identity[]} [selectedIdentities=[]]
+     * @property {Layer.Core.Identity[]} [selectedIdentities=[]]
      */
     selectedIdentities: {
       set(value) {
@@ -300,7 +300,7 @@ registerComponent('layer-identity-list', {
      * Append a layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
      *
      * @method _generateItem
-     * @param {layer.Core.Identity} identity
+     * @param {Layer.Core.Identity} identity
      * @private
      */
     _generateItem(identity) {

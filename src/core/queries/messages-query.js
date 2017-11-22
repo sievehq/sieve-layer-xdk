@@ -18,7 +18,7 @@
  *
  * #### predicate
  *
- * Note that the `predicate` property is only supported for Messages and layer.Membership, and only supports
+ * Note that the `predicate` property is only supported for Messages and Layer.Core.Membership, and only supports
  * querying by Conversation or Channel:
  *
  * * `conversation.id = 'layer:///conversations/UUIUD'`
@@ -245,7 +245,7 @@ class MessagesQuery extends Query {
    * If this Query's Conversation's ID has changed, update the predicate.
    *
    * @method _handleConvIdChangeEvent
-   * @param {layer.Core.LayerEvent} evt - A Message Change Event
+   * @param {Layer.Core.LayerEvent} evt - A Message Change Event
    * @private
    */
   _handleConvIdChangeEvent(evt) {
@@ -267,7 +267,7 @@ class MessagesQuery extends Query {
    *
    * @method _handlePositionChange
    * @private
-   * @param {layer.Core.LayerEvent} evt  A Message Change event
+   * @param {Layer.Core.LayerEvent} evt  A Message Change event
    * @param {number} index  Index of the message in the current data array
    * @return {boolean} True if a data was changed and a change event was emitted
    */

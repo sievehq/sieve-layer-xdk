@@ -5,8 +5,8 @@
  * that will be rendered within any Viewer associated with this model.
  *
  * ```
- * CarouselModel = layer.Core.Client.getMessageTypeModelClass('CarouselModel');
- * ButtonsModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
+ * CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
+ * ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
  * model = new CarouselModel({
  *    items: [
  *       new ButtonModel({

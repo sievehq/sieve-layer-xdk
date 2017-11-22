@@ -3,9 +3,9 @@
  *
  * Identities are created by the System, never directly by apps.
  *
- * @class layer.Membership
+ * @class Layer.Core.Membership
  * @experimental This feature is incomplete, and available as Preview only.
- * @extends layer.Syncable
+ * @extends Layer.Core.Syncable
  */
 
 import Syncable from './syncable';
@@ -137,7 +137,7 @@ class Membership extends Syncable {
    * @static
    * @param {Object} membership - Server Membership Object
    * @param {layer.Client} client
-   * @returns {layer.Membership}
+   * @returns {Layer.Core.Membership}
    */
   static _createFromServer(membership, client) {
     return new Membership({
@@ -173,7 +173,7 @@ Membership.prototype.role = null;
 /**
  * Identity associated with the membership
  *
- * @type {layer.Core.Identity}
+ * @type {Layer.Core.Identity}
  */
 Membership.prototype.identity = '';
 

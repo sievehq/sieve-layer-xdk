@@ -12,7 +12,7 @@
  *    the UI can then rerender/update itself.
  *
  * ```
- * ResponseModel = layer.Core.Client.getMessageTypeModelClass('ResponseModel')
+ * ResponseModel = Layer.Core.Client.getMessageTypeModelClass('ResponseModel')
  * var responseModel = new ResponseModel({
  *     // The change in state to the Message based on the user's actions:
  *     participantData: {

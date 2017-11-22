@@ -3,8 +3,8 @@
  *
  * Identities are created by the System, never directly by apps.
  *
- * @class layer.Core.Identity
- * @extends layer.Syncable
+ * @class Layer.Core.Identity
+ * @extends Layer.Core.Syncable
  */
 
 /*
@@ -261,8 +261,8 @@ class Identity extends Syncable {
    * Set the status of the current user.
    *
    * @method setStatus
-   * @param {String} status    One of layer.Core.Identity.STATUS.AVAILABLE, layer.Core.Identity.STATUS.AWAY,
-   *        layer.Core.Identity.STATUS.BUSY, layer.Core.Identity.STATUS.OFLINE
+   * @param {String} status    One of Layer.Core.Identity.STATUS.AVAILABLE, Layer.Core.Identity.STATUS.AWAY,
+   *        Layer.Core.Identity.STATUS.BUSY, Layer.Core.Identity.STATUS.OFLINE
    */
   setStatus(status) {
     status = (status || '').toLowerCase();
@@ -353,7 +353,7 @@ class Identity extends Syncable {
    * @static
    * @param {Object} identity - Server Identity Object
    * @param {layer.Client} client
-   * @returns {layer.Core.Identity}
+   * @returns {Layer.Core.Identity}
    */
   static _createFromServer(identity, client) {
     return new Identity({
@@ -371,7 +371,7 @@ class Identity extends Syncable {
 Identity.prototype.displayName = '';
 
 /**
- * The Identity matching `layer.Core.Client.user` will have this be true.
+ * The Identity matching `Layer.Core.Client.user` will have this be true.
  *
  * All other Identities will have this as false.
  * @type {boolean}
@@ -460,21 +460,21 @@ Identity.prototype.publicKey = '';
 
 /**
  * @static
- * @type {string} The Identity represents a user.  Value used in the layer.Core.Identity.type field.
+ * @type {string} The Identity represents a user.  Value used in the Layer.Core.Identity.type field.
  */
 Identity.UserType = 'user';
 
 /**
  * @static
- * @type {string} The Identity represents a bot.  Value used in the layer.Core.Identity.type field.
+ * @type {string} The Identity represents a bot.  Value used in the Layer.Core.Identity.type field.
  */
 Identity.BotType = 'bot';
 
 /**
  * What type of Identity does this represent?
  *
- * * A bot? Use layer.Core.Identity.BotType
- * * A User? Use layer.Core.Identity.UserType
+ * * A bot? Use Layer.Core.Identity.BotType
+ * * A User? Use Layer.Core.Identity.UserType
  * @type {string}
  */
 Identity.prototype.type = Identity.UserType;
@@ -505,17 +505,17 @@ Identity.prototype._presence = null;
  *
  * Value is one of:
  *
- * * `layer.Core.Identity.STATUS.AVAILABLE`: User has set their status to `available`.  This is the default initial state
- * * `layer.Core.Identity.STATUS.AWAY`: App or User has changed their status to `away`
- * * `layer.Core.Identity.STATUS.BUSY`: App or User has changed their status to `busy`
- * * `layer.Core.Identity.STATUS.OFFLINE`: User is not connected or has set their status to `offline`
- * * `layer.Core.Identity.STATUS.INVISIBLE`: When a user has set their status to `offline` they instead see a status of `invisible` so that they know
+ * * `Layer.Core.Identity.STATUS.AVAILABLE`: User has set their status to `available`.  This is the default initial state
+ * * `Layer.Core.Identity.STATUS.AWAY`: App or User has changed their status to `away`
+ * * `Layer.Core.Identity.STATUS.BUSY`: App or User has changed their status to `busy`
+ * * `Layer.Core.Identity.STATUS.OFFLINE`: User is not connected or has set their status to `offline`
+ * * `Layer.Core.Identity.STATUS.INVISIBLE`: When a user has set their status to `offline` they instead see a status of `invisible` so that they know
  *    that they have deliberately set their status to `offline` but are still connected.
  *
  * This property can only be set on the session owner's identity, not on other identities via:
  *
  * ```
- * client.user.setStatus(layer.Core.Identity.STATUS.AVAILABLE);
+ * client.user.setStatus(Layer.Core.Identity.STATUS.AVAILABLE);
  * ```
  *
  * @property {String} status
@@ -532,7 +532,7 @@ Object.defineProperty(Identity.prototype, 'status', {
  * Time that the user was last known to be online.
  *
  * Accurate to within about 15 minutes.  User's who are online, but set their status
- * to `layer.Core.Identity.STATUS.INVISIBLE` will not have their `lastSeenAt` value updated.
+ * to `Layer.Core.Identity.STATUS.INVISIBLE` will not have their `lastSeenAt` value updated.
  *
  * @property {Date} lastSeenAt
  * @readonly
@@ -547,7 +547,7 @@ Object.defineProperty(Identity.prototype, 'lastSeenAt', {
 /**
  * Is this Identity a bot?
  *
- * If the layer.Core.Identity.type field is equal to layer.Core.Identity.BotType then this will return true.
+ * If the Layer.Core.Identity.type field is equal to Layer.Core.Identity.BotType then this will return true.
  * @property {boolean} isBot
  */
 Object.defineProperty(Identity.prototype, 'isBot', {
@@ -558,7 +558,7 @@ Object.defineProperty(Identity.prototype, 'isBot', {
 });
 
 /**
- * Possible values for layer.Core.Identity.status field to be used in `setStatus()`
+ * Possible values for Layer.Core.Identity.status field to be used in `setStatus()`
  *
  * @property {Object} STATUS
  * @property {String} STATUS.AVAILABLE   User has set their status to `available`.  This is the default initial state

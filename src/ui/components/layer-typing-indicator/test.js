@@ -3,16 +3,16 @@ describe('layer-typing-indicator', function() {
 
   afterEach(function() {
     jasmine.clock().uninstall();
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -21,7 +21,7 @@ describe('layer-typing-indicator', function() {
       sessionOwner: true
     });
 
-    user1 = new layer.Core.Identity({
+    user1 = new Layer.Core.Identity({
       client: client,
       userId: 'SaurumanTheMildlyAged',
       displayName: 'Sauruman the Mildly Aged',

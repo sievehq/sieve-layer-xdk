@@ -14,13 +14,13 @@ describe("The ChannelsQuery Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
@@ -67,7 +67,7 @@ describe("The ChannelsQuery Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     it("Should be an ChannelsQuery", function() {
@@ -275,7 +275,7 @@ describe("The ChannelsQuery Class", function() {
                 var data = query.data;
                 channel._clearObject();
                 channel.id = id;
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "id",
                     oldValue: tempId,
                     newValue: id,
@@ -297,7 +297,7 @@ describe("The ChannelsQuery Class", function() {
                 var originalObject = data[1];
                 originalObject.unreadCount = 1;
                 channel._clearObject();
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "unreadCount",
                     oldValue: 1,
                     newValue: 2,
@@ -316,7 +316,7 @@ describe("The ChannelsQuery Class", function() {
                 // Setup
                 var data = query.data;
                 channel._clearObject();
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "name",
                     oldValue: 'a',
                     newValue: 'b',
@@ -333,7 +333,7 @@ describe("The ChannelsQuery Class", function() {
 
             it("Should not touch data array if dataType is object but item not in the data", function() {
                 var channel = client.createChannel({ members: ["abc"] });
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "participants",
                     oldValue: ["abc"],
                     newValue: ["a", "b"],
@@ -350,7 +350,7 @@ describe("The ChannelsQuery Class", function() {
             });
 
             it("Should trigger change event if the Channel is in the data", function() {
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "participants",
                     oldValue: ["a"],
                     newValue: ["a", "b"],
@@ -377,7 +377,7 @@ describe("The ChannelsQuery Class", function() {
 
             it("Should not trigger change event if channel is NOT in the data", function() {
                 var data = query.data;
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "participants",
                     oldValue: ["a"],
                     newValue: ["a", "b"],
@@ -395,7 +395,7 @@ describe("The ChannelsQuery Class", function() {
 
             it("Should not trigger a move event if the channel sorting has not changed", function() {
                 expect(query.data.indexOf(channel.toObject())).toEqual(1);
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "participants",
                     oldValue: ["a"],
                     newValue: ["a", "b"],
@@ -432,7 +432,7 @@ describe("The ChannelsQuery Class", function() {
             });
 
             it("Should not touch data array for a participant change event", function() {
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "participants",
                     oldValue: ["abc"],
                     newValue: ["a", "b"],
@@ -452,7 +452,7 @@ describe("The ChannelsQuery Class", function() {
                 // Setup
                 var data = query.data;
                 var dataCopy = [].concat(query.data);
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "lastMessage",
                     oldValue: null,
                     newValue: message,
@@ -468,7 +468,7 @@ describe("The ChannelsQuery Class", function() {
             });
 
             it("Should trigger change event if the channel is in the data", function() {
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "participants",
                     oldValue: ["a"],
                     newValue: ["a", "b"],
@@ -495,7 +495,7 @@ describe("The ChannelsQuery Class", function() {
 
             it("Should not trigger change event if channel is NOT in the data", function() {
                 var data = query.data;
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "participants",
                     oldValue: ["a"],
                     newValue: ["a", "b"],
@@ -512,7 +512,7 @@ describe("The ChannelsQuery Class", function() {
 
             it("Should not trigger a move event if the channel sorting has not changed", function() {
                 expect(query.data.indexOf(channel)).toEqual(1);
-                var evt = new layer.Core.LayerEvent({
+                var evt = new Layer.Core.LayerEvent({
                     property: "participants",
                     oldValue: ["a"],
                     newValue: ["a", "b"],

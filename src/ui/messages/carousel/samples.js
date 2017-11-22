@@ -10,9 +10,9 @@ model = new CarouselModel({
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
-ButtonModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
-TextModel = layer.Core.Client.getMessageTypeModelClass('TextModel');
-CarouselModel = layer.Core.Client.getMessageTypeModelClass('CarouselModel');
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
 model = new CarouselModel({
 items: [
   new ButtonModel({
@@ -57,8 +57,8 @@ model.generateMessage($("layer-conversation-view").conversation, message => mess
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
 CarouselModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json')
-   ButtonsModel = layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
-   ChoiceModel = layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+   ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+   ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 model = new CarouselModel({
   items: [
     new ButtonsModel({
@@ -317,8 +317,8 @@ model = new CarouselModel({
 }).generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
-  TextModel = layer.Core.Client.getMessageTypeModelClass('TextModel');
-CarouselModel = layer.Core.Client.getMessageTypeModelClass('CarouselModel');
+  TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
 new CarouselModel({
   items: [
     new TextModel({text: "Carousel item 1", title: "Title 1"}),

@@ -19,13 +19,13 @@ describe("The Client Message Mixin", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
+        client.user = userIdentity = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
@@ -51,7 +51,7 @@ describe("The Client Message Mixin", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -115,7 +115,7 @@ describe("The Client Message Mixin", function() {
             var m1 = client.getMessage(newId, true);
 
             // Posttest
-            expect(m1 instanceof layer.Announcement).toBe(true);
+            expect(m1 instanceof Layer.Core.Announcement).toBe(true);
             expect(m1.id).toEqual(newId);
             expect(requests.mostRecent().url).toEqual(client.url + newId.replace(/layer\:\/\//, ""));
         });

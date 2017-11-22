@@ -4,13 +4,13 @@ describe("The SyncEvent Classes", function() {
     var appId = "Fred's App";
     beforeEach(function() {
       jasmine.clock().install();
-      client = new layer.Core.Client({
+      client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
       });
 
       client.userId = 'Frodo';
-      client.user = new layer.Core.Identity({
+      client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,

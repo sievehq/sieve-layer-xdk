@@ -16,7 +16,7 @@ describe('layer-file-upload-button', function() {
   });
 
   afterEach(function() {
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   it("Should setup a label pointing to a file input", function() {

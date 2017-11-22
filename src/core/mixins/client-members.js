@@ -1,7 +1,7 @@
 /**
- * Adds Channel Membership handling to the layer.Core.Client.
+ * Adds Channel Membership handling to the Layer.Core.Client.
  *
- * @class layer.mixins.ClientMembership
+ * @class Layer.Core.mixins.ClientMembership
  */
 
 import Syncable from '../models/syncable';
@@ -11,11 +11,11 @@ import { ErrorDictionary } from '../layer-error';
 module.exports = {
   events: [
     /**
-     * A call to layer.Membership.load has completed successfully
+     * A call to Layer.Core.Membership.load has completed successfully
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Membership} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Membership} evt.target
      */
     'members:loaded',
 
@@ -32,8 +32,8 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Membership} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Membership} evt.target
      * @param {Object[]} evt.changes
      * @param {Mixed} evt.changes.newValue
      * @param {Mixed} evt.changes.oldValue
@@ -44,7 +44,7 @@ module.exports = {
     /**
      * A new Member has been added to the Client.
      *
-     * This event is triggered whenever a new layer.Membership
+     * This event is triggered whenever a new Layer.Core.Membership
      * has been received by the Client.
      *
             client.on('members:add', function(evt) {
@@ -54,8 +54,8 @@ module.exports = {
             });
     *
     * @event
-    * @param {layer.Core.LayerEvent} evt
-    * @param {layer.Membership[]} evt.membership
+    * @param {Layer.Core.LayerEvent} evt
+    * @param {Layer.Core.Membership[]} evt.membership
     */
     'members:add',
 
@@ -71,8 +71,8 @@ module.exports = {
             });
     *
     * @event
-    * @param {layer.Core.LayerEvent} evt
-    * @param {layer.Membership[]} evt.membership
+    * @param {Layer.Core.LayerEvent} evt
+    * @param {Layer.Core.Membership[]} evt.membership
     */
     'members:remove',
   ],
@@ -102,7 +102,7 @@ module.exports = {
      * @method getMember
      * @param  {string} id               - layer:///channels/uuid/members/user_id
      * @param  {boolean} [canLoad=false] - Pass true to allow loading a member from the server if not found
-     * @return {layer.Membership}
+     * @return {Layer.Core.Membership}
      */
     getMember(id, canLoad) {
       let result = null;
@@ -122,7 +122,7 @@ module.exports = {
      *
      * @method _addMembership
      * @protected
-     * @param  {layer.Membership} member
+     * @param  {Layer.Core.Membership} member
      *
      */
     _addMembership(member) {
@@ -138,7 +138,7 @@ module.exports = {
      *
      * @method _removeMembership
      * @protected
-     * @param  {layer.Membership} member
+     * @param  {Layer.Core.Membership} member
      */
     _removeMembership(member) {
       const id = (typeof member === 'string') ? member : member.id;

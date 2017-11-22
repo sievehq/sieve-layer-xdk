@@ -10,7 +10,7 @@ describe('layer-send-button', function() {
   });
 
   afterEach(function() {
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   it("Should use the text property", function() {

@@ -12,13 +12,13 @@ describe("The Channel Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: "Frodo",
           id: "layer:///identities/" + "Frodo",
@@ -34,13 +34,13 @@ describe("The Channel Class", function() {
           isFullIdentity: true,
           sessionOwner: true
         });
-        userIdentity1 = new layer.Core.Identity({
+        userIdentity1 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "1",
             userId: "1"
         });
-        userIdentity2 = new layer.Core.Identity({
+        userIdentity2 = new Layer.Core.Identity({
             clientId: client.appId,
             id: "layer:///identities/2",
             displayName: "2",
@@ -71,7 +71,7 @@ describe("The Channel Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+        Layer.Core.Client.destroyAllClients();
     });
 
     describe("The constructor() method", function() {
@@ -259,7 +259,7 @@ describe("The Channel Class", function() {
             expect(channel.createdAt).toEqual(new Date(c.created_at));
 
             /* WAITING FOR SPEC TO COMPLETE
-            expect(channel.membership).toEqual(jasmine.any(layer.Membership));
+            expect(channel.membership).toEqual(jasmine.any(Layer.Core.Membership));
             expect(channel.membership).toBe(client.getMember(c.membership.id));
             */
         });
@@ -320,8 +320,8 @@ describe("The Channel Class", function() {
             channel._populateFromServer(c);
 
             // Posttest
-            expect(client._models.members[channel.membership.id]).toEqual(jasmine.any(layer.Membership));
-            expect(channel.membership).toEqual(jasmine.any(layer.Membership));
+            expect(client._models.members[channel.membership.id]).toEqual(jasmine.any(Layer.Core.Membership));
+            expect(channel.membership).toEqual(jasmine.any(Layer.Core.Membership));
         });
 
         /* TODO Waiting for SPEC Complete */
@@ -336,7 +336,7 @@ describe("The Channel Class", function() {
             channel._populateFromServer(c);
 
             // Posttest
-            expect(channel.membership).toEqual(jasmine.any(layer.Membership));
+            expect(channel.membership).toEqual(jasmine.any(Layer.Core.Membership));
             expect(channel.membership).toBe(client._models.members[mid]);
         });
 
@@ -506,7 +506,7 @@ describe("The Channel Class", function() {
 
       it("Should return an empty member that is loading", function() {
         var m = channel.getMember(responses.membership1.identity.id, true);
-        expect(m).toEqual(jasmine.any(layer.Membership));
+        expect(m).toEqual(jasmine.any(Layer.Core.Membership));
         expect(m.syncState).toEqual(layer.Constants.SYNC_STATE.LOADING);
       });
     });

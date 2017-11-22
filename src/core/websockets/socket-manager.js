@@ -11,7 +11,7 @@
  * through the layer.Client class.
  *
  * @class  layer.Websockets.SocketManager
- * @extends layer.Root
+ * @extends Layer.Core.Root
  * @private
  */
 import Root from '../root';
@@ -79,7 +79,7 @@ class SocketManager extends Root {
    * If going offline, close the websocket as its no longer useful/relevant.
    * @method _onlineStateChange
    * @private
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   _onlineStateChange(evt) {
     if (!this.client.isAuthenticated) return;
@@ -792,7 +792,7 @@ SocketManager._supportedEvents = [
   /**
    * A data packet has been received from the server.
    * @event message
-   * @param {layer.Core.LayerEvent} layerEvent
+   * @param {Layer.Core.LayerEvent} layerEvent
    * @param {Object} layerEvent.data - The data that was received from the server
    */
   'message',

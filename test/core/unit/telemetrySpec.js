@@ -12,14 +12,14 @@ describe("The TelemetryMonitor class", function() {
         jasmine.clock().mockDate(today);
 
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://doh.com"
         });
         client.userId = "999";
 
-        client.user = new layer.Core.Identity({
+        client.user = new Layer.Core.Identity({
           clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
@@ -62,13 +62,13 @@ describe("The TelemetryMonitor class", function() {
       });
 
       it("Should received enabled true/false", function() {
-        var c = new layer.Core.Client({
+        var c = new Layer.Core.Client({
           appId: appId,
           telemetryEnabled: false
         });
         expect(c.telemetryMonitor.enabled).toBe(false);
 
-        var c = new layer.Core.Client({
+        var c = new Layer.Core.Client({
           appId: appId,
           telemetryEnabled: true
         });

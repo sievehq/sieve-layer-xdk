@@ -1,10 +1,10 @@
 describe('layer-menu', function() {
   var el, testRoot, client;
   beforeEach(function() {
-    client = new layer.Core.Client({
+    client = new Layer.Core.Client({
       appId: 'Fred'
     });
-    client.user = new layer.Core.Identity({
+    client.user = new Layer.Core.Identity({
       client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -23,7 +23,7 @@ describe('layer-menu', function() {
 
   afterEach(function() {
     document.body.removeChild(testRoot);
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.Core.Client.removeListenerForNewClient();
   });
   it("Should have tests", function() {
     expect("Tests").toBe("written");

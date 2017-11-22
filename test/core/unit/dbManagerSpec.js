@@ -63,7 +63,7 @@ var dbIt = it;
 
       // NOTE: beforeEach finishes by deleting everything from the database. You must insert before you can query.
       beforeEach(function(done) {
-          client = new layer.Core.Client({
+          client = new Layer.Core.Client({
               appId: appId,
               url: "https://huh.com",
               isTrustedDevice: true,
@@ -71,7 +71,7 @@ var dbIt = it;
           });
           client.sessionToken = "sessionToken";
 
-          identity = new layer.Core.Identity({
+          identity = new Layer.Core.Identity({
             clientId: client.appId,
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
@@ -101,7 +101,7 @@ var dbIt = it;
               message = conversation.lastMessage;
               announcement = client._createObject(responses.announcement);
               userIdentity = client._createObject(responses.useridentity);
-              basicIdentity = new layer.Core.Identity({
+              basicIdentity = new Layer.Core.Identity({
                 clientId: client.appId,
                 userId: client.userId,
                 id: "layer:///identities/" + client.userId,
@@ -631,7 +631,7 @@ var dbIt = it;
         it("Should generate a proper Announcement object", function() {
           message = client._createObject(JSON.parse(JSON.stringify(responses.announcement)));
           message.receivedAt = new Date();
-          message.sender = new layer.Core.Identity({
+          message.sender = new Layer.Core.Identity({
             fromServer: {
               id: null,
               user_id: null,
@@ -902,7 +902,7 @@ var dbIt = it;
           public_key: identity.publicKey,
           phone_number: identity.phoneNumber,
           sync_state: identity.syncState,
-          type: layer.Core.Identity.UserType,
+          type: Layer.Core.Identity.UserType,
         }]);
       });
     });
@@ -1531,7 +1531,7 @@ var dbIt = it;
     describe("The _createIdentity() method", function() {
       it("Should return an Identity", function() {
         delete client._models.identities[identity.id];
-        expect(dbManager._createIdentity(dbManager._getIdentityData([identity])[0])).toEqual(jasmine.any(layer.Core.Identity));
+        expect(dbManager._createIdentity(dbManager._getIdentityData([identity])[0])).toEqual(jasmine.any(Layer.Core.Identity));
       });
 
       it("Should flag Identity with _fromDB property", function() {

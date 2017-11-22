@@ -14,7 +14,7 @@
  *
  * @class  layer.Content
  * @private
- * @extends layer.Root
+ * @extends Layer.Core.Root
  * @author Michael Kantor
  */
 

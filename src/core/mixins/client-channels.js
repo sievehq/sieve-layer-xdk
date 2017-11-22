@@ -1,7 +1,7 @@
 /**
- * Adds Channel handling to the layer.Core.Client.
+ * Adds Channel handling to the Layer.Core.Client.
  *
- * @class layer.mixins.ClientChannels
+ * @class Layer.Core.mixins.ClientChannels
  */
 
 import Channel from '../models/channel';
@@ -11,7 +11,7 @@ import { ErrorDictionary } from '../layer-error';
 module.exports = {
   events: [
     /**
-     * One or more layer.Channel objects have been added to the client.
+     * One or more Layer.Core.Channel objects have been added to the client.
      *
      * They may have been added via the websocket, or via the user creating
      * a new Channel locally.
@@ -23,18 +23,18 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Channel[]} evt.channels - Array of channels added
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Channel[]} evt.channels - Array of channels added
      */
     'channels:add',
 
     /**
-     * One or more layer.Channel objects have been removed.
+     * One or more Layer.Core.Channel objects have been removed.
      *
      * A removed Channel is not necessarily deleted, its just
      * no longer being held in local memory.
      *
-     * Note that typically you will want the channels:delete event
+     * Note that typically you will want the `channels:delete` event
      * rather than channels:remove.
      *
      *      client.on('channels:remove', function(evt) {
@@ -44,8 +44,8 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Channel[]} evt.channels - Array of channels removed
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Channel[]} evt.channels - Array of channels removed
      */
     'channels:remove',
 
@@ -69,8 +69,8 @@ module.exports = {
      * NOTE: Typically such rendering is done using Events on layer.Core.Query.
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Channel} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Channel} evt.target
      * @param {Object[]} evt.changes
      * @param {Mixed} evt.changes.newValue
      * @param {Mixed} evt.changes.oldValue
@@ -79,18 +79,18 @@ module.exports = {
     'channels:change',
 
     /**
-     * A call to layer.Channel.load has completed successfully
+     * A call to Layer.Core.Channel.load has completed successfully
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Channel} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Channel} evt.target
      */
     'channels:loaded',
 
     /**
      * A Channel has been deleted from the server.
      *
-     * Caused by either a successful call to layer.Channel.delete() on the Channel
+     * Caused by either a successful call to Layer.Core.Channel.delete() on the Channel
      * or by a remote user.
      *
      *      client.on('channels:delete', function(evt) {
@@ -98,8 +98,8 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Channel} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Channel} evt.target
      */
     'channels:delete',
 
@@ -110,8 +110,8 @@ module.exports = {
      * Called after creating the channel
      * on the server.  The Result property is one of:
      *
-     * * layer.Channel.CREATED: A new Channel has been created
-     * * layer.Channel.FOUND: A matching Channel has been found
+     * * Layer.Core.Channel.CREATED: A new Channel has been created
+     * * Layer.Core.Channel.FOUND: A matching Channel has been found
      *
      * All of these results will also mean that the updated property values have been
      * copied into your Channel object.  That means your metadata property may no
@@ -129,9 +129,9 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} event
+     * @param {Layer.Core.LayerEvent} event
      * @param {string} event.result
-     * @param {layer.Channel} target
+     * @param {Layer.Core.Channel} target
      */
     'channels:sent',
 
@@ -143,9 +143,9 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Core.LayerEvent} evt.data
-     * @param {layer.Channel} target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.LayerEvent} evt.data
+     * @param {Layer.Core.Channel} target
      */
     'channels:sent-error',
   ],
@@ -178,7 +178,7 @@ module.exports = {
      *
      * If you want it to load it from cache and then from server if not in cache, use the `canLoad` parameter.
      * If loading from the server, the method will return
-     * a layer.Channel instance that has no data; the `channels:loaded` / `channels:loaded-error` events
+     * a Layer.Core.Channel instance that has no data; the `channels:loaded` / `channels:loaded-error` events
      * will let you know when the channel has finished/failed loading from the server.
      *
      *      var c = client.getChannel('layer:///channels/123', true)
@@ -195,7 +195,7 @@ module.exports = {
      * @param  {string} id
      * @param  {boolean} [canLoad=false] - Pass true to allow loading a channel from
      *                                    the server if not found
-     * @return {layer.Channel}
+     * @return {Layer.Core.Channel}
      */
     getChannel(id, canLoad) {
       let result = null;
@@ -219,7 +219,7 @@ module.exports = {
      * Typically, you do not need to call this; the following code
      * automatically calls _addChannel for you:
      *
-     *      var conv = new layer.Channel({
+     *      var conv = new Layer.Core.Channel({
      *          client: client,
      *          members: ['a', 'b']
      *      });
@@ -229,7 +229,7 @@ module.exports = {
      *
      * @method _addChannel
      * @protected
-     * @param  {layer.Channel} c
+     * @param  {Layer.Core.Channel} c
      */
     _addChannel(channel) {
       const id = channel.id;
@@ -255,7 +255,7 @@ module.exports = {
      *
      * @method _removeChannel
      * @protected
-     * @param  {layer.Channel} c
+     * @param  {Layer.Core.Channel} c
      */
     _removeChannel(channel) {
       // Insure we do not get any events, such as message:remove
@@ -279,7 +279,7 @@ module.exports = {
      *
      * @method _updateChannelId
      * @protected
-     * @param  {layer.Channel} channel - Channel whose ID has changed
+     * @param  {Layer.Core.Channel} channel - Channel whose ID has changed
      * @param  {string} oldId - Previous ID
      */
     _updateChannelId(channel, oldId) {
@@ -308,10 +308,10 @@ module.exports = {
      *
      * @method findCachedChannel
      * @param  {Function} f - Function to call until we find a match
-     * @param  {layer.Channel} f.channel - A channel to test
+     * @param  {Layer.Core.Channel} f.channel - A channel to test
      * @param  {boolean} f.return - Return true if the channel is a match
      * @param  {Object} [context] - Optional context for the *this* object
-     * @return {layer.Channel}
+     * @return {Layer.Core.Channel}
      *
      * @deprecated
      * This should be replaced by iterating over your layer.Core.Query data.
@@ -388,10 +388,10 @@ module.exports = {
      *
      * @method createChannel
      * @param  {Object} options
-     * @param {string[]/layer.Core.Identity[]} options.members - Array of UserIDs or UserIdentities
+     * @param {string[]/Layer.Core.Identity[]} options.members - Array of UserIDs or UserIdentities
      * @param {String} options.name - The unique name for this Channel
      * @param {Object} [options.metadata={}] Metadata for your Channel
-     * @return {layer.Channel}
+     * @return {Layer.Core.Channel}
      */
     createChannel(options) {
       // If we aren't authenticated, then we don't yet have a UserID, and won't create the correct Channel

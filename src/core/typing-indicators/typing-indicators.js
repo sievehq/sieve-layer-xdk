@@ -1,11 +1,11 @@
 /**
  * Static properties here only needed if your directly using
- * the layer.TypingIndicators.TypingPublisher (not needed if
- * you are using the layer.TypingIndicators.TypingListener).
+ * the Layer.Core.TypingIndicators.TypingPublisher (not needed if
+ * you are using the Layer.Core.TypingIndicators.TypingListener).
  *
- *      typingPublisher.setState(layer.TypingIndicators.STARTED);
+ *      typingPublisher.setState(Layer.Core.TypingIndicators.STARTED);
  *
- * @class  layer.TypingIndicators
+ * @class  Layer.Core.TypingIndicators
  * @static
  */
 module.exports = {
