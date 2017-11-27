@@ -28,15 +28,22 @@
  */
 import Layer from '../core';
 import Util from '../util';
+import Constants from './constants';
+import { animatedScrollTo, animatedScrollLeftTo } from './utils/animated-scroll';
+
 
 /*
  * NOTES TO MAINTAINER:
  *
  * * Avoid using `this`, rather use `layerUI` instead.  Otherwise usage such as:
- *   `import { registerMessage} from 'layer-ui-web'` will give developers a method that
+ *   `import { registerMessage } from 'layer-ui-web'` will give developers a method that
  *   needs scope but won't have it.
  */
-const layerUI = {};
+const layerUI = {
+  Constants,
+  animatedScrollTo,
+  animatedScrollLeftTo,
+ };
 
 /**
  * The settings object stores a hash of configurable properties to change widget Behaviors.
@@ -174,6 +181,20 @@ layerUI.messageActionHandlers = {};
  * @protected
  */
 layerUI.statusMimeTypes = [];
+
+/**
+ * Register a Message Type Model to be treated as a Status Message instead of a Message Sent/Received.
+ *
+ * A Status Message is rendered without Avatar, sender, timestamp, etc...
+ *
+ * ```
+ * Layer.UI.registerStatusModel(MyModelClass);
+ * ```
+ *
+ * @method registerStatusModel
+ * @param {Function} StatusModel    Pass in the Class Definition for a Layer.Core.MessageTypeModel subclass
+ */
+layerUI.registerStatusModel = StatusModel => layerUI.statusMimeTypes.push(StatusModel.MIMEType);
 
 /**
  * Hash of components defined using layer.UI.components.Component.
@@ -349,7 +370,7 @@ layerUI.adapters = {
  * @static
  * @param {Object} options
  * @param {Function} options.handlesMessage
- * @param {layer.Message} options.handlesMessage.message    Message to test and handle with our handler if it matches
+ * @param {Layer.Core.Message} options.handlesMessage.message    Message to test and handle with our handler if it matches
  * @param {HTMLElement} options.handlesMessage.container     The container that this will be rendered within; typically identifies a specific
  *                                                          layerUI.MessageList or layerUI.ConversationItem.
  * @param {Boolean} options.handlesMessage.returns          Return true to signal that this handler accepts this Message.
@@ -378,7 +399,7 @@ layerUI.registerMessageHandler = function registerMessageHandler(options) {
  *
  * @method getHandler
  * @static
- * @param {layer.Message} message
+ * @param {Layer.Core.Message} message
  * @param {HTMLElement} container     The container that this will be rendered within
  * @return {Object} handler     See layerUI.registerMessageHandler for the structure of a handler.
  */
@@ -591,12 +612,23 @@ layerUI.isInBackground = () => !document.hasFocus() || document.hidden;
  */
 layerUI.addAdapter = (name, adapter) => { layerUI.adapters[name] = adapter; };
 
+
+/**
+ * Placeholder for a mechanism for all Message Types to share for showing a zoomed in version of their content.
+ *
+ * Eventually should open an in-app dialog
+ *
+ * @method showFullScreen
+ * @param {String} url
+ */
+layerUI.showFullScreen = url => window.open(url);
+
 /**
  * Call init with any custom settings, and to register all components with the dom.
  *
  * Note that `init()` must be called prior to putting any webcomponents into a document.
  *
- * Note as well that if passing in your appId, you must have instantiated a layer.Client with that appId
+ * Note as well that if passing in your appId, you must have instantiated a Layer.Core.Client with that appId
  * prior to putting any webcomponents into your document.
  *
  * ```javascript

@@ -22,7 +22,7 @@ class WebsocketChangeManager {
    *
    * @method
    * @param  {Object} options
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    * @param {layer.Websockets.SocketManager} socketManager
    * @returns {layer.Websockets.ChangeManager}
    */
@@ -168,7 +168,7 @@ class WebsocketChangeManager {
 
 /**
  * The Client that owns this.
- * @type {layer.Client}
+ * @type {Layer.Core.Client}
  */
 WebsocketChangeManager.prototype.client = null;
 

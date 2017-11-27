@@ -10,6 +10,7 @@ import '../../components/layer-action-button/layer-action-button';
 import '../../components/layer-url-button/layer-url-button';
 import '../../components/layer-choice-button/layer-choice-button';
 import MessageViewMixin from '../message-view-mixin';
+import { Constants } from '../../base';
 
 registerComponent('layer-buttons-message-view', {
   template: `
@@ -36,16 +37,16 @@ registerComponent('layer-buttons-message-view', {
   properties: {
 
     /**
-     * Button Message has a widthType that is whatever its child has, or if its just buttons, use flex-width.
+     * Button Message has a widthType that is whatever its child has, or if its just buttons, use Layer.UI.Constants.WIDTH.FLEX.
      *
-     * @property {String} [widthType=flex-width]
+     * @property {String} [widthType=Layer.UI.Constants.WIDTH.FLEX]
      */
     widthType: {
       get() {
-        if (this.properties.contentView && this.properties.contentView.widthType !== 'chat-bubble') {
+        if (this.properties.contentView && this.properties.contentView.widthType !== Constants.WIDTH.ANY) {
           return this.properties.contentView.widthType;
         } else {
-          return 'flex-width';
+          return Constants.WIDTH.FLEX;
         }
       },
     },

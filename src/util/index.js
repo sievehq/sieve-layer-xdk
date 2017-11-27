@@ -1,7 +1,7 @@
 /**
  * Utility methods
  *
- * @class layer.ClientUtils
+ * @class Layer.Core.ClientUtils
  */
 
 import uuid from 'uuid';
@@ -344,7 +344,7 @@ exports.defer = defer;
  * @param {Object} request.object - Object being updated  by the operations
  * @param {string} request.type - Type of object being updated
  * @param {Object[]} request.operations - Array of change operations to perform upon the object
- * @param {layer.Client} request.client
+ * @param {Layer.Core.Client} request.client
  */
 exports.layerParse = layerParse;
 

@@ -107,15 +107,15 @@ describe("The Client Queries Mixin", function() {
                   model: "Conversation"
               });
 
-              expect(query).toEqual(jasmine.any(layer.Core.Query));
+              expect(query).toEqual(jasmine.any(Layer.Core.Query));
               expect(query.client).toBe(client);
               expect(query.model).toEqual("Conversation");
           });
 
           it("Should return a Query from QueryBuilder", function() {
-              var query = client.createQuery(layer.Core.QueryBuilder.conversations());
+              var query = client.createQuery(Layer.Core.QueryBuilder.conversations());
 
-              expect(query).toEqual(jasmine.any(layer.Core.Query));
+              expect(query).toEqual(jasmine.any(Layer.Core.Query));
               expect(query.client).toBe(client);
               expect(query.model).toEqual("Conversation");
           });

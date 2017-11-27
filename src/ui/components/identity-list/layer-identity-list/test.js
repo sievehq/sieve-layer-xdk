@@ -31,7 +31,7 @@ describe('layer-identity-list', function() {
     el = document.createElement('layer-identity-list');
     testRoot.appendChild(el);
     query = client.createQuery({
-      model: layer.Core.Query.Identity
+      model: Layer.Core.Query.Identity
     });
     query.isFiring = false;
     query.data = [client.user];

@@ -103,7 +103,10 @@ import './messages/feedback/layer-feedback-view';
 import './messages/feedback/layer-feedback-expanded-view';
 import './messages/feedback/layer-feedback-model';
 
-import { animatedScrollTo, animatedScrollLeftTo } from './utils/animated-scroll';
+import './message-actions/open-url-action';
+import './message-actions/open-file-action';
+import './message-actions/open-map-action';
+
 import MessageHandler from './mixins/message-handler';
 import HasQuery from './mixins/has-query';
 import MainComponent from './mixins/main-component';
@@ -113,10 +116,6 @@ import ListSelection from './mixins/list-selection';
 import ListItemSelection from './mixins/list-item-selection';
 import FocusOnKeydown from './mixins/focus-on-keydown';
 import MessageViewMixin from './messages/message-view-mixin';
-
-
-LayerUI.animatedScrollTo = animatedScrollTo;
-LayerUI.animatedScrollLeftTo = animatedScrollLeftTo;
 
 LayerUI.mixins = {
   MessageHandler,

@@ -13,7 +13,7 @@
  * 4. Trigger events `connected` and `disconnected` to let the rest of the system know when we are/are not connected.
  *    NOTE: The Websocket manager will use that to reconnect its websocket, and resume its `getCounter` call every 30 seconds.
  *
- * NOTE: Apps that want to be notified of changes to online/offline state should see layer.Client's `online` event.
+ * NOTE: Apps that want to be notified of changes to online/offline state should see Layer.Core.Client's `online` event.
  *
  * NOTE: One iteration of this class treated navigator.onLine = false as fact.  If onLine is false, then we don't need to test
  * anything.  If its true, then this class verifies it can reach layer's servers.  However, https://code.google.com/p/chromium/issues/detail?id=277372 has replicated multiple times in chrome; this bug causes one tab of chrome to have navigator.onLine=false while all other tabs

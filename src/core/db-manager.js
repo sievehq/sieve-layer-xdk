@@ -65,7 +65,7 @@ class DbManager extends Root {
    *
    * @method constructor
    * @param {Object} options
-   * @param {layer.Client} options.client
+   * @param {Layer.Core.Client} options.client
    * @param {Object} options.persistenceFeatures
    * @return {layer.Core.DbManager} this
    */
@@ -256,7 +256,7 @@ class DbManager extends Root {
    *
    * @method _getConversationData
    * @private
-   * @param {layer.Conversation[]} conversations
+   * @param {Layer.Core.Conversation[]} conversations
    * @return {Object[]} conversations
    */
   _getConversationData(conversations) {
@@ -302,7 +302,7 @@ class DbManager extends Root {
    * Writes an array of Conversations to the Database.
    *
    * @method writeConversations
-   * @param {layer.Conversation[]} conversations - Array of Conversations to write
+   * @param {Layer.Core.Conversation[]} conversations - Array of Conversations to write
    * @param {Function} [callback]
    */
   writeConversations(conversations, callback) {
@@ -319,7 +319,7 @@ class DbManager extends Root {
    *
    * @method _getChannelData
    * @private
-   * @param {layer.Channel[]} channels
+   * @param {Layer.Core.Channel[]} channels
    * @return {Object[]} channels
    */
   _getChannelData(channels) {
@@ -362,7 +362,7 @@ class DbManager extends Root {
    * Writes an array of Conversations to the Database.
    *
    * @method writeChannels
-   * @param {layer.Channel[]} channels - Array of Channels to write
+   * @param {Layer.Core.Channel[]} channels - Array of Channels to write
    * @param {Function} [callback]
    */
   writeChannels(channels, callback) {
@@ -440,7 +440,7 @@ class DbManager extends Root {
    *
    * @method _getMessageData
    * @private
-   * @param {layer.Message[]} messages
+   * @param {Layer.Core.Message[]} messages
    * @param {Function} callback
    * @return {Object[]} messages
    */
@@ -509,7 +509,7 @@ class DbManager extends Root {
    * Writes an array of Messages to the Database.
    *
    * @method writeMessages
-   * @param {layer.Message[]} messages - Array of Messages to write
+   * @param {Layer.Core.Message[]} messages - Array of Messages to write
    * @param {Function} [callback]
    */
   writeMessages(messages, callback) {
@@ -617,7 +617,7 @@ class DbManager extends Root {
    * @param {string} [fromId=]    - For pagination, provide the conversationId to get Conversations after
    * @param {number} [pageSize=]  - To limit the number of results, provide a number for how many results to return.
    * @param {Function} [callback]  - Callback for getting results
-   * @param {layer.Conversation[]} callback.result
+   * @param {Layer.Core.Conversation[]} callback.result
    */
   loadConversations(sortBy, fromId, pageSize, callback) {
     try {
@@ -655,14 +655,14 @@ class DbManager extends Root {
   }
 
   /**
-   * Assemble all LastMessages and Conversation POJOs into layer.Message and layer.Conversation instances.
+   * Assemble all LastMessages and Conversation POJOs into Layer.Core.Message and Layer.Core.Conversation instances.
    *
    * @method _loadConversationsResult
    * @private
    * @param {Object[]} conversations
    * @param {Object[]} messages
    * @param {Function} callback
-   * @param {layer.Conversation[]} callback.result
+   * @param {Layer.Core.Conversation[]} callback.result
    */
   _loadConversationsResult(conversations, messages, callback) {
     // Instantiate and Register each Message
@@ -685,7 +685,7 @@ class DbManager extends Root {
    * @param {string} [fromId=]    - For pagination, provide the channelId to get Channel after
    * @param {number} [pageSize=]  - To limit the number of results, provide a number for how many results to return.
    * @param {Function} [callback]  - Callback for getting results
-   * @param {layer.Channel[]} callback.result
+   * @param {Layer.Core.Channel[]} callback.result
    */
   loadChannels(fromId, pageSize, callback) {
     try {
@@ -705,13 +705,13 @@ class DbManager extends Root {
   }
 
   /**
-   * Assemble all LastMessages and Conversation POJOs into layer.Message and layer.Conversation instances.
+   * Assemble all LastMessages and Conversation POJOs into Layer.Core.Message and Layer.Core.Conversation instances.
    *
    * @method _loadChannelsResult
    * @private
    * @param {Object[]} channels
    * @param {Function} callback
-   * @param {layer.Channel[]} callback.result
+   * @param {Layer.Core.Channel[]} callback.result
    */
   _loadChannelsResult(channels, callback) {
     // Instantiate and Register each Conversation; will find any lastMessage that was registered.
@@ -733,7 +733,7 @@ class DbManager extends Root {
    * @param {string} [fromId=]    - For pagination, provide the messageId to get Messages after
    * @param {number} [pageSize=]  - To limit the number of results, provide a number for how many results to return.
    * @param {Function} [callback]   - Callback for getting results
-   * @param {layer.Message[]} callback.result
+   * @param {Layer.Core.Message[]} callback.result
    */
   loadMessages(conversationId, fromId, pageSize, callback) {
     if (!this['_permission_messages'] || this._isOpenError) return callback([]);
@@ -790,7 +790,7 @@ class DbManager extends Root {
    * @private
    * @param {Object[]} Message objects from the database.
    * @param {Function} callback
-   * @param {layer.Message} callback.result - Message instances created from the database
+   * @param {Layer.Core.Message} callback.result - Message instances created from the database
    */
   _loadMessagesResult(messages, callback) {
     // Convert base64 to blob before sending it along...
@@ -820,7 +820,7 @@ class DbManager extends Root {
   }
 
   /**
-   * Assemble all LastMessages and Identityy POJOs into layer.Message and Layer.Core.Identityy instances.
+   * Assemble all LastMessages and Identityy POJOs into Layer.Core.Message and Layer.Core.Identityy instances.
    *
    * @method _loadIdentitiesResult
    * @private
@@ -841,7 +841,7 @@ class DbManager extends Root {
   /**
    * Instantiate and Register the Conversation from a conversation DB Entry.
    *
-   * If the layer.Conversation already exists, then its presumed that whatever is in
+   * If the Layer.Core.Conversation already exists, then its presumed that whatever is in
    * javascript cache is more up to date than whats in IndexedDB cache.
    *
    * Attempts to assign the lastMessage property to refer to appropriate Message.  If it fails,
@@ -850,7 +850,7 @@ class DbManager extends Root {
    * @method _createConversation
    * @private
    * @param {Object} conversation
-   * @returns {layer.Conversation}
+   * @returns {Layer.Core.Conversation}
    */
   _createConversation(conversation) {
     if (!this.client.getConversation(conversation.id)) {
@@ -864,7 +864,7 @@ class DbManager extends Root {
   /**
    * Instantiate and Register the Channel from a Channel DB Entry.
    *
-   * If the layer.Channel already exists, then its presumed that whatever is in
+   * If the Layer.Core.Channel already exists, then its presumed that whatever is in
    * javascript cache is more up to date than whats in IndexedDB cache.
    *
    * Attempts to assign the lastMessage property to refer to appropriate Message.  If it fails,
@@ -873,7 +873,7 @@ class DbManager extends Root {
    * @method _createChannel
    * @private
    * @param {Object} channel
-   * @returns {layer.Channel}
+   * @returns {Layer.Core.Channel}
    */
   _createChannel(channel) {
     if (!this.client.getChannel(channel.id)) {
@@ -887,13 +887,13 @@ class DbManager extends Root {
   /**
    * Instantiate and Register the Message from a message DB Entry.
    *
-   * If the layer.Message already exists, then its presumed that whatever is in
+   * If the Layer.Core.Message already exists, then its presumed that whatever is in
    * javascript cache is more up to date than whats in IndexedDB cache.
    *
    * @method _createMessage
    * @private
    * @param {Object} message
-   * @returns {layer.Message}
+   * @returns {Layer.Core.Message}
    */
   _createMessage(message) {
     if (!this.client.getMessage(message.id)) {
@@ -1287,7 +1287,7 @@ class DbManager extends Root {
 }
 
 /**
- * @type {layer.Client} Layer Client instance
+ * @type {Layer.Core.Client} Layer Client instance
  */
 DbManager.prototype.client = null;
 

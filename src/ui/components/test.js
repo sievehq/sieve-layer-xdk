@@ -791,7 +791,7 @@ describe('Components', function() {
       });
       client._clientAuthenticated();
       client._clientReady();
-      var query = client.createQuery({model: layer.Core.Query.Conversation});
+      var query = client.createQuery({model: Layer.Core.Query.Conversation});
       var el = document.createElement('layer-conversation-list');
       query.data = [
         client.createConversation({participants: ["a"]}),

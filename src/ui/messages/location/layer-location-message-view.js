@@ -9,7 +9,7 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import { registerMessageActionHandler } from '../../base';
+import { Constants } from '../../base';
 
 registerComponent('layer-location-message-view', {
   mixins: [MessageViewMixin],
@@ -17,12 +17,16 @@ registerComponent('layer-location-message-view', {
   style: `
   layer-message-viewer.layer-location-message-view {
     cursor: pointer;
+    max-width: 640px;
   }
   layer-location-message-view.layer-location-message-view-address-only {
     display: none;
   }
   layer-location-message-view img {
     display: block;
+  }
+  layer-message-viewer.layer-location-message-view .layer-location-message-show-street-address .layer-card-description p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
+    margin-top: 0px;
   }
   `,
   properties: {
@@ -54,7 +58,7 @@ registerComponent('layer-location-message-view', {
 
     // See parent class
     widthType: {
-      value: 'full-width',
+      value: Constants.WIDTH.FULL,
     },
 
     /**
@@ -105,18 +109,7 @@ registerComponent('layer-location-message-view', {
     _setupContainerClasses() {
       this.parentComponent.toggleClass('layer-arrow-next-container', this.hideMap);
       this.parentComponent.toggleClass('layer-no-core-ui', this.hideMap);
+      this.parentComponent.toggleClass('layer-location-message-show-street-address', this.model.street1 && !this.model.description);
     },
   },
-});
-
-registerMessageActionHandler('open-map', function openMapHandler(customData) {
-  let url;
-  if (this.model.street1) {
-    url = 'http://www.google.com/maps/?q=' +
-      escape(this.model.street1 + (this.model.street2 ? ' ' + this.model.street2 : '') +
-      ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
-  } else if (this.model.latitude) {
-    url = `https://www.google.com/maps/search/?api=1&query=${this.model.latitude},${this.model.longitude}&zoom=${this.model.zoom}`;
-  }
-  this.showFullScreen(url);
 });

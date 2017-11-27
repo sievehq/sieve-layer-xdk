@@ -860,8 +860,12 @@ describe("The MessageParts class", function() {
           var c = new layer.Core.Content({});
           c.downloadUrl = "hey";
           c.expiration = new Date('2010-10-10');
-          var part = new layer.Core.MessagePart({_content: c});
+          var part = new layer.Core.MessagePart({mimeType: "image/png", _content: c});
+
+          // Run Test: Replace the downloadUrl and expiration we just set with values provided by server
           part._populateFromServer(JSON.parse(JSON.stringify(responses.message1.parts[1])));
+
+          // Posttest
           expect(part._content.downloadUrl).toEqual(responses.message1.parts[1].content.download_url);
           expect(part._content.expiration).toEqual(new Date(responses.message1.parts[1].content.expiration));
         });
@@ -882,9 +886,9 @@ describe("The MessageParts class", function() {
         });
 
         it("Should not trigger a change event if a blob is unchanged", function(done) {
-            m = new layer.Core.MessagePart({body: "hey", mimeType: "ho"});
+            m = new layer.Core.MessagePart({body: "hey", mimeType: "ho", encoding: "base64"});
             spyOn(m, '_triggerAsync');
-            m._populateFromServer({mime_type: "ho", body: "hey"});
+            m._populateFromServer({mime_type: "ho", body: "hey", encoding: "base64"});
             setTimeout(function() {
                 expect(m._triggerAsync).not.toHaveBeenCalled();
                 done();
@@ -899,6 +903,43 @@ describe("The MessageParts class", function() {
                 expect(m._triggerAsync).toHaveBeenCalled();
                 done();
             }, 100);
+        });
+    });
+
+    describe("The createModel() method", function() {
+        it("Should create a new model", function() {
+            describe("The createModel() method", function() {
+                it("Should call rootPart.createModel()", function() {
+                    // Setup
+                    var part = new layer.Core.MessagePart({
+                        client: client,
+                        mimeType: "application/vnd.layer.text+json",
+                        body: '{"text": "a"}'
+                    });
+
+                    // Run
+                    var TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+                    expect(part.createModel()).toEqual(jasmine.any(TextModel));
+                });
+            });
+
+
+        });
+
+        it("Should return a cached model", function() {
+            // Setup
+            var message = new layer.Core.Message({
+                client: client,
+                parts: [{
+                    mimeType: "application/vnd.layer.text+json",
+                    body: '{"text": "a"}'
+                }]
+            });
+            var part = message.parts[0]
+            var model = part.createModel();
+
+            // Run
+            expect(part.createModel()).toBe(model);
         });
     });
 
@@ -928,7 +969,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should have a correct content", function() {
-            expect(part._content instanceof layer.Content).toBe(true);
+            expect(part._content instanceof Layer.Core.Content).toBe(true);
             expect(part._content.id).toEqual("jill");
         });
 

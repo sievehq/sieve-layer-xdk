@@ -5,6 +5,7 @@
  */
 
 import { registerComponent } from '../components/component';
+import { Constants } from '../base';
 
 module.exports = {
   properties: {
@@ -54,9 +55,9 @@ module.exports = {
      *
      * One of:
      *
-     * * "full-width": Uses all available width
-     * * "chat-bubble": No minimum, maximum is all available width; generallay does not look like a card
-     * * "flex-width": card that has a minimum and a maximum but tries for an optimal size for its contents
+     * * Layer.UI.Constants.WIDTH.FULL: Uses all available width
+     * * Layer.UI.Constants.WIDTH.ANY: No minimum, maximum is all available width; generallay does not look like a card
+     * * Layer.UI.Constants.WIDTH.FLEX: card that has a minimum and a maximum but tries for an optimal size for its contents
      *
      * @type {String} widthType
      */
@@ -135,7 +136,7 @@ module.exports = {
      */
     onRerender() {
       if (this.messageViewer) {
-        this.messageViewer.widthType = this.widthType || 'flex-width';
+        this.messageViewer.widthType = this.widthType || Constants.WIDTH.FLEX;
       }
     },
 

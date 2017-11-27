@@ -2,7 +2,7 @@
  * Query class for running a Query on Messages
  *
  *      var messageQuery = client.createQuery({
- *        model: layer.Core.Query.Message,
+ *        model: Layer.Core.Query.Message,
  *        predicate: 'conversation.id = "layer:///conversations/UUID"'
  *      });
  *
@@ -24,8 +24,8 @@
  * * `conversation.id = 'layer:///conversations/UUIUD'`
  * * `channel.id = 'layer:///channels/UUIUD'`
  *
- * @class  layer.MessagesQuery
- * @extends layer.Core.Query
+ * @class  Layer.Core.MessagesQuery
+ * @extends Layer.Core.Query
  */
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';

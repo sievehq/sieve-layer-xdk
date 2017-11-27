@@ -15,7 +15,7 @@
  *
  * Typically, rendering would be done as follows:
  *
- *      // Create a layer.Core.Query that loads Messages for the
+ *      // Create a Layer.Core.Query that loads Messages for the
  *      // specified Conversation.
  *      var query = client.createQuery({
  *        model: Query.Message,
@@ -46,13 +46,13 @@
  *
  *      // Full API style:
  *      var m = conversation.createMessage({
- *          parts: [new layer.MessagePart({
+ *          parts: [new Layer.Core.MessagePart({
  *              body: 'Hello there',
  *              mimeType: 'text/plain'
  *          })]
  *      });
  *
- *      // Option 1: Pass in an Object instead of an array of layer.MessageParts
+ *      // Option 1: Pass in an Object instead of an array of Layer.Core.MessageParts
  *      var m = conversation.createMessage({
  *          parts: {
  *              body: 'Hello there',
@@ -60,7 +60,7 @@
  *          }
  *      });
  *
- *      // Option 2: Pass in an array of Objects instead of an array of layer.MessageParts
+ *      // Option 2: Pass in an array of Objects instead of an array of Layer.Core.MessageParts
  *      var m = conversation.createMessage({
  *          parts: [{
  *              body: 'Hello there',
@@ -90,30 +90,30 @@
  *
  * Properties:
  *
- * * layer.Message.id: this property is worth being familiar with; it identifies the
+ * * Layer.Core.Message.id: this property is worth being familiar with; it identifies the
  *   Message and can be used in `client.getMessage(id)` to retrieve it
  *   at any time.
- * * layer.Message.internalId: This property makes for a handy unique ID for use in dom nodes.
+ * * Layer.Core.Message.internalId: This property makes for a handy unique ID for use in dom nodes.
  *   It is gaurenteed not to change during this session.
- * * layer.Message.isRead: Indicates if the Message has been read yet; set `m.isRead = true`
+ * * Layer.Core.Message.isRead: Indicates if the Message has been read yet; set `m.isRead = true`
  *   to tell the client and server that the message has been read.
- * * layer.Message.parts: An array of layer.MessagePart classes representing the contents of the Message.
- * * layer.Message.sentAt: Date the message was sent
- * * layer.Message.sender `userId`: Conversation participant who sent the Message. You may
+ * * Layer.Core.Message.parts: An array of Layer.Core.MessagePart classes representing the contents of the Message.
+ * * Layer.Core.Message.sentAt: Date the message was sent
+ * * Layer.Core.Message.sender `userId`: Conversation participant who sent the Message. You may
  *   need to do a lookup on this id in your own servers to find a
  *   displayable name for it.
  *
  * Methods:
  *
- * * layer.Message.send(): Sends the message to the server and the other participants.
- * * layer.Message.on() and layer.Message.off(); event listeners built on top of the `backbone-events-standalone` npm project
+ * * Layer.Core.Message.send(): Sends the message to the server and the other participants.
+ * * Layer.Core.Message.on() and Layer.Core.Message.off(); event listeners built on top of the `backbone-events-standalone` npm project
  *
  * Events:
  *
  * * `messages:sent`: The message has been received by the server. Can also subscribe to
- *   this event from the layer.Client which is usually simpler.
+ *   this event from the Layer.Core.Client which is usually simpler.
  *
- * @class  layer.Message
+ * @class  Layer.Core.Message
  * @extends Layer.Core.Syncable
  */
 
@@ -127,10 +127,10 @@ import Identity from './identity';
 
 class Message extends Syncable {
   /**
-   * See layer.Conversation.createMessage()
+   * See Layer.Core.Conversation.createMessage()
    *
    * @method constructor
-   * @return {layer.Message}
+   * @return {Layer.Core.Message}
    */
   constructor(options = {}) {
     // Unless this is a server representation, this is a developer's shorthand;
@@ -175,7 +175,7 @@ class Message extends Syncable {
   }
 
   /**
-   * Turn input into valid layer.MessageParts.
+   * Turn input into valid Layer.Core.MessageParts.
    *
    * This method is automatically called any time the parts
    * property is set (including during intialization).  This
@@ -185,7 +185,7 @@ class Message extends Syncable {
    * @method __adjustParts
    * @private
    * @param  {Mixed} parts -- Could be a string, array, object or MessagePart instance
-   * @return {layer.MessagePart[]}
+   * @return {Layer.Core.MessagePart[]}
    */
   __adjustParts(parts) {
     let adjustedParts;
@@ -240,7 +240,7 @@ class Message extends Syncable {
   }
 
   /**
-   * Add a layer.MessagePart to this Message.
+   * Add a Layer.Core.MessagePart to this Message.
    *
    * Should only be called on an unsent Message.
    *
@@ -248,12 +248,12 @@ class Message extends Syncable {
    * message.addPart({mimeType: 'text/plain', body: 'Frodo really is a Dodo'});
    *
    * // OR
-   * message.addPart(new layer.MessagePart({mimeType: 'text/plain', body: 'Frodo really is a Dodo'}));
+   * message.addPart(new Layer.Core.MessagePart({mimeType: 'text/plain', body: 'Frodo really is a Dodo'}));
    * ```
    *
    * @method addPart
-   * @param  {layer.MessagePart/Object} part - A layer.MessagePart instance or a `{mimeType: 'text/plain', body: 'Hello'}` formatted Object.
-   * @returns {layer.Message} this
+   * @param  {Layer.Core.MessagePart/Object} part - A Layer.Core.MessagePart instance or a `{mimeType: 'text/plain', body: 'Hello'}` formatted Object.
+   * @returns {Layer.Core.Message} this
    */
   addPart(part) {
     if (part) {
@@ -304,7 +304,7 @@ class Message extends Syncable {
    * Your unsent Message will show up in Query results and be rendered in Message Lists.
    *
    * This method is only needed for Messages that should show up in a Message List Widget that
-   * is driven by Query data, but where the layer.Message.send method has not yet been called.
+   * is driven by Query data, but where the Layer.Core.Message.send method has not yet been called.
    *
    * Once you have called `presend` your message should show up in your Message List.  However,
    * typically you want to be able to edit and rerender that Message. After making changes to the Message,
@@ -377,7 +377,7 @@ class Message extends Syncable {
    * @param {string} [notification.title] - Title to show on lock screen and notification bar
    * @param {string} [notification.text] - Text of your notification
    * @param {string} [notification.sound] - Name of an audio file or other sound-related hint
-   * @return {layer.Message} this
+   * @return {Layer.Core.Message} this
    */
   send(notification) {
     const client = this.getClient();
@@ -493,7 +493,7 @@ class Message extends Syncable {
   /**
    * Handle the actual sending.
    *
-   * layer.Message.send has some potentially asynchronous
+   * Layer.Core.Message.send has some potentially asynchronous
    * preprocessing to do before sending (Rich Content); actual sending
    * is done here.
    *
@@ -531,7 +531,7 @@ class Message extends Syncable {
   }
 
   /**
-    * layer.Message.send() Success Callback.
+    * Layer.Core.Message.send() Success Callback.
     *
     * If successfully sending the message; triggers a 'sent' event,
     * and updates the message.id/url
@@ -583,7 +583,7 @@ class Message extends Syncable {
    * @param  {string} eventName
    * @param  {Function} eventHandler
    * @param  {Object} context
-   * @return {layer.Message} this
+   * @return {Layer.Core.Message} this
    */
   on(name, callback, context) {
     const hasLoadedEvt = name === 'messages:loaded' ||
@@ -619,7 +619,7 @@ class Message extends Syncable {
    *
    * @private
    * @method
-   * @param {layer.MessagePart[]} parts
+   * @param {Layer.Core.MessagePart[]} parts
    */
   _setupPartIds(parts) {
     // Assign IDs to preexisting Parts so that we can call getPartById()
@@ -693,7 +693,7 @@ class Message extends Syncable {
   }
 
   /**
-   * Returns the Message's layer.MessagePart with the specified the part ID.
+   * Returns the Message's Layer.Core.MessagePart with the specified the part ID.
    *
    * ```
    * var part = client.getMessagePart('layer:///messages/6f08acfa-3268-4ae5-83d9-6ca00000000/parts/0');
@@ -701,7 +701,7 @@ class Message extends Syncable {
    *
    * @method getPartById
    * @param {string} partId
-   * @return {layer.MessagePart}
+   * @return {Layer.Core.MessagePart}
    */
   getPartById(partId) {
     const part = this.parts ? this.parts.filter(aPart => aPart.id === partId)[0] : null;
@@ -716,7 +716,7 @@ class Message extends Syncable {
   }
 
   /**
-   * Returns array of layer.MessagePart that have the specified MIME Type attribute.
+   * Returns array of Layer.Core.MessagePart that have the specified MIME Type attribute.
    *
    * ```
    * // get all parts where mime type has "lang=en-us" in it
@@ -728,7 +728,7 @@ class Message extends Syncable {
    *
    * @method
    * @param {Object} matches
-   * @returns {layer.MessagePart[]}
+   * @returns {Layer.Core.MessagePart[]}
    */
   getPartsMatchingAttribute(matches) {
     let first = true;
@@ -916,11 +916,11 @@ Message.prototype.clientId = '';
 Message.prototype.conversationId = '';
 
 /**
- * Array of layer.MessagePart objects.
+ * Array of Layer.Core.MessagePart objects.
  *
- * Use layer.Message.addPart to modify this array.
+ * Use Layer.Core.Message.addPart to modify this array.
  *
- * @type {layer.MessagePart[]}
+ * @type {Layer.Core.MessagePart[]}
  * @readonly
  */
 Message.prototype.parts = null;
@@ -928,7 +928,7 @@ Message.prototype.parts = null;
 /**
  * Time that the message was sent.
  *
- *  Note that a locally created layer.Message will have a `sentAt` value even
+ *  Note that a locally created Layer.Core.Message will have a `sentAt` value even
  * though its not yet sent; this is so that any rendering code doesn't need
  * to account for `null` values.  Sending the Message may cause a slight change
  * in the `sentAt` value.
@@ -979,7 +979,7 @@ Message.prototype.sender = null;
 Message.prototype.position = 0;
 
 /**
- * Hint used by layer.Client on whether to trigger a messages:notify event.
+ * Hint used by Layer.Core.Client on whether to trigger a messages:notify event.
  *
  * @type {boolean}
  * @private
@@ -1062,7 +1062,7 @@ Message._supportedEvents = [
   /**
    * Message has been loaded from the server.
    *
-   * Note that this is only used in response to the layer.Message.load() method.
+   * Note that this is only used in response to the Layer.Core.Message.load() method.
    *
    * ```
    * var m = client.getMessage('layer:///messages/123', true)
@@ -1080,7 +1080,7 @@ Message._supportedEvents = [
   /**
    * The load method failed to load the message from the server.
    *
-   * Note that this is only used in response to the layer.Message.load() method.
+   * Note that this is only used in response to the Layer.Core.Message.load() method.
    * @event
    * @param {Layer.Core.LayerEvent} evt
    */
@@ -1089,7 +1089,7 @@ Message._supportedEvents = [
   /**
    * Message deleted from the server.
    *
-   * Caused by a call to layer.Message.delete() or a websocket event.
+   * Caused by a call to Layer.Core.Message.delete() or a websocket event.
    * @param {Layer.Core.LayerEvent} evt
    * @event
    */
@@ -1151,7 +1151,7 @@ Message._supportedEvents = [
    *
    * @event
    * @param {Layer.Core.LayerEvent} evt
-   * @param {layer.MessagePart} evt.part
+   * @param {Layer.Core.MessagePart} evt.part
    */
   'messages:part-added',
 
@@ -1160,7 +1160,7 @@ Message._supportedEvents = [
    *
    * @event
    * @param {Layer.Core.LayerEvent} evt
-   * @param {layer.MessagePart} evt.part
+   * @param {Layer.Core.MessagePart} evt.part
    */
   'messages:part-removed',
 ].concat(Syncable._supportedEvents);

@@ -22,31 +22,31 @@
  *
  * Properties:
  *
- * * layer.Channel.id: this property is worth being familiar with; it identifies the
+ * * Layer.Core.Channel.id: this property is worth being familiar with; it identifies the
  *   Channel and can be used in `client.getChannel(id)` to retrieve it.
- * * layer.Channel.name: this property names the channel; this may be human readable, though for localization purposes,
+ * * Layer.Core.Channel.name: this property names the channel; this may be human readable, though for localization purposes,
  *   you may instead want to use a common name that is distinct from your displayed name.  There can only be a single
  *   channel with a given name per app.
- * * layer.Channel.membership: Contains status information about your user's role in this Channel.
- * * layer.Channel.isCurrentParticipant: Shorthand for determining if your user is a member of the Channel.
+ * * Layer.Core.Channel.membership: Contains status information about your user's role in this Channel.
+ * * Layer.Core.Channel.isCurrentParticipant: Shorthand for determining if your user is a member of the Channel.
  *
  * Methods:
  *
- * * layer.Channel.join() to join the Channel
- * * layer.Channel.leave() to leave the Channel
- * * layer.Channel.on() and layer.Channel.off(): event listeners built on top of the `backbone-events-standalone` npm project
- * * layer.Channel.createMessage() to send a message on the Channel.
+ * * Layer.Core.Channel.join() to join the Channel
+ * * Layer.Core.Channel.leave() to leave the Channel
+ * * Layer.Core.Channel.on() and Layer.Core.Channel.off(): event listeners built on top of the `backbone-events-standalone` npm project
+ * * Layer.Core.Channel.createMessage() to send a message on the Channel.
  *
  * Events:
  *
  * * `channels:change`: Useful for observing changes to Channel name
  *   and updating rendering of your Channel
  *
- * Finally, to access a list of Messages in a Channel, see layer.Core.Query.
+ * Finally, to access a list of Messages in a Channel, see Layer.Core.Query.
  *
- * @class  layer.Channel
+ * @class  Layer.Core.Channel
  * @experimental This feature is incomplete, and available as Preview only.
- * @extends layer.Container
+ * @extends Layer.Core.Container
  * @author  Michael Kantor
  */
 import Root from '../root';
@@ -81,25 +81,25 @@ class Channel extends Container {
   }
 
   /**
-   * Create a new layer.Message.ChannelMessage instance within this conversation
+   * Create a new Layer.Core.Message.ChannelMessage instance within this conversation
    *
    *      var message = channel.createMessage('hello');
    *
    *      var message = channel.createMessage({
-   *          parts: [new layer.MessagePart({
+   *          parts: [new Layer.Core.MessagePart({
    *                      body: 'hello',
    *                      mimeType: 'text/plain'
    *                  })]
    *      });
    *
-   * See layer.Message.ChannelMessage for more options for creating the message.
+   * See Layer.Core.Message.ChannelMessage for more options for creating the message.
    *
    * @method createMessage
    * @param  {String|Object} options - If its a string, a MessagePart is created around that string.
-   * @param {layer.MessagePart[]} options.parts - An array of MessageParts.  There is some tolerance for
+   * @param {Layer.Core.MessagePart[]} options.parts - An array of MessageParts.  There is some tolerance for
    *                                               it not being an array, or for it being a string to be turned
    *                                               into a MessagePart.
-   * @return {layer.Message.ChannelMessage}
+   * @return {Layer.Core.Message.ChannelMessage}
    */
   createMessage(options = {}) {
     let messageConfig;
@@ -151,7 +151,15 @@ class Channel extends Container {
     };
   }
 
-
+  /**
+   * Populates this instance using server-data.
+   *
+   * Side effects add this to the Client.
+   *
+   * @method _populateFromServer
+   * @private
+   * @param  {Object} channel - Server representation of the channel
+   */
   _populateFromServer(channel) {
     this._inPopulateFromServer = true;
 
@@ -183,6 +191,13 @@ class Channel extends Container {
     this._inPopulateFromServer = false;
   }
 
+  /**
+   * Validation done on the name; triggered via setter before value is written.
+   *
+   * @method __adjustName
+   * @private
+   * @param {String} newValue
+   */
   __adjustName(newValue) {
     if (this._inPopulateFromServer || this._inLayerParser || this.isNew() || this.isLoading) return;
     throw new Error(ErrorDictionary.permissionDenied);
@@ -216,7 +231,7 @@ class Channel extends Container {
    *
    * @method addMembers
    * @param {String[]} members   Identity IDs of users to add to this Channel
-   * @return {layer.Channel} this
+   * @return {Layer.Core.Channel} this
    *
    *
    *
@@ -248,7 +263,7 @@ class Channel extends Container {
    *
    * @method removeMembers
    * @param {String[]} members   Identity IDs of users to remove from this Channel
-   * @return {layer.Channel} this
+   * @return {Layer.Core.Channel} this
    *
    *
    *
@@ -281,7 +296,7 @@ class Channel extends Container {
    * Add the current user to this channel.
    *
    * @method join
-   * @return {layer.Channel} this
+   * @return {Layer.Core.Channel} this
    *
    *
    *
@@ -297,7 +312,7 @@ class Channel extends Container {
    * remove the current user from this channel.
    *
    * @method leave
-   * @return {layer.Channel} this
+   * @return {Layer.Core.Channel} this
    *
    *
    *
@@ -354,7 +369,7 @@ class Channel extends Container {
    *
    * Trigger any cleanup or events needed after these changes.
    *
-   * TODO: Move this to layer.Container
+   * TODO: Move this to Layer.Core.Container
    *
    * @method _handlePatchEvent
    * @private
@@ -425,8 +440,8 @@ class Channel extends Container {
    * @protected
    * @static
    * @param  {Object} channel - Server representation of a Channel
-   * @param  {layer.Client} client
-   * @return {layer.Channel}
+   * @param  {Layer.Core.Client} client
+   * @return {Layer.Core.Channel}
    */
   static _createFromServer(channel, client) {
     return new Channel({
@@ -439,7 +454,7 @@ class Channel extends Container {
   /**
    * Find or create a new Channel.
    *
-   *      var channel = layer.Channel.create({
+   *      var channel = Layer.Core.Channel.create({
    *          members: ['a', 'b'],
    *          private: true,
    *          metadata: {
@@ -458,11 +473,11 @@ class Channel extends Container {
    * @static
    * @protected
    * @param  {Object} options
-   * @param  {layer.Client} options.client
+   * @param  {Layer.Core.Client} options.client
    * @param  {string[]/Layer.Core.Identity[]} options.members - Array of Participant IDs or Layer.Core.Identity objects to create a channel with.
    * @param {boolean} [options.private=false] - Create a private channel
    * @param {Object} [options.metadata={}] - Initial metadata for Channel
-   * @return {layer.Channel}
+   * @return {Layer.Core.Channel}
    */
   static create(options) {
     if (!options.client) throw new Error(ErrorDictionary.clientMissing);
@@ -561,7 +576,7 @@ Channel._supportedEvents = [
   /**
    * The conversation is now loaded from the server.
    *
-   * Note that this is only used in response to the layer.Channel.load() method.
+   * Note that this is only used in response to the Layer.Core.Channel.load() method.
    * from the server.
    * @event
    * @param {Layer.Core.LayerEvent} event
@@ -571,7 +586,7 @@ Channel._supportedEvents = [
   /**
    * An attempt to load this conversation from the server has failed.
    *
-   * Note that this is only used in response to the layer.Channel.load() method.
+   * Note that this is only used in response to the Layer.Core.Channel.load() method.
    * @event
    * @param {Layer.Core.LayerEvent} event
    * @param {Layer.Core.LayerEvent} event.error
@@ -597,7 +612,7 @@ Channel._supportedEvents = [
    * @param {Mixed} event.changes.newValue
    * @param {Mixed} event.changes.oldValue
    * @param {string} event.changes.property - Name of the property that changed
-   * @param {layer.Conversation} event.target
+   * @param {Layer.Core.Conversation} event.target
    */
   'channels:change'].concat(Syncable._supportedEvents);
 

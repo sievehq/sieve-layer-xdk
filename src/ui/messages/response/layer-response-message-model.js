@@ -45,7 +45,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, MessageTypeModel }  from '../../../core';
-import { statusMimeTypes } from '../../base';
+import { registerStatusModel } from '../../base';
 
 class ResponseModel extends MessageTypeModel {
 
@@ -166,6 +166,6 @@ ResponseModel.messageRenderer = 'layer-response-message-view';
 Client.registerMessageTypeModelClass(ResponseModel, 'ResponseModel');
 
 // Register the message to be handled as a Status Message
-statusMimeTypes.push(ResponseModel.MIMEType);
+registerStatusModel(ResponseModel);
 
 module.exports = ResponseModel;

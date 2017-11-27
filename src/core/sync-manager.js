@@ -15,7 +15,7 @@
  * This issue goes away when we use bidirectional websockets for all requests.
  *
  * Applications do not typically interact with this class, but may subscribe to its events
- * to get richer detailed information than is available from the layer.Client instance.
+ * to get richer detailed information than is available from the Layer.Core.Client instance.
  */
 import Root from './root';
 import { WebsocketSyncEvent } from './sync-event';
@@ -49,7 +49,7 @@ class SyncManager extends Root {
    * @param  {Object} options
    * @param {layer.OnlineStateManager} options.onlineManager
    * @param {layer.Websockets.RequestManager} options.requestManager
-   * @param {layer.Client} options.client
+   * @param {Layer.Core.Client} options.client
    */
   constructor(options) {
     super(options);

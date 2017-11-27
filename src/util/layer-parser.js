@@ -17,7 +17,7 @@
  * @param {Object} request.object - Object being updated  by the operations
  * @param {string} request.type - Type of object being updated
  * @param {Object[]} request.operations - Array of change operations to perform upon the object
- * @param {layer.Client} request.client
+ * @param {Layer.Core.Client} request.client
  */
 import LayerParser from 'layer-patch';
 
@@ -28,7 +28,7 @@ let parser;
  *
  * @method
  * @private
- * @param {Object} request - see layer.ClientUtils.layerParse
+ * @param {Object} request - see Layer.Core.ClientUtils.layerParse
  */
 function createParser(request) {
   request.client.once('destroy', () => (parser = null));

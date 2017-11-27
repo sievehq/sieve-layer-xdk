@@ -34,7 +34,7 @@
  * ## Key Properties
  *
  * * layer.UI.components.ConversationPanel.conversationId (attribute-name: `conversation-id`): Set what conversation is being viewed
- * * layer.UI.components.ConversationPanel.queryId (attribute-name: `query-id`): If your app already has a layer.Core.Query, you can provide it to this widget to render and page through its Messages.  If you don't have a layer.Core.Query instance, this widget will generate one for you.
+ * * layer.UI.components.ConversationPanel.queryId (attribute-name: `query-id`): If your app already has a Layer.Core.Query, you can provide it to this widget to render and page through its Messages.  If you don't have a Layer.Core.Query instance, this widget will generate one for you.
  *
  * NOTE: If you provide your own Query, you must update its predicate when changing Conversations.
  *
@@ -77,7 +77,7 @@ registerComponent('layer-conversation-view', {
    *   evt.preventDefault();
    *   var message = evt.detail.item;
    *   myAsyncLookup(function(result) {
-   *     var part = new layer.MessagePart({
+   *     var part = new Layer.Core.MessagePart({
    *       mimeType: 'application/json',
    *       body: result
    *     });
@@ -90,7 +90,7 @@ registerComponent('layer-conversation-view', {
    * @property {Function} onSendMessage
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item
+   * @param {Layer.Core.Message} evt.detail.item
    */
 
   /**
@@ -103,7 +103,7 @@ registerComponent('layer-conversation-view', {
    *   evt.preventDefault();
    *   var message = evt.detail.item;
    *   myAsyncLookup(function(result) {
-   *     var part = new layer.MessagePart({
+   *     var part = new Layer.Core.MessagePart({
    *       mimeType: 'application/json',
    *       body: result
    *     });
@@ -116,7 +116,7 @@ registerComponent('layer-conversation-view', {
    * @event layer-send-message
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item
+   * @param {Layer.Core.Message} evt.detail.item
    * @param {Object} evt.detail.notification
    */
 
@@ -136,7 +136,7 @@ registerComponent('layer-conversation-view', {
    * @property {Function} onMessageDeleted
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item
+   * @param {Layer.Core.Message} evt.detail.item
    * @removed 2.0, use menu options callback to perform any needed actions or trigger any needed events
    */
 
@@ -156,7 +156,7 @@ registerComponent('layer-conversation-view', {
    * @event layer-message-deleted
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item
+   * @param {Layer.Core.Message} evt.detail.item
    * @removed 2.0, use menu options callback to perform any needed actions or trigger any needed events
    */
 
@@ -319,7 +319,7 @@ registerComponent('layer-conversation-view', {
      * }
      * ```
      *
-     * @property {layer.Container}
+     * @property {Layer.Core.Container}
      */
     conversation: {
       set(value) {
@@ -385,7 +385,7 @@ registerComponent('layer-conversation-view', {
      * @property {Function} onRenderListItem
      * @property {layer.UI.components.MessagesListPanel.Item} onRenderListItem.widget
      *    One row of the list
-     * @property {layer.Message[]} onRenderListItem.items
+     * @property {Layer.Core.Message[]} onRenderListItem.items
      *    full set of messages in the list
      * @property {Number} onRenderListItem.index
      *    index of the message in the items array
@@ -434,7 +434,7 @@ registerComponent('layer-conversation-view', {
      * };
      * ```
      *
-     * See layer.Message for more information on the properties available to determine a message's status.
+     * See Layer.Core.Message for more information on the properties available to determine a message's status.
      *
      * @property {Function} [messageStatusRenderer=null]
      */
@@ -502,7 +502,7 @@ registerComponent('layer-conversation-view', {
      * ```
      *
      * @property {Function} getMenuOptions
-     * @property {layer.Message} getMenuOptions.message
+     * @property {Layer.Core.Message} getMenuOptions.message
      * @property {Object[]} getMenuOptions.returns
      */
     getMenuOptions: {
@@ -642,7 +642,7 @@ registerComponent('layer-conversation-view', {
      *
      * @readonly
      * @private
-     * @property {String} [_queryModel=layer.Core.Query.Message]
+     * @property {String} [_queryModel=Layer.Core.Query.Message]
      */
     _queryModel: {
       value: Core.Query.Message,
@@ -709,7 +709,7 @@ registerComponent('layer-conversation-view', {
      * ```
      *
      * @method
-     * @param {layer.MessagePart[]} optionalParts
+     * @param {Layer.Core.MessagePart[]} optionalParts
      */
     send(optionalParts) {
       const args = optionalParts ? [optionalParts] : [];

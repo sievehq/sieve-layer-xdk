@@ -83,7 +83,7 @@ module.exports = {
    * @property {Object} [DELETION_MODE=]
    * @property {number} DELETION_MODE.ALL          Delete Message/Conversation for All users but remain in the Conversation;
    *                                               new Messages will restore this Conversation minus any Message History prior to deletion.
-   * @property {number} DELETION_MODE.MY_DEVICES   Delete Message or Conversation; but see layer.Conversation.leave if you want to delete
+   * @property {number} DELETION_MODE.MY_DEVICES   Delete Message or Conversation; but see Layer.Core.Conversation.leave if you want to delete
    *                                               a Conversation and not have it come back.
    */
   DELETION_MODE: {

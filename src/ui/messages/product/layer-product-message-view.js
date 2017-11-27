@@ -10,7 +10,7 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Base from '../../base';
+import LayerUI, { Constants } from '../../base';
 
 registerComponent('layer-product-message-view', {
   style: `
@@ -52,7 +52,7 @@ registerComponent('layer-product-message-view', {
 
   properties: {
     widthType: {
-      value: 'full-width',
+      value: Constants.WIDTH.FULL,
     },
 
     // Carousels of these things should not fill _any_ sized screen; put a max.
@@ -71,10 +71,10 @@ registerComponent('layer-product-message-view', {
     onRerender() {
 
       // Render the basic info fields
-      this.nodes.name.innerHTML = Base.processText(this.model.name);
-      this.nodes.brand.innerHTML = Base.processText(this.model.brand);
-      this.nodes.price.innerHTML = Base.processText(this.model.getFormattedPrice());
-      this.nodes.description.innerHTML = Base.processText(this.model.description);
+      this.nodes.name.innerHTML = LayerUI.processText(this.model.name);
+      this.nodes.brand.innerHTML = LayerUI.processText(this.model.brand);
+      this.nodes.price.innerHTML = LayerUI.processText(this.model.getFormattedPrice());
+      this.nodes.description.innerHTML = LayerUI.processText(this.model.description);
 
       // Render the image (at some point we may want a way to see multiple images)
       // If no images, hide the image area

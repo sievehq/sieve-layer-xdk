@@ -111,7 +111,7 @@ registerComponent('layer-message-list', {
     /**
      * Supplemental property which helps drive the welcome message
      *
-     * @property {layer.Conversation}
+     * @property {Layer.Core.Conversation}
      */
     conversation: {
       // Enables it to be made avaialble to any emptyNode, endOfConversation node, etc...  also over applies by writing to all Message Items too.
@@ -206,7 +206,7 @@ registerComponent('layer-message-list', {
      * ```
      *
      * @property {Function} getMenuOptions
-     * @property {layer.Message} getMenuOptions.message
+     * @property {Layer.Core.Message} getMenuOptions.message
      * @property {Object[]} getMenuOptions.returns
      */
     getMenuOptions: {

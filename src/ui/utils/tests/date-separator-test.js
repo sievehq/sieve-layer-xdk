@@ -37,7 +37,7 @@ describe("Date Separator Utility", function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
     query = client.createQuery({
-      model: layer.Core.Query.Message,
+      model: Layer.Core.Query.Message,
       predicate: 'conversation.id = "' + conversation.id + '"'
     });
     query.isFiring = false;

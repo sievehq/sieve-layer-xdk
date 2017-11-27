@@ -94,7 +94,7 @@ registerComponent('layer-conversation-list', {
    * @property {Function} onConversationSelected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Conversation} evt.detail.item   The selected Conversation
+   * @param {Layer.Core.Conversation} evt.detail.item   The selected Conversation
    * @param {Event} evt.detail.originalEvent               The click event that selected the Conversation
    */
 
@@ -104,7 +104,7 @@ registerComponent('layer-conversation-list', {
    * @event layer-conversation-selected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Conversation} evt.detail.item   The selected Conversation
+   * @param {Layer.Core.Conversation} evt.detail.item   The selected Conversation
    * @param {Event} evt.detail.originalEvent               The click event that selected the Conversation
    */
 
@@ -138,7 +138,7 @@ registerComponent('layer-conversation-list', {
    * @property {Function} onConversationDeleted
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Conversation} evt.detail.item
+   * @param {Layer.Core.Conversation} evt.detail.item
    */
 
   /**
@@ -147,7 +147,7 @@ registerComponent('layer-conversation-list', {
    * @event layer-conversation-deleted
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Conversation} evt.detail.item
+   * @param {Layer.Core.Conversation} evt.detail.item
    */
 
   events: ['layer-conversation-selected', 'layer-conversation-deleted'],
@@ -195,7 +195,7 @@ registerComponent('layer-conversation-list', {
      * the `layer-delete-enabled` css class to be added/removed on that widget.
      *
      * @property {Function} [deleteConversationEnabled=null]
-     * @property {layer.Conversation} deleteConversationEnabled.conversation
+     * @property {Layer.Core.Conversation} deleteConversationEnabled.conversation
      * @property {Boolean} deleteConversationEnabled.return
      */
     deleteConversationEnabled: {
@@ -207,7 +207,7 @@ registerComponent('layer-conversation-list', {
      *
      * @readonly
      * @private
-     * @property {String} [_queryModel=layer.Core.Query.Conversation]
+     * @property {String} [_queryModel=Layer.Core.Query.Conversation]
      */
     _queryModel: {
       value: Core.Query.Conversation,
@@ -289,7 +289,7 @@ registerComponent('layer-conversation-list', {
      * ```
      *
      * @property {Function} getMenuOptions
-     * @property {layer.Conversation} getMenuOptions.conversation
+     * @property {Layer.Core.Conversation} getMenuOptions.conversation
      * @property {Object[]} getMenuOptions.returns
      */
     getMenuOptions: {
@@ -388,7 +388,7 @@ registerComponent('layer-conversation-list', {
      *
      * @method _generateItem
      * @private
-     * @param {layer.Conversation} conversation
+     * @param {Layer.Core.Conversation} conversation
      */
     _generateItem(conversation) {
       const isChannel = conversation instanceof Core.Channel;

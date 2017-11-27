@@ -16,10 +16,10 @@
 * Renamed:
     * `<layer-standard-display-container />` to `<layer-standard-message-view-container />`
     * `<layer-titled-display-container />` to `<layer-titled-message-view-container />`
-    * `<layer-text-view />` to `<layer-text-message-view />`
-    * `<layer-status-view />` to `<layer-status-message-view />`
-    * `<layer-response-view />` to `<layer-response-message-view />`
-* Removed support for putting a `selectedAnswer` in the constructor for a Choice Model.  Instead use the `preselectedChoice` property.
+    * All Message Types are renamed with the following pattern: `<layer-xxx-view />` to `<layer-xxx-message-view />`
+    * Removed support for putting a `selectedAnswer` in the constructor for a Choice Model.  Instead use the `preselectedChoice` property.
+* Registered Message Action handlers are no longer called with `<layer-message-viewer />` as context, and instead receive inputs of `({data, model, rootModel, messageViewer})` where model and rootModel represent the model the event was triggered upon and any root Message Model (Carousel for example) that contains the model.
+* Triggering an action now first triggers a DOM level event with the name of the action. A call to `evt.preventDefault()` will prevent the Registered Message Action Handler from being called, and will let your event handler alone handle it.
 
 ## 1.0.0-pre1.15
 

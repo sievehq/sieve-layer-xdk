@@ -46,7 +46,7 @@ module.exports = {
                 });
             });
     *
-    * NOTE: Such rendering would typically be done using events on layer.Core.Query.
+    * NOTE: Such rendering would typically be done using events on Layer.Core.Query.
     *
     * @event
     * @param {Layer.Core.LayerEvent} evt
@@ -69,7 +69,7 @@ module.exports = {
      *          });
      *      });
      *
-     * NOTE: Such rendering would typically be done using events on layer.Core.Query.
+     * NOTE: Such rendering would typically be done using events on Layer.Core.Query.
      *
      * @event
      * @param {Layer.Core.LayerEvent} evt
@@ -131,7 +131,7 @@ module.exports = {
      *          }
      *      });
      *
-     * NOTE: Such rendering would typically be done using events on layer.Core.Query.
+     * NOTE: Such rendering would typically be done using events on Layer.Core.Query.
      *
      * @event
      * @param {Layer.Core.LayerEvent} evt

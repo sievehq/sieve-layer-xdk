@@ -9,7 +9,7 @@
  * websocket to the client, and `change` events on an Announcements Query.
  *
  * @class  Layer.Core.Announcement
- * @extends layer.Message.ConversationMessage
+ * @extends Layer.Core.Message.ConversationMessage
  */
 
 import ConversationMessage from './conversation-message';

@@ -1,5 +1,5 @@
 /**
- * The Layer widget renders a Last Message for a layer.Conversation.
+ * The Layer widget renders a Last Message for a Layer.Core.Conversation.
  *
  * This is provided as a specialized component so that it can be easily redefined by your app to
  * provide your own Conversation Last Message rendering:
@@ -32,9 +32,9 @@ registerComponent('layer-conversation-last-message', {
   properties: {
 
     /**
-     * The layer.Message to be rendered
+     * The Layer.Core.Message to be rendered
      *
-     * @property {layer.Message} [item=null]
+     * @property {Layer.Core.Message} [item=null]
      */
     item: {
       set(newValue, oldValue) {
@@ -84,7 +84,7 @@ registerComponent('layer-conversation-last-message', {
     },
 
     /**
-     * Rerender this widget whenever the layer.Conversation has a change event reporting on a
+     * Rerender this widget whenever the Layer.Core.Conversation has a change event reporting on a
      * new `lastMessage` property.
      *
      * Lookup a handler for the Message, and if one is found, see if it can render a concise version of its contents.

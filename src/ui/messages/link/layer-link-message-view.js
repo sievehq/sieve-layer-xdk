@@ -8,8 +8,8 @@
 
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import { registerMessageActionHandler } from '../../base';
 import Util from '../../../util';
+import { Constants } from '../../base';
 
 registerComponent('layer-link-message-view', {
   mixins: [MessageViewMixin],
@@ -41,7 +41,7 @@ registerComponent('layer-link-message-view', {
     widthType: {
       get() {
         // Use a chat bubble if there is no metadata nor image to show, else render this as a normal card-like message
-        return this.model.imageUrl || this.parentComponent.isShowingMetadata ? 'flex-width' : 'chat-bubble';
+        return this.model.imageUrl || this.parentComponent.isShowingMetadata ? Constants.WIDTH.FLEX : Constants.WIDTH.ANY;
       },
     },
 
@@ -104,7 +104,7 @@ registerComponent('layer-link-message-view', {
      */
     _setupContainerClasses() {
       if (this.widthType) {
-        const isLinkOnly = this.widthType === 'chat-bubble';
+        const isLinkOnly = this.widthType === Constants.WIDTH.ANY;
         const op = isLinkOnly || this.model.imageUrl ? 'remove' : 'add';
         this.parentComponent.classList[op]('layer-arrow-next-container');
         this.parentComponent.classList[this.model.imageUrl || isLinkOnly ? 'remove' : 'add']('layer-no-core-ui');
@@ -113,7 +113,3 @@ registerComponent('layer-link-message-view', {
   },
 });
 
-registerMessageActionHandler('open-url', function openUrlHandler(customData) {
-  const url = customData.url || this.model.url;
-  this.showFullScreen(url);
-});

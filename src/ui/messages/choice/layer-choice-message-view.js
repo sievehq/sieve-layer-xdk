@@ -7,6 +7,7 @@
  */
 
 import { registerComponent } from '../../components/component';
+import { Constants } from '../../base';
 
 import MessageViewMixin from '../message-view-mixin';
 import '../../components/layer-action-button/layer-action-button';
@@ -38,7 +39,7 @@ registerComponent('layer-choice-message-view', {
 
     // See parent definition
     widthType: {
-      value: 'flex-width',
+      value: Constants.WIDTH.FLEX,
     },
   },
   methods: {

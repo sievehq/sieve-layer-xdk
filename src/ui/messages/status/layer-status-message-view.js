@@ -10,7 +10,7 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Base from '../../base';
+import LayerUI, { Constants } from '../../base';
 
 registerComponent('layer-status-message-view', {
   style: `layer-status-message-view {
@@ -23,7 +23,7 @@ registerComponent('layer-status-message-view', {
   mixins: [MessageViewMixin],
   properties: {
     widthType: {
-      value: 'chat-bubble',
+      value: Constants.WIDTH.ANY,
     },
     messageViewContainerTagName: {
       value: '',
@@ -31,7 +31,7 @@ registerComponent('layer-status-message-view', {
   },
   methods: {
     onRerender() {
-      this.innerHTML = Base.processText(this.model.text);
+      this.innerHTML = LayerUI.processText(this.model.text);
     },
   },
 });

@@ -5,21 +5,21 @@
       {
         "name": "Core Classes",
         "classes": [
-          "layer.Client",
-          "layer.Conversation",
-          "layer.Message",
-          "layer.MessagePart",
-          "layer.Core.Query"
+          "Layer.Core.Client",
+          "Layer.Core.Conversation",
+          "Layer.Core.Message",
+          "Layer.Core.MessagePart",
+          "Layer.Core.Query"
         ]
       },
       {
         "name": "Utilities",
         "classes": [
-          "layer.Core.QueryBuilder.ConversationsQuery",
-          "layer.Core.QueryBuilder.MessagesQuery",
+          "Layer.Core.QueryBuilder.ConversationsQuery",
+          "Layer.Core.QueryBuilder.MessagesQuery",
           "Layer.Core.LayerEvent",
           "Layer.Core.LayerEvent",
-          "layer.ClientUtils",
+          "Layer.Core.ClientUtils",
           "Layer.Core.Root",
           "layer.Constants"
         ]

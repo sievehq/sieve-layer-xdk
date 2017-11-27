@@ -7,7 +7,7 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import { registerMessageActionHandler } from '../../base';
+import { Constants } from '../../base';
 
 registerComponent('layer-file-message-view', {
   mixins: [MessageViewMixin],
@@ -23,7 +23,7 @@ registerComponent('layer-file-message-view', {
   properties: {
     // See parent class
     widthType: {
-      value: 'flex-width',
+      value: Constants.WIDTH.FLEX,
     },
 
     /**
@@ -58,13 +58,4 @@ registerComponent('layer-file-message-view', {
       this.classList.add('layer-file-' + this.model.mimeType.replace(/[/+]/g, '-'));
     },
   },
-});
-
-/* Note that this runs with this === <layer-message-viewer /> */
-registerMessageActionHandler('open-file', function openFileHandler(customData) {
-  if (customData.url || customData.source_url) {
-    this.showFullScreen(customData.url || customData.source_url);
-  } else {
-    this.model.getSourceUrl(url => this.showFullScreen(url));
-  }
 });

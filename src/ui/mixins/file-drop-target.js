@@ -161,7 +161,7 @@ module.exports = {
      * previews and metadata message parts
      *
      * @method processAttachments
-     * @param {layer.MessagePart[]} files    File Objects to turn into a carousel
+     * @param {Layer.Core.MessagePart[]} files    File Objects to turn into a carousel
      */
     processAttachments(files) {
       const imageTypes = ['image/gif', 'image/png', 'image/jpeg', 'image/svg'];

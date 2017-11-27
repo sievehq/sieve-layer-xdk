@@ -4,7 +4,7 @@ describe("Has Query Mixin", function() {
       mixins: [layerUI.mixins.HasQuery, layerUI.mixins.MainComponent],
       properties: {
         _queryModel: {
-          value: layer.Core.Query.Identity
+          value: Layer.Core.Query.Identity
         },
         sortBy: {
           order: 10,
@@ -36,7 +36,7 @@ describe("Has Query Mixin", function() {
     el = document.createElement('has-query-test');
     testRoot.appendChild(el);
     query = client.createQuery({
-      model: layer.Core.Query.Identity
+      model: Layer.Core.Query.Identity
     });
     query.isFiring = false;
     query.data = [client.user];
@@ -113,7 +113,7 @@ describe("Has Query Mixin", function() {
   describe("The query property", function() {
     it("Should disconnect from old query but not destroy it", function() {
       var query = client.createQuery({
-        model: layer.Core.Query.Conversation
+        model: Layer.Core.Query.Conversation
       });
       var oldQuery = el.query;
       expect(oldQuery.isDestroyed).toBe(false);
@@ -129,7 +129,7 @@ describe("Has Query Mixin", function() {
 
     it("Should destroy old query if generated and set generated to false", function() {
       var query = client.createQuery({
-        model: layer.Core.Query.Conversation
+        model: Layer.Core.Query.Conversation
       });
       var oldQuery = el.query;
       expect(oldQuery.isDestroyed).toBe(false);
@@ -144,7 +144,7 @@ describe("Has Query Mixin", function() {
 
     it("Should call _updateQuery", function() {
       var query = client.createQuery({
-        model: layer.Core.Query.Conversation
+        model: Layer.Core.Query.Conversation
       });
       spyOn(el, "_updateQuery");
 
@@ -204,8 +204,8 @@ describe("Has Query Mixin", function() {
         layer.Util.defer.flush();
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
-        expect(el.query).toEqual(jasmine.any(layer.Core.Query));
-        expect(el.query.model).toEqual(layer.Core.Query.Identity);
+        expect(el.query).toEqual(jasmine.any(Layer.Core.Query));
+        expect(el.query.model).toEqual(Layer.Core.Query.Identity);
 
         // Alt test 1
         testRoot.innerHTML = '<has-query-test app-id="' + client.appId + '"></has-query-test>';

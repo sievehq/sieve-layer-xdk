@@ -28,7 +28,7 @@ registerComponent('layer-compose-bar', {
     /**
      * Specify which Conversation we are sending messages and typing indicators to.
      *
-     * @property {layer.Conversation} [conversation=null]
+     * @property {Layer.Core.Conversation} [conversation=null]
      */
     conversation: {
       set(value) {
@@ -41,7 +41,7 @@ registerComponent('layer-compose-bar', {
     /**
      * The Client are we using to communicate.
      *
-     * @property {layer.Client} [client=null]
+     * @property {Layer.Core.Client} [client=null]
      */
     client: {
       set(value) {
@@ -287,7 +287,7 @@ registerComponent('layer-compose-bar', {
        *   var message = evt.detail.item;
        *   evt.preventDefault();
        *   myAsyncLookup(function(result) {
-       *     var part = new layer.MessagePart({
+       *     var part = new Layer.Core.MessagePart({
        *       mimeType: 'application/json',
        *       body: result
        *     });
@@ -300,9 +300,9 @@ registerComponent('layer-compose-bar', {
        * @event layer-send-message
        * @param {Event} evt
        * @param {Object} evt.detail
-       * @param {layer.MessagePart[]} evt.detail.parts   The array of message parts that will be sent
-       * @param {layer.Message} evt.detail.item          The message that was created from the parts; null if no Conversation property is set
-       * @param {layer.Conversation} evt.detail.conversation  The conversation that the message was created on; may be null if no conversation has been set.
+       * @param {Layer.Core.MessagePart[]} evt.detail.parts   The array of message parts that will be sent
+       * @param {Layer.Core.Message} evt.detail.item          The message that was created from the parts; null if no Conversation property is set
+       * @param {Layer.Core.Conversation} evt.detail.conversation  The conversation that the message was created on; may be null if no conversation has been set.
        * @param {Object} evt.detail.notification
        * @param {String} evt.detail.notification.text
        * @param {String} evt.detail.notification.title
@@ -345,8 +345,8 @@ registerComponent('layer-compose-bar', {
      * MIXIN HOOK: Called just before sending a message.
      *
      * @method
-     * @param {layer.Message} message
-     * @param {Object} notification   See layer.Message.send for details on the notification object
+     * @param {Layer.Core.Message} message
+     * @param {Object} notification   See Layer.Core.Message.send for details on the notification object
      */
     onSend(message, notification) {
       // No-op

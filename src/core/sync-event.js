@@ -217,7 +217,7 @@ class XHRSyncEvent extends SyncEvent {
    *      xhr(event._getRequestData(client));
    *
    * @method _getRequestData
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    * @protected
    * @returns {Object}
    */
@@ -311,7 +311,7 @@ class WebsocketSyncEvent extends SyncEvent {
    *
    * @method _getRequestData
    * @private
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    * @return {Object}
    */
   _getRequestData(client) {

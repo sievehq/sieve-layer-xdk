@@ -228,7 +228,7 @@ class TypingIndicatorListener extends Root {
    *
    * @method _getClient
    * @protected
-   * @return {layer.Client}
+   * @return {Layer.Core.Client}
    */
   _getClient() {
     return ClientRegistry.get(this.clientId);

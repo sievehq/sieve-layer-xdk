@@ -8,11 +8,11 @@
  * That means for the most part, you should never need to
  * instantiate one of these directly.
  *
- *      var content = new layer.Content({
+ *      var content = new Layer.Core.Content({
  *          id: 'layer:///content/8c839735-5f95-439a-a867-30903c0133f2'
  *      });
  *
- * @class  layer.Content
+ * @class  Layer.Core.Content
  * @private
  * @extends Layer.Core.Root
  * @author Michael Kantor
@@ -33,7 +33,7 @@ class Content extends Root {
    * @param  {Date} [options.expiration] - Expiration date for the url
    * @param  {string} [options.refreshUrl] - Url to access to get a new downloadUrl after it has expired
    *
-   * @return {layer.Content}
+   * @return {Layer.Core.Content}
    */
   constructor(options) {
     if (typeof options === 'string') {
@@ -47,7 +47,7 @@ class Content extends Root {
    *
    * Data is provided via callback.
    *
-   * Note that typically one should use layer.MessagePart.fetchContent() rather than layer.Content.loadContent()
+   * Note that typically one should use Layer.Core.MessagePart.fetchContent() rather than Layer.Core.Content.loadContent()
    *
    * @method loadContent
    * @param {string} mimeType - Mime type for the Blob
@@ -77,7 +77,7 @@ class Content extends Root {
    * Refreshes the URL, which updates the URL and resets the expiration time for the URL
    *
    * @method refreshContent
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    * @param {Function} [callback]
    */
   refreshContent(client, callback) {
@@ -131,8 +131,6 @@ class Content extends Root {
  */
 Content.prototype.id = '';
 
-Content.prototype.blob = null;
-
 /**
  * Server generated url for downloading the content
  * @type {string}
@@ -147,9 +145,6 @@ Content.prototype.refreshUrl = '';
 
 /**
  * Size of the content.
- *
- * This property only has a value when in the process
- * of Creating the rich content and sending the Message.
  *
  * @type {number}
  */

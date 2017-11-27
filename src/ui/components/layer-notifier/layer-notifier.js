@@ -59,7 +59,7 @@ registerComponent('layer-notifier', {
    * @event layer-message-notification
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item     The Message that has triggered this notification
+   * @param {Layer.Core.Message} evt.detail.item     The Message that has triggered this notification
    * @param {Boolean} evt.detail.isBackground   Is the app running in the background
    * @param {String} evt.detail.type            What type of notification has been configured for this event ("desktop" or "toast")
    */
@@ -81,7 +81,7 @@ registerComponent('layer-notifier', {
    * @property {Function} onMessageNotification
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item     The Message that has triggered this notification
+   * @param {Layer.Core.Message} evt.detail.item     The Message that has triggered this notification
    * @param {Boolean} evt.detail.isBackground   Is the app running in the background
    * @param {String} evt.detail.type            What type of notification has been configured for this event ("desktop" or "toast")
    */
@@ -101,7 +101,7 @@ registerComponent('layer-notifier', {
    * @event layer-notification-click
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item   The Message that has triggered this notification
+   * @param {Layer.Core.Message} evt.detail.item   The Message that has triggered this notification
    */
 
   /**
@@ -119,7 +119,7 @@ registerComponent('layer-notifier', {
    * @property {Function} onNotificationClick
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item   The Message that has triggered this notification
+   * @param {Layer.Core.Message} evt.detail.item   The Message that has triggered this notification
    */
 
   events: ['layer-message-notification', 'layer-notification-click'],
@@ -235,7 +235,7 @@ registerComponent('layer-notifier', {
     /**
      * Tells the notifier to put a badge in the titlebar for the specified message if its unread, and clear it once read.
      *
-     * @property {layer.Message} flagTitlebarForMessage
+     * @property {Layer.Core.Message} flagTitlebarForMessage
      */
     flagTitlebarForMessage: {
       set(message, oldMessage) {
@@ -386,7 +386,7 @@ registerComponent('layer-notifier', {
      * Show a desktop notification for this message.
      *
      * @method desktopNotify
-     * @param {layer.Message} message
+     * @param {Layer.Core.Message} message
      */
     desktopNotify(message) {
       try {
@@ -436,7 +436,7 @@ registerComponent('layer-notifier', {
      * MIXIN HOOK: User has clicked on a desktop notification.
      *
      * @method
-     * @param {layer.Message} message
+     * @param {Layer.Core.Message} message
      */
     onDesktopClick(message) {
       // No-op
@@ -446,7 +446,7 @@ registerComponent('layer-notifier', {
      * Show a toast notification for this message.
      *
      * @method toastNotify
-     * @param {layer.Message} message
+     * @param {Layer.Core.Message} message
      */
     toastNotify(message) {
       this.closeToast();

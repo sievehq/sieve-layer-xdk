@@ -1,5 +1,5 @@
 /**
- * The Layer widget renders a title for a layer.Conversation.
+ * The Layer widget renders a title for a Layer.Core.Conversation.
  *
  * This is provided as a specialized component so that it can be easily redefined by your app to
  * provide your own Conversation titles:
@@ -30,9 +30,9 @@ registerComponent('layer-conversation-title', {
   properties: {
 
     /**
-     * The layer.Conversation to be rendered.
+     * The Layer.Core.Conversation to be rendered.
      *
-     * @property {layer.Conversation} [item=null]
+     * @property {Layer.Core.Conversation} [item=null]
      */
     item: {
       set(newConversation, oldConversation) {

@@ -66,7 +66,7 @@ module.exports = {
      *          }
      *      });
      *
-     * NOTE: Typically such rendering is done using Events on layer.Core.Query.
+     * NOTE: Typically such rendering is done using Events on Layer.Core.Query.
      *
      * @event
      * @param {Layer.Core.LayerEvent} evt
@@ -314,7 +314,7 @@ module.exports = {
      * @return {Layer.Core.Channel}
      *
      * @deprecated
-     * This should be replaced by iterating over your layer.Core.Query data.
+     * This should be replaced by iterating over your Layer.Core.Query data.
      */
     findCachedChannel(func, context) {
       const test = context ? func.bind(context) : func;

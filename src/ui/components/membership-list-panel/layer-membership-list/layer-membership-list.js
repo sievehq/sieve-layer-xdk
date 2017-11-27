@@ -124,7 +124,7 @@ registerComponent('layer-membership-list', {
      * }
      * ```
      *
-     * @property {layer.Channel}
+     * @property {Layer.Core.Channel}
      */
     channel: {
       set(value) {
@@ -142,7 +142,7 @@ registerComponent('layer-membership-list', {
      *
      * @readonly
      * @private
-     * @property {String} [_queryModel=layer.Core.Query.Membership]
+     * @property {String} [_queryModel=Layer.Core.Query.Membership]
      */
     _queryModel: {
       value: Core.Query.Membership,

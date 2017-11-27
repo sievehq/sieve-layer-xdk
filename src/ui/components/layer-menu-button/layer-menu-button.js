@@ -4,7 +4,7 @@
  * This is provided as a specialized component so that it can be easily redefined by your app to
  * provide your own menu capability.
  *
- * Note that the `item` property can refer to any type of data Layer data including layer.Message and layer.Conversation.
+ * Note that the `item` property can refer to any type of data Layer data including Layer.Core.Message and Layer.Core.Conversation.
  *
  * ```
  * var menuButton = document.createElement('layer-menu-button');

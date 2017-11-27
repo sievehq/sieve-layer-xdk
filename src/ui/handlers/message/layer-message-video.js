@@ -24,7 +24,7 @@ registerMessageComponent('layer-message-video', {
     /**
      * The Message property provides the MessageParts we are going to render.
      *
-     * @property {layer.Message} [message=null]
+     * @property {Layer.Core.Message} [message=null]
      */
     message: {
       set(value) {

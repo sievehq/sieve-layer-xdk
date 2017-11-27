@@ -98,7 +98,7 @@ Layer.UI.registerTextHandler({
 });
 
 /* Define the ipsum-lorum-handler Component; comes with message and messageWidget properties
-  * refering to the layer.Message and the <layer-message-item-sent /> (or received) widget its associated with.
+  * refering to the Layer.Core.Message and the <layer-message-item-sent /> (or received) widget its associated with.
   * Height MUST be locked no later than the `onAfterCreate` call.  Content of unknown height is tricky, and must
   * allow for, or UI for expanding to full height.  We may build UI for expanding to full height in at some point.
   */

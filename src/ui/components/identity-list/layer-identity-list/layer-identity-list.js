@@ -210,7 +210,7 @@ registerComponent('layer-identity-list', {
      *
      * @readonly
      * @private
-     * @property {String} [_queryModel=layer.Core.Query.Identity]
+     * @property {String} [_queryModel=Layer.Core.Query.Identity]
      */
     _queryModel: {
       value: Core.Query.Identity,

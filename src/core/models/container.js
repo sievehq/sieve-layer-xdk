@@ -1,7 +1,7 @@
 /**
  * A Container is a parent class representing a container that manages a set of Messages.
  *
- * @class  layer.Container
+ * @class  Layer.Core.Container
  * @abstract
  * @extends Layer.Core.Syncable
  * @author  Michael Kantor
@@ -17,11 +17,11 @@ class Container extends Syncable {
   /**
    * Create a new conversation.
    *
-   * The static `layer.Conversation.create()` method
+   * The static `Layer.Core.Conversation.create()` method
    * will correctly lookup distinct Conversations and
-   * return them; `new layer.Conversation()` will not.
+   * return them; `new Layer.Core.Conversation()` will not.
    *
-   * Developers should use `layer.Conversation.create()`.
+   * Developers should use `Layer.Core.Conversation.create()`.
    *
    * @method constructor
    * @protected
@@ -29,7 +29,7 @@ class Container extends Syncable {
    * @param {string[]/Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity instances
    * @param {boolean} [options.distinct=true] - Is the conversation distinct
    * @param {Object} [options.metadata] - An object containing Conversation Metadata.
-   * @return {layer.Conversation}
+   * @return {Layer.Core.Conversation}
    */
   constructor(options = {}) {
     // Make sure the ID from handle fromServer parameter is used by the Root.constructor
@@ -60,6 +60,12 @@ class Container extends Syncable {
   }
 
 
+  /**
+   * Send the Conversation/Channel/etc... to the server to be created there and shared with other participants.
+   *
+   * @param {Layer.Core.Message} [message]  Message being sent while creating the new resource
+   * @returns this
+   */
   send(message) {
     if (this.isNew()) {
       this.createdAt = new Date();
@@ -123,7 +129,7 @@ class Container extends Syncable {
    * Process result of send method.
    *
    * Note that we use _triggerAsync so that
-   * events reporting changes to the layer.Conversation.id can
+   * events reporting changes to the Layer.Core.Conversation.id can
    * be applied before reporting on it being sent.
    *
    * Example: Query will now have the resolved Distinct IDs rather than the proposed ID
@@ -216,7 +222,7 @@ class Container extends Syncable {
    *
    * @method setMetadataProperties
    * @param  {Object} properties
-   * @return {layer.Conversation} this
+   * @return {Layer.Core.Conversation} this
    *
    */
   setMetadataProperties(props) {
@@ -284,7 +290,7 @@ class Container extends Syncable {
    *
    * @method deleteMetadataProperties
    * @param  {string[]} properties
-   * @return {layer.Conversation} this
+   * @return {Layer.Core.Conversation} this
    */
   deleteMetadataProperties(props) {
     const layerPatchOperations = [];
@@ -329,7 +335,7 @@ class Container extends Syncable {
    * Delete the Conversation from the server (internal version).
    *
    * This version of Delete takes a Query String that is packaged up by
-   * layer.Conversation.delete and layer.Conversation.leave.
+   * Layer.Core.Conversation.delete and Layer.Core.Conversation.leave.
    *
    * @method _delete
    * @private
@@ -380,7 +386,7 @@ class Container extends Syncable {
    * @param  {string} eventName
    * @param  {Function} callback
    * @param  {Object} context
-   * @return {layer.Conversation} this
+   * @return {Layer.Core.Conversation} this
    */
   on(name, callback, context) {
     const evtName = `${this.constructor.eventPrefix}:loaded`;
@@ -522,8 +528,6 @@ Container.prototype._sendDistinctEvent = null;
  * @private
  */
 Container.prototype._toObject = null;
-
-
 
 /**
  * Property to look for when bubbling up events.

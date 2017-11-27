@@ -204,12 +204,12 @@ class TypingPublisher {
   }
 
   /**
-   * Get the Client associated with this layer.Message.
+   * Get the Client associated with this Layer.Core.Message.
    *
    * Uses the clientId property.
    *
    * @method getClient
-   * @return {layer.Client}
+   * @return {Layer.Core.Client}
    */
   _getClient() {
     return ClientRegistry.get(this.clientId);

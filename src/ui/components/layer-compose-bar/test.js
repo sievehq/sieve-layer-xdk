@@ -144,7 +144,7 @@ describe('layer-compose-bar', function() {
 
     it("Should wire up layer-file-selected to handleAttachments", function() {
       el.properties.conversation = conversation;
-      var parts = [new layer.MessagePart({body: "After death he became Lord Dork Laugh", mimeType: "text/plain"})];
+      var parts = [new Layer.Core.MessagePart({body: "After death he became Lord Dork Laugh", mimeType: "text/plain"})];
       var evt = new CustomEvent('layer-file-selected', {
         detail: {parts: parts},
         bubbles: true,
@@ -216,7 +216,7 @@ describe('layer-compose-bar', function() {
     });
 
     it("Should send optional parts and leave text as-is", function() {
-      var parts = [new layer.MessagePart({body: "After death he became Lord Dork Laugh", mimeType: "text/plain"})];
+      var parts = [new Layer.Core.MessagePart({body: "After death he became Lord Dork Laugh", mimeType: "text/plain"})];
 
       var calledFor = null;
       document.body.addEventListener("layer-send-message", function(evt) {
@@ -446,7 +446,7 @@ describe('layer-compose-bar', function() {
 
   describe("The handleAttachments() method", function() {
     it("Should call send with its parts", function() {
-      var parts = [new layer.MessagePart({body: "After death he became Lord Dork Laugh", mimeType: "text/plain"})];
+      var parts = [new Layer.Core.MessagePart({body: "After death he became Lord Dork Laugh", mimeType: "text/plain"})];
       var evt = new CustomEvent('layer-file-selected', {
         detail: {parts: parts},
         bubbles: true,

@@ -2,7 +2,7 @@
  * Query class for running a Query on Announcements
  *
  *      var announcementQuery = client.createQuery({
- *        model: layer.Core.Query.Announcement
+ *        model: Layer.Core.Query.Announcement
  *      });
  *
  *
@@ -17,7 +17,7 @@
  *      query.destroy();
  *
  * @class  Layer.Core.AnnouncementsQuery
- * @extends layer.Core.Query
+ * @extends Layer.Core.Query
  */
 import Root from '../root';
 import Query from './query';

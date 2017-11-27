@@ -29,7 +29,7 @@ class Syncable extends Root {
    * Get the client associated with this Object.
    *
    * @method getClient
-   * @return {layer.Client}
+   * @return {Layer.Core.Client}
    */
   getClient() {
     return ClientRegistry.get(this.clientId);
@@ -129,7 +129,7 @@ class Syncable extends Root {
    * the `conversations:loaded`, `messages:loaded`, etc... event has fired.
    *
    * ```
-   * var message = layer.Message.load(messageId, client);
+   * var message = Layer.Core.Message.load(messageId, client);
    * message.once('messages:loaded', function(evt) {
    *    alert("Message loaded");
    * });
@@ -138,7 +138,7 @@ class Syncable extends Root {
    * @method load
    * @static
    * @param {string} id - `layer:///messages/UUID`
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    * @return {Layer.Core.Syncable} - Returns an empty object that will be populated once data is loaded.
    */
   static load(id, client) {
@@ -283,6 +283,20 @@ class Syncable extends Root {
     this._toObject = null;
   }
 
+  // Any time there is an event triggered, assume that its state has changed and clear its cached object.
+  // See parent class for docs
+  _triggerAsync(evtName, args) {
+    this._clearObject();
+    super._triggerAsync(evtName, args);
+  }
+
+  // Any time there is an event triggered, assume that its state has changed and clear its cached object.
+  // See parent class for docs
+  trigger(evtName, args) {
+    this._clearObject();
+    super.trigger(evtName, args);
+  }
+
   /**
    * Returns a plain object.
    *
@@ -375,7 +389,7 @@ Syncable.prototype.localCreatedAt = null;
 
 
 /**
- * layer.Client that the object belongs to.
+ * Layer.Core.Client that the object belongs to.
  *
  * Actual value of this string matches the appId.
  * @type {string}
@@ -474,3 +488,4 @@ Syncable.subclasses = [];
 Syncable._supportedEvents = [].concat(Root._supportedEvents);
 Syncable.inObjectIgnore = Root.inObjectIgnore;
 module.exports = Syncable;
+

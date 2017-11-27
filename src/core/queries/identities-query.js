@@ -2,7 +2,7 @@
  * Query class for running a Query on Identities
  *
  *      var identityQuery = client.createQuery({
- *        model: layer.Core.Query.Identity
+ *        model: Layer.Core.Query.Identity
  *      });
  *
  *
@@ -17,7 +17,7 @@
  *      query.destroy();
  *
  * @class  layer.IdentitiesQuery
- * @extends layer.Core.Query
+ * @extends Layer.Core.Query
  */
 import Root from '../root';
 import Query from './query';

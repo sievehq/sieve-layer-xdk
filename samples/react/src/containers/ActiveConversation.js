@@ -218,10 +218,10 @@ export default class ActiveConversation extends Component {
              imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
              options: [
                new ChoiceModel({
-                 question: 'RAM',
-                 type: 'Label',
+                 label: 'RAM',
+                 type: 'label',
                  allowReselect: true,
-                 selectedAnswer: 'large',
+                 preselectedChoice: 'large',
                  choices: [
                    {text:  "2K", id: "small"},
                    {text:  "4K", id: "medium"},
@@ -229,10 +229,10 @@ export default class ActiveConversation extends Component {
                  ]
                }),
                new ChoiceModel({
-                 question: 'Color',
-                 type: 'Label',
+                 label: 'Color',
+                 type: 'label',
                  allowReselect: true,
-                 selectedAnswer: 'offwhite',
+                 preselectedChoice: 'offwhite',
                  choices: [
                    {text:  "Off White", id: "offwhite"},
                    {text:  "Awful White", id: "awfwhite"}
@@ -285,9 +285,9 @@ export default class ActiveConversation extends Component {
                     imageUrls: [ 'http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg' ],
                     options: [
                       new ChoiceModel({
-                        question: 'Size',
-                        type: 'Label',
-                        selectedAnswer: 'small',
+                        label: 'Size',
+                        type: 'label',
+                        preselectedChoice: 'small',
                         choices: [
                           {text:  'Small', id: 'small'},
                           {text:  'Medium', id: 'medium'},
@@ -295,9 +295,9 @@ export default class ActiveConversation extends Component {
                         ]
                       }),
                       new ChoiceModel({
-                        question: 'Color',
-                        type: 'Label',
-                        selectedAnswer: 'white',
+                        label: 'Color',
+                        type: 'label',
+                        preselectedChoice: 'white',
                         choices: [
                           {text:  'White', id: 'white'},
                           {text:  'Black', id: 'black'},
@@ -317,9 +317,9 @@ export default class ActiveConversation extends Component {
                     imageUrls: [ 'http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg' ],
                     options: [
                       new ChoiceModel({
-                        question: 'Size',
-                        type: 'Label',
-                        selectedAnswer: '',
+                        label: 'Size',
+                        type: 'label',
+                        preselectedChoice: '',
                         choices: [
                           {text:  'Small', id: 'small'},
                           {text:  'Medium', id: 'medium'},
@@ -327,9 +327,9 @@ export default class ActiveConversation extends Component {
                         ]
                       }),
                       new ChoiceModel({
-                        question: 'Color',
-                        type: 'Label',
-                        selectedAnswer: 'gold',
+                        label: 'Color',
+                        type: 'label',
+                        preselectedChoice: 'gold',
                         choices: [
                           {text:  'White', id: 'white'},
                           {text:  'Black', id: 'black'},
@@ -349,9 +349,9 @@ export default class ActiveConversation extends Component {
                   imageUrls: [ 'http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg' ],
                   options: [
                     new ChoiceModel({
-                      question: 'Size',
-                      type: 'Label',
-                      selectedAnswer: 'medium',
+                      label: 'Size',
+                      type: 'label',
+                      preselectedChoice: 'medium',
                       choices: [
                         {text:  'Small', id: 'small'},
                         {text:  'Medium', id: 'medium'},
@@ -359,8 +359,8 @@ export default class ActiveConversation extends Component {
                       ]
                     }),
                     new ChoiceModel({
-                      question: 'Color',
-                      type: 'Label',
+                      label: 'Color',
+                      type: 'label',
                       choices: [
                         {text:  'White', id: 'white'},
                         {text:  'Black', id: 'black'},
@@ -379,7 +379,7 @@ export default class ActiveConversation extends Component {
         method: function() {
           const ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
           const model = new ChoiceModel({
-            question: 'What is the airspeed velocity of an unladen swallow?',
+            label: 'What is the airspeed velocity of an unladen swallow?',
             responseName: 'airspeedselection',
             choices: [
                {text:  'Zero, it can not get off the ground!', id: 'zero'},

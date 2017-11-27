@@ -42,7 +42,7 @@ registerComponent('layer-message-status', {
     /**
      * Message whose status is to be rendered
      *
-     * @property {layer.Message} [message=null]
+     * @property {Layer.Core.Message} [message=null]
      */
     item: {
       set(newMessage, oldMessage) {

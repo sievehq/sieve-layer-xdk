@@ -199,7 +199,7 @@ describe('Link Message Components', function() {
       expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(false);
 
       // Message Viewer: Render as a chat bubble
-      expect(el.classList.contains('layer-card-width-chat-bubble')).toEqual(true);
+      expect(el.classList.contains('layer-card-width-any-width')).toEqual(true);
 
       // Message UI: contains anchor tag
       expect(el.querySelector('a').src).toEqual("http://layer.com/about");

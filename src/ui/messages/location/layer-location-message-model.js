@@ -78,7 +78,7 @@ class LocationModel extends MessageTypeModel {
     if (this.description && this.showAddress !== true) {
       return this.description;
     } else if (this.street1 || this.city || this.postalCode) {
-      return this.street1 + (this.street2 ? '<br/>' + this.street2 : '') + `<br/>${this.city} ${this.administrativeArea}${this.postalCode ? ', ' + this.postalCode : ''}`;
+      return this.street1 + (this.street2 ? '\n' + this.street2 : '') + `\n${this.city} ${this.administrativeArea}${this.postalCode ? ', ' + this.postalCode : ''}`;
     }
   }
 }

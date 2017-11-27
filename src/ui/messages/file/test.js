@@ -256,7 +256,7 @@ describe('File Message Components', function() {
 
       layer.Util.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-chat-bubble class
+      // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
       // Container: hide metadata
@@ -282,7 +282,7 @@ describe('File Message Components', function() {
 
       layer.Util.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-chat-bubble class
+      // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
       // Message UI: contains anchor tag

@@ -11,6 +11,7 @@
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import './layer-receipt-message-product-view';
+import { Constants } from '../../base';
 
 registerComponent('layer-receipt-message-view', {
   template: `
@@ -49,7 +50,7 @@ registerComponent('layer-receipt-message-view', {
       value: 'layer-titled-message-view-container',
     },
     widthType: {
-      value: 'full-width',
+      value: Constants.WIDTH.FULL,
     },
   },
   methods: {

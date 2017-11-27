@@ -2,7 +2,7 @@
  * Query class for running a Query on Channel Members
  *
  *      var membersQuery = client.createQuery({
- *        model: layer.Core.Query.Membership,
+ *        model: Layer.Core.Query.Membership,
  *        predicate: 'channel.id = "layer:///channels/UUID"'
  *      });
  *
@@ -22,7 +22,7 @@
  * querying by Channel.
  *
  * @class  layer.MembersQuery
- * @extends layer.Core.Query
+ * @extends Layer.Core.Query
  */
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';

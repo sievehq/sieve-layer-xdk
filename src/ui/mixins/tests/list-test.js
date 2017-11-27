@@ -34,7 +34,7 @@ describe("List Mixin", function() {
       el = document.createElement('layer-identity-list');
       testRoot.appendChild(el);
       query = client.createQuery({
-        model: layer.Core.Query.Identity
+        model: Layer.Core.Query.Identity
       });
       query.isFiring = false;
       query.data = [client.user];
@@ -121,8 +121,8 @@ describe("List Mixin", function() {
         CustomElements.takeRecords();
         layer.Util.defer.flush();
 
-        expect(el.query).toEqual(jasmine.any(layer.Core.Query));
-        expect(el.properties.query).toEqual(jasmine.any(layer.Core.Query));
+        expect(el.query).toEqual(jasmine.any(Layer.Core.Query));
+        expect(el.properties.query).toEqual(jasmine.any(Layer.Core.Query));
       });
 
       it("Should add and remove classes on setting isDataLoading", function() {
@@ -147,7 +147,7 @@ describe("List Mixin", function() {
 
       it("Should destroy the existing query if hasGeneratedQuery is true", function() {
         el.client = client;
-        var query2 = client.createQuery({model: layer.Conversation});
+        var query2 = client.createQuery({model: Layer.Core.Conversation});
         el.query = query2;
         el.properties.hasGeneratedQuery = true;
         el.query = query;
@@ -157,7 +157,7 @@ describe("List Mixin", function() {
 
       it("Should not destroy the existing query if hasGeneratedQuery is false", function() {
         el.client = client;
-        var query2 = client.createQuery({model: layer.Conversation});
+        var query2 = client.createQuery({model: Layer.Core.Conversation});
         el.query = query2;
         el.properties.hasGeneratedQuery = false;
         el.query = query;

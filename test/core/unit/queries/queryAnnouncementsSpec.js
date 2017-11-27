@@ -48,7 +48,7 @@ describe("The AnnouncementsQuery Class", function() {
         client.onlineManager.isOnline = true;
 
         query = client.createQuery({
-          model: layer.Core.Query.Announcement
+          model: Layer.Core.Query.Announcement
         });
         conversation = client._createObject(responses.conversation1);
         announcement = client._createObject(responses.announcement);
@@ -69,20 +69,20 @@ describe("The AnnouncementsQuery Class", function() {
     });
 
     it("Should be an AnnouncementQuery", function() {
-      expect(query.constructor.prototype.model).toEqual(layer.Core.Query.Announcement);
+      expect(query.constructor.prototype.model).toEqual(Layer.Core.Query.Announcement);
     });
 
     describe("The _fetchData() method", function() {
         var query;
         beforeEach(function() {
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
                 client: client,
-                model: layer.Core.Query.Announcement,
+                model: Layer.Core.Query.Announcement,
                 paginationWindow: 15
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {

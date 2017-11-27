@@ -46,7 +46,7 @@ registerComponent('layer-typing-indicator', {
     /**
      * The Conversation whose typing indicator activity we are reporting on.
      *
-     * @property {layer.Conversation} [conversation=null]
+     * @property {Layer.Core.Conversation} [conversation=null]
      */
     conversation: {
       set(value) {
@@ -69,7 +69,7 @@ registerComponent('layer-typing-indicator', {
      *
      * This property is typically set indirectly by setting the layerUI.TypingIndicator.conversation.
      *
-     * @property {layer.Client} [client=null]
+     * @property {Layer.Core.Client} [client=null]
      */
     client: {
       set(newClient, oldClient) {

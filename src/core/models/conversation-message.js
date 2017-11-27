@@ -1,8 +1,8 @@
 /**
- * A layer.Message instance for use within layer.Conversation.
+ * A Layer.Core.Message instance for use within Layer.Core.Conversation.
  *
- * @class layer.Message.ConversationMessage
- * @extends layer.Message
+ * @class Layer.Core.Message.ConversationMessage
+ * @extends Layer.Core.Message
  */
 import Root from '../root';
 import Message from './message';
@@ -35,11 +35,11 @@ class ConversationMessage extends Message {
   }
 
   /**
-   * Get the layer.Conversation associated with this layer.Message.ConversationMessage.
+   * Get the Layer.Core.Conversation associated with this Layer.Core.Message.ConversationMessage.
    *
    * @method getConversation
-   * @param {Boolean} load       Pass in true if the layer.Conversation should be loaded if not found locally
-   * @return {layer.Conversation}
+   * @param {Boolean} load       Pass in true if the Layer.Core.Conversation should be loaded if not found locally
+   * @return {Layer.Core.Conversation}
    */
   getConversation(load) {
     if (this.conversationId) {
@@ -63,7 +63,7 @@ class ConversationMessage extends Message {
   /**
    * Accessor called whenever the app accesses `message.recipientStatus`.
    *
-   * Insures that participants who haven't yet been sent the Message are marked as layer.Constants.RECEIPT_STATE.PENDING
+   * Insures that participants who haven't yet been sent the Message are marked as Layer.Constants.RECEIPT_STATE.PENDING
    *
    * @method __getRecipientStatus
    * @param {string} pKey - The actual property key where the value is stored
@@ -182,7 +182,7 @@ __updateParts(parts) {
   }
 
   /**
-   * Sets the layer.Message.ConversationMessage.readStatus and layer.Message.ConversationMessage.deliveryStatus properties.
+   * Sets the Layer.Core.Message.ConversationMessage.readStatus and Layer.Core.Message.ConversationMessage.deliveryStatus properties.
    *
    * @method _setReceiptStatus
    * @private
@@ -212,7 +212,7 @@ __updateParts(parts) {
    *
    * If someone called m.isRead = true, AND
    * if it was previously false, AND
-   * if the call didn't come from layer.Message.ConversationMessage.__updateRecipientStatus,
+   * if the call didn't come from Layer.Core.Message.ConversationMessage.__updateRecipientStatus,
    * Then notify the server that the message has been read.
    *
    *
@@ -263,12 +263,12 @@ __updateParts(parts) {
    * You can retract a Delivery or Read Receipt; once marked as Delivered or Read, it can't go back.
    *
    * ```
-   * messsage.sendReceipt(layer.Constants.RECEIPT_STATE.READ);
+   * messsage.sendReceipt(Layer.Constants.RECEIPT_STATE.READ);
    * ```
    *
    * @method sendReceipt
-   * @param {string} [type=layer.Constants.RECEIPT_STATE.READ] - One of layer.Constants.RECEIPT_STATE.READ or layer.Constants.RECEIPT_STATE.DELIVERY
-   * @return {layer.Message.ConversationMessage} this
+   * @param {string} [type=Layer.Constants.RECEIPT_STATE.READ] - One of Layer.Constants.RECEIPT_STATE.READ or Layer.Constants.RECEIPT_STATE.DELIVERY
+   * @return {Layer.Core.Message.ConversationMessage} this
    */
   sendReceipt(type = Constants.RECEIPT_STATE.READ) {
     if (type === Constants.RECEIPT_STATE.READ) {
@@ -299,7 +299,7 @@ __updateParts(parts) {
    *
    * @method _sendReceipt
    * @private
-   * @param {string} [type=read] - One of layer.Constants.RECEIPT_STATE.READ or layer.Constants.RECEIPT_STATE.DELIVERY
+   * @param {string} [type=read] - One of Layer.Constants.RECEIPT_STATE.READ or Layer.Constants.RECEIPT_STATE.DELIVERY
    */
   _sendReceipt(type) {
     // This little test exists so that we don't send receipts on Conversations we are no longer
@@ -328,9 +328,9 @@ __updateParts(parts) {
    *
    * Deletion Modes:
    *
-   * * layer.Constants.DELETION_MODE.ALL: This deletes the local copy immediately, and attempts to also
+   * * Layer.Constants.DELETION_MODE.ALL: This deletes the local copy immediately, and attempts to also
    *   delete the server's copy.
-   * * layer.Constants.DELETION_MODE.MY_DEVICES: Deletes this Message from all of my devices; no effect on other users.
+   * * Layer.Constants.DELETION_MODE.MY_DEVICES: Deletes this Message from all of my devices; no effect on other users.
    *
    * @method delete
    * @param {String} deletionMode
@@ -386,8 +386,8 @@ __updateParts(parts) {
    * @protected
    * @static
    * @param  {Object} message - Server's representation of the message
-   * @param  {layer.Client} client
-   * @return {layer.Message.ConversationMessage}
+   * @param  {Layer.Core.Client} client
+   * @return {Layer.Core.Message.ConversationMessage}
    */
   static _createFromServer(message, client) {
     const fromWebsocket = message.fromWebsocket;
@@ -426,10 +426,10 @@ ConversationMessage.prototype.isRead = false;
  * This is an object containing keys for each participant,
  * and a value of:
  *
- * * layer.RECEIPT_STATE.SENT
- * * layer.RECEIPT_STATE.DELIVERED
- * * layer.RECEIPT_STATE.READ
- * * layer.RECEIPT_STATE.PENDING
+ * * Layer.Constants.RECEIPT_STATE.SENT
+ * * Layer.Constants.RECEIPT_STATE.DELIVERED
+ * * Layer.Constants.RECEIPT_STATE.READ
+ * * Layer.Constants.RECEIPT_STATE.PENDING
  *
  * @type {Object}
  */
@@ -440,13 +440,13 @@ ConversationMessage.prototype.recipientStatus = null;
  *
  * This value is one of:
  *
- *  * layer.Constants.RECIPIENT_STATE.ALL
- *  * layer.Constants.RECIPIENT_STATE.SOME
- *  * layer.Constants.RECIPIENT_STATE.NONE
+ *  * Layer.Constants.RECIPIENT_STATE.ALL
+ *  * Layer.Constants.RECIPIENT_STATE.SOME
+ *  * Layer.Constants.RECIPIENT_STATE.NONE
  *
  *  This value is updated any time recipientStatus changes.
  *
- * See layer.Message.ConversationMessage.recipientStatus for a more detailed report.
+ * See Layer.Core.Message.ConversationMessage.recipientStatus for a more detailed report.
  *
  * @type {String}
  */
@@ -457,13 +457,13 @@ ConversationMessage.prototype.readStatus = Constants.RECIPIENT_STATE.NONE;
  *
   * This value is one of:
  *
- *  * layer.Constants.RECIPIENT_STATE.ALL
- *  * layer.Constants.RECIPIENT_STATE.SOME
- *  * layer.Constants.RECIPIENT_STATE.NONE
+ *  * Layer.Constants.RECIPIENT_STATE.ALL
+ *  * Layer.Constants.RECIPIENT_STATE.SOME
+ *  * Layer.Constants.RECIPIENT_STATE.NONE
  *
  *  This value is updated any time recipientStatus changes.
  *
- * See layer.Message.ConversationMessage.recipientStatus for a more detailed report.
+ * See Layer.Core.Message.ConversationMessage.recipientStatus for a more detailed report.
  *
  *
  * @type {String}

@@ -46,14 +46,14 @@ module.exports = {
             // Wait for the next client with this appId to be registered and then assign it.
             Layer.Client.addListenerForNewClient(newClient => (this.client = newClient), value);
           } else {
-            throw new Error('You must create a layer.Client with your appId before creating this component. Or upgrade to Layer WebSDK 3.2.2 or above.');
+            throw new Error('You must create a Layer.Core.Client with your appId before creating this component. Or upgrade to Layer WebSDK 3.2.2 or above.');
           }
         }
       },
     },
 
     /**
-     * The layer.Client can be passed in via the `client` property or the `appId` property.
+     * The Layer.Core.Client can be passed in via the `client` property or the `appId` property.
      *
      * App IDs are typically provided via:
      *
@@ -64,7 +64,7 @@ module.exports = {
      * The only time one would use this property
      * is if building an app that used multiple Clients.
      *
-     * @property {layer.Client} [client=null]
+     * @property {Layer.Core.Client} [client=null]
      */
     client: {
       order: 2,

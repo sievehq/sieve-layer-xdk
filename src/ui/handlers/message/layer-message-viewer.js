@@ -16,7 +16,7 @@ import { registerMessageComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
 import Clickable from '../../mixins/clickable';
 
-import { messageActionHandlers } from '../../base';
+import { messageActionHandlers, components } from '../../base';
 
 
 registerMessageComponent('layer-message-viewer', {
@@ -121,9 +121,9 @@ registerMessageComponent('layer-message-viewer', {
      *
      * One of:
      *
-     * * "full-width": Uses all available width
-     * * "chat-bubble": No minimum, maximum is all available width; generallay does not look like a card
-     * * "flex-width": card that has a minimum and a maximum but tries for an optimal size for its contents
+     * * Layer.UI.Constants.WIDTH.FULL: Uses all available width
+     * * Layer.UI.Constants.WIDTH.ANY: No minimum, maximum is all available width; generallay does not look like a card
+     * * Layer.UI.Constants.WIDTH.FLEX: card that has a minimum and a maximum but tries for an optimal size for its contents
      *
      * @type {String} widthType
      */
@@ -233,27 +233,22 @@ registerMessageComponent('layer-message-viewer', {
 
       const event = action && action.event ? action.event : this.model.actionEvent;
       const actionData = action && action.data ? action.data : this.model.actionData; // TODO: perhaps merge action.data with actionData?
-
-      if (messageActionHandlers[event]) return messageActionHandlers[event].apply(this, [actionData]);
       const rootModel = this.message.getRootPart().createModel();
-      this.nodes.ui.trigger(event, {
+
+      const args = {
         model: this.model,
         rootModel,
         data: actionData,
-      });
-    },
+        messageViewer: this,
+      };
 
-    /**
-     * Placeholder for a mechanism for all Message Types to share for showing a zoomed in version of their content.
-     *
-     * Eventually should open an in-app dialog
-     *
-     * @method showFullScreen
-     * @param {String} url
-     */
-    showFullScreen(url) {
-      if (url) window.open(url);
+      // Trigger an event based on the event name; trigger returns false if evt.preventDefault() was called
+      const actionHandlerAllowed = this.nodes.ui.trigger(event, args);
+
+      // If evt.preventDefault() was not called then invoke any registered action handler
+      if (actionHandlerAllowed && messageActionHandlers[event]) {
+        messageActionHandlers[event].call(null, args);
+      }
     },
   },
 });
-

@@ -31,7 +31,7 @@ describe('layer-membership-list', function() {
     el = document.createElement('layer-membership-list');
     testRoot.appendChild(el);
     query = client.createQuery({
-      model: layer.Core.Query.Membership
+      model: Layer.Core.Query.Membership
     });
     query.isFiring = false;
     query.data = [];

@@ -48,7 +48,7 @@ describe('layer-file-upload-button', function() {
   });
 
   it("Should trigger layer-file-selected onChange", function() {
-    var part = new layer.MessagePart({body: "Frodo is a Dodo", mimeType: "text/plain"});
+    var part = new Layer.Core.MessagePart({body: "Frodo is a Dodo", mimeType: "text/plain"});
     var spy = jasmine.createSpy('processAttachments').and.callFake(function(a, callback) {
       callback([part]);
     });

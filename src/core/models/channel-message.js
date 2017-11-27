@@ -1,9 +1,9 @@
 /**
  * For purposes of API consistency across SDKs, this class is not exposed.
- * Instead, customers will see only the layer.Message class.
+ * Instead, customers will see only the Layer.Core.Message class.
  *
- * @class layer.Message.ChannelMessage
- * @extends layer.Message
+ * @class Layer.Core.Message.ChannelMessage
+ * @extends Layer.Core.Message
  */
 import Root from '../root';
 import Message from './message';
@@ -27,11 +27,11 @@ class ChannelMessage extends Message {
   }
 
   /**
-   * Get the layer.Channel associated with this layer.Message.ChannelMessage.
+   * Get the Layer.Core.Channel associated with this Layer.Core.Message.ChannelMessage.
    *
    * @method getConversation
-   * @param {Boolean} load       Pass in true if the layer.Channel should be loaded if not found locally
-   * @return {layer.Channel}
+   * @param {Boolean} load       Pass in true if the Layer.Core.Channel should be loaded if not found locally
+   * @return {Layer.Core.Channel}
    */
   getConversation(load) {
     if (this.conversationId) {
@@ -45,7 +45,7 @@ class ChannelMessage extends Message {
    *
    * @method sendReceipt
    * @param {string} [type=layer.Constants.RECEIPT_STATE.READ] - One of layer.Constants.RECEIPT_STATE.READ or layer.Constants.RECEIPT_STATE.DELIVERY
-   * @return {layer.Message.ChannelMessage} this
+   * @return {Layer.Core.Message.ChannelMessage} this
    */
   sendReceipt(type = Constants.RECEIPT_STATE.READ) {
     logger.warn('Receipts not supported for Channel Messages yet');
@@ -103,8 +103,8 @@ class ChannelMessage extends Message {
    * @protected
    * @static
    * @param  {Object} message - Server's representation of the message
-   * @param  {layer.Client} client
-   * @return {layer.Message.ChannelMessage}
+   * @param  {Layer.Core.Client} client
+   * @return {Layer.Core.Message.ChannelMessage}
    */
   static _createFromServer(message, client) {
     const fromWebsocket = message.fromWebsocket;

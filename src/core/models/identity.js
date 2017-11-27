@@ -86,16 +86,6 @@ class Identity extends Syncable {
     super.destroy();
   }
 
-  _triggerAsync(evtName, args) {
-    this._clearObject();
-    super._triggerAsync(evtName, args);
-  }
-
-  trigger(evtName, args) {
-    this._clearObject();
-    super.trigger(evtName, args);
-  }
-
   /**
    * Populates this instance using server-data.
    *
@@ -352,7 +342,7 @@ class Identity extends Syncable {
    * @method _createFromServer
    * @static
    * @param {Object} identity - Server Identity Object
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    * @returns {Layer.Core.Identity}
    */
   static _createFromServer(identity, client) {

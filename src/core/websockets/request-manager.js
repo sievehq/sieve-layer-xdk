@@ -23,7 +23,7 @@ class WebsocketRequestManager {
    *
    * @method
    * @param  {Object} options
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    * @param {layer.Websockets.SocketManager} socketManager
    * @returns {layer.Websockets.RequestManager}
    */
@@ -299,7 +299,7 @@ WebsocketRequestManager.prototype._nextRequestId = 1;
 
 /**
  * The Client that owns this.
- * @type {layer.Client}
+ * @type {Layer.Core.Client}
  */
 WebsocketRequestManager.prototype.client = null;
 

@@ -7,7 +7,7 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Base from '../../base';
+import LayerUI, { Constants } from '../../base';
 
 registerComponent('layer-text-message-view', {
   style: `layer-text-message-view {
@@ -22,7 +22,7 @@ registerComponent('layer-text-message-view', {
   properties: {
     widthType: {
       get() {
-        return this.parentComponent.isShowingMetadata ? 'flex-width' : 'chat-bubble';
+        return this.parentComponent.isShowingMetadata ? Constants.WIDTH.FLEX : Constants.WIDTH.ANY;
       },
     },
     messageViewContainerTagName: {
@@ -32,7 +32,7 @@ registerComponent('layer-text-message-view', {
   },
   methods: {
     onRerender() {
-      this.innerHTML = Base.processText(this.model.text);
+      this.innerHTML = LayerUI.processText(this.model.text);
     },
   },
 });

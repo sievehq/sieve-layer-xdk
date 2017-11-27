@@ -23,12 +23,12 @@ describe("List Selection Mixin", function() {
     el = document.createElement('layer-conversation-list');
     testRoot.appendChild(el);
     query = client.createQuery({
-      model: layer.Core.Query.Conversation
+      model: Layer.Core.Query.Conversation
     });
     query.isFiring = false;
     for (i = 0; i < 100; i++) {
       query.data.push(
-        new layer.Conversation({
+        new Layer.Core.Conversation({
           client: client,
           participants: [client.user],
           id: 'layer:///conversations/c' + i,
@@ -70,7 +70,7 @@ describe("List Selection Mixin", function() {
     });
 
     it("Should set isSelected when generating items", function() {
-      var query2 = new layer.Core.Query({
+      var query2 = new Layer.Core.Query({
         client: client,
       });
       el.query = query2;

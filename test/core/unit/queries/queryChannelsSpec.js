@@ -49,7 +49,7 @@ describe("The ChannelsQuery Class", function() {
         client.onlineManager.isOnline = true;
 
         query = client.createQuery({
-          model: layer.Core.Query.Channel
+          model: Layer.Core.Query.Channel
         });
         channel = client._createObject(responses.channel1);
         channel2 = client._createObject(responses.channel2);
@@ -71,14 +71,14 @@ describe("The ChannelsQuery Class", function() {
     });
 
     it("Should be an ChannelsQuery", function() {
-      expect(query.constructor.prototype.model).toEqual(layer.Core.Query.Channel);
+      expect(query.constructor.prototype.model).toEqual(Layer.Core.Query.Channel);
     });
 
     describe("The constructor() method", function() {
          it("Should reject predicate on Channel", function() {
             expect(function() {
                 var query = client.createQuery({
-                    model: layer.Core.Query.Channel,
+                    model: Layer.Core.Query.Channel,
                     predicate: 'channel.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
                 });
             }).toThrowError(layer.Core.LayerError.ErrorDictionary.predicateNotSupported);
@@ -90,7 +90,7 @@ describe("The ChannelsQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Channel,
+                model: Layer.Core.Query.Channel,
                 paginationWindow: 15
             });
         });
@@ -170,7 +170,7 @@ describe("The ChannelsQuery Class", function() {
             channel2.createdAt = 10;
             query = client.createQuery({
                 client: client,
-                model: layer.Core.Query.Channel,
+                model: Layer.Core.Query.Channel,
                 paginationWindow: 15,
                 dataType: "object"
             });
@@ -215,7 +215,7 @@ describe("The ChannelsQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Channel,
+                model: Layer.Core.Query.Channel,
                 paginationWindow: 15
             });
             query.data = [channel];
@@ -255,7 +255,7 @@ describe("The ChannelsQuery Class", function() {
             var query;
             beforeEach(function() {
                 query = client.createQuery({
-                    model: layer.Core.Query.Channel,
+                    model: Layer.Core.Query.Channel,
                     paginationWindow: 15,
                     dataType: "object",
                     sortBy: [{'createdAt': 'desc'}]
@@ -419,7 +419,7 @@ describe("The ChannelsQuery Class", function() {
             beforeEach(function() {
                 query = client.createQuery({
                     client: client,
-                    model: layer.Core.Query.Channel,
+                    model: Layer.Core.Query.Channel,
                     paginationWindow: 15,
                     dataType: "instance",
                     sortBy: [{'createdAt': 'desc'}]
@@ -538,7 +538,7 @@ describe("The ChannelsQuery Class", function() {
         beforeEach(function() {
             query = client.createQuery({
                 client: client,
-                model: layer.Core.Query.Channel,
+                model: Layer.Core.Query.Channel,
                 paginationWindow: 15,
                 dataType: "object"
             });
@@ -706,7 +706,7 @@ describe("The ChannelsQuery Class", function() {
         beforeEach(function() {
             query = client.createQuery({
                 client: client,
-                model: layer.Core.Query.Channel,
+                model: Layer.Core.Query.Channel,
                 paginationWindow: 15,
                 dataType: "object"
             });

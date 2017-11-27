@@ -11,7 +11,7 @@ module.exports = {
     /**
      * The Client is needed in order for the list to get a Query from a queryId
      *
-     * @property {layer.Client} [client=null]
+     * @property {Layer.Core.Client} [client=null]
      */
     client: {
       set(value) {
@@ -27,11 +27,11 @@ module.exports = {
     },
 
     /**
-     * The ID for the layer.Core.Query providing the items to render.
+     * The ID for the Layer.Core.Query providing the items to render.
      *
      * Note that you can directly set the `query` property as well.
      *
-     * Leaving this and the query properties empty will cause a layer.Core.Query to be generated for you.
+     * Leaving this and the query properties empty will cause a Layer.Core.Query to be generated for you.
      *
      * @property {String} [queryId='']
      */
@@ -45,14 +45,14 @@ module.exports = {
     },
 
     /**
-     * A layer.Core.Query provides the items to render.
+     * A Layer.Core.Query provides the items to render.
      *
      * Suggested practices:
      *
      * * If your not using this query elsewhere in your app, let this widget generate its own Query
      * * If setting this from an html template, use layerUI.mixins.List.queryId instead.
      *
-     * @property {layer.Core.Query} [query=null]
+     * @property {Layer.Core.Query} [query=null]
      */
     query: {
       set(newValue, oldValue) {

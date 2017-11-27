@@ -792,7 +792,7 @@ describe("The Client class", function() {
 
             it("Should keep Conversations if they are in a Query and remove and destroy all others", function() {
                 // Setup
-                var query = client.createQuery({model: layer.Core.Query.Conversation});
+                var query = client.createQuery({model: Layer.Core.Query.Conversation});
                 var c1 = client.createConversation({ participants: ["a"] });
                 var c2 = client.createConversation({ participants: ["b"] });
                 var c3 = client.createConversation({ participants: ["c"] });
@@ -815,7 +815,7 @@ describe("The Client class", function() {
 
             it("Should handle immutable objects; keeping Conversations if they are in a Query and remove and destroy all others", function() {
                 // Setup
-                var query = client.createQuery({model: layer.Core.Query.Conversation});
+                var query = client.createQuery({model: Layer.Core.Query.Conversation});
                 var c1 = client.createConversation({ participants: ["a"] });
                 var c2 = client.createConversation({ participants: ["b"] });
                 var c3 = client.createConversation({ participants: ["c"] });
@@ -839,7 +839,7 @@ describe("The Client class", function() {
                 // Setup
                 var c = client.createConversation({ participants: ["a"] });
                 var query = client.createQuery({
-                    model: layer.Core.Query.Message,
+                    model: Layer.Core.Query.Message,
                     predicate: "conversation.id = '" + c.id + "'"
                 });
                 var m1 = c.createMessage("a").send();

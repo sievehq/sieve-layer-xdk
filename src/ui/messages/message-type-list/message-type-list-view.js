@@ -5,6 +5,7 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
+import { Constants } from '../../base';
 
 registerComponent('layer-message-type-list-view', {
   template: '',
@@ -27,7 +28,7 @@ registerComponent('layer-message-type-list-view', {
       value: null,
     },
     widthType: {
-      value: 'flex-width',
+      value: Constants.WIDTH.FLEX,
     },
     cardBorderStyle: {
       value: 'none',

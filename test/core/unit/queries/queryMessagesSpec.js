@@ -50,7 +50,7 @@ describe("The MessagesQuery Class", function() {
         client.onlineManager.isOnline = true;
 
         query = client.createQuery({
-          model: layer.Core.Query.Message
+          model: Layer.Core.Query.Message
         });
         channel = client._createObject(responses.channel1);
         conversation = client._createObject(responses.conversation1);
@@ -73,14 +73,14 @@ describe("The MessagesQuery Class", function() {
     });
 
     it("Should be an MessagesQuery", function() {
-      expect(query.constructor.prototype.model).toEqual(layer.Core.Query.Message);
+      expect(query.constructor.prototype.model).toEqual(Layer.Core.Query.Message);
     });
 
     describe("The constructor() method", function() {
         it("Should accept a full predicate", function() {
           var query = client.createQuery({
             client: client,
-            model: layer.Core.Query.Message,
+            model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
           expect(query.predicate).toEqual('conversation.id = \'layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf\'');
@@ -89,7 +89,7 @@ describe("The MessagesQuery Class", function() {
         it("Should accept a UUID predicate", function() {
           var query = client.createQuery({
             client: client,
-            model: layer.Core.Query.Message,
+            model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
           expect(query.predicate).toEqual('conversation.id = \'layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf\'');
@@ -98,7 +98,7 @@ describe("The MessagesQuery Class", function() {
         it("Should accept a full predicate double quote", function() {
           var query = client.createQuery({
             client: client,
-            model: layer.Core.Query.Message,
+            model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
           expect(query.predicate).toEqual("conversation.id = 'layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf'");
@@ -107,7 +107,7 @@ describe("The MessagesQuery Class", function() {
         it("Should accept a UUID predicate double quote", function() {
           var query = client.createQuery({
             client: client,
-            model: layer.Core.Query.Message,
+            model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
           expect(query.predicate).toEqual("conversation.id = 'layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf'");
@@ -117,7 +117,7 @@ describe("The MessagesQuery Class", function() {
           expect(function() {
             var query = client.createQuery({
                 client: client,
-                model: layer.Core.Query.Message,
+                model: Layer.Core.Query.Message,
                 predicate: "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf-hey"
             });
           }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
@@ -188,14 +188,14 @@ describe("The MessagesQuery Class", function() {
     describe("The _getConversationPredicateIds() method", function() {
         var query;
         beforeEach(function() {
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
                 client: client,
                 model: 'Message',
                 paginationWindow: 15
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {
@@ -207,7 +207,7 @@ describe("The MessagesQuery Class", function() {
           expect(query._getConversationPredicateIds()).toEqual({
             uuid: conversation.id.replace(/layer\:\/\/\/conversations\//, ""),
             id: conversation.id,
-            type: layer.Core.Query.Conversation
+            type: Layer.Core.Query.Conversation
           });
         });
 
@@ -243,7 +243,7 @@ describe("The MessagesQuery Class", function() {
             spyOn(query, "_getConversationPredicateIds").and.returnValue({
               uuid: conversation.id.replace(/^layer\:\/\/\/conversations\//,''),
               id: conversation.id,
-              type: layer.Core.Query.Conversation
+              type: Layer.Core.Query.Conversation
             });
             query.isFiring = false;
             query._fetchData(37);
@@ -289,14 +289,14 @@ describe("The MessagesQuery Class", function() {
         var query;
         beforeEach(function() {
             client._models.conversations[conversation.id] = conversation;
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
                 model: 'Message',
                 paginationWindow: 15,
                 predicate: 'conversation.id = "' + conversation.id + '"'
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {
@@ -425,14 +425,14 @@ describe("The MessagesQuery Class", function() {
         var query;
         beforeEach(function() {
             client._models.channels[channel.id] = channel;
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
                 model: 'Message',
                 paginationWindow: 15,
                 predicate: 'channel.id = "' + channel.id + '"'
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {

@@ -331,8 +331,8 @@ describe('Image Message Components', function() {
 
       layer.Util.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-chat-bubble class
-      expect(el.classList.contains('layer-card-width-chat-bubble')).toBe(true);
+      // Message Viewer: gets the layer-card-width-any-width class
+      expect(el.classList.contains('layer-card-width-any-width')).toBe(true);
 
       // Container: hide metadata
       expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(true);
@@ -357,8 +357,8 @@ describe('Image Message Components', function() {
           layer.Util.defer.flush();
           setTimeout(function() {
             try {
-              // Message Viewer: gets the layer-card-width-chat-bubble class
-              expect(el.classList.contains('layer-card-width-chat-bubble')).toBe(true);
+              // Message Viewer: gets the layer-card-width-any-width class
+              expect(el.classList.contains('layer-card-width-any-width')).toBe(true);
 
               // Container: hide metadata
               expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(true);

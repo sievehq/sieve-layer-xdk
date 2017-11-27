@@ -15,7 +15,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
-import { statusMimeTypes } from '../../base';
+import { registerStatusModel } from '../../base';
 
 class StatusModel extends MessageTypeModel {
 
@@ -83,6 +83,6 @@ Root.initClass.apply(StatusModel, [StatusModel, 'StatusModel']);
 Client.registerMessageTypeModelClass(StatusModel, 'StatusModel');
 
 // Register this MIME Type to be handled as a Status Message
-statusMimeTypes.push(StatusModel.MIMEType);
+registerStatusModel(StatusModel);
 
 module.exports = StatusModel;

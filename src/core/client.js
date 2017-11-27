@@ -471,7 +471,7 @@ class Client extends ClientAuth {
    * A reset boolean property is passed; set based on  Layer.Core.ClientAuthenticator.ResetAfterOfflineDuration.
    *
    * Note it is possible for an application to have logic that causes queries to be created/destroyed
-   * as a side-effect of layer.Core.Query.reset destroying all data. So we must test to see if queries exist.
+   * as a side-effect of Layer.Core.Query.reset destroying all data. So we must test to see if queries exist.
    *
    * @method _connectionRestored
    * @private
@@ -562,7 +562,7 @@ class Client extends ClientAuth {
    * @method getClient
    * @static
    * @param  {string} appId
-   * @return {layer.Client}
+   * @return {Layer.Core.Client}
    */
   static getClient(appId) {
     return ClientRegistry.get(appId);
@@ -587,7 +587,7 @@ class Client extends ClientAuth {
    * @method addListenerForNewClient
    * @static
    * @param {Function} listener
-   * @param {layer.Client} listener.client
+   * @param {Layer.Core.Client} listener.client
    */
   static addListenerForNewClient(listener) {
     ClientRegistry.addListener(listener);

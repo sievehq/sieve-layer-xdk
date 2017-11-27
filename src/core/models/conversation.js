@@ -9,7 +9,7 @@
  *          distinct: true
  *      });
  *
- * NOTE:   Do not create a conversation with new layer.Conversation(...),
+ * NOTE:   Do not create a conversation with new Layer.Core.Conversation(...),
  *         This will fail to handle the distinct property short of going to the server for evaluation.
  *
  * NOTE:   Creating a Conversation is a local action.  A Conversation will not be
@@ -17,36 +17,36 @@
  *
  * 1. A message is sent on that Conversation
  * 2. `Conversation.send()` is called (not recommended as mobile clients
- *    expect at least one layer.Message.ConversationMessage in a Conversation)
+ *    expect at least one Layer.Core.Message.ConversationMessage in a Conversation)
  *
  * Key methods, events and properties for getting started:
  *
  * Properties:
  *
- * * layer.Conversation.id: this property is worth being familiar with; it identifies the
+ * * Layer.Core.Conversation.id: this property is worth being familiar with; it identifies the
  *   Conversation and can be used in `client.getConversation(id)` to retrieve it.
- * * layer.Conversation.lastMessage: This property makes it easy to show info about the most recent Message
+ * * Layer.Core.Conversation.lastMessage: This property makes it easy to show info about the most recent Message
  *    when rendering a list of Conversations.
- * * layer.Conversation.metadata: Custom data for your Conversation; commonly used to store a 'title' property
+ * * Layer.Core.Conversation.metadata: Custom data for your Conversation; commonly used to store a 'title' property
  *    to name your Conversation.
  *
  * Methods:
  *
- * * layer.Conversation.addParticipants and layer.Conversation.removeParticipants: Change the participants of the Conversation
- * * layer.Conversation.setMetadataProperties: Set metadata.title to 'My Conversation with Layer Support' (uh oh)
- * * layer.Conversation.on() and layer.Conversation.off(): event listeners built on top of the `backbone-events-standalone` npm project
- * * layer.Conversation.leave() to leave the Conversation
- * * layer.Conversation.delete() to delete the Conversation for all users (or for just this user)
+ * * Layer.Core.Conversation.addParticipants and Layer.Core.Conversation.removeParticipants: Change the participants of the Conversation
+ * * Layer.Core.Conversation.setMetadataProperties: Set metadata.title to 'My Conversation with Layer Support' (uh oh)
+ * * Layer.Core.Conversation.on() and Layer.Core.Conversation.off(): event listeners built on top of the `backbone-events-standalone` npm project
+ * * Layer.Core.Conversation.leave() to leave the Conversation
+ * * Layer.Core.Conversation.delete() to delete the Conversation for all users (or for just this user)
  *
  * Events:
  *
  * * `conversations:change`: Useful for observing changes to participants and metadata
  *   and updating rendering of your open Conversation
  *
- * Finally, to access a list of Messages in a Conversation, see layer.Core.Query.
+ * Finally, to access a list of Messages in a Conversation, see Layer.Core.Query.
  *
- * @class  layer.Conversation
- * @extends layer.Container
+ * @class  Layer.Core.Conversation
+ * @extends Layer.Core.Container
  * @author  Michael Kantor
  */
 
@@ -63,11 +63,11 @@ class Conversation extends Container {
   /**
    * Create a new conversation.
    *
-   * The static `layer.Conversation.create()` method
+   * The static `Layer.Core.Conversation.create()` method
    * will correctly lookup distinct Conversations and
-   * return them; `new layer.Conversation()` will not.
+   * return them; `new Layer.Core.Conversation()` will not.
    *
-   * Developers should use `layer.Conversation.create()`.
+   * Developers should use `Layer.Core.Conversation.create()`.
    *
    * @method constructor
    * @protected
@@ -75,7 +75,7 @@ class Conversation extends Container {
    * @param {string[]/Layer.Core.Identity[]} [options.participants] - Array of Participant IDs or Layer.Core.Identity instances
    * @param {boolean} [options.distinct=true] - Is the conversation distinct
    * @param {Object} [options.metadata] - An object containing Conversation Metadata.
-   * @return {layer.Conversation}
+   * @return {Layer.Core.Conversation}
    */
   constructor(options = {}) {
     // Setup default values
@@ -114,25 +114,25 @@ class Conversation extends Container {
   }
 
   /**
-   * Create a new layer.Message.ConversationMessage instance within this conversation
+   * Create a new Layer.Core.Message.ConversationMessage instance within this conversation
    *
    *      var message = conversation.createMessage('hello');
    *
    *      var message = conversation.createMessage({
-   *          parts: [new layer.MessagePart({
+   *          parts: [new Layer.Core.MessagePart({
    *                      body: 'hello',
    *                      mimeType: 'text/plain'
    *                  })]
    *      });
    *
-   * See layer.Message.ConversationMessage for more options for creating the message.
+   * See Layer.Core.Message.ConversationMessage for more options for creating the message.
    *
    * @method createMessage
    * @param  {String|Object} options - If its a string, a MessagePart is created around that string.
-   * @param {layer.MessagePart[]} options.parts - An array of MessageParts.  There is some tolerance for
+   * @param {Layer.Core.MessagePart[]} options.parts - An array of MessageParts.  There is some tolerance for
    *                                               it not being an array, or for it being a string to be turned
    *                                               into a MessagePart.
-   * @return {layer.Message.ConversationMessage}
+   * @return {Layer.Core.Message.ConversationMessage}
    */
   createMessage(options = {}) {
     let messageConfig;
@@ -184,7 +184,7 @@ class Conversation extends Container {
    * if there was a FOUND_WITHOUT_REQUESTED_METADATA result.
    *
    * Note that the optional Message parameter should NOT be used except
-   * by the layer.Message.ConversationMessage class itself.
+   * by the Layer.Core.Message.ConversationMessage class itself.
    *
    * Note that recommended practice is to send the Conversation by sending a Message in the Conversation,
    * and NOT by calling Conversation.send.
@@ -199,8 +199,8 @@ class Conversation extends Container {
    *      });
    *
    * @method send
-   * @param {layer.Message.ConversationMessage} [message] Tells the Conversation what its last_message will be
-   * @return {layer.Conversation} this
+   * @param {Layer.Core.Message.ConversationMessage} [message] Tells the Conversation what its last_message will be
+   * @return {Layer.Core.Conversation} this
    */
   send(message) {
     const client = this.getClient();
@@ -296,7 +296,7 @@ class Conversation extends Container {
    * ```
    *
    * @method markAllMessagesAsRead
-   * @param {layer.Message} [message=conversation.lastMessage]
+   * @param {Layer.Core.Message} [message=conversation.lastMessage]
    * @return this
    */
   markAllMessagesAsRead(message) {
@@ -362,7 +362,7 @@ class Conversation extends Container {
    *
    * @method addParticipants
    * @param  {string[]/Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
-   * @returns {layer.Conversation} this
+   * @returns {Layer.Core.Conversation} this
    */
   addParticipants(participants) {
     // Only add those that aren't already in the list.
@@ -387,7 +387,7 @@ class Conversation extends Container {
    *
    * @method removeParticipants
    * @param  {string[]/Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
-   * @returns {layer.Conversation} this
+   * @returns {Layer.Core.Conversation} this
    */
   removeParticipants(participants) {
     const currentParticipants = {};
@@ -416,7 +416,7 @@ class Conversation extends Container {
    *
    * @method replaceParticipants
    * @param  {string[]/Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
-   * @returns {layer.Conversation} this
+   * @returns {Layer.Core.Conversation} this
    */
   replaceParticipants(participants) {
     if (!participants || !participants.length) {
@@ -521,14 +521,14 @@ class Conversation extends Container {
    *
    * Deletion Modes:
    *
-   * * layer.Constants.DELETION_MODE.ALL: This deletes the local copy immediately, and attempts to also
+   * * Layer.Constants.DELETION_MODE.ALL: This deletes the local copy immediately, and attempts to also
    *   delete the server's copy.
-   * * layer.Constants.DELETION_MODE.MY_DEVICES: Deletes the local copy immediately, and attempts to delete it from all
+   * * Layer.Constants.DELETION_MODE.MY_DEVICES: Deletes the local copy immediately, and attempts to delete it from all
    *   of my devices.  Other users retain access.
    * * true: For backwards compatibility thi is the same as ALL.
    *
    * MY_DEVICES does not remove this user as a participant.  That means a new Message on this Conversation will recreate the
-   * Conversation for this user.  See layer.Conversation.leave() instead.
+   * Conversation for this user.  See Layer.Core.Conversation.leave() instead.
    *
    * Executes as follows:
    *
@@ -690,8 +690,8 @@ class Conversation extends Container {
    *
    * @method __updateLastMessage
    * @private
-   * @param  {layer.Message.ConversationMessage} newValue
-   * @param  {layer.Message.ConversationMessage} oldValue
+   * @param  {Layer.Core.Message.ConversationMessage} newValue
+   * @param  {Layer.Core.Message.ConversationMessage} oldValue
    */
   __updateLastMessage(newValue, oldValue) {
     if (newValue && oldValue && newValue.id === oldValue.id) return;
@@ -748,8 +748,8 @@ class Conversation extends Container {
    * @protected
    * @static
    * @param  {Object} conversation - Server representation of a Conversation
-   * @param  {layer.Client} client
-   * @return {layer.Conversation}
+   * @param  {Layer.Core.Client} client
+   * @return {Layer.Core.Conversation}
    */
   static _createFromServer(conversation, client) {
     return new Conversation({
@@ -762,7 +762,7 @@ class Conversation extends Container {
   /**
    * Find or create a new conversation.
    *
-   *      var conversation = layer.Conversation.create({
+   *      var conversation = Layer.Core.Conversation.create({
    *          participants: ['a', 'b'],
    *          distinct: true,
    *          metadata: {
@@ -784,11 +784,11 @@ class Conversation extends Container {
    * @static
    * @protected
    * @param  {Object} options
-   * @param  {layer.Client} options.client
+   * @param  {Layer.Core.Client} options.client
    * @param  {string[]/Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity objects to create a conversation with.
    * @param {boolean} [options.distinct=true] - Create a distinct conversation
    * @param {Object} [options.metadata={}] - Initial metadata for Conversation
-   * @return {layer.Conversation}
+   * @return {Layer.Core.Conversation}
    */
   static create(options) {
     if (!options.client) throw new Error(ErrorDictionary.clientMissing);
@@ -817,8 +817,8 @@ class Conversation extends Container {
    * @method _createDistinct
    * @static
    * @private
-   * @param  {Object} options - See layer.Conversation.create options; participants must be Layer.Core.Identity[]
-   * @return {layer.Conversation}
+   * @param  {Object} options - See Layer.Core.Conversation.create options; participants must be Layer.Core.Identity[]
+   * @return {Layer.Core.Conversation}
    */
   static _createDistinct(options) {
     if (options.participants.indexOf(options.client.user) === -1) {
@@ -881,10 +881,10 @@ Conversation.prototype.unreadCount = 0;
 Conversation.prototype.distinct = true;
 
 /**
- * The last layer.Message.ConversationMessage to be sent/received for this Conversation.
+ * The last Layer.Core.Message.ConversationMessage to be sent/received for this Conversation.
  *
  * Value may be a Message that has been locally created but not yet received by server.
- * @type {layer.Message.ConversationMessage}
+ * @type {Layer.Core.Message.ConversationMessage}
  */
 Conversation.prototype.lastMessage = null;
 
@@ -964,7 +964,7 @@ Conversation._supportedEvents = [
   /**
    * The conversation is now loaded from the server.
    *
-   * Note that this is only used in response to the layer.Conversation.load() method.
+   * Note that this is only used in response to the Layer.Core.Conversation.load() method.
    * from the server.
    * @event
    * @param {Layer.Core.LayerEvent} event
@@ -974,7 +974,7 @@ Conversation._supportedEvents = [
   /**
    * An attempt to load this conversation from the server has failed.
    *
-   * Note that this is only used in response to the layer.Conversation.load() method.
+   * Note that this is only used in response to the Layer.Core.Conversation.load() method.
    * @event
    * @param {Layer.Core.LayerEvent} event
    * @param {Layer.Core.LayerEvent} event.error
@@ -1000,7 +1000,7 @@ Conversation._supportedEvents = [
    * @param {Mixed} event.changes.newValue
    * @param {Mixed} event.changes.oldValue
    * @param {string} event.changes.property - Name of the property that changed
-   * @param {layer.Conversation} event.target
+   * @param {Layer.Core.Conversation} event.target
    */
   'conversations:change'].concat(Syncable._supportedEvents);
 

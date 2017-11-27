@@ -2,7 +2,7 @@
  * Query class for running a Query on Channels
  *
  *      var channelQuery = client.createQuery({
- *        model: layer.Core.Query.Channel
+ *        model: Layer.Core.Query.Channel
  *      });
  *
  *
@@ -16,8 +16,8 @@
  *
  *      query.destroy();
  *
- * @class  layer.ChannelsQuery
- * @extends layer.Core.Query
+ * @class  Layer.Core.ChannelsQuery
+ * @extends Layer.Core.Query
  */
 import Root from '../root';
 import { SYNC_STATE } from '../../constants';

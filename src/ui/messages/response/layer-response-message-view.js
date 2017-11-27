@@ -11,6 +11,7 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
+import { Constants } from '../../base';
 
 registerComponent('layer-response-message-view', {
   mixins: [MessageViewMixin],
@@ -20,7 +21,7 @@ registerComponent('layer-response-message-view', {
     // widthType is derived from the Response's contentView if there is one
     widthType: {
       get() {
-        return this.properties.contentView ? this.properties.contentView.widthType : 'flex-width';
+        return this.properties.contentView ? this.properties.contentView.widthType : Constants.WIDTH.FLEX;
       },
     },
   },

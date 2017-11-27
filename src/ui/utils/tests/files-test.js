@@ -175,7 +175,7 @@ describe("File Utils", function() {
         };
         dropWatcher.onFileDrop(evt);
 
-        expect(layerUI.files.processAttachments).toHaveBeenCalledWith([jasmine.any(layer.MessagePart), jasmine.any(layer.MessagePart)], dropWatcher.callback);
+        expect(layerUI.files.processAttachments).toHaveBeenCalledWith([jasmine.any(Layer.Core.MessagePart), jasmine.any(Layer.Core.MessagePart)], dropWatcher.callback);
 
         // restore
         layerUI.files.processAttachments = tmp;
@@ -189,25 +189,25 @@ describe("File Utils", function() {
       layerUI.files.generateImageMessageParts = jasmine.createSpy('generate');
 
       layerUI.files.processAttachments([
-        new layer.MessagePart(generateBlob('image/png')),
-        new layer.MessagePart(generateBlob('image/png'))
+        new Layer.Core.MessagePart(generateBlob('image/png')),
+        new Layer.Core.MessagePart(generateBlob('image/png'))
       ]);
 
       expect(layerUI.files.generateImageMessageParts.calls.count()).toEqual(2);
-      expect(layerUI.files.generateImageMessageParts).toHaveBeenCalledWith(jasmine.any(layer.MessagePart), undefined);
+      expect(layerUI.files.generateImageMessageParts).toHaveBeenCalledWith(jasmine.any(Layer.Core.MessagePart), undefined);
       layerUI.files.generateImageMessageParts.calls.reset();
 
       layerUI.files.processAttachments([
-        new layer.MessagePart(generateBlob('image/png')),
-        new layer.MessagePart(generateBlob('video/mp4'))
+        new Layer.Core.MessagePart(generateBlob('image/png')),
+        new Layer.Core.MessagePart(generateBlob('video/mp4'))
       ]);
       expect(layerUI.files.generateImageMessageParts.calls.count()).toEqual(1);
       layerUI.files.generateImageMessageParts.calls.reset();
 
 
       layerUI.files.processAttachments([
-        new layer.MessagePart(generateBlob('text/plain')),
-        new layer.MessagePart(generateBlob('video/mp4'))
+        new Layer.Core.MessagePart(generateBlob('text/plain')),
+        new Layer.Core.MessagePart(generateBlob('video/mp4'))
       ]);
       expect(layerUI.files.generateImageMessageParts.calls.count()).toEqual(0);
 
@@ -220,25 +220,25 @@ describe("File Utils", function() {
       layerUI.files.generateVideoMessageParts = jasmine.createSpy('generate');
 
       layerUI.files.processAttachments([
-        new layer.MessagePart(generateBlob('video/mp4')),
-        new layer.MessagePart(generateBlob('video/mp4'))
+        new Layer.Core.MessagePart(generateBlob('video/mp4')),
+        new Layer.Core.MessagePart(generateBlob('video/mp4'))
       ], jasmine.createSpy('ignored'));
 
       expect(layerUI.files.generateVideoMessageParts.calls.count()).toEqual(2);
-      expect(layerUI.files.generateVideoMessageParts).toHaveBeenCalledWith(jasmine.any(layer.MessagePart), jasmine.any(Function));
+      expect(layerUI.files.generateVideoMessageParts).toHaveBeenCalledWith(jasmine.any(Layer.Core.MessagePart), jasmine.any(Function));
       layerUI.files.generateVideoMessageParts.calls.reset();
 
       layerUI.files.processAttachments([
-        new layer.MessagePart(generateBlob('image/png')),
-        new layer.MessagePart(generateBlob('video/mp4'))
+        new Layer.Core.MessagePart(generateBlob('image/png')),
+        new Layer.Core.MessagePart(generateBlob('video/mp4'))
       ], jasmine.createSpy('ignored'));
       expect(layerUI.files.generateVideoMessageParts.calls.count()).toEqual(1);
       layerUI.files.generateVideoMessageParts.calls.reset();
 
 
       layerUI.files.processAttachments([
-        new layer.MessagePart(generateBlob('text/plain')),
-        new layer.MessagePart(generateBlob('image/png'))
+        new Layer.Core.MessagePart(generateBlob('text/plain')),
+        new Layer.Core.MessagePart(generateBlob('image/png'))
       ], jasmine.createSpy('ignored'));
       expect(layerUI.files.generateVideoMessageParts.calls.count()).toEqual(0);
 
@@ -250,23 +250,23 @@ describe("File Utils", function() {
       var spy = jasmine.createSpy('hey');
 
       layerUI.files.processAttachments([
-        new layer.MessagePart(generateBlob('video/mp4')),
-        new layer.MessagePart(generateBlob('video/mp4'))
+        new Layer.Core.MessagePart(generateBlob('video/mp4')),
+        new Layer.Core.MessagePart(generateBlob('video/mp4'))
       ], spy);
 
       expect(spy).not.toHaveBeenCalled();
 
       layerUI.files.processAttachments([
-        new layer.MessagePart(generateBlob('arg/there')),
-        new layer.MessagePart(generateBlob('video/mp4'))
+        new Layer.Core.MessagePart(generateBlob('arg/there')),
+        new Layer.Core.MessagePart(generateBlob('video/mp4'))
       ], spy);
       expect(spy.calls.count()).toEqual(1);
       spy.calls.reset();
 
 
       layerUI.files.processAttachments([
-        new layer.MessagePart(generateBlob('text/plain')),
-        new layer.MessagePart(generateBlob('arg/there'))
+        new Layer.Core.MessagePart(generateBlob('text/plain')),
+        new Layer.Core.MessagePart(generateBlob('arg/there'))
       ], spy);
       expect(spy.calls.count()).toEqual(2);
     });
@@ -274,11 +274,11 @@ describe("File Utils", function() {
 
   describe("The generateImageMessageParts() method", function() {
     it("Should return the expected 3 message parts for sending an image", function(done) {
-      var srcPart = new layer.MessagePart(generateBlob("image/png"));
+      var srcPart = new Layer.Core.MessagePart(generateBlob("image/png"));
       layerUI.files.generateImageMessageParts(srcPart, function(parts) {
         expect(parts[0]).toBe(srcPart);
-        expect(parts[1]).toEqual(jasmine.any(layer.MessagePart));
-        expect(parts[2]).toEqual(jasmine.any(layer.MessagePart));
+        expect(parts[1]).toEqual(jasmine.any(Layer.Core.MessagePart));
+        expect(parts[2]).toEqual(jasmine.any(Layer.Core.MessagePart));
         expect(parts[1].mimeType).toEqual("image/jpeg+preview");
         expect(parts[1].body).toEqual(jasmine.any(Blob));
         expect(parts[2].mimeType).toEqual("application/json+imageSize");
@@ -300,11 +300,11 @@ describe("File Utils", function() {
   describe("The generateVideoMessageParts() method", function() {
     it("Should return the expected 3 message parts for sending a video", function(done) {
       setTimeout(function() {
-        var srcPart = new layer.MessagePart(generateBlob("video/mp4"));
+        var srcPart = new Layer.Core.MessagePart(generateBlob("video/mp4"));
         layerUI.files.generateVideoMessageParts(srcPart, function(parts) {
           expect(parts[0]).toBe(srcPart);
-          expect(parts[1]).toEqual(jasmine.any(layer.MessagePart));
-          expect(parts[2]).toEqual(jasmine.any(layer.MessagePart));
+          expect(parts[1]).toEqual(jasmine.any(Layer.Core.MessagePart));
+          expect(parts[2]).toEqual(jasmine.any(Layer.Core.MessagePart));
           expect(parts[1].mimeType).toEqual("image/jpeg+preview");
           expect(parts[1].body).toEqual(jasmine.any(Blob));
           expect(parts[2].mimeType).toEqual("application/json+imageSize");

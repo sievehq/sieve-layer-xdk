@@ -27,13 +27,13 @@ describe('layer-conversation-list', function() {
     el = document.createElement('layer-conversation-list');
     testRoot.appendChild(el);
     query = client.createQuery({
-      model: layer.Core.Query.Conversation,
+      model: Layer.Core.Query.Conversation,
       sortBy: [{ 'lastMessage.sentAt': 'desc' }]
     });
     query.isFiring = false;
     for (i = 0; i < 100; i++) {
       query.data.push(
-        new layer.Conversation({
+        new Layer.Core.Conversation({
           client: client,
           participants: [client.user],
           id: 'layer:///conversations/c' + i,

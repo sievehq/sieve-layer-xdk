@@ -2315,6 +2315,84 @@ describe("The Message class", function() {
     // tested by _populateFromServer
     xdescribe("The getPartById() method", function() {});
 
+    describe("The getPartsMatchingAttribute() method", function() {
+        it("Should find the parts with the specified attribute value", function() {
+            // Setup
+            m = new layer.Core.Message.ConversationMessage({
+                client: client,
+                parts: [
+                    {mimeType: "text/plain;a=b", body: "a"},
+                    {mimeType: "text/plain;a=c", body: "a"},
+                    {mimeType: "text/plain;a=d", body: "a"},
+                    {mimeType: "text/plain;a=c", body: "a"},
+                    {mimeType: "text/plain;a=e", body: "a"},
+                ]
+            });
+
+            // Run
+            expect(m.getPartsMatchingAttribute({a: "c"}) ).toEqual([m.parts[1], m.parts[3]]);
+        });
+    });
+
+    describe("The getRootPart() method", function() {
+        it("Should find the root part", function() {
+            // Setup
+            m = new layer.Core.Message.ConversationMessage({
+                client: client,
+                parts: [
+                    {mimeType: "text/plain;a=b", body: "a"},
+                    {mimeType: "text/plain;a=c", body: "a"},
+                    {mimeType: "text/plain;a=d", body: "a"},
+                    {mimeType: "text/plain;role=root", body: "a"},
+                    {mimeType: "text/plain;a=e", body: "a"},
+                ]
+            });
+
+            // Run
+            expect(m.getRootPart()).toEqual(m.parts[3]);
+        });
+    });
+
+    describe("The createModel() method", function() {
+        it("Should call rootPart.createModel()", function() {
+            // Setup
+            m = new layer.Core.Message.ConversationMessage({
+                client: client,
+                parts: [
+                    {mimeType: "application/vnd.layer.text+json;a=b", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;a=c", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;a=d", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;role=root", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;a=e", body: '{"text": "a"}'},
+                ]
+            });
+            spyOn(m.parts[3], "createModel").and.callThrough();
+
+            // Run
+            expect(m.createModel()).toEqual(jasmine.any(Layer.Core.MessageTypeModel));
+            expect(m.parts[3].createModel).toHaveBeenCalledWith();
+        });
+    });
+
+    describe("The getModelName() method", function() {
+        it("Should return model names", function() {
+            // Setup
+            m = new layer.Core.Message.ConversationMessage({
+                client: client,
+                parts: [
+                    {mimeType: "application/vnd.layer.image+json;a=b", body: '{"image": "a"}'},
+                    {mimeType: "application/vnd.layer.image+json;a=c", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.image+json;a=d", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;role=root", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.image+json;a=e", body: '{"text": "a"}'},
+                ]
+            });
+
+            // Test
+            expect (m.getModelName()).toEqual("TextModel");
+        });
+    });
+
     describe("The _handlePatchEvent() method", function() {
         it("Should call __updateRecipientStatus", function() {
             // Setup

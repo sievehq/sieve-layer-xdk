@@ -13,7 +13,11 @@
  *        sortBy: [{'createdAt': 'desc'}]
  *      });
  *      var channelQuery = client.createQuery({
- *        model: layer.Core.Query.Channel
+ *        model: Layer.Core.Query.Conversation,
+ *        sortBy: [{'createdAt': 'desc'}]
+ *      });
+ *      var channelQuery = client.createQuery({
+ *        model: Layer.Core.Query.Channel
  *      });
  *
  * You can change the data selected by your query any time you want using:
@@ -38,31 +42,31 @@
  *
  * For documentation on creating each of these types of queries, see the specified Query Subclass:
  *
- * * layer.ConversationsQuery
- * * layer.ChannelsQuery
- * * layer.MessagesQuery
+ * * Layer.Core.ConversationsQuery
+ * * Layer.Core.ChannelsQuery
+ * * Layer.Core.MessagesQuery
  * * layer.IdentitiesQuery
  * * layer.MembersQuery
  *
  * #### dataType
  *
- * The layer.Core.Query.dataType property lets you specify what type of data shows up in your results:
+ * The Layer.Core.Query.dataType property lets you specify what type of data shows up in your results:
  *
  * ```javascript
  * var query = client.createQuery({
- *     model: layer.Core.Query.Message,
+ *     model: Layer.Core.Query.Message,
  *     predicate: "conversation.id = 'layer:///conversations/uuid'",
- *     dataType: layer.Core.Query.InstanceDataType
+ *     dataType: Layer.Core.Query.InstanceDataType
  * })
  *
  * var query = client.createQuery({
- *     model: layer.Core.Query.Message,
+ *     model: Layer.Core.Query.Message,
  *     predicate: "conversation.id = 'layer:///conversations/uuid'",
- *     dataType: layer.Core.Query.ObjectDataType
+ *     dataType: Layer.Core.Query.ObjectDataType
  * })
  * ```
  *
- * The property defaults to layer.Core.Query.InstanceDataType.  Instances support methods and let you subscribe to events for direct notification
+ * The property defaults to Layer.Core.Query.InstanceDataType.  Instances support methods and let you subscribe to events for direct notification
  * of changes to any of the results of your query:
  *
 * ```javascript
@@ -71,7 +75,7 @@
  * });
  * ```
  *
- * A value of layer.Core.Query.ObjectDataType will cause the data to be an array of immutable objects rather than instances.  One can still get an instance from the POJO:
+ * A value of Layer.Core.Query.ObjectDataType will cause the data to be an array of immutable objects rather than instances.  One can still get an instance from the POJO:
  *
  * ```javascript
  * var m = client.getMessage(query.data[0].id);
@@ -153,7 +157,7 @@
  *
  * ### 5. Property Events
  *
- * If any properties change in any of the objects listed in your layer.Core.Query.data property, a `property` event will be fired.
+ * If any properties change in any of the objects listed in your Layer.Core.Query.data property, a `property` event will be fired.
  *
  * The Layer.Core.LayerEvent.target property contains object that was modified.
  *
@@ -197,7 +201,7 @@
  *```
  * Note that `query.on('change:move', function(evt) {}` is also supported.
  *
- * @class  layer.Core.Query
+ * @class  Layer.Core.Query
  * @extends Layer.Core.Root
  *
  */
@@ -304,7 +308,7 @@ class Query extends Root {
    * @param {string} [options.predicate] - A new predicate for the query
    * @param {string} [options.model] - A new model for the Query
    * @param {number} [paginationWindow] - Increase/decrease our result size to match this pagination window.
-   * @return {layer.Core.Query} this
+   * @return {Layer.Core.Query} this
    */
   update(options = {}) {
     let needsRefresh,
@@ -729,7 +733,7 @@ Query.prefixUUID = 'layer:///queries/';
 /**
  * Query for Conversations.
  *
- * Use this value in the layer.Core.Query.model property.
+ * Use this value in the Layer.Core.Query.model property.
  * @type {string}
  * @static
  */
@@ -738,7 +742,7 @@ Query.Conversation = 'Conversation';
 /**
  * Query for Channels.
  *
- * Use this value in the layer.Core.Query.model property.
+ * Use this value in the Layer.Core.Query.model property.
  * @type {string}
  * @static
  */
@@ -747,7 +751,7 @@ Query.Channel = 'Channel';
 /**
  * Query for Messages.
  *
- * Use this value in the layer.Core.Query.model property.
+ * Use this value in the Layer.Core.Query.model property.
  * @type {string}
  * @static
  */
@@ -756,7 +760,7 @@ Query.Message = 'Message';
 /**
  * Query for Announcements.
  *
- * Use this value in the layer.Core.Query.model property.
+ * Use this value in the Layer.Core.Query.model property.
  * @type {string}
  * @static
  */
@@ -765,7 +769,7 @@ Query.Announcement = 'Announcement';
 /**
  * Query for Identities.
  *
- * Use this value in the layer.Core.Query.model property.
+ * Use this value in the Layer.Core.Query.model property.
  * @type {string}
  * @static
  */
@@ -774,7 +778,7 @@ Query.Identity = 'Identity';
 /**
  * Query for Members of a Channel.
  *
- * Use this value in the layer.Core.Query.model property.
+ * Use this value in the Layer.Core.Query.model property.
  * @type {string}
  * @static
  */
@@ -783,7 +787,7 @@ Query.Membership = 'Membership';
 /**
  * Get data as POJOs/immutable objects.
  *
- * This value of layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as immutable objects.
+ * This value of Layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as immutable objects.
  *
  * @type {string}
  * @static
@@ -791,9 +795,9 @@ Query.Membership = 'Membership';
 Query.ObjectDataType = 'object';
 
 /**
- * Get data as instances of layer.Message and layer.Conversation.
+ * Get data as instances of Layer.Core.Message and Layer.Core.Conversation.
  *
- * This value of layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as instances.
+ * This value of Layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as instances.
  *
  * @type {string}
  * @static
@@ -834,7 +838,7 @@ Query.prototype.totalSize = 0;
 /**
  * Access to the client so it can listen to websocket and local events.
  *
- * @type {layer.Client}
+ * @type {Layer.Core.Client}
  * @protected
  * @readonly
  */
@@ -856,13 +860,13 @@ Query.prototype.data = null;
  *
  * Model is one of
  *
- * * layer.Core.Query.Conversation
- * * layer.Core.Query.Channel
- * * layer.Core.Query.Message
- * * layer.Core.Query.Announcement
- * * layer.Core.Query.Identity
+ * * Layer.Core.Query.Conversation
+ * * Layer.Core.Query.Channel
+ * * Layer.Core.Query.Message
+ * * Layer.Core.Query.Announcement
+ * * Layer.Core.Query.Identity
  *
- * Value can be set via constructor and layer.Core.Query.update().
+ * Value can be set via constructor and Layer.Core.Query.update().
  *
  * @type {String}
  * @readonly

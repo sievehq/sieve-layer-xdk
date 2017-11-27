@@ -3,6 +3,7 @@ layer-message-item-status layer-message-viewer:not(.layer-card-width-chat-bubble
 }
 
 layer-message-viewer:not(.layer-card-width-chat-bubble) {
+layer-message-viewer:not(.layer-card-width-any-width) {
   min-width: 192px;
 }
 
@@ -29,22 +30,22 @@ layer-message-viewer:not(.layer-card-width-chat-bubble) {
 }
 
 .layer-conversation-view-width-medium, .layer-conversation-view-width-small {
-  layer-message-viewer.layer-root-card.layer-card-width-chat-bubble {
+  layer-message-viewer.layer-root-card.layer-card-width-any-width {
     max-width: 90%;
   }
 }
 .layer-conversation-view-width-large {
-  layer-message-viewer.layer-root-card.layer-card-width-chat-bubble {
+  layer-message-viewer.layer-root-card.layer-card-width-any-width {
     max-width: 60%;
   }
 }
 
 
-.layer-root-card.layer-card-width-chat-bubble > layer-standard-message-view-container {
+.layer-root-card.layer-card-width-any-width > layer-standard-message-view-container {
   padding-bottom: 0px;
 }
 
-layer-message-item-received .layer-root-card.layer-card-width-chat-bubble > layer-standard-message-view-container > .layer-card-top {
+layer-message-item-received .layer-root-card.layer-card-width-any-width > layer-standard-message-view-container > .layer-card-top {
   background-color: @message-item-bubble-received-background-color;
   color: @message-item-bubble-received-color;
   font-size: @font-medium;
@@ -56,7 +57,7 @@ layer-message-item-received .layer-root-card.layer-card-width-chat-bubble > laye
   }
 }
 
-layer-message-item-sent .layer-root-card.layer-card-width-chat-bubble > layer-standard-message-view-container > .layer-card-top {
+layer-message-item-sent .layer-root-card.layer-card-width-any-width > layer-standard-message-view-container > .layer-card-top {
   background-color: @message-item-bubble-sent-background-color;
   color: @message-item-bubble-text-sent-color;
   font-size: @font-medium;
@@ -68,7 +69,7 @@ layer-message-item-sent .layer-root-card.layer-card-width-chat-bubble > layer-st
   }
 }
 
-.layer-root-card.layer-card-width-chat-bubble {
+.layer-root-card.layer-card-width-any-width {
   border-width: 0px;
 }
 

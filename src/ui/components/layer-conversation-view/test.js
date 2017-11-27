@@ -45,7 +45,7 @@ describe('layer-conversation-view', function() {
     });
 
     query = client.createQuery({
-      model: layer.Core.Query.Message
+      model: Layer.Core.Query.Message
     });
     query.isFiring = false;
     for (i = 0; i < 100; i++) {
@@ -120,7 +120,7 @@ describe('layer-conversation-view', function() {
 
     it("Should destroy the existing query if hasGeneratedQuery is true", function() {
       el.client = client;
-      var query2 = client.createQuery({model: layer.Conversation});
+      var query2 = client.createQuery({model: Layer.Core.Conversation});
       el.query = query2;
       el.properties.hasGeneratedQuery = true;
       el.query = query;
@@ -130,7 +130,7 @@ describe('layer-conversation-view', function() {
 
     it("Should not destroy the existing query if hasGeneratedQuery is false", function() {
       el.client = client;
-      var query2 = client.createQuery({model: layer.Conversation});
+      var query2 = client.createQuery({model: Layer.Core.Conversation});
       el.query = query2;
       el.properties.hasGeneratedQuery = false;
       el.query = query;
@@ -244,7 +244,7 @@ describe('layer-conversation-view', function() {
       el.conversationId = conversation.id.replace(/.$/, 'z');
 
       // Posttest
-      expect(el.conversation).toEqual(jasmine.any(layer.Conversation));
+      expect(el.conversation).toEqual(jasmine.any(Layer.Core.Conversation));
       expect(el.conversation.isLoading).toBe(true);
     });
 

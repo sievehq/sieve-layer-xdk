@@ -727,7 +727,7 @@ layerUI.adapters = {
  * @static
  * @param {Object} options
  * @param {Function} options.handlesMessage
- * @param {layer.Message} options.handlesMessage.message    Message to test and handle with our handler if it matches
+ * @param {Layer.Core.Message} options.handlesMessage.message    Message to test and handle with our handler if it matches
  * @param {HTMLElement} options.handlesMessage.container     The container that this will be rendered within; typically identifies a specific
  *                                                          layerUI.MessageList or layerUI.ConversationItem.
  * @param {Boolean} options.handlesMessage.returns          Return true to signal that this handler accepts this Message.
@@ -758,7 +758,7 @@ layerUI.registerMessageHandler = function registerMessageHandler(options) {
  *
  * @method getHandler
  * @static
- * @param {layer.Message} message
+ * @param {Layer.Core.Message} message
  * @param {HTMLElement} container     The container that this will be rendered within
  * @return {Object} handler     See layerUI.registerMessageHandler for the structure of a handler.
  */
@@ -828,7 +828,7 @@ layerUI.getHandler = function (message, container) {
  * @param {String} options.handler.textData.text          Use this to read the current text value and write an update to it
  * @param {String[]} options.handler.textData.afterText   Append elements to this array to add stuff to be rendered below the text.
  *      Anything that goes into `afterText` should NOT be parsed by any text handler.
- * @param {layer.Message} options.handler.message         If your text processor needs access to the original message, this is it, but should be treated as a read-only object in this context.
+ * @param {Layer.Core.Message} options.handler.message         If your text processor needs access to the original message, this is it, but should be treated as a read-only object in this context.
  * @param {Boolean} [requiresEnable=false]                If provided, this registers the handler but won't use the handler
  *       without a separate call to opt in.  Opt in later using with `layerUI.registerTextHandler({name: handlerName})`
  *       and no handler function.  (For Internal use only)
@@ -1028,7 +1028,7 @@ layerUI.addAdapter = function (name, adapter) {
  *
  * Note that `init()` must be called prior to putting any webcomponents into a document.
  *
- * Note as well that if passing in your appId, you must have instantiated a layer.Client with that appId
+ * Note as well that if passing in your appId, you must have instantiated a Layer.Core.Client with that appId
  * prior to putting any webcomponents into your document.
  *
  * ```javascript
@@ -3076,7 +3076,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    * @property {Function} onConversationSelected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Conversation} evt.detail.item   The selected Conversation
+   * @param {Layer.Core.Conversation} evt.detail.item   The selected Conversation
    * @param {Event} evt.detail.originalEvent               The click event that selected the Conversation
    */
 
@@ -3086,7 +3086,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    * @event layer-conversation-selected
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Conversation} evt.detail.item   The selected Conversation
+   * @param {Layer.Core.Conversation} evt.detail.item   The selected Conversation
    * @param {Event} evt.detail.originalEvent               The click event that selected the Conversation
    */
 
@@ -3120,7 +3120,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    * @property {Function} onConversationDeleted
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Conversation} evt.detail.item
+   * @param {Layer.Core.Conversation} evt.detail.item
    */
 
   /**
@@ -3129,7 +3129,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    * @event layer-conversation-deleted
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Conversation} evt.detail.item
+   * @param {Layer.Core.Conversation} evt.detail.item
    */
 
   events: ['layer-conversation-selected', 'layer-conversation-deleted'],
@@ -3177,7 +3177,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      * the `layer-delete-enabled` css class to be added/removed on that widget.
      *
      * @property {Function} [deleteConversationEnabled=null]
-     * @property {layer.Conversation} deleteConversationEnabled.conversation
+     * @property {Layer.Core.Conversation} deleteConversationEnabled.conversation
      * @property {Boolean} deleteConversationEnabled.return
      */
     deleteConversationEnabled: {
@@ -3262,7 +3262,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      *
      * @method _generateItem
      * @private
-     * @param {layer.Conversation} conversation
+     * @param {Layer.Core.Conversation} conversation
      */
     _generateItem: function _generateItem(conversation) {
       var isChannel = conversation instanceof _layerWebsdk2.default.Channel;
@@ -3900,7 +3900,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    *   evt.preventDefault();
    *   var message = evt.detail.item;
    *   myAsyncLookup(function(result) {
-   *     var part = new layer.MessagePart({
+   *     var part = new Layer.Core.MessagePart({
    *       mimeType: 'application/json',
    *       body: result
    *     });
@@ -3913,7 +3913,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    * @property {Function} onSendMessage
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item
+   * @param {Layer.Core.Message} evt.detail.item
    */
 
   /**
@@ -3926,7 +3926,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    *   evt.preventDefault();
    *   var message = evt.detail.item;
    *   myAsyncLookup(function(result) {
-   *     var part = new layer.MessagePart({
+   *     var part = new Layer.Core.MessagePart({
    *       mimeType: 'application/json',
    *       body: result
    *     });
@@ -3939,7 +3939,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    * @event layer-send-message
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item
+   * @param {Layer.Core.Message} evt.detail.item
    * @param {Object} evt.detail.notification
    */
 
@@ -3959,7 +3959,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    * @property {Function} onMessageDeleted
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item
+   * @param {Layer.Core.Message} evt.detail.item
    */
 
   /**
@@ -3978,7 +3978,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
    * @event layer-message-deleted
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item
+   * @param {Layer.Core.Message} evt.detail.item
    */
 
   /**
@@ -4141,7 +4141,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      * }
      * ```
      *
-     * @property {layer.Container}
+     * @property {Layer.Core.Container}
      */
     conversation: {
       set: function set(value) {
@@ -4208,7 +4208,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      * @property {Function} onRenderListItem
      * @property {layerUI.components.MessagesListPanel.Item} onRenderListItem.widget
      *    One row of the list
-     * @property {layer.Message[]} onRenderListItem.items
+     * @property {Layer.Core.Message[]} onRenderListItem.items
      *    full set of messages in the list
      * @property {Number} onRenderListItem.index
      *    index of the message in the items array
@@ -4257,7 +4257,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      * };
      * ```
      *
-     * See layer.Message for more information on the properties available to determine a message's status.
+     * See Layer.Core.Message for more information on the properties available to determine a message's status.
      *
      * @property {Function} [messageStatusRenderer=null]
      */
@@ -4491,7 +4491,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      * ```
      *
      * @method
-     * @param {layer.MessagePart[]} optionalParts
+     * @param {Layer.Core.MessagePart[]} optionalParts
      */
     send: function send(optionalParts) {
       var _nodes$composer;
@@ -4651,7 +4651,7 @@ if ('default' in Notify) Notify = Notify.default; // Annoying difference between
    * @event layer-message-notification
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item     The Message that has triggered this notification
+   * @param {Layer.Core.Message} evt.detail.item     The Message that has triggered this notification
    * @param {Boolean} evt.detail.isBackground   Is the app running in the background
    * @param {String} evt.detail.type            What type of notification has been configured for this event ("desktop" or "toast")
    */
@@ -4673,7 +4673,7 @@ if ('default' in Notify) Notify = Notify.default; // Annoying difference between
    * @property {Function} onMessageNotification
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item     The Message that has triggered this notification
+   * @param {Layer.Core.Message} evt.detail.item     The Message that has triggered this notification
    * @param {Boolean} evt.detail.isBackground   Is the app running in the background
    * @param {String} evt.detail.type            What type of notification has been configured for this event ("desktop" or "toast")
    */
@@ -4693,7 +4693,7 @@ if ('default' in Notify) Notify = Notify.default; // Annoying difference between
    * @event layer-notification-click
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item   The Message that has triggered this notification
+   * @param {Layer.Core.Message} evt.detail.item   The Message that has triggered this notification
    */
 
   /**
@@ -4711,7 +4711,7 @@ if ('default' in Notify) Notify = Notify.default; // Annoying difference between
    * @property {Function} onNotificationClick
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {layer.Message} evt.detail.item   The Message that has triggered this notification
+   * @param {Layer.Core.Message} evt.detail.item   The Message that has triggered this notification
    */
 
   events: ['layer-message-notification', 'layer-notification-click'],
@@ -4827,7 +4827,7 @@ if ('default' in Notify) Notify = Notify.default; // Annoying difference between
     /**
      * Tells the notifier to put a badge in the titlebar for the specified message if its unread, and clear it once read.
      *
-     * @property {layer.Message} flagTitlebarForMessage
+     * @property {Layer.Core.Message} flagTitlebarForMessage
      */
     flagTitlebarForMessage: {
       set: function set(message, oldMessage) {
@@ -4983,7 +4983,7 @@ if ('default' in Notify) Notify = Notify.default; // Annoying difference between
      * Show a desktop notification for this message.
      *
      * @method desktopNotify
-     * @param {layer.Message} message
+     * @param {Layer.Core.Message} message
      */
     desktopNotify: function desktopNotify(message) {
       var _this = this;
@@ -5036,7 +5036,7 @@ if ('default' in Notify) Notify = Notify.default; // Annoying difference between
      * MIXIN HOOK: User has clicked on a desktop notification.
      *
      * @method
-     * @param {layer.Message} message
+     * @param {Layer.Core.Message} message
      */
     onDesktopClick: function onDesktopClick(message) {
       // No-op
@@ -5047,7 +5047,7 @@ if ('default' in Notify) Notify = Notify.default; // Annoying difference between
      * Show a toast notification for this message.
      *
      * @method toastNotify
-     * @param {layer.Message} message
+     * @param {Layer.Core.Message} message
      */
     toastNotify: function toastNotify(message) {
       var _this2 = this;
@@ -5357,7 +5357,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      * }
      * ```
      *
-     * @property {layer.Channel}
+     * @property {Layer.Core.Channel}
      */
     channel: {
       set: function set(value) {
@@ -6211,8 +6211,8 @@ var PAGING_DELAY = 2000;
      *
      * @method _inSameGroup
      * @private
-     * @param {layer.Message} m1
-     * @param {layer.Message} m2
+     * @param {Layer.Core.Message} m1
+     * @param {Layer.Core.Message} m2
      */
     _inSameGroup: function _inSameGroup(m1, m2) {
       if (!m1 || !m2) return false;
@@ -6761,7 +6761,7 @@ var TAB = 9;
     /**
      * Specify which Conversation we are sending messages and typing indicators to.
      *
-     * @property {layer.Conversation} [conversation=null]
+     * @property {Layer.Core.Conversation} [conversation=null]
      */
     conversation: {
       set: function set(value) {
@@ -6773,7 +6773,7 @@ var TAB = 9;
     /**
      * The Client are we using to communicate.
      *
-     * @property {layer.Client} [client=null]
+     * @property {Layer.Core.Client} [client=null]
      */
     client: {
       set: function set(value) {
@@ -6931,7 +6931,7 @@ var TAB = 9;
      * ```
      *
      * @method
-     * @param {layer.MessagePart[]} optionalParts
+     * @param {Layer.Core.MessagePart[]} optionalParts
      */
     send: function send(optionalParts) {
 
@@ -6978,7 +6978,7 @@ var TAB = 9;
        *   var message = evt.detail.item;
        *   evt.preventDefault();
        *   myAsyncLookup(function(result) {
-       *     var part = new layer.MessagePart({
+       *     var part = new Layer.Core.MessagePart({
        *       mimeType: 'application/json',
        *       body: result
        *     });
@@ -6991,9 +6991,9 @@ var TAB = 9;
        * @event layer-send-message
        * @param {Event} evt
        * @param {Object} evt.detail
-       * @param {layer.MessagePart[]} evt.detail.parts   The array of message parts that will be sent
-       * @param {layer.Message} evt.detail.item          The message that was created from the parts; null if no Conversation property is set
-       * @param {layer.Conversation} evt.detail.conversation  The conversation that the message was created on; may be null if no conversation has been set.
+       * @param {Layer.Core.MessagePart[]} evt.detail.parts   The array of message parts that will be sent
+       * @param {Layer.Core.Message} evt.detail.item          The message that was created from the parts; null if no Conversation property is set
+       * @param {Layer.Core.Conversation} evt.detail.conversation  The conversation that the message was created on; may be null if no conversation has been set.
        * @param {Object} evt.detail.notification
        * @param {String} evt.detail.notification.text
        * @param {String} evt.detail.notification.title
@@ -7030,8 +7030,8 @@ var TAB = 9;
      * MIXIN HOOK: Called just before sending a message.
      *
      * @method
-     * @param {layer.Message} message
-     * @param {Object} notification   See layer.Message.send for details on the notification object
+     * @param {Layer.Core.Message} message
+     * @param {Object} notification   See Layer.Core.Message.send for details on the notification object
      */
     onSend: function onSend(message, notification) {
       // No-op
@@ -7112,7 +7112,7 @@ var TAB = 9;
 })();
 },{"../../../base":4,"../../../components/component":5,"../layer-compose-button-panel/layer-compose-button-panel":20,"layer-websdk":66}],22:[function(require,module,exports){
 /**
- * The Layer widget renders a Last Message for a layer.Conversation.
+ * The Layer widget renders a Last Message for a Layer.Core.Conversation.
  *
  * This is provided as a specialized component so that it can be easily redefined by your app to
  * provide your own Conversation Last Message rendering:
@@ -7153,9 +7153,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   properties: {
 
     /**
-     * The layer.Message to be rendered
+     * The Layer.Core.Message to be rendered
      *
-     * @property {layer.Message} [item=null]
+     * @property {Layer.Core.Message} [item=null]
      */
     item: {
       set: function set(newValue, oldValue) {
@@ -7196,7 +7196,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
     /**
-     * Rerender this widget whenever the layer.Conversation has a change event reporting on a
+     * Rerender this widget whenever the Layer.Core.Conversation has a change event reporting on a
      * new `lastMessage` property.
      *
      * Lookup a handler for the Message, and if one is found, see if `canFullyRenderLastMessage` allows it to be rendered.
@@ -7239,7 +7239,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })();
 },{"../../../base":4,"../../../components/component":5}],23:[function(require,module,exports){
 /**
- * The Layer widget renders a title for a layer.Conversation.
+ * The Layer widget renders a title for a Layer.Core.Conversation.
  *
  * This is provided as a specialized component so that it can be easily redefined by your app to
  * provide your own Conversation titles:
@@ -7272,9 +7272,9 @@ var _component = require('../../../components/component');
   properties: {
 
     /**
-     * The layer.Conversation to be rendered.
+     * The Layer.Core.Conversation to be rendered.
      *
-     * @property {layer.Conversation} [item=null]
+     * @property {Layer.Core.Conversation} [item=null]
      */
     item: {
       set: function set(newConversation, oldConversation) {
@@ -7444,7 +7444,7 @@ var _component = require('../../../components/component');
  * This is provided as a specialized component so that it can be easily redefined by your app to
  * provide your own deletion capability.
  *
- * Note that the `item` property can refer to any type of data that can be deleted, including layer.Message and layer.Conversation.
+ * Note that the `item` property can refer to any type of data that can be deleted, including Layer.Core.Message and Layer.Core.Conversation.
  *
  * ```
  * layerUI.registerComponent('layer-delete', {
@@ -7694,7 +7694,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
        * @event layer-file-selected
        * @param {Object} evt
        * @param {Object} evt.detail
-       * @[aram {layer.MessagePart[]} evt.detail.parts
+       * @[aram {Layer.Core.MessagePart[]} evt.detail.parts
        */
       _base2.default.files.processAttachments(inputParts, function (parts) {
         _this2.trigger('layer-file-selected', { parts: parts });
@@ -7760,7 +7760,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     /**
      * Message whose status is to be rendered
      *
-     * @property {layer.Message} [message=null]
+     * @property {Layer.Core.Message} [message=null]
      */
     item: {
       set: function set(newMessage, oldMessage) {
@@ -8092,7 +8092,7 @@ var _component = require('../../../components/component');
     /**
      * The Conversation whose typing indicator activity we are reporting on.
      *
-     * @property {layer.Conversation} [conversation=null]
+     * @property {Layer.Core.Conversation} [conversation=null]
      */
     conversation: {
       set: function set(value) {
@@ -8115,7 +8115,7 @@ var _component = require('../../../components/component');
      *
      * This property is typically set indirectly by setting the layerUI.TypingIndicator.conversation.
      *
-     * @property {layer.Client} [client=null]
+     * @property {Layer.Core.Client} [client=null]
      */
     client: {
       set: function set(newClient, oldClient) {
@@ -8283,7 +8283,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     /**
      * The Message property provides the MessageParts we are going to render.
      *
-     * @property {layer.Message} [message=null]
+     * @property {Layer.Core.Message} [message=null]
      */
     message: {
       set: function set(value) {
@@ -8687,7 +8687,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     /**
      * The Message property provides the MessageParts we are going to render.
      *
-     * @property {layer.Message} [message=null]
+     * @property {Layer.Core.Message} [message=null]
      */
     message: {
       set: function set(value) {
@@ -9370,7 +9370,7 @@ module.exports = {
     /**
      * The Client is needed in order for the list to get a Query from a queryId
      *
-     * @property {layer.Client} [client=null]
+     * @property {Layer.Core.Client} [client=null]
      */
     client: {
       set: function set(value) {
@@ -10103,7 +10103,7 @@ module.exports = {
     /**
      * Scroll to the specified item.
      *
-     * Item is assumed to be a layer.Message, layer.Conversation, or whatever the core
+     * Item is assumed to be a Layer.Core.Message, Layer.Core.Conversation, or whatever the core
      * data set is that is in your list.  Note that this does not load the item from the server;
      * scrolling to an item not in the list will return `false`.
      *
@@ -10489,14 +10489,14 @@ module.exports = {
               return _this.client = newClient;
             }, value);
           } else {
-            throw new Error('You must create a layer.Client with your appId before creating this component. Or upgrade to Layer WebSDK 3.2.2 or above.');
+            throw new Error('You must create a Layer.Core.Client with your appId before creating this component. Or upgrade to Layer WebSDK 3.2.2 or above.');
           }
         }
       }
     },
 
     /**
-     * The layer.Client can be passed in via the `client` property or the `appId` property.
+     * The Layer.Core.Client can be passed in via the `client` property or the `appId` property.
      *
      * App IDs are typically provided via:
      *
@@ -10507,7 +10507,7 @@ module.exports = {
      * The only time one would use this property
      * is if building an app that used multiple Clients.
      *
-     * @property {layer.Client} [client=null]
+     * @property {Layer.Core.Client} [client=null]
      */
     client: {
       order: 2,
@@ -10608,9 +10608,9 @@ var _component = require('../components/component');
 module.exports = {
   properties: {
     /**
-     * The layer.Message to be rendered.
+     * The Layer.Core.Message to be rendered.
      *
-     * @property {layer.Message} message
+     * @property {Layer.Core.Message} message
      */
     message: {
       mode: _component.registerComponent.MODES.AFTER,
@@ -10646,8 +10646,8 @@ module.exports = {
      *
      * It should be called when:
      *
-     * * Your layer.Message is first rendered
-     * * Your layer.Message triggers any `messages:change` events
+     * * Your Layer.Core.Message is first rendered
+     * * Your Layer.Core.Message triggers any `messages:change` events
      * * Any outside events that influence rendering occur (though this is in your control)
      *
      * @method onRerender
@@ -10886,7 +10886,7 @@ module.exports = _base.utils.dateSeparator = function (widget, messages, index) 
  * @param {Object} options
  * @param {HTMLElement|String} options.node - The dom node (or dom node ID) to watch for files/file-drag events
  * @param {Function} options.callback - The function to call when a file is dropped
- * @param {layer.MessagePart[]} options.callback.parts - The MessageParts representing the dropped files, which you can modify and send.
+ * @param {Layer.Core.MessagePart[]} options.callback.parts - The MessageParts representing the dropped files, which you can modify and send.
  * @param {Boolean} [options.allowDocumentDrop=false] - By default, this utility adds an event handler to prevent the browser from navigating away from your
  *         app to view a file dropped in some other part of your app. If you need to handle this event yourself, set this to true.
  */
@@ -11040,9 +11040,9 @@ Files.DragAndDropFileWatcher.prototype.onFileDrop = function onFileDrop(evt) {
  * previews and metadata message parts before calling your callback.
  *
  * @method processAttachments
- * @param {layer.MessagePart[]} parts    Input MessagParts, presumably an array of one element
+ * @param {Layer.Core.MessagePart[]} parts    Input MessagParts, presumably an array of one element
  * @param {Function} callback            Callback on completion; may be called synchronously
- * @param {layer.MessagePart[]} callback.parts  The MessageParts to send in your Message
+ * @param {Layer.Core.MessagePart[]} callback.parts  The MessageParts to send in your Message
  */
 Files.processAttachments = function processAttachments(parts, callback) {
   // TODO: Need a way to register additional handlers; currently relies on the callback for additional handling.

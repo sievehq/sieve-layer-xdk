@@ -136,7 +136,7 @@ class Membership extends Syncable {
    * @method _createFromServer
    * @static
    * @param {Object} membership - Server Membership Object
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    * @returns {Layer.Core.Membership}
    */
   static _createFromServer(membership, client) {
@@ -166,7 +166,7 @@ Membership.prototype.channelId = '';
  * The user's role within the channel
  *
  * @ignore
- * @type {layer.Role}
+ * @type {Layer.Core.Role}
  */
 Membership.prototype.role = null;
 

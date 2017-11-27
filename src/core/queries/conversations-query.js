@@ -3,7 +3,7 @@
  *
  *
  *      var conversationQuery = client.createQuery({
- *        model: layer.Core.Query.Conversation,
+ *        model: Layer.Core.Query.Conversation,
  *        sortBy: [{'createdAt': 'desc'}]
  *      });
  *
@@ -28,8 +28,8 @@
  *      });
  *
  *
- * @class  layer.ConversationsQuery
- * @extends layer.Core.Query
+ * @class  Layer.Core.ConversationsQuery
+ * @extends Layer.Core.Query
  */
 import Root from '../root';
 import Util from '../../util';

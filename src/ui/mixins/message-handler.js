@@ -68,9 +68,9 @@ import { registerComponent } from '../components/component';
 module.exports = {
   properties: {
     /**
-     * The layer.Message to be rendered.
+     * The Layer.Core.Message to be rendered.
      *
-     * @property {layer.Message} message
+     * @property {Layer.Core.Message} message
      */
     message: {
       mode: registerComponent.MODES.AFTER,
@@ -109,8 +109,8 @@ module.exports = {
      *
      * It should be called when:
      *
-     * * Your layer.Message is first rendered
-     * * Your layer.Message triggers any `messages:change` events
+     * * Your Layer.Core.Message is first rendered
+     * * Your Layer.Core.Message triggers any `messages:change` events
      * * Any outside events that influence rendering occur (though this is in your control)
      *
      * @method onRerender

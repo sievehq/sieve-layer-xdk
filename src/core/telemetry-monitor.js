@@ -26,7 +26,7 @@ class TelemetryMonitor extends Root {
    *
    * @method constructor
    * @param {Object} options
-   * @param {layer.Client} options.client
+   * @param {Layer.Core.Client} options.client
    * @param {Boolean} [options.enabled=true]   Set to false to disable telemetry reporting
    * @param {Number} [options.reportingInterval=1000 * 3600]   Defaults to 1 hour, but can be set to other intervals
    */
@@ -414,9 +414,9 @@ TelemetryMonitor.prototype.tempState = null;
 TelemetryMonitor.prototype.enabled = true;
 
 /**
- * Pointer to the layer.Client
+ * Pointer to the Layer.Core.Client
  *
- * @property {layer.Client}
+ * @property {Layer.Core.Client}
  */
 TelemetryMonitor.prototype.client = null;
 

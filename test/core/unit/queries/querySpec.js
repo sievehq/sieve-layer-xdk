@@ -71,30 +71,30 @@ describe("The Query Class", function() {
 
     describe("The constructor() method", function() {
         it("Should accept an object as input", function() {
-            expect(new layer.Core.Query({
+            expect(new Layer.Core.Query({
                 client: client,
                 model: "Conversation"
             }).model).toEqual("Conversation");
 
-            expect(new layer.Core.Query({
+            expect(new Layer.Core.Query({
                 client: client,
                 returnType: "count"
             }).returnType).toEqual("count");
 
-            expect(new layer.Core.Query({
+            expect(new Layer.Core.Query({
                 client: client,
                 dataType: "object"
             }).dataType).toEqual("object");
         });
 
         it("Should accept a QueryBuilder input", function() {
-            var builder = layer.Core.QueryBuilder.conversations().paginationWindow(15);
-            var query = new layer.Core.Query(client, builder);
+            var builder = Layer.Core.QueryBuilder.conversations().paginationWindow(15);
+            var query = new Layer.Core.Query(client, builder);
             expect(query.paginationWindow).toEqual(15);
         });
 
         it("Should initialize data", function() {
-            expect(new layer.Core.Query({
+            expect(new Layer.Core.Query({
                 client: client,
                 dataType: "object"
             }).data).toEqual([]);
@@ -102,14 +102,14 @@ describe("The Query Class", function() {
 
         it("Should require a client", function() {
             expect(function() {
-                new layer.Core.Query({});
+                new Layer.Core.Query({});
             }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
         });
 
         it("Should call _run if isReady", function() {
             // Setup
-            var tmp = layer.Core.Query.prototype._run;
-            spyOn(layer.Core.Query.prototype, "_run");
+            var tmp = Layer.Core.Query.prototype._run;
+            spyOn(Layer.Core.Query.prototype, "_run");
 
             // Run
             var query = client.createQuery({
@@ -117,16 +117,16 @@ describe("The Query Class", function() {
             });
 
             // Posttest
-            expect(layer.Core.Query.prototype._run).toHaveBeenCalledWith();
+            expect(Layer.Core.Query.prototype._run).toHaveBeenCalledWith();
 
             // Restore
-            layer.Core.Query.prototype._run = tmp;;
+            Layer.Core.Query.prototype._run = tmp;;
         });
 
         it("Should call _run WHEN isReady", function() {
             // Setup
-            var tmp = layer.Core.Query.prototype._run;
-            spyOn(layer.Core.Query.prototype, "_run");
+            var tmp = Layer.Core.Query.prototype._run;
+            spyOn(Layer.Core.Query.prototype, "_run");
             client.isReady = false;
 
             // Run
@@ -135,23 +135,23 @@ describe("The Query Class", function() {
             });
 
             // Midtest
-            expect(layer.Core.Query.prototype._run).not.toHaveBeenCalled();
+            expect(Layer.Core.Query.prototype._run).not.toHaveBeenCalled();
 
             // Run some more
             client.trigger('ready');
 
             // Posttest
-            expect(layer.Core.Query.prototype._run).toHaveBeenCalledWith();
+            expect(Layer.Core.Query.prototype._run).toHaveBeenCalledWith();
 
             // Restore
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         // Integration test verifies that new Conversation in the Client
         // triggers _handleEvents in Query
         it("Should setup change event handlers", function() {
             var query = client.createQuery({
-                model: layer.Core.Query.Conversation
+                model: Layer.Core.Query.Conversation
             });
             var spy = client._events.all[0].callback = jasmine.createSpy('callback');
             spyOn(query, "_handleEvents");
@@ -168,7 +168,7 @@ describe("The Query Class", function() {
             client: client,
             paginationWindow: 12345
           });
-          expect(query.paginationWindow).toEqual(layer.Core.Query.MaxPageSize);
+          expect(query.paginationWindow).toEqual(Layer.Core.Query.MaxPageSize);
         });
     });
 
@@ -214,7 +214,7 @@ describe("The Query Class", function() {
         beforeEach(function() {
             query = client.createQuery({
                 client: client,
-                model: layer.Core.Query.Message,
+                model: Layer.Core.Query.Message,
                 paginationWindow: 15
             });
         });
@@ -245,7 +245,7 @@ describe("The Query Class", function() {
             query.update({paginationWindow: 500});
 
             // Posttest
-            expect(query.paginationWindow).toEqual(layer.Core.Query.MaxPageSize + query.data.length);
+            expect(query.paginationWindow).toEqual(Layer.Core.Query.MaxPageSize + query.data.length);
         });
 
         it("Should update the predicate", function() {
@@ -299,7 +299,7 @@ describe("The Query Class", function() {
         });
 
         it("Should accept a Query Builder", function() {
-            query.update(layer.Core.QueryBuilder.messages().paginationWindow(18));
+            query.update(Layer.Core.QueryBuilder.messages().paginationWindow(18));
             expect(query.paginationWindow).toEqual(18);
         });
 
@@ -905,7 +905,7 @@ describe("The Query Class", function() {
             // Setup
             var m = conversation.createMessage("Hi");
             query = client.createQuery({
-                model: layer.Core.Query.Message,
+                model: Layer.Core.Query.Message,
                 paginationWindow: 15
             });
             query.data = [m];
@@ -917,7 +917,7 @@ describe("The Query Class", function() {
             // Setup
             var m = conversation.createMessage("Hi");
             query = client.createQuery({
-                model: layer.Core.Query.Message,
+                model: Layer.Core.Query.Message,
                 paginationWindow: 15
             });
             query.data = [m];
@@ -927,7 +927,7 @@ describe("The Query Class", function() {
 
         it("Should return a Conversation if Model is Conversation and Conversation is found", function() {
             query = client.createQuery({
-                model: layer.Core.Query.Conversation,
+                model: Layer.Core.Query.Conversation,
                 paginationWindow: 15
             });
             query.data = [conversation];
@@ -936,7 +936,7 @@ describe("The Query Class", function() {
 
         it("Should return null if Model is Conversation and Conversation is not found", function() {
             query = client.createQuery({
-                model: layer.Core.Query.Conversation,
+                model: Layer.Core.Query.Conversation,
                 paginationWindow: 15
             });
             query.data = [conversation];
@@ -945,7 +945,7 @@ describe("The Query Class", function() {
 
         it("Should return a Message if Model is Conversation and lastMessage is found", function() {
             query = client.createQuery({
-                model: layer.Core.Query.Conversation,
+                model: Layer.Core.Query.Conversation,
                 paginationWindow: 15
             });
             query.data = [conversation];
@@ -956,7 +956,7 @@ describe("The Query Class", function() {
 
         it("Should return null if Model is Conversation and lastMessage is not found", function() {
             query = client.createQuery({
-                model: layer.Core.Query.Conversation,
+                model: Layer.Core.Query.Conversation,
                 paginationWindow: 15
             });
             query.data = [conversation];
@@ -968,7 +968,7 @@ describe("The Query Class", function() {
         it("Should return an Announcement if Model is Announcement and Announcement is found", function() {
             // Setup
             query = client.createQuery({
-                model: layer.Core.Query.Announcement,
+                model: Layer.Core.Query.Announcement,
                 paginationWindow: 15
             });
             query.data = [announcement];
@@ -979,7 +979,7 @@ describe("The Query Class", function() {
         it("Should return null if Model is Announcement and Announcement is not found", function() {
             // Setup
             query = client.createQuery({
-                model: layer.Core.Query.Announcement,
+                model: Layer.Core.Query.Announcement,
                 paginationWindow: 15
             });
             query.data = [announcement];
@@ -990,7 +990,7 @@ describe("The Query Class", function() {
         it("Should return an Identity if Model is Identity and Identity is found", function() {
             // Setup
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15
             });
             query.data = [identity];
@@ -1001,7 +1001,7 @@ describe("The Query Class", function() {
         it("Should return null if Model is Identity and Identity is not found", function() {
             // Setup
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15
             });
             query.data = [identity];;

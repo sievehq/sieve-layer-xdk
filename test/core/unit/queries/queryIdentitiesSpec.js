@@ -48,7 +48,7 @@ describe("The IdentitiesQuery Class", function() {
 
         identity = client._createObject(responses.useridentity);
         query = client.createQuery({
-          model: layer.Core.Query.Identity
+          model: Layer.Core.Query.Identity
         });
 
         jasmine.clock().tick(1);
@@ -67,20 +67,20 @@ describe("The IdentitiesQuery Class", function() {
     });
 
     it("Should be an IdentitiesQuery", function() {
-      expect(query.constructor.prototype.model).toEqual(layer.Core.Query.Identity);
+      expect(query.constructor.prototype.model).toEqual(Layer.Core.Query.Identity);
     });
 
 
     describe("The _fetchData() method", function() {
         var query;
         beforeEach(function() {
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {
@@ -143,7 +143,7 @@ describe("The IdentitiesQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15
             });
         });
@@ -171,7 +171,7 @@ describe("The IdentitiesQuery Class", function() {
 
           query.data = [i1.toObject(), i2.toObject()];
           query.dataType = "object";
-          query.model = layer.Core.Query.Identity;
+          query.model = Layer.Core.Query.Identity;
 
           // Run
           query._appendResults({
@@ -192,7 +192,7 @@ describe("The IdentitiesQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15
             });
             query.data = [identity];
@@ -232,7 +232,7 @@ describe("The IdentitiesQuery Class", function() {
         var query, identity2;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15,
                 dataType: "object"
             });
@@ -350,7 +350,7 @@ describe("The IdentitiesQuery Class", function() {
                 display_name: "2"
             });
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15,
                 dataType: "object",
             });
@@ -462,7 +462,7 @@ describe("The IdentitiesQuery Class", function() {
                 display_name: "2"
             });
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15,
                 dataType: "object",
             });

@@ -37,9 +37,9 @@ module.exports = {
     /**
      * Set/get state related to whether the Query data is loading data from the server.
      *
-     * This is managed by the app, and is updated any time the layer.Core.Query changes state.
+     * This is managed by the app, and is updated any time the Layer.Core.Query changes state.
      *
-     * You could set this as well if you need to indicate some activity outside of the layer.Core.Query:
+     * You could set this as well if you need to indicate some activity outside of the Layer.Core.Query:
      *
      * ```
      * widget.isDataLoading = true;
@@ -187,7 +187,7 @@ module.exports = {
     /**
      * Scroll to the specified item.
      *
-     * Item is assumed to be a layer.Message, layer.Conversation, or whatever the core
+     * Item is assumed to be a Layer.Core.Message, Layer.Core.Conversation, or whatever the core
      * data set is that is in your list.  Note that this does not load the item from the server;
      * scrolling to an item not in the list will return `false`.
      *

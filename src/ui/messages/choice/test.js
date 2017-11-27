@@ -338,7 +338,6 @@ describe('Choice Message Components', function() {
             })
           }]
         });
-        debugger;
         var model = new ChoiceModel({
           message: m,
           part: m.parts[0],
@@ -1299,7 +1298,7 @@ describe('Choice Message Components', function() {
 
       layer.Util.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-chat-bubble class
+      // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
       // Message UI:

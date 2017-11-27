@@ -8,7 +8,7 @@
  *
  * Applications typically do not interact with this component, but may subscribe
  * to the `message` event if they want richer event information than is available
- * through the layer.Client class.
+ * through the Layer.Core.Client class.
  *
  * @class  layer.Websockets.SocketManager
  * @extends Layer.Core.Root
@@ -30,7 +30,7 @@ class SocketManager extends Root {
    *
    * @method
    * @param  {Object} options
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    * @return {layer.Websockets.SocketManager}
    */
   constructor(options) {
@@ -764,7 +764,7 @@ SocketManager.prototype.maxDelaySecondsBetweenReconnect = 30;
 
 /**
  * The Client that owns this.
- * @type {layer.Client}
+ * @type {Layer.Core.Client}
  */
 SocketManager.prototype.client = null;
 

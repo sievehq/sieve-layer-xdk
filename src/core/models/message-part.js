@@ -2,18 +2,18 @@
  * The MessagePart class represents an element of a message.
  *
  *      // Create a Message Part with any mimeType
- *      var part = new layer.MessagePart({
+ *      var part = new Layer.Core.MessagePart({
  *          body: "hello",
  *          mimeType: "text/plain"
  *      });
  *
  *      // Create a text/plain only Message Part
- *      var part = new layer.MessagePart("Hello I am text/plain");
+ *      var part = new Layer.Core.MessagePart("Hello I am text/plain");
  *
  * You can also create a Message Part from a File Input dom node:
  *
  *      var fileInputNode = document.getElementById("myFileInput");
- *      var part = new layer.MessagePart(fileInputNode.files[0]);
+ *      var part = new Layer.Core.MessagePart(fileInputNode.files[0]);
  *
  * You can also create Message Parts from a file drag and drop operation:
  *
@@ -21,18 +21,18 @@
  *           var files = evt.dataTransfer.files;
  *           var m = conversation.createMessage({
  *               parts: files.map(function(file) {
- *                  return new layer.MessagePart({body: file, mimeType: file.type});
+ *                  return new Layer.Core.MessagePart({body: file, mimeType: file.type});
  *               }
  *           });
  *      });
  *
  * ### Blobs vs Strings
  *
- * You should always expect to see the `body` property be a Blob **unless** the mimeType is listed in layer.MessagePart.TextualMimeTypes,
+ * You should always expect to see the `body` property be a Blob **unless** the mimeType is listed in Layer.Core.MessagePart.TextualMimeTypes,
  * in which case the value will be a String.  You can add mimeTypes to TextualMimeTypes:
  *
  * ```
- * layer.MessagePart.TextualMimeTypes = ['text/plain', 'text/mountain', /^application\/json(\+.+)$/]
+ * Layer.Core.MessagePart.TextualMimeTypes = ['text/plain', 'text/mountain', /^application\/json(\+.+)$/]
  * ```
  *
  * Any mimeType matching the above strings and regular expressions will be transformed to text before being delivered to your app; otherwise it
@@ -58,9 +58,9 @@
  * }
  * ```
  *
- * NOTE: `layer.MessagePart.url` should have a value when the message is first received, and will only fail `if (!part.url)` once the url has expired.
+ * NOTE: `Layer.Core.MessagePart.url` should have a value when the message is first received, and will only fail `if (!part.url)` once the url has expired.
  *
- * @class  layer.MessagePart
+ * @class  Layer.Core.MessagePart
  * @extends Layer.Core.Root
  * @author Michael Kantor
  */
@@ -83,7 +83,7 @@ class MessagePart extends Root {
    * @param  {string} [options.mimeType=text/plain] - Mime type; can be anything; if your client doesn't have a renderer for it, it will be ignored.
    * @param  {number} [options.size=0] - Size of your part. Will be calculated for you if not provided.
    *
-   * @return {layer.MessagePart}
+   * @return {Layer.Core.MessagePart}
    */
   constructor(options, ...args) {
     let newOptions = options;
@@ -171,24 +171,24 @@ class MessagePart extends Root {
   }
 
   /**
-   * Get the layer.Client associated with this layer.MessagePart.
+   * Get the Layer.Core.Client associated with this Layer.Core.MessagePart.
    *
-   * Uses the layer.MessagePart.clientId property.
+   * Uses the Layer.Core.MessagePart.clientId property.
    *
    * @method _getClient
    * @private
-   * @return {layer.Client}
+   * @return {Layer.Core.Client}
    */
   _getClient() {
     return ClientRegistry.get(this.clientId);
   }
 
   /**
-   * Get the layer.Message associated with this layer.MessagePart.
+   * Get the Layer.Core.Message associated with this Layer.Core.MessagePart.
    *
    * @method _getMessage
    * @private
-   * @return {layer.Message}
+   * @return {Layer.Core.Message}
    */
   _getMessage() {
     return this._message || this._getClient().getMessage(this.id.replace(/\/parts.*$/, ''));
@@ -219,7 +219,7 @@ class MessagePart extends Root {
    * @method fetchContent
    * @param {Function} [callback]
    * @param {Mixed} callback.data - Either a string (mimeType=text/plain) or a Blob (all other mimeTypes)
-   * @return {layer.Content} this
+   * @return {Layer.Core.Content} this
    */
   fetchContent(callback) {
     if (this._content && !this.isFiring) {
@@ -312,7 +312,7 @@ class MessagePart extends Root {
    * @method fetchStream
    * @param {Function} [callback]
    * @param {Mixed} callback.url
-   * @return {layer.Content} this
+   * @return {Layer.Core.Content} this
    */
   fetchStream(callback) {
     if (!this._content) throw new Error(ErrorDictionary.contentRequired);
@@ -353,7 +353,7 @@ class MessagePart extends Root {
    *
    * @method _send
    * @protected
-   * @param  {layer.Client} client
+   * @param  {Layer.Core.Client} client
    * @fires parts:send
    */
   _send(client) {
@@ -421,7 +421,7 @@ class MessagePart extends Root {
    *
    * @method _sendBlob
    * @private
-   * @param {layer.Client} client
+   * @param {Layer.Core.Client} client
    */
   _sendBlob(client) {
     /* istanbul ignore else */
@@ -447,7 +447,7 @@ class MessagePart extends Root {
    *
    * @method _generateContentAndSend
    * @private
-   * @param  {layer.Client} client
+   * @param  {Layer.Core.Client} client
    */
   _generateContentAndSend(client) {
     this.hasContent = true;
@@ -470,14 +470,14 @@ class MessagePart extends Root {
   }
 
   /**
-   * Creates a layer.Content object from the server's
+   * Creates a Layer.Core.Content object from the server's
    * Content object, and then uploads the data to google cloud storage.
    *
    * @method _processContentResponse
    * @private
    * @param  {Object} response
    * @param  {Blob} body
-   * @param  {layer.Client} client
+   * @param  {Layer.Core.Client} client
    * @param {Number} [retryCount=0]
    */
   _processContentResponse(response, body, client, retryCount = 0) {
@@ -507,7 +507,7 @@ class MessagePart extends Root {
    * @private
    * @param  {Object} uploadResult    Response from google cloud server; note that the xhr method assumes some layer-like behaviors and may replace non-json responses with js objects.
    * @param  {Object} contentResponse Response to `POST /content` from before
-   * @param  {layer.Client} client
+   * @param  {Layer.Core.Client} client
    * @param  {Blob} body
    * @param  {Number} retryCount
    */
@@ -547,7 +547,7 @@ class MessagePart extends Root {
    * Updates the MessagePart with new data from the server.
    *
    * Currently, MessagePart properties do not update... however,
-   * the layer.Content object that Rich Content MessageParts contain
+   * the Layer.Core.Content object that Rich Content MessageParts contain
    * do get updated with refreshed expiring urls.
    *
    * @method _populateFromServer
@@ -562,6 +562,11 @@ class MessagePart extends Root {
       return;
     }
 
+    if (part.encoding === 'base64') {
+      part.body = Util.base64ToBlob(part.body, part.mime_type);
+    }
+
+
     if (part.content && this._content) {
       this._content.downloadUrl = part.content.download_url;
       this._content.expiration = new Date(part.content.expiration);
@@ -573,7 +578,7 @@ class MessagePart extends Root {
       if (!textual) {
 
         // If the body exists and is a blob, extract the data uri for convenience; only really relevant for image and video HTML tags.
-        if (part.body) {
+        if (part.body && Util.isBlob(part.body)) {
           Util.blobToBase64(this.body, (inputBase64) => {
             if (!inputBase64) {
               logger.error(`Invalid Blob for ${this.id} ${this.mimeType}  `, this.body);
@@ -609,7 +614,7 @@ class MessagePart extends Root {
    *
    * If the answer is true, expect a `body` of string, else expect `body` of Blob.
    *
-   * To change whether a given MIME Type is treated as textual, see layer.MessagePart.TextualMimeTypes.
+   * To change whether a given MIME Type is treated as textual, see Layer.Core.MessagePart.TextualMimeTypes.
    *
    * @method isTextualMimeType
    * @returns {Boolean}
@@ -627,6 +632,18 @@ class MessagePart extends Root {
     return false;
   }
 
+  /**
+   * Returns a Layer.Core.MessageTypeModel representing this Message Part.
+   *
+   * Will return an existing model if one already exists for this Message Part.
+   *
+   * ```
+   * var model = part.createModel();
+   * ```
+   *
+   * @method createModel
+   * @returns {Layer.Core.MessageTypeModel}
+   */
   createModel() {
     if (!this._messageTypeModel) {
       const client = this._getClient();
@@ -647,7 +664,7 @@ class MessagePart extends Root {
    * part.body = "Hi";
    * ```
    *
-   * can expect this to trigger a change event, which will in turn trigger a `messages:change` event on the layer.Message.
+   * can expect this to trigger a change event, which will in turn trigger a `messages:change` event on the Layer.Core.Message.
    *
    * @method __updateBody
    * @private
@@ -655,11 +672,28 @@ class MessagePart extends Root {
    * @param {String} oldValue
    */
   __updateBody(newValue, oldValue) {
-    this._triggerAsync('messageparts:change', {
-      property: 'body',
-      newValue,
-      oldValue,
-    });
+    if (Util.isBlob(newValue) && Util.isBlob(oldValue)) {
+      let newValueStr, oldValueStr;
+      Util.blobToBase64(newValue, (str) => {
+        newValueStr = str;
+        Util.blobToBase64(oldValue, (str) => {
+          oldValueStr = str;
+          if (newValueStr !== oldValueStr) {
+            this._triggerAsync('messageparts:change', {
+              property: 'body',
+              newValue,
+              oldValue,
+            });
+          }
+        });
+      });
+    } else {
+      this._triggerAsync('messageparts:change', {
+        property: 'body',
+        newValue,
+        oldValue,
+      });
+    }
   }
 
   /**
@@ -671,7 +705,7 @@ class MessagePart extends Root {
    * part.mimeType = "text/mountain";
    * ```
    *
-   * can expect this to trigger a change event, which will in turn trigger a `messages:change` event on the layer.Message.
+   * can expect this to trigger a change event, which will in turn trigger a `messages:change` event on the Layer.Core.Message.
    *
    * @method __updateMimeType
    * @private
@@ -768,16 +802,16 @@ class MessagePart extends Root {
 }
 
 /**
- * layer.Client that the conversation belongs to.
+ * Layer.Core.Client that the conversation belongs to.
  *
  * Actual value of this string matches the appId.
- * @type {string}
+ * @property {string}
  */
 MessagePart.prototype.clientId = '';
 
 /**
  * Server generated identifier for the part
- * @type {string}
+ * @property {string}
  */
 MessagePart.prototype.id = '';
 
@@ -786,26 +820,26 @@ MessagePart.prototype.id = '';
  *
  * This is the core data of your part.
  *
- * If this is `null` then most likely layer.Message.hasContent is true, and you
- * can either use the layer.MessagePart.url property or the layer.MessagePart.fetchContent method.
+ * If this is `null` then most likely Layer.Core.Message.hasContent is true, and you
+ * can either use the Layer.Core.MessagePart.url property or the Layer.Core.MessagePart.fetchContent method.
  *
- * @type {string}
+ * @property {string}
  */
 MessagePart.prototype.body = null;
 
 /**
  * Rich content object.
  *
- * This will be automatically created for you if your layer.MessagePart.body
+ * This will be automatically created for you if your Layer.Core.MessagePart.body
  * is large.
- * @type {layer.Content}
+ * @property {Layer.Core.Content}
  * @private
  */
 MessagePart.prototype._content = null;
 
 /**
  * The Part has rich content
- * @type {Boolean}
+ * @property {Boolean}
  */
 MessagePart.prototype.hasContent = false;
 
@@ -814,10 +848,10 @@ MessagePart.prototype.hasContent = false;
  *
  * Parts with rich content will be initialized with this property set.  But its value will expire.
  *
- * Will contain an expiring url at initialization time and be refreshed with calls to `layer.MessagePart.fetchStream()`.
- * Will contain a non-expiring url to a local resource if `layer.MessagePart.fetchContent()` is called.
+ * Will contain an expiring url at initialization time and be refreshed with calls to `Layer.Core.MessagePart.fetchStream()`.
+ * Will contain a non-expiring url to a local resource if `Layer.Core.MessagePart.fetchContent()` is called.
  *
- * @type {layer.Content}
+ * @property {Layer.Core.Content}
  */
 Object.defineProperty(MessagePart.prototype, 'url', {
   enumerable: true,
@@ -836,11 +870,11 @@ Object.defineProperty(MessagePart.prototype, 'url', {
 /**
  * Mime Type for the data represented by the MessagePart.
  *
- * Typically this is the type for the data in layer.MessagePart.body;
+ * Typically this is the type for the data in Layer.Core.MessagePart.body;
  * if there is Rich Content, then its the type of Content that needs to be
  * downloaded.
  *
- * @type {String}
+ * @property {String}
  */
 MessagePart.prototype.mimeType = 'text/plain';
 
@@ -849,7 +883,7 @@ MessagePart.prototype.mimeType = 'text/plain';
  *
  * These attributes are removed from the mimeType and moved into a hash.
  *
- * @type {Object}
+ * @property {Object}
  */
 MessagePart.prototype.mimeAttributes = null;
 
@@ -859,25 +893,61 @@ MessagePart.prototype.mimeAttributes = null;
  * If the part was created after the message was sent, or the part was updated after the
  * part was sent then this will have a value.
  *
- * @type {Date}
+ * @property {Date}
  */
 MessagePart.prototype.updatedAt = null;
 
 /**
- * Size of the layer.MessagePart.body.
+ * Size of the Layer.Core.MessagePart.body.
  *
  * Will be set for you if not provided.
  * Only needed for use with rich content.
  *
- * @type {number}
+ * @property {number}
  */
 MessagePart.prototype.size = 0;
 
-
+/**
+ * Message Parts are organized into a tree structure; this identifies the Message Part's Parent node in the Tree.
+ *
+ * ```
+ * var parentId = messagePart.parentId;
+ * var parentNode = message.parts.filter(part => part.nodeId === parentId)[0];
+ * ```
+ *
+ * Or just:
+ *
+ * ```
+ * var parentNode = message.getRootPart();
+ * ```
+ *
+ * @property {String}
+ */
 MessagePart.prototype.parentId = '';
+
+/**
+ * Every Message Part has a nodeId identifying it within the Message Part Tree heirarchy setup by the
+ * Layer.Core.MessageTypeModel.
+ *
+ * This nodeId will typically be based off of the MessagePart's `id` property.
+ *
+ * @property {String}
+ */
 MessagePart.prototype.nodeId = '';
+
+/**
+ * Every Message Part within the MessagePart Heirarchy has a role within that structure; get that role.
+ *
+ * @property {String}
+ */
 MessagePart.prototype.role = '';
 
+/**
+ * Cache any model created for this Message Part.
+ *
+ * @property {Layer.Core.MessageTypeModel} _messageTypeModel
+ * @private
+ */
 MessagePart.prototype._messageTypeModel = null;
 
 // We want to avoid setting this as it creates circular references.
@@ -893,18 +963,18 @@ MessagePart.prototype._message = null;
  * This value can be customized using strings and regular expressions:
  *
  * ```
- * layer.MessagePart.TextualMimeTypes = ['text/plain', 'text/mountain', /^application\/json(\+.+)$/]
+ * Layer.Core.MessagePart.TextualMimeTypes = ['text/plain', 'text/mountain', /^application\/json(\+.+)$/]
  * ```
  *
  * @static
- * @type {Mixed[]}
+ * @property {Mixed[]}
  */
 MessagePart.TextualMimeTypes = [/^text\/.+$/, /^application\/json(\+.+)?$/, /\+json$/, /-json$/];
 
 /**
  * Number of retry attempts to make before giving up on uploading Rich Content to Google Cloud Storage.
  *
- * @type {Number}
+ * @property {Number}
  */
 MessagePart.MaxRichContentRetryCount = 3;
 

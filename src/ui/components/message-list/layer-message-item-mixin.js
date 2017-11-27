@@ -182,7 +182,7 @@ module.exports = {
      * ```
      *
      * @property {Function} getMenuOptions
-     * @property {layer.Conversation} getMenuOptions.conversation
+     * @property {Layer.Core.Conversation} getMenuOptions.conversation
      * @property {Object[]} getMenuOptions.returns
      */
     getMenuOptions: {

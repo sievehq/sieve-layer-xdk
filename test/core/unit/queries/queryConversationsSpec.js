@@ -49,7 +49,7 @@ describe("The ConversationsQuery Class", function() {
         client.onlineManager.isOnline = true;
 
         query = client.createQuery({
-          model: layer.Core.Query.Conversation
+          model: Layer.Core.Query.Conversation
         });
         conversation = client._createObject(responses.conversation1);
         conversation2 = client._createObject(responses.conversation2);
@@ -71,7 +71,7 @@ describe("The ConversationsQuery Class", function() {
     });
 
     it("Should be an ConversationsQuery", function() {
-      expect(query.constructor.prototype.model).toEqual(layer.Core.Query.Conversation);
+      expect(query.constructor.prototype.model).toEqual(Layer.Core.Query.Conversation);
     });
 
     describe("The constructor() method", function() {
@@ -79,7 +79,7 @@ describe("The ConversationsQuery Class", function() {
             expect(function() {
                 var query = client.createQuery({
                     client: client,
-                    model: layer.Core.Query.Conversation,
+                    model: Layer.Core.Query.Conversation,
                     predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
                 });
             }).toThrowError(layer.Core.LayerError.ErrorDictionary.predicateNotSupported);

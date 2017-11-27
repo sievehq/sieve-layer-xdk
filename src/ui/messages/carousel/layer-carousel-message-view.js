@@ -6,7 +6,7 @@
  * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
-import { animatedScrollLeftTo } from '../../base';
+import { animatedScrollLeftTo, Constants } from '../../base';
 import MessageViewMixin from '../message-view-mixin';
 import Throttler from '../../mixins/throttler';
 import Clickable from '../../mixins/clickable';
@@ -70,7 +70,7 @@ registerComponent('layer-carousel-message-view', {
 
     // See parent class
     widthType: {
-      value: 'flex-width',
+      value: Constants.WIDTH.FLEX,
     },
   },
   methods: {
@@ -169,10 +169,10 @@ registerComponent('layer-carousel-message-view', {
         const preferedMinWidth = card.nodes.ui.preferredMinWidth;
         const preferedMaxWidth = Math.min(maxCardWidth, card.nodes.ui.preferredMaxWidth);
         switch (card.widthType) {
-          case 'full-width':
+          case Constants.WIDTH.FULL:
             card.style.width = card.style.minWidth = preferedMaxWidth + 'px';
             break;
-          case 'flex-width':
+          case Constants.WIDTH.FLEX:
             if (preferedMaxWidth < preferedMinWidth) {
               card.style.maxWidth = card.style.minWidth = card.style.width = preferedMaxWidth + 'px';
             } else {

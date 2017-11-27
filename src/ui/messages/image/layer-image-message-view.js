@@ -6,7 +6,8 @@
  * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
-import { settings as UISettings } from '../../base';
+import { settings as UISettings } from '../../index';
+import { Constants } from '../../base';
 import MessageViewMixin from '../message-view-mixin';
 
 import ImageManager from 'blueimp-load-image/js/load-image';
@@ -38,10 +39,10 @@ registerComponent('layer-image-message-view', {
       },
     },
 
-    // See parent class; uses a chat-bubble style width if there is no metadata.
+    // See parent class; uses an any-width style width if there is no metadata.
     widthType: {
       get() {
-        return this.parentComponent.isShowingMetadata ? 'flex-width' : 'chat-bubble';
+        return this.parentComponent.isShowingMetadata ? Constants.WIDTH.FLEX : Constants.WIDTH.ANY;
       },
     },
 

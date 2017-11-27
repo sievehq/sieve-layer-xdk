@@ -200,10 +200,10 @@ describe("The Content class", function() {
 
     describe("The static _createFromServer() method", function() {
         it("Should initialize with an object", function() {
-            expect(layer.Content._createFromServer({download_url: "hey1"}).downloadUrl).toEqual("hey1");
-            expect(layer.Content._createFromServer({expiration: 100000}).expiration).toEqual(new Date(100000));
-            expect(layer.Content._createFromServer({refresh_url: "hey2"}).refreshUrl).toEqual("hey2");
-            expect(layer.Content._createFromServer({id: "content"}).id).toEqual("content");
+            expect(Layer.Core.Content._createFromServer({download_url: "hey1"}).downloadUrl).toEqual("hey1");
+            expect(Layer.Core.Content._createFromServer({expiration: 100000}).expiration).toEqual(new Date(100000));
+            expect(Layer.Core.Content._createFromServer({refresh_url: "hey2"}).refreshUrl).toEqual("hey2");
+            expect(Layer.Core.Content._createFromServer({id: "content"}).id).toEqual("content");
         });
     });
 });
