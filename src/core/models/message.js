@@ -746,6 +746,16 @@ class Message extends Syncable {
     return results;
   }
 
+  /**
+   * Return the Layer.Core.MessagePart that represents the root of the Message Part Tree structure for this Message.
+   *
+   * ```
+   * var part = message.getRootPart();
+   * ```
+   *
+   * @method getRootPart
+   * @returns {Layer.Core.MessagePart}
+   */
   getRootPart() {
     if (!this._rootPart) {
       this._rootPart = this.getPartsMatchingAttribute({ role: 'root' })[0] || null;
@@ -753,6 +763,16 @@ class Message extends Syncable {
     return this._rootPart;
   }
 
+  /**
+   * Creates a new Layer.Core.MessageTypeModel that represents this Message (or returns a cached version of the same).
+   *
+   * ```
+   * var model = message.createModel();
+   * ```
+   *
+   * @method createModel
+   * @returns {Layer.Core.MessageTypeModel}
+   */
   createModel() {
     if (!this._messageTypeModel) {
       const rootPart = this.getRootPart();
@@ -763,6 +783,18 @@ class Message extends Syncable {
     return this._messageTypeModel;
   }
 
+  /**
+   * Return the name of the Layer.Core.MessageTypeModel class that represents this Message; for use in simple tests.
+   *
+   * ```
+   * if (message.getModelName() === "TextModel") {
+   *    console.log("Yet another text message");
+   * }
+   * ```
+   *
+   * @method getModelName
+   * @returns {String}
+   */
   getModelName() {
     const model = this.createModel();
     return model.constructor.name;
