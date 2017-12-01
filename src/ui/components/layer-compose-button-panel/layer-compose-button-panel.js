@@ -1,7 +1,7 @@
 /**
  * Provides a Button Panel for adding custom actions to the layerUI.Composer panel.
  *
- * You can populate this button panel using the layer.UI.components.ConversationPanel.composeButtons property.
+ * You can populate this button panel using the Layer.UI.components.ConversationView.composeButtons property.
  *
  * Alternatively, you can replace this by defining a custom `layer-compose-button-panel` to make the resulting component entirely yours:
  *
@@ -23,7 +23,7 @@
  * ```
  *
  * @class layer.UI.components.ComposeButtonPanel
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  * @removed
  */
 import { registerComponent } from '../../../components/component';

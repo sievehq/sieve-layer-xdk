@@ -1,5 +1,6 @@
 describe('layer-compose-bar', function() {
   var el, testRoot, client, conversation;
+  var TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
 
   beforeAll(function(done) {
     if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
@@ -33,6 +34,7 @@ describe('layer-compose-bar', function() {
     document.body.appendChild(testRoot);
     el = document.createElement('layer-compose-bar');
     testRoot.appendChild(el);
+
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
@@ -55,6 +57,23 @@ describe('layer-compose-bar', function() {
       el.conversation = conversation;
       expect(el._setTypingListenerConversation).toHaveBeenCalledWith();
     });
+
+    it("Should manage the disabled state if manageDisabledState is true", function() {
+      el.client = client;
+      expect(el.manageDisabledState).toBe(true);
+      expect(el.disabled).toBe(false);
+      el.conversation = '';
+      expect(el.disabled).toBe(true);
+      el.conversation = conversation;
+      expect(el.disabled).toBe(false);
+
+      // If manageDisabledState is false...
+      el.manageDisabledState = false;
+      el.conversation = '';
+      expect(el.disabled).toBe(false);
+      el.conversation = conversation;
+      expect(el.disabled).toBe(false);
+    });
   });
 
   describe("The client property", function() {
@@ -70,18 +89,6 @@ describe('layer-compose-bar', function() {
       el.conversation = conversation;
       expect(client.createTypingListener).toHaveBeenCalledWith(el.nodes.input);
       expect(el.properties.typingListener.conversation).toBe(conversation);
-    });
-  });
-
-  describe("The buttons property", function() {
-    it("Should pass buttons to the button panel", function() {
-      var div1 = document.createElement("div"),
-        div2 = document.createElement("div"),
-        div3 = document.createElement("div");
-      el.buttons = [div1, div2];
-      el.buttonsLeft = [div3];
-      expect(el.nodes.buttonPanel.buttons).toEqual([div1, div2]);
-      expect(el.nodes.buttonPanelLeft.buttons).toEqual([div3]);
     });
   });
 
@@ -125,6 +132,24 @@ describe('layer-compose-bar', function() {
     });
   });
 
+  describe("The disabled property", function() {
+    it("Should toggle layer-is-disabled", function() {
+      expect(el.classList.contains('layer-is-disabled')).toBe(false);
+      el.disabled = true;
+      expect(el.classList.contains('layer-is-disabled')).toBe(true);
+      el.disabled = false;
+      expect(el.classList.contains('layer-is-disabled')).toBe(false);
+    });
+
+    it("Should toggle input-disabled", function() {
+      expect(el.nodes.input.disabled).toBe(false);
+      el.disabled = true;
+      expect(el.nodes.input.disabled).toBe(true);
+      el.disabled = false;
+      expect(el.nodes.input.disabled).toBe(false);
+    });
+  });
+
   describe("The created() method", function() {
     it("Should add the layer-compose-bar-one-line-of-text class", function() {
       expect(el.classList.contains('layer-compose-bar-one-line-of-text')).toBe(true);
@@ -136,27 +161,24 @@ describe('layer-compose-bar', function() {
       expect(el.nodes.lineHeighter).toEqual(jasmine.any(HTMLElement));
     });
 
-    it("Should setup buttonPanel and editPanel", function() {
-      expect(el.nodes.buttonPanel).toEqual(jasmine.any(HTMLElement));
-      expect(el.nodes.buttonPanelLeft).toEqual(jasmine.any(HTMLElement));
-      expect(el.nodes.editPanel).toEqual(jasmine.any(HTMLElement));
-    });
-
-    it("Should wire up layer-file-selected to handleAttachments", function() {
+    it("Should wire up layer-model-generated to handleAttachments", function() {
+      el.client = client;
       el.properties.conversation = conversation;
-      var parts = [new Layer.Core.MessagePart({body: "After death he became Lord Dork Laugh", mimeType: "text/plain"})];
-      var evt = new CustomEvent('layer-file-selected', {
-        detail: {parts: parts},
+      var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel')
+      var model = new FileModel({sourceUrl: "hey ho", mimeType: "text/plain"});
+
+      var evt = new CustomEvent('layer-model-generated', {
+        detail: {models: [model]},
         bubbles: true,
         cancelable: true
       });
-      spyOn(el, 'send');
+      spyOn(el, 'sendModels');
 
       // Run
-      el.nodes.buttonPanel.dispatchEvent(evt);
+      el.firstChild.dispatchEvent(evt);
 
       // Posttest
-      expect(el.send).toHaveBeenCalled();
+      expect(el.sendModels).toHaveBeenCalledWith([model]);
     });
   });
 
@@ -192,76 +214,136 @@ describe('layer-compose-bar', function() {
     });
 
     it("Should trigger layer-send-message and send the message typed", function() {
-      var calledFor = null;
-      document.body.addEventListener("layer-send-message", function(evt) {
-        calledFor = evt.detail.item;
+      var calledForModel = null;
+      el.addEventListener("layer-send-message", function(evt) {
+        calledForModel = evt.detail.model;
       });
       el.send();
 
-
-      expect(calledFor.parts[0].body).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
-      expect(calledFor.syncState).toEqual(layer.Constants.SYNC_STATE.SAVING);
+      expect(calledForModel.text).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
+      expect(calledForModel.part.body).toEqual('{"text":"Frodo shall hang until he is dead or until we get tired of watching him laugh at us"}');
+      expect(calledForModel.message.syncState).toEqual(layer.Constants.SYNC_STATE.SAVING);
     });
 
     it("Should trigger layer-send-message and cancel the message on evt.preventDefault()", function() {
-      var calledFor = null;
-      document.body.addEventListener("layer-send-message", function(evt) {
-        calledFor = evt.detail.item;
+      var calledForModel = null;
+      el.addEventListener("layer-send-message", function(evt) {
+        calledForModel = evt.detail.model;
         evt.preventDefault();
       });
       el.send();
 
-      expect(calledFor.parts[0].body).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
-      expect(calledFor.syncState).toEqual(layer.Constants.SYNC_STATE.NEW);
+      expect(calledForModel.text).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
+      expect(calledForModel.part.body).toEqual('{"text":"Frodo shall hang until he is dead or until we get tired of watching him laugh at us"}');
+      expect(calledForModel.message.syncState).toEqual(layer.Constants.SYNC_STATE.NEW);
     });
 
-    it("Should send optional parts and leave text as-is", function() {
-      var parts = [new Layer.Core.MessagePart({body: "After death he became Lord Dork Laugh", mimeType: "text/plain"})];
+    it("Should trigger events even if no conversation", function() {
+      var calledForModel = null;
+      el.addEventListener("layer-send-message", function(evt) {
+        calledForModel = evt.detail.model;
+        evt.preventDefault();
+      });
+      el.conversation = null;
+      el.send();
 
-      var calledFor = null;
-      document.body.addEventListener("layer-send-message", function(evt) {
-        calledFor = evt.detail.item;
+      expect(calledForModel.text).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
+      expect(calledForModel.part).toBe(null);
+      expect(calledForModel.message).toBe(null);
+    });
+  });
+
+  describe("The sendModels() method", function() {
+    it("Should send models and leave text as-is", function() {
+      el.conversation = conversation;
+      el.value = "Frodo shall hang until he is dead or until we get tired of watching him laugh at us";
+      var model = new TextModel({text: "hello"});
+
+      var calledForModel = null;
+      el.addEventListener("layer-send-message", function(evt) {
+        calledForModel = evt.detail.model;
         evt.preventDefault();
       });
 
       // Run
-      el.send(parts);
+      el.sendModels([model]);
 
       // Posttest
-      expect(calledFor.parts.length).toEqual(1);
-      expect(calledFor.parts[0].body).toEqual("After death he became Lord Dork Laugh");
+      expect(calledForModel).toBe(model);
+      expect(calledForModel.part.body).toEqual('{"text":"hello"}');
       expect(el.value).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
     });
+  });
 
-    it("Should trigger events even if no conversation", function() {
-      var calledFor = null;
-      document.body.addEventListener("layer-send-message", function(evt) {
-        calledFor = evt.detail.parts[0];
-        evt.preventDefault();
-      });
-      el.conversation = null;
-      el.send();
+  describe("The _send() method", function() {
+    it("Should trigger layer-send-message and then call onSend", function() {
+      el.conversation = conversation;
+      spyOn(el, "onSend");
+      var spy = jasmine.createSpy('spy');
+      el.addEventListener('layer-send-message', spy);
 
+      var model = new TextModel({text: "hello"});
+      var notification = {
+        title: 'New Message from ' + client.user.displayName,
+        text: 'hello'
+      };
+      el._send(model);
 
-      expect(calledFor.body).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
+      expect(spy).toHaveBeenCalledWith(jasmine.objectContaining({
+        detail: {
+          model: model,
+          notification: notification,
+          conversation: conversation
+        }
+      }));
+      expect(el.onSend).toHaveBeenCalledWith(model, notification);
     });
 
-    it("Should not send, nor create a message with no conversation", function() {
-      var calledFor = null;
-      document.body.addEventListener("layer-send-message", function(evt) {
-        calledFor = evt.detail.parts[0];
-        expect(evt.detail.item).toBe(null);
-        expect(evt.detail.conversation).toBe(null);
-      });
-      el.conversation = null;
-      el.send();
+    it("Should trigger layer-send-message and then skip onSend if evt.preventDefault", function() {
+      el.conversation = conversation;
+      spyOn(el, "onSend");
+      var evtDetails = null;
+      var f = function(evt) {
+        evtDetails = evt.detail;
+        evt.preventDefault();
+      };
+      el.addEventListener('layer-send-message', f)
+      var model = new TextModel({text: "hello"});
+      var notification = {
+        title: 'New Message from ' + client.user.displayName,
+        text: 'hello'
+      };
+      el._send(model);
 
-      expect(calledFor.body).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
+      expect(evtDetails).toEqual({
+        model: model,
+        notification: notification,
+        conversation: conversation
+      });
+      expect(el.onSend).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("The onSend() method", function() {
+    it("Should call the model send method", function() {
+      el.conversation = conversation;
+      var model = new TextModel({text: "hello"});
+      spyOn(model, "send");
+
+      // Run
+      el.onSend(model, {text: "hey"});
+
+      // Posttest
+      expect(model.send).toHaveBeenCalledWith({
+        conversation: conversation,
+        notification: {text: "hey"}
+      });
     });
   });
 
   describe("The _onKeyDown() method", function() {
     it("Should preventDefault on ENTER and call send", function() {
+      el.client = client;
       spyOn(el, 'send');
       var preventSpy = jasmine.createSpy('preventDefault');
       el._onKeyDown({
@@ -304,7 +386,7 @@ describe('layer-compose-bar', function() {
     });
 
     it("Should not preventDefault nor insert a tab if tabs are not enabled", function() {
-      layerUI.settings.disableTabAsWhiteSpace = true;
+      Layer.UI.settings.disableTabAsWhiteSpace = true;
       var preventSpy = jasmine.createSpy('preventDefault');
       el._onKeyDown({
         preventDefault: preventSpy,
@@ -315,10 +397,13 @@ describe('layer-compose-bar', function() {
       });
       expect(preventSpy).not.toHaveBeenCalledWith();
       expect(el.nodes.input.value).toEqual("");
-      layerUI.settings.disableTabAsWhiteSpace = false;
+      Layer.UI.settings.disableTabAsWhiteSpace = false;
     });
 
     it("Should call onRender() whether its an ENTER or a letter", function() {
+      el.value = "hello";
+      el.properties.client = client;
+
       spyOn(el, "onRender");
       var preventSpy = jasmine.createSpy('preventDefault');
       el._onKeyDown({
@@ -332,7 +417,7 @@ describe('layer-compose-bar', function() {
     });
 
     it("Should call _triggerChange", function() {
-      el.properties.value = "hi";
+      el.value = "hi";
       el.properties.client = client;
 
       spyOn(el, "_triggerChange");
@@ -371,7 +456,7 @@ describe('layer-compose-bar', function() {
       spyOn(el, "trigger");
       el._triggerChange("hi ho", "hi");
       expect(el.trigger).toHaveBeenCalledWith("layer-compose-bar-change-value", {
-        value: "hi ho",
+        newValue: "hi ho",
         oldValue: "hi"
       });
     });
@@ -445,20 +530,21 @@ describe('layer-compose-bar', function() {
   });
 
   describe("The handleAttachments() method", function() {
-    it("Should call send with its parts", function() {
-      var parts = [new Layer.Core.MessagePart({body: "After death he became Lord Dork Laugh", mimeType: "text/plain"})];
-      var evt = new CustomEvent('layer-file-selected', {
-        detail: {parts: parts},
+    it("Should call send with its models", function() {
+      var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel')
+      var model = new FileModel({sourceUrl: "hey ho", mimeType: "text/plain"});
+      var evt = new CustomEvent('layer-model-generated', {
+        detail: {models: [model]},
         bubbles: true,
         cancelable: true
       });
-      spyOn(el, 'send');
+      spyOn(el, 'sendModels');
 
       // Run
-      el.nodes.buttonPanel.dispatchEvent(evt);
+      el.firstChild.dispatchEvent(evt);
 
       // Posttest
-      expect(el.send).toHaveBeenCalledWith(parts);
+      expect(el.sendModels).toHaveBeenCalledWith([model]);
     });
   });
 });

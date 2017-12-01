@@ -9,18 +9,13 @@
  * ];
  * ```
  *
- * If using it elsewhere, note that it triggers a `layer-file-selected` event that you would listen for to do your own processing.
- * If using it in the ComposeButtonPanel, this event will be received by the Composer and will not propagate any further:
- *
- * ```
- * document.body.addEventListener('layer-file-selected', function(evt) {
- *    var messageParts = evt.custom.parts;
- *    conversation.createMessage({ parts: messageParts }).send();
- * }
- * ```
+ * * Generates a `layer-files-selected` event when files are selected, prior to generating models; you can call `evt.preventDefault()` on this event to prevent further processing
+ * * Generates a `layer-model-generated` event after generating models from the selected files. This event is received by
+ *   the Compose Bar if this widget is inside of the Compose Bar, and it will handle this event.  You can intercept
+ *   this event and call `evt.stopPropgation()` to prevent the Compose Bar from receiving this event.
  *
  * @class layer.UI.components.FileUploadButton
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import Layer, { MessagePart } from '../../../core';
 import Util from '../../../util';
@@ -91,34 +86,71 @@ registerComponent('layer-file-upload-button', {
      */
     onChange() {
       const files = Array.prototype.slice.call(this.nodes.input.files);
-      const imageTypes = ['image/gif', 'image/png', 'image/jpeg', 'image/svg'];
-      const ImageModel = Layer.Client.getMessageTypeModelClass('ImageModel');
-      const FileModel = Layer.Client.getMessageTypeModelClass('FileModel');
-
-      const models = files.map((file) => {
-        const options = { source: file };
-        if (files.length > 1 && file.name) {
-          options.title = file.name;
-        }
-        if (imageTypes.indexOf(file.type) !== -1) {
-          return new ImageModel(options);
-        } else {
-          return new FileModel(options);
-        }
-      });
 
       /**
-       * This widget triggers a `layer-file-selected` event when the user selects files.
-       * This event is captured and stopped from propagating by the layer.UI.components.Composer.
-       * If using it outside of the composer, this event can be used to receive the MessageParts generated
-       * for the selected files.
+       * This event is triggered when files are selected, but before Message Type Models are generated for those files.
        *
-       * @event layer-file-selected
+       * You can prevent any further processing of these files with `evt.preventDefault()`
+       *
+       * ```
+       * document.body.addEventListener('layer-files-selected', function(evt) {
+       *    // prevent further processing
+       *    evt.preventDefault();
+       *
+       *    // Generate and send a message from the files
+       *    var files = evt.detail.files;
+       *    var parts = files.map(file => new layer.Core.MessagePart({ body: file }));
+       *    conversation.createMessage({ parts }).send();
+       * });
+       * ```
+       *
+       * You can alter the `files` array as needed prior to doing further processing.
+       *
+       * ```
+       * document.body.addEventListener('layer-files-selected', function(evt) {
+       *    var files = evt.detail.files;
+       *    for (var i = files.length - 1; i >= 0; i--) {
+       *        // Remove any file whose size is greater than ~100K
+       *        if (files[i].size > 100000) files.splice(i, 1);
+       *    }
+       * });
+       * ```
+       *
+       * @event layer-files-selected
        * @param {Object} evt
        * @param {Object} evt.detail
        * @param {layer.CardModel[]} evt.detail.models
        */
-      this.trigger('layer-file-selected', { models });
+      if (this.trigger('layer-files-selected', { files })) {
+        const imageTypes = ['image/gif', 'image/png', 'image/jpeg', 'image/svg'];
+        const ImageModel = Layer.Client.getMessageTypeModelClass('ImageModel');
+        const FileModel = Layer.Client.getMessageTypeModelClass('FileModel');
+
+        const models = files.map((file) => {
+          const options = { source: file };
+          if (files.length > 1 && file.name) {
+            options.title = file.name;
+          }
+          if (imageTypes.indexOf(file.type) !== -1) {
+            return new ImageModel(options);
+          } else {
+            return new FileModel(options);
+          }
+        });
+
+        /**
+         * This widget triggers a `layer-model-generated` event when the user selects files.
+         * This event is captured and stopped from propagating by the Layer.UI.components.ComposeBar.
+         * If using it outside of the composer, this event can be used to receive the MessageParts generated
+         * for the selected files.
+         *
+         * @event layer-model-generated
+         * @param {Object} evt
+         * @param {Object} evt.detail
+         * @param {Layer.Core.MessageTypeModel[]} evt.detail.models
+         */
+        this.trigger('layer-model-generated', { models });
+      }
     },
   },
 });

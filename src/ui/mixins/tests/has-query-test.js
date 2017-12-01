@@ -1,7 +1,7 @@
 describe("Has Query Mixin", function() {
   beforeAll(function() {
     layerUI.registerComponent('has-query-test', {
-      mixins: [layerUI.mixins.HasQuery, layerUI.mixins.MainComponent],
+      mixins: [Layer.UI.mixins.HasQuery, Layer.UI.mixins.MainComponent],
       properties: {
         _queryModel: {
           value: Layer.Core.Query.Identity
@@ -311,6 +311,12 @@ describe("Has Query Mixin", function() {
         el._updateQuery();
         el.query.trigger("change");
         expect(el.onRerender).toHaveBeenCalled();
+      });
+    });
+
+    describe("They queryFilter property", function() {
+      it("Should prevent data from entering the query data list", function() {
+        expect(1).toEqual(0);
       });
     });
 });

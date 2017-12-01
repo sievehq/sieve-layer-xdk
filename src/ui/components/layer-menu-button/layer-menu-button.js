@@ -17,7 +17,7 @@
  * ```
  *
  * @class layer.UI.components.MenuButton
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import Layer from '../../../core';
 import { registerComponent } from '../../components/component';

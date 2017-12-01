@@ -1,5 +1,5 @@
 /**
- * The Layer Message List widget renders a scrollable, pagable list of layer.UI.components.MessagesListPanel.Item widgets.
+ * The Layer Message List widget renders a scrollable, pagable list of Layer.UI.components.MessagesListPanel.Item widgets.
  *
  * This is designed to go inside of the layerUI.Conversation widget.
  *
@@ -18,8 +18,8 @@
  *
  * 1. Define a custom `<layer-message-list/>` widget; this works but your now entirely responsible for all of its
  *    behaviors, and can not easily integrate fixes and enhancements added to this repo. Defining components is discussed in
- *    layer.UI.components.Component.
- * 2. Enhance the provided widget with Mixins.  Details of Mixins are described in layer.UI.components.Component.
+ *    Layer.UI.components.Component.
+ * 2. Enhance the provided widget with Mixins.  Details of Mixins are described in Layer.UI.components.Component.
  *    Below illustrates an example of a mixin for modifying this widget.
  *
  *
@@ -79,12 +79,12 @@
  * });
  * ```
  *
- * @class layer.UI.components.MessagesListPanel.List
- * @extends layer.UI.components.Component
+ * @class Layer.UI.components.MessagesListPanel.List
+ * @extends Layer.UI.components.Component
  *
  * @mixin layerUI.mixins.EmptyList
- * @mixin layerUI.mixins.List
- * @mixin layerUI.mixins.ListLoadIndicator
+ * @mixin Layer.UI.mixins.List
+ * @mixin Layer.UI.mixins.ListLoadIndicator
  * @mixin layerUI.mixins.QueryEndIndicator
  */
 import Layer from '../../../../core';
@@ -504,7 +504,7 @@ registerComponent('layer-message-list', {
      *
      * @method _markAsRead
      * @private
-     * @param {layer.UI.components.MessagesListPanel.Item} child
+     * @param {Layer.UI.components.MessagesListPanel.Item} child
      */
     _markAsRead(child) {
       if (LayerUI.isInBackground() || this.disable) return;
@@ -582,7 +582,7 @@ registerComponent('layer-message-list', {
      *
      * @method _processAffectedWidgetsCustom
      * @private
-     * @param {layer.UI.components.MessagesListPanel.Item[]} widgets
+     * @param {Layer.UI.components.MessagesListPanel.Item[]} widgets
      */
     _processAffectedWidgetsCustom(widgets, firstIndex, isTopItemNew) {
       if (widgets.length === 0) return;
@@ -845,7 +845,6 @@ registerComponent('layer-message-list', {
 
     onPagedDataDone(isDoneSizingContent) {
       if (this.properties.stuckToBottom) {
-        console.log(isDoneSizingContent + ': ' + (this.scrollHeight - this.clientHeight));
         this.scrollTo(this.scrollHeight - this.clientHeight);
       }
     },

@@ -40,7 +40,8 @@
  * @class Layer.UI.messages.LinkMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel, Root, xhr }  from '../../../core';
+import { Client, MessagePart, MessageTypeModel, Root }  from '../../../core';
+import { xhr } from '../../../util';
 
 const TitleRegEx = new RegExp(/<meta [^>]*property\s*=\s*['"]og:title['"].*?\/>/);
 const DescriptionRegEx = new RegExp(/<meta [^>]*property\s*=\s*['"]og:description['"].*?\/>/);

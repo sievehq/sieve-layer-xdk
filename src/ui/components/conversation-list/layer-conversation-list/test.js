@@ -66,40 +66,17 @@ describe('layer-conversation-list', function() {
       el.trigger('layer-conversation-selected', {conversation: query.data[1]});
       expect(spy).toHaveBeenCalledWith(jasmine.any(CustomEvent));
     });
-
-    it("Should call onConversationDeleted when child triggers layer-conversation-deleted", function() {
-      var spy = jasmine.createSpy('callback');
-      el.onConversationDeleted = spy;
-      el.trigger('layer-conversation-deleted', {conversation: query.data[1]});
-      expect(spy).toHaveBeenCalledWith(jasmine.any(CustomEvent));
-    });
   });
 
   describe("The sortBy property", function() {
     it("Should setup a proper values", function() {
       expect(query.sortBy).toEqual([{'lastMessage.sentAt': 'desc'}]);
-      el.sortBy = 'createdAt';
+      el.sortBy = Layer.UI.Constants.CONVERSATIONS_SORT.CREATED_AT;
       expect(el.sortBy).toEqual([{'createdAt': 'desc'}]);
 
-      el.sortBy = 'lastMessage';
+      el.sortBy = Layer.UI.Constants.CONVERSATIONS_SORT.LAST_MESSAGE;
       expect(el.sortBy).toEqual([{'lastMessage.sentAt': 'desc'}]);
     });
-  });
-
-  describe("The deleteConversationEnabled property", function() {
-    it("Should accept a function", function() {
-      var f = function() {console.log("F-ing Function");};
-      el.deleteConversationEnabled = f;
-      expect(el.deleteConversationEnabled).toBe(f);
-    });
-
-    it("Should accept a stringified function", function() {
-      var f = function() {console.log("F-ing Function");};
-      el.deleteConversationEnabled = f.toString();
-      expect(el.deleteConversationEnabled).toEqual(jasmine.any(Function));
-      expect(el.deleteConversationEnabled.toString()).toEqual(f.toString());
-    });
-
   });
 
   describe("The filter property", function() {

@@ -19,8 +19,7 @@
  */
 import Root from './root';
 import { WebsocketSyncEvent } from './sync-event';
-import xhr from './xhr';
-import Util, { logger } from '../util';
+import Util, { logger, xhr } from '../util';
 
 const MAX_RECEIPT_CONNECTIONS = 4;
 
@@ -31,7 +30,7 @@ class SyncManager extends Root {
    * An Application is expected to only have one SyncManager.
    *
    *      var socketManager = new layer.Websockets.SocketManager({client: client});
-   *      var requestManager = new layer.Websockets.RequestManager({client: client, socketManager: socketManager});
+   *      var requestManager = new Layer.Core.Websockets.RequestManager({client: client, socketManager: socketManager});
    *
    *      var onlineManager = new layer.OnlineManager({
    *          socketManager: socketManager
@@ -48,7 +47,7 @@ class SyncManager extends Root {
    * @method constructor
    * @param  {Object} options
    * @param {layer.OnlineStateManager} options.onlineManager
-   * @param {layer.Websockets.RequestManager} options.requestManager
+   * @param {Layer.Core.Websockets.RequestManager} options.requestManager
    * @param {Layer.Core.Client} options.client
    */
   constructor(options) {
@@ -117,7 +116,7 @@ class SyncManager extends Root {
    * requests already in-flight.
    *
    * @method request
-   * @param  {layer.SyncEvent} requestEvt - A SyncEvent specifying the request to be made
+   * @param  {Layer.Core.SyncEvent} requestEvt - A SyncEvent specifying the request to be made
    */
   request(requestEvt) {
     // If its a PATCH request on an object that isn't yet created,
@@ -170,7 +169,7 @@ class SyncManager extends Root {
    *
    * @method _findUnfiredCreate
    * @private
-   * @param  {layer.SyncEvent} requestEvt
+   * @param  {Layer.Core.SyncEvent} requestEvt
    * @return {Boolean}
    */
   _findUnfiredCreate(requestEvt) {
@@ -236,7 +235,7 @@ class SyncManager extends Root {
    *
    * @method _fireRequest
    * @private
-   * @param {layer.SyncEvent} requestEvt
+   * @param {Layer.Core.SyncEvent} requestEvt
    */
   _fireRequest(requestEvt) {
     if (requestEvt instanceof WebsocketSyncEvent) {
@@ -251,7 +250,7 @@ class SyncManager extends Root {
    *
    * @method _fireRequestXHR
    * @private
-   * @param {layer.SyncEvent.XHRSyncEvent} requestEvt
+   * @param {Layer.Core.SyncEvent.XHRSyncEvent} requestEvt
    */
   _fireRequestXHR(requestEvt) {
     requestEvt.isFiring = true;
@@ -267,7 +266,7 @@ class SyncManager extends Root {
    *
    * @method _fireRequestWebsocket
    * @private
-   * @param {layer.SyncEvent.WebsocketSyncEvent} requestEvt
+   * @param {Layer.Core.SyncEvent.WebsocketSyncEvent} requestEvt
    */
   _fireRequestWebsocket(requestEvt) {
     if (this.socketManager && this.socketManager._isOpen()) {
@@ -293,7 +292,7 @@ class SyncManager extends Root {
    * will call false.
    *
    * @method _validateRequest
-   * @param {layer.SyncEvent} syncEvent
+   * @param {Layer.Core.SyncEvent} syncEvent
    * @param {Function} callback
    * @param {Function} callback.isValid - The request is still valid
    * @private
@@ -326,7 +325,7 @@ class SyncManager extends Root {
    * @method _xhrResult
    * @private
    * @param  {Object} result  - Response object returned by xhr call
-   * @param  {layer.SyncEvent} requestEvt - Request object
+   * @param  {Layer.Core.SyncEvent} requestEvt - Request object
    */
   _xhrResult(result, requestEvt) {
     if (this.isDestroyed) return;
@@ -346,7 +345,7 @@ class SyncManager extends Root {
    * @method _getErrorState
    * @private
    * @param  {Object} result  - Response object returned by xhr call
-   * @param  {layer.SyncEvent} requestEvt - Request object
+   * @param  {Layer.Core.SyncEvent} requestEvt - Request object
    * @param  {boolean} isOnline - Is our app state set to online
    * @returns {String}
    */
@@ -393,7 +392,7 @@ class SyncManager extends Root {
    * @method _xhrError
    * @private
    * @param  {Object} result  - Response object returned by xhr call
-   * @param  {layer.SyncEvent} requestEvt - Request object
+   * @param  {Layer.Core.SyncEvent} requestEvt - Request object
    */
   _xhrError(result) {
     const requestEvt = result.request;
@@ -579,7 +578,7 @@ class SyncManager extends Root {
    * @method _xhrValidateIsOnlineCallback
    * @private
    * @param  {boolean} isOnline  - Response object returned by xhr call
-   * @param {layer.SyncEvent} requestEvt - The request that failed triggering this call
+   * @param {Layer.Core.SyncEvent} requestEvt - The request that failed triggering this call
    */
   _xhrValidateIsOnlineCallback(isOnline, requestEvt) {
     logger.debug('Sync Manager online check result is ' + isOnline);
@@ -606,7 +605,7 @@ class SyncManager extends Root {
    * @method _xhrSuccess
    * @private
    * @param  {Object} result  - Response object returned by xhr call
-   * @param  {layer.SyncEvent} requestEvt - Request object
+   * @param  {Layer.Core.SyncEvent} requestEvt - Request object
    */
   _xhrSuccess(result) {
     const requestEvt = result.request;
@@ -630,7 +629,7 @@ class SyncManager extends Root {
    *
    * @method _removeRequest
    * @private
-   * @param  {layer.SyncEvent} requestEvt - SyncEvent Request to remove
+   * @param  {Layer.Core.SyncEvent} requestEvt - SyncEvent Request to remove
    * @param {Boolean} deleteDB - Delete from indexedDB
    */
   _removeRequest(requestEvt, deleteDB) {
@@ -652,7 +651,7 @@ class SyncManager extends Root {
    *
    * @method _purgeDependentRequests
    * @private
-   * @param  {layer.SyncEvent} request - Request whose target is no longer valid
+   * @param  {Layer.Core.SyncEvent} request - Request whose target is no longer valid
    */
   _purgeDependentRequests(request) {
     this.queue = this.queue.filter(evt => evt.depends.indexOf(request.target) === -1 || evt === request);
@@ -665,7 +664,7 @@ class SyncManager extends Root {
    *
    * @method _purgeOnDelete
    * @private
-   * @param  {layer.SyncEvent} evt - Delete event that requires removal of other events
+   * @param  {Layer.Core.SyncEvent} evt - Delete event that requires removal of other events
    */
   _purgeOnDelete(evt) {
     this.queue.filter(request => request.depends.indexOf(evt.target) !== -1 && evt !== request)
@@ -713,7 +712,7 @@ SyncManager.prototype.socketManager = null;
 
 /**
  * Websocket Request Manager for sending requests.
- * @type {layer.Websockets.RequestManager}
+ * @type {Layer.Core.Websockets.RequestManager}
  */
 SyncManager.prototype.requestManager = null;
 
@@ -727,16 +726,16 @@ SyncManager.prototype.requestManager = null;
 SyncManager.prototype.onlineManager = null;
 
 /**
- * The array of layer.SyncEvent instances awaiting to be fired.
- * @type {layer.SyncEvent[]}
+ * The array of Layer.Core.SyncEvent instances awaiting to be fired.
+ * @type {Layer.Core.SyncEvent[]}
  */
 SyncManager.prototype.queue = null;
 
 /**
- * The array of layer.SyncEvent instances awaiting to be fired.
+ * The array of Layer.Core.SyncEvent instances awaiting to be fired.
  *
  * Receipts can generally just be fired off all at once without much fretting about ordering or dependencies.
- * @type {layer.SyncEvent[]}
+ * @type {Layer.Core.SyncEvent[]}
  */
 SyncManager.prototype.receiptQueue = null;
 
@@ -794,7 +793,7 @@ SyncManager._supportedEvents = [
    * @param {Layer.Core.LayerEvent} evt          Standard Layer Event object generated by all calls to `trigger`
    * @param {Layer.Core.LayerEvent} evt.error    An error object representing the server's response
    * @param {String} evt.target             ID of the message/conversation/etc. being operated upon
-   * @param {layer.SyncEvent} evt.request  The original request object
+   * @param {Layer.Core.SyncEvent} evt.request  The original request object
    */
   'sync:error',
 
@@ -813,7 +812,7 @@ SyncManager._supportedEvents = [
    * @param {Layer.Core.LayerEvent} evt          Standard Layer Event object generated by all calls to `trigger`
    * @param {Layer.Core.LayerEvent} evt.error    An error object representing the server's response
    * @param {String} evt.target             ID of the message/conversation/etc. being operated upon
-   * @param {layer.SyncEvent} evt.request   The original request object
+   * @param {Layer.Core.SyncEvent} evt.request   The original request object
    * @param {Number} evt.retryCount         Number of retries performed on this request; for the first event this will be 0
    */
   'sync:error-will-retry',
@@ -832,7 +831,7 @@ SyncManager._supportedEvents = [
    * @event
    * @param {Layer.Core.LayerEvent} evt          Standard Layer Event object generated by all calls to `trigger`
    * @param {String} evt.target             ID of the message/conversation/etc. being operated upon
-   * @param {layer.SyncEvent} evt.request   The original request
+   * @param {Layer.Core.SyncEvent} evt.request   The original request
    * @param {Object} evt.response           null or any data returned by the call
    */
   'sync:success',
@@ -850,7 +849,7 @@ SyncManager._supportedEvents = [
    * @event
    * @param {Layer.Core.LayerEvent} evt          Standard Layer Event object generated by all calls to `trigger`
    * @param {String} evt.target             ID of the message/conversation/etc. being operated upon
-   * @param {layer.SyncEvent} evt.request   The original request
+   * @param {Layer.Core.SyncEvent} evt.request   The original request
    */
   'sync:add',
 
@@ -862,7 +861,7 @@ SyncManager._supportedEvents = [
    * @event
    * @param {Layer.Core.LayerEvent} evt          Standard Layer Event object generated by all calls to `trigger`
    * @param {String} evt.target             ID of the message/conversation/etc. being operated upon
-   * @param {layer.SyncEvent} evt.request   The original request
+   * @param {Layer.Core.SyncEvent} evt.request   The original request
    */
   'sync:abort',
 ].concat(Root._supportedEvents);

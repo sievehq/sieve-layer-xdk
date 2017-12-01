@@ -157,6 +157,7 @@ LayerError.ErrorDictionary = {
   invalidUrl: 'URL is invalid',
   invalidId: 'Identifier is invalid',
   idParamRequired: 'The ID Parameter is required',
+  modelParamRequired: 'The Model Parameter is required',
   wrongClass: 'Parameter class error; should be: ',
   inProgress: 'Operation already in progress',
   cantChangeIfConnected: 'You can not change value after connecting',

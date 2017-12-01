@@ -28,7 +28,6 @@
  *
  */
 
-import xhr from './xhr';
 import Root from './root';
 import SocketManager from './websockets/socket-manager';
 import WebsocketChangeManager from './websockets/change-manager';
@@ -40,7 +39,7 @@ import DbManager from './db-manager';
 import Identity from './models/identity';
 import { XHRSyncEvent, WebsocketSyncEvent } from './sync-event';
 import { LOCALSTORAGE_KEYS, ACCEPT } from '../constants';
-import Util, { logger } from '../util';
+import Util, { xhr, logger } from '../util';
 
 const MAX_XHR_RETRIES = 3;
 

@@ -16,10 +16,10 @@
  *
  * @class layer.UI.components.MembershipListPanel.List
  * @experimental This feature is incomplete, and available as Preview only.
- * @extends layer.UI.components.Component
- * @mixin layerUI.mixins.List
- * @mixin layerUI.mixins.MainComponent
- * @mixin layerUI.mixins.ListSelection
+ * @extends Layer.UI.components.Component
+ * @mixin Layer.UI.mixins.List
+ * @mixin Layer.UI.mixins.MainComponent
+ * @mixin Layer.UI.mixins.ListSelection
  */
 import Core from '../../../../core';
 import { registerComponent } from '../../component';
@@ -162,7 +162,7 @@ registerComponent('layer-membership-list', {
   methods: {
 
     /**
-     * Append a layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
+     * Append a Layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
      *
      * @method _generateItem
      * @param {Layer.Core.Membership} membership

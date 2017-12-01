@@ -1,7 +1,7 @@
 /**
  *
  * @class
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';

@@ -2,7 +2,7 @@
  * The Layer Conversation Item widget renders a single Conversation, typically for use representing a
  * conversation within a list of conversations.
  *
- * This is designed to go inside of the layer.UI.components.ConversationsListPanel.List widget, and be a
+ * This is designed to go inside of the Layer.UI.components.ConversationsListPanel.List widget, and be a
  * concise enough summary that it can be scrolled through along
  * with hundreds of other Conversations Item widgets.
  *
@@ -10,8 +10,11 @@
  *
  * * Badges for unread messages (currently just adds a css class so styling can change if there are any unread messages)
  *
- * @class layer.UI.components.ConversationsListPanel.Item.Conversation
- * @extends layer.UI.components.Component
+ * @class Layer.UI.components.ConversationsListPanel.Item.Conversation
+ * @extends Layer.UI.components.Component
+ * @mixin Layer.UI.mixins.ListItem
+ * @mixin Layer.UI.mixins.SizeProperty
+ * @mixin Layer.UI.mixins.ListItemSelection
  */
 import { registerComponent } from '../../../components/component';
 import ListItem from '../../../mixins/list-item';
@@ -27,7 +30,11 @@ registerComponent('layer-conversation-item', {
   mixins: [ListItem, ListItemSelection, SizeProperty],
   properties: {
 
-    // Every List Item has an item property, here it represents the Conversation to render
+    /**
+     * The Item to render in this list item row; specifically, the Layer.Core.Conversation represented by this row.
+     *
+     * @property {Layer.Core.Conversation} item
+     */
     item: {},
 
     /**
@@ -39,13 +46,8 @@ registerComponent('layer-conversation-item', {
      * This property does nothing if you remove the `delete` node from the template.
      *
      * @property {Boolean} [deleteConversationEnabled=false]
+     * @removed
      */
-    deleteConversationEnabled: {
-      type: Boolean,
-      set(value) {
-        if (this.nodes.delete) this.nodes.delete.enabled = value;
-      },
-    },
 
     /**
      * Provide a function to determine if the last message is rendered in the Conversation List.
@@ -61,9 +63,10 @@ registerComponent('layer-conversation-item', {
      * ```
      *
      * @property {Function} [canFullyRenderLastMessage=null]
+     * @removed
      */
-    canFullyRenderLastMessage: {},
 
+    // See Layer.UI.mixins.SizeProperty.size
     size: {
       value: 'large',
       set(size) {
@@ -76,6 +79,7 @@ registerComponent('layer-conversation-item', {
       },
     },
 
+    // See Layer.UI.mixins.SizeProperty.supportedSizes
     supportedSizes: {
       value: ['tiny', 'small', 'medium', 'large'],
     },
@@ -84,7 +88,8 @@ registerComponent('layer-conversation-item', {
     /**
      * Set the date format for the Conversation Item.
      *
-     * Note that typically you'd set layer.UI.components.ConversationsListPanel.List.dateFormat instead.
+     * Note that typically you'd set Layer.UI.components.ConversationsListPanel.List.dateFormat instead, and this would set it for all
+     * Conversation Item components.
      *
      * @property {Object} [dateFormat]
      */
@@ -95,13 +100,25 @@ registerComponent('layer-conversation-item', {
         older: { month: 'short', year: 'numeric' },
         default: { month: 'short', day: 'numeric' },
       },
+      set(dateFormat) {
+        if (dateFormat && this.nodes.date) {
+          Object.keys(dateFormat).forEach(formatName => (this.nodes.date[formatName + 'Format'] = dateFormat[formatName]));
+        }
+      },
     },
 
     /**
-     * Provide a function that returns the menu items for the given Conversation.
+     * Provide a function that returns the menu items this Message Item.
      *
-     * Note that this is called each time the user clicks on a menu button to open the menu,
-     * but is not dynamic in that it will regenerate the list as the Conversation's properties change.
+     * > *Note*
+     * >
+     * > This is called each time the user clicks on a menu button next to a message to open the menu,
+     * but is not dynamic in that it will regenerate the list while its open.
+     *
+     * > *Note*
+     * >
+     * > This only works if your `<layer-message-item-sent />` or `<layer-message-item-received />` has a `<layer-menu-button layer-id='menuButton'/>`;
+     * > The `layer-id` is required... unless explicitly setting `messageListItem.nodes.menuButton = <layer-menu-button />;`
      *
      * Format is:
      *
@@ -129,44 +146,56 @@ registerComponent('layer-conversation-item', {
     },
   },
   methods: {
-    onAfterCreate() {
-      const dateFormat = this.dateFormat;
-      if (dateFormat && this.nodes.date) {
-        Object.keys(dateFormat).forEach(formatName => (this.nodes.date[formatName + 'Format'] = dateFormat[formatName]));
-      }
-    },
-
+    // Lifecycle method
     onRender() {
       this.onRerender();
     },
 
+    // Lifecycle method
     onRerender() {
       const users = this.item.participants.filter(user => !user.sessionOwner);
-      const isRead = !this.item.lastMessage || this.item.lastMessage.isRead;
+      const isUnread = this.item.lastMessage && !this.item.lastMessage.isRead;
 
+      // Group counter only shows when size = tiny and there is more than one other
+      // participant; set it to have the number of participants.
       if (this.nodes.groupCounter) this.nodes.groupCounter.innerHTML = users.length;
+
+      // Setup the CSS class to indicate group/direct-message
       this.toggleClass('layer-group-conversation', users.length > 1);
       this.toggleClass('layer-direct-message-conversation', users.length <= 1);
-      if (!this.item.lastMessage) {
-        this.nodes.date.date = null;
-        this.nodes.date.value = '';
-      } else if (this.item.lastMessage.isNew()) {
-        this.item.lastMessage.on('messages:change', this.onRerender, this);
-        this.nodes.date.value = '';
-      } else if (this.item.lastMessage.isSaving()) {
-        this.nodes.date.value = 'Pending'; // LOCALIZE!
-        this.item.lastMessage.on('messages:change', this.onRerender, this);
-      } else {
-        this.item.lastMessage.off('messages:change', this.onRerender, this);
-        this.nodes.date.date = this.item.lastMessage.sentAt;
+
+      // If there is a date node, wire it up to render the correct value
+      if (this.nodes.date) {
+        if (!this.item.lastMessage) {
+          this.nodes.date.date = null;
+          this.nodes.date.value = '';
+        } else if (this.item.lastMessage.isNew()) {
+          this.item.lastMessage.on('messages:change', this.onRerender, this);
+          this.nodes.date.value = '';
+        } else if (this.item.lastMessage.isSaving()) {
+          this.nodes.date.value = 'Pending'; // LOCALIZE!
+          this.item.lastMessage.on('messages:change', this.onRerender, this);
+        } else {
+          this.item.lastMessage.off('messages:change', this.onRerender, this);
+          this.nodes.date.date = this.item.lastMessage.sentAt;
+        }
       }
+
+      // Setup the avatar and presence nodes
       if (this.nodes.avatar) this.nodes.avatar.users = users;
       if (this.nodes.presence) this.nodes.presence.item = users.length === 1 ? users[0] : null;
-      this.classList[isRead ? 'remove' : 'add']('layer-conversation-unread-messages');
+
+      // Setup the unread style
+      this.classList[isUnread ? 'add' : 'remove']('layer-conversation-unread-messages');
     },
 
     /**
-     * Run a filter on this item; not match => hidden; match => shown.
+     * Run a filter on this item; if the filter returns `false` hide the item, else show the item
+     *
+     * Note that this does not filter data out of the Layer.Core.Query.data; to do that,
+     * see Layer.Core.Query.filter. This filter is for doing local search,
+     * that filter is not for search, but for removing invalid data from the dataset such
+     * that only requerying the server will restore the data.
      *
      * @method _runFilter
      * @param {String|Regex|Function} filter

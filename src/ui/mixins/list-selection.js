@@ -12,7 +12,7 @@ module.exports = {
   mixins: [Clickable],
   properties: {
     /**
-     * Get/Set the selected Conversation by ID.
+     * Get/Set the item shown as selected in the List, selected by Item ID (Conversation ID for example).
      *
      * ```javascript
      * list.selectedId = myConversation.id;
@@ -61,7 +61,7 @@ module.exports = {
      * User has selected something in the Conversation List that didn't handle that click event.
      *
      * Find the Conversation Item selected and generate a `layer-conversation-selected` event.
-     * Click events do NOT bubble up; they must either be handled by the layer.UI.components.ConversationsListPanel.Item.Conversation or
+     * Click events do NOT bubble up; they must either be handled by the Layer.UI.components.ConversationsListPanel.Item.Conversation or
      * they are treated as a selection event.
      *
      * Listening to `layer-conversation-selected` you will still receive the original click event

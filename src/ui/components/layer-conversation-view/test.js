@@ -77,9 +77,9 @@ describe('layer-conversation-view', function() {
       expect(spy).toHaveBeenCalledWith(jasmine.any(CustomEvent));
     });
 
-    it("Should call onComposerChangeValue when child triggers layer-compose-bar-change-value", function() {
+    it("Should call onComposBarChangeValue when child triggers layer-compose-bar-change-value", function() {
       var spy = jasmine.createSpy('callback');
-      el.onComposerChangeValue = spy;
+      el.onComposeBarChangeValue = spy;
       el.firstChild.trigger('layer-compose-bar-change-value', {});
       expect(spy).toHaveBeenCalledWith(jasmine.any(CustomEvent));
     });
@@ -166,33 +166,33 @@ describe('layer-conversation-view', function() {
     it("Should call _setupConversation if set to true", function() {
       el.conversationId = conversation.id;
       el.client = client;
-      spyOn(el, "_setupConversation");
+      spyOn(el, "_setupQuery");
       el.hasGeneratedQuery = true;
-      expect(el._setupConversation).toHaveBeenCalled();
+      expect(el._setupQuery).toHaveBeenCalled();
     });
 
-    it("Should not call _setupConversation if set to false", function() {
+    it("Should not call _setupQuery if set to false", function() {
       el.conversationId = conversation.id;
       el.client = client;
-      spyOn(el, "_setupConversation");
+      spyOn(el, "_setupQuery");
       el.hasGeneratedQuery = false;
-      expect(el._setupConversation).not.toHaveBeenCalled();
+      expect(el._setupQuery).not.toHaveBeenCalled();
     });
 
-    it("Should not call _setupConversation if set to true but no conversationId", function() {
+    it("Should not call _setupQuery if set to true but no conversationId", function() {
       el.conversationId = '';
       el.client = client;
-      spyOn(el, "_setupConversation");
+      spyOn(el, "_setupQuery");
       el.hasGeneratedQuery = true;
-      expect(el._setupConversation).not.toHaveBeenCalled();
+      expect(el._setupQuery).not.toHaveBeenCalled();
     });
 
-    it("Should not call _setupConversation if no client", function() {
+    it("Should not call _setupQuery if no client", function() {
       el.conversationId = conversation.id;
       el.client = null;
-      spyOn(el, "_setupConversation");
+      spyOn(el, "_setupQuery");
       el.hasGeneratedQuery = true;
-      expect(el._setupConversation).not.toHaveBeenCalled();
+      expect(el._setupQuery).not.toHaveBeenCalled();
     });
   });
 
@@ -291,7 +291,8 @@ describe('layer-conversation-view', function() {
       layer.Util.defer.flush();
 
       el = testRoot.firstChild;
-      expect(el.autoFocusConversation).toEqual('desktop-only');
+      expect(el.autoFocusConversation).toEqual(Layer.UI.Constants.FOCUS.DESKTOP_ONLY);
+      expect(Layer.UI.Constants.FOCUS.DESKTOP_ONLY).not.toBe(undefined);
     });
 
     it("Should be initializable to never", function() {
@@ -375,37 +376,6 @@ describe('layer-conversation-view', function() {
     });
   });
 
-  describe("The emptyMessageListNode property", function() {
-    it("Should set the list emptyNode property", function() {
-      var div = document.createElement('div');
-      el.emptyMessageListNode = div;
-      layer.Util.defer.flush();
-      expect(el.nodes.list.emptyNode).toBe(div);
-    });
-  });
-
-  describe("The endOfMessagesNode property", function() {
-    it("Should set the list endOfResultsNode property", function() {
-      var div = document.createElement('div');
-      el.endOfMessagesNode = div;
-      layer.Util.defer.flush();
-      expect(el.nodes.list.endOfResultsNode).toBe(div);
-    });
-  });
-
-  describe("The composeButtons property", function() {
-    it("Should set the list composeButtons property", function() {
-      var buttons = [document.createElement("button"), document.createElement("button")];
-      var moreButtons = [document.createElement("button")];
-      el.composeButtons = buttons;
-      el.composeButtonsLeft = moreButtons;
-      layer.Util.defer.flush();
-      expect(el.nodes.composer.buttons).toBe(buttons);
-      expect(el.nodes.composer.buttonsLeft).toBe(moreButtons);
-    });
-  });
-
-
   describe("The composeText property", function() {
     it("Should set the list composeText property", function() {
       el.composeText = "Frodo Must Cry";
@@ -451,8 +421,8 @@ describe('layer-conversation-view', function() {
 
   describe("The created() method", function() {
     it("Should setup basic properties", function() {
-      expect(el.nodes.list.tagName).toEqual('layer-message-list');
-      expect(el.nodes.composer.tagName).toEqual('layer-compose-bar');
+      expect(el.nodes.list.tagName).toEqual('LAYER-MESSAGE-LIST');
+      expect(el.nodes.composer.tagName).toEqual('LAYER-COMPOSE-BAR');
       expect(el.nodes.typingIndicators.tagName).toEqual('LAYER-TYPING-INDICATOR');
     });
 
@@ -489,12 +459,6 @@ describe('layer-conversation-view', function() {
       el.send();
       expect(el.nodes.composer.send).toHaveBeenCalledWith();
     });
-
-    it("Should send optional parts", function() {
-      spyOn(el.nodes.composer, "send");
-      el.send([{mimeType: "hey", body: "ho"}]);
-      expect(el.nodes.composer.send).toHaveBeenCalledWith([{mimeType: "hey", body: "ho"}]);
-    });
   });
 
   describe("The _setupConversation() method", function() {
@@ -517,14 +481,14 @@ describe('layer-conversation-view', function() {
     });
 
     it("Should call focusText if showAutoFocusConversation returns true", function() {
-      el.autoFocusConversation = "always";
+      el.autoFocusConversation = Layer.UI.Constants.FOCUS.ALWAYS;
       spyOn(el, "focusText");
       el.conversationId = conversation.id;
       expect(el.focusText).toHaveBeenCalledWith();
 
       // Inverse
       el.focusText.calls.reset();
-      el.autoFocusConversation = "never";
+      el.autoFocusConversation = Layer.UI.Constants.FOCUS.NEVER;
       el.conversationId = conversation.id;
       expect(el.focusText).not.toHaveBeenCalled();
     });
@@ -556,8 +520,8 @@ describe('layer-conversation-view', function() {
       client.isReady = false;
       el.conversationId = conversation.id.replace(/.$/, 'z');
       el.hasGeneratedQuery = true;
+      el._setupConversation();
 
-      expect(el._setupConversation).toHaveBeenCalled();
       el._setupConversation.calls.reset();
 
       client._clientReady();
@@ -595,16 +559,16 @@ describe('layer-conversation-view', function() {
 
   describe("The shouldAutoFocusConversation() method", function() {
     beforeEach(function() {
-      el.autoFocusConversation = 'desktop-only';
+      el.autoFocusConversation = Layer.UI.Constants.FOCUS.DESKTOP_ONLY;
     });
 
     it("Should return true if always", function() {
-      el.autoFocusConversation = 'always';
+      el.autoFocusConversation = Layer.UI.Constants.FOCUS.ALWAYS;
       expect(el.shouldAutoFocusConversation('')).toBe(true);
     });
 
     it("Should return false if never", function() {
-      el.autoFocusConversation = 'never';
+      el.autoFocusConversation = Layer.UI.Constants.FOCUS.NEVER;
       expect(el.shouldAutoFocusConversation('')).toBe(false);
     });
 

@@ -4,8 +4,8 @@
  *
  * @class layer.UI.components.MembershipListPanel.Item
  * @experimental
- * @mixin layerUI.mixins.ListItem
- * @extends layer.UI.components.Component
+ * @mixin Layer.UI.mixins.ListItem
+ * @extends Layer.UI.components.Component
  */
 import ListItem from '../../../mixins/list-item';
 import ListItemSelection from '../../../mixins/list-item-selection';

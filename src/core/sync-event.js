@@ -4,7 +4,7 @@
  * queue for a long duration before firing.
  *
  * DO NOT confuse this with Layer.Core.LayerEvent which represents a change notification
- * to your application.  layer.SyncEvent represents a request to the server that
+ * to your application.  Layer.Core.SyncEvent represents a request to the server that
  * is either in progress or in queue.
  *
  * GET requests are typically NOT done via a SyncEvent as these are typically
@@ -12,18 +12,18 @@
  *
  * Applications typically do not interact with these objects.
  *
- * @class  layer.SyncEvent
+ * @class  Layer.Core.SyncEvent
  * @extends Layer.Core.Root
  */
 import Util from '../util';
 
 class SyncEvent {
   /**
-   * Create a layer.SyncEvent.  See Layer.Core.ClientAuthenticator for examples of usage.
+   * Create a Layer.Core.SyncEvent.  See Layer.Core.ClientAuthenticator for examples of usage.
    *
    * @method  constructor
    * @private
-   * @return {layer.SyncEvent}
+   * @return {Layer.Core.SyncEvent}
    */
   constructor(options) {
     let key;
@@ -201,10 +201,10 @@ SyncEvent.FIRING_EXPIRATION = 1000 * 15;
 SyncEvent.VALIDATION_EXPIRATION = 500;
 
 /**
- * A layer.SyncEvent intended to be fired as an XHR request.
+ * A Layer.Core.SyncEvent intended to be fired as an XHR request.
  *
- * @class layer.SyncEvent.XHRSyncEvent
- * @extends layer.SyncEvent
+ * @class Layer.Core.SyncEvent.XHRSyncEvent
+ * @extends Layer.Core.SyncEvent
  */
 class XHRSyncEvent extends SyncEvent {
 
@@ -213,8 +213,7 @@ class XHRSyncEvent extends SyncEvent {
    *
    * Actually it just returns the parameters needed to make the xhr call:
    *
-   *      var xhr = require('./xhr');
-   *      xhr(event._getRequestData(client));
+   *      Layer.Util.xhr(event._getRequestData(client));
    *
    * @method _getRequestData
    * @param {Layer.Core.Client} client
@@ -299,10 +298,10 @@ XHRSyncEvent.prototype.method = 'GET';
 XHRSyncEvent.prototype.telemetry = null;
 
 /**
- * A layer.SyncEvent intended to be fired as a websocket request.
+ * A Layer.Core.SyncEvent intended to be fired as a websocket request.
  *
- * @class layer.SyncEvent.WebsocketSyncEvent
- * @extends layer.SyncEvent
+ * @class Layer.Core.SyncEvent.WebsocketSyncEvent
+ * @extends Layer.Core.SyncEvent
  */
 class WebsocketSyncEvent extends SyncEvent {
 

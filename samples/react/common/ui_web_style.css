@@ -17,6 +17,7 @@ body {
   align-items: center;
   -webkit-justify-content: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 /* Messenger Container */
@@ -49,7 +50,6 @@ body {
 
 /* Conversation List */
 layer-conversation-list {
-  overflow-y: auto;
   -webkit-flex-grow: 1;
   flex-grow: 1;
 }
@@ -125,8 +125,6 @@ layer-conversation-list {
   min-width: 320px;
 }
 .left-panel layer-conversation-list {
-  overflow-y: auto;
-  overflow-x: hidden;
   -webkit-flex-grow: 1;
   flex-grow: 1;
 }

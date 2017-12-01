@@ -5,10 +5,10 @@
  *
  * The simplest way to customize the behavior of this widget is using the `layer-typing-indicator-change` event.
  *
- * TODO: Provide a layer.UI.components.ConversationPanel.typingIndicatorRenderer property
+ * TODO: Provide a Layer.UI.components.ConversationView.typingIndicatorRenderer property
  *
- * @class layer.UI.components.TypingIndicator
- * @extends layer.UI.components.Component
+ * @class Layer.UI.components.TypingIndicator
+ * @extends Layer.UI.components.Component
  */
 
 /**

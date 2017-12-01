@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var USER_ID = prompt('Enter Email Address');
       var PASSWORD = prompt('Enter Password');
       if (USER_ID && PASSWORD) {
-        Layer.Core.xhr({
+        Layer.Util.xhr({
           url: PROVIDER_URL + '/authenticate',
           headers: {
             'Content-type': 'application/json',
@@ -106,7 +106,7 @@ Layer.UI.registerComponent('ipsum-lorem-handler', {
   style: 'ipsum-lorem-handler {height: 100px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto;}',
   methods: {
     onAfterCreate() {
-      layer.xhr({
+      Layer.Util.xhr({
         url: "https://baconipsum.com/api/?type=meat-and-filler&paras=1&start-with-lorem=1&format=text",
       }, this._processResult.bind(this));
     },

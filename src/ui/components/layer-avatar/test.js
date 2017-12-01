@@ -113,7 +113,20 @@ describe('layer-avatar', function() {
   });
 
   it("Should set cluster class if multiple users", function() {
-    el.users = [client.user, client.user];
+    el.users = [
+      new Layer.Core.Identity({
+          client: client,
+          userId: 'AA',
+          id: 'layer:///identities/AA',
+          displayName: "Abby"
+        }),
+        new Layer.Core.Identity({
+          client: client,
+          userId: 'BB',
+          id: 'layer:///identities/BB',
+          displayName: 'Normal'
+        })
+    ];
     expect(el.classList.contains('layer-avatar-cluster')).toBe(true);
   });
 

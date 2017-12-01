@@ -22,7 +22,6 @@ Core.Query.IdentitiesQuery = require('./queries/identities-query');
 Core.Query.MembersQuery = require('./queries/members-query');
 Core.Query.MessagesQuery = require('./queries/messages-query');
 Core.QueryBuilder = require('./queries/query-builder');
-Core.xhr = require('./xhr');
 Core.Identity = require('./models/identity');
 Core.Membership = require('./models/membership');
 Core.LayerError = require('./layer-error');

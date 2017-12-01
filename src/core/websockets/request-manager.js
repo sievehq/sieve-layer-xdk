@@ -1,5 +1,5 @@
 /**
- * @class  layer.Websockets.RequestManager
+ * @class  Layer.Core.Websockets.RequestManager
  * @private
  *
  * This class allows one to send requests to the websocket server, and provide a callback,
@@ -16,7 +16,7 @@ class WebsocketRequestManager {
   /**
    * Create a new websocket change manager
    *
-   *      var websocketRequestManager = new layer.Websockets.RequestManager({
+   *      var websocketRequestManager = new Layer.Core.Websockets.RequestManager({
    *          client: client,
    *          socketManager: client.Websockets.SocketManager
    *      });
@@ -25,7 +25,7 @@ class WebsocketRequestManager {
    * @param  {Object} options
    * @param {Layer.Core.Client} client
    * @param {layer.Websockets.SocketManager} socketManager
-   * @returns {layer.Websockets.RequestManager}
+   * @returns {Layer.Core.Websockets.RequestManager}
    */
   constructor(options) {
     this.client = options.client;

@@ -61,27 +61,27 @@ describe("The Websocket Change Manager Class", function() {
             expect(new layer.Core.Websockets.ChangeManager({
                 client: client,
                 socketManager: client.socketManager
-            })).toEqual(jasmine.any(layer.Websockets.ChangeManager));
+            })).toEqual(jasmine.any(Layer.Core.Websockets.ChangeManager));
         });
 
 
         it("Should subscribe to call _handleChange on message", function() {
-            var tmp = layer.Websockets.ChangeManager.prototype._handleChange;
-            layer.Websockets.ChangeManager.prototype._handleChange = jasmine.createSpy('handleChange');
+            var tmp = Layer.Core.Websockets.ChangeManager.prototype._handleChange;
+            Layer.Core.Websockets.ChangeManager.prototype._handleChange = jasmine.createSpy('handleChange');
             var changeManager = new layer.Core.Websockets.ChangeManager({
                 client: client,
                 socketManager: client.socketManager
             })
-            expect(layer.Websockets.ChangeManager.prototype._handleChange).not.toHaveBeenCalled();
+            expect(Layer.Core.Websockets.ChangeManager.prototype._handleChange).not.toHaveBeenCalled();
 
             // Run
             client.socketManager.trigger("message", {data: {body: {}}});
 
             // Posttest
-            expect(layer.Websockets.ChangeManager.prototype._handleChange).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
+            expect(Layer.Core.Websockets.ChangeManager.prototype._handleChange).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
-            layer.Websockets.ChangeManager.prototype._handleChange = tmp;
+            Layer.Core.Websockets.ChangeManager.prototype._handleChange = tmp;
             changeManager.destroy();
         });
     });
@@ -505,7 +505,12 @@ describe("The Websocket Change Manager Class", function() {
             var onMessagePartChange = layer.Core.Message.prototype._onMessagePartChange;
             spyOn(layer.Core.Message.prototype, '_onMessagePartChange');
 
-            m = conversation.createMessage("hello").presend();
+            m = conversation.createMessage({
+                parts: [{
+                    body: "hello",
+                    mimeType: "text/plain2"
+                }]
+            }).presend();
             expect(m.parts.length).toEqual(1);
             expect(m.parts[0].body).toEqual("hello");
 
@@ -521,7 +526,7 @@ describe("The Websocket Change Manager Class", function() {
                     "id": m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a7",
 				    "value": {
 						"id": m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a7",
-						"mime_type": "text/plain",
+						"mime_type": "text/plain2",
 						"body": "This is the message.",
 						"updated_at": "2017-05-15T18:05:09Z"
 					}
@@ -536,7 +541,7 @@ describe("The Websocket Change Manager Class", function() {
             expect(m.parts.length).toEqual(2);
             expect(m.parts[0].body).toEqual("hello");
             expect(m.parts[1].body).toEqual("This is the message.");
-            expect(m.parts[1].mimeType).toEqual("text/plain");
+            expect(m.parts[1].mimeType).toEqual("text/plain2");
             expect(m.parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2017-05-15T18:05:09");
             expect(m.updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
 
@@ -554,11 +559,11 @@ describe("The Websocket Change Manager Class", function() {
             m = conversation.createMessage({
                 parts: [{
                     body: "B1",
-                    mimeType: "text/plain"
+                    mimeType: "text/plain2"
                 },
                 {
                     body: "B2",
-                    mimeType: "text/plain2"
+                    mimeType: "text/plain3"
                 }]
             }).presend();
 
@@ -591,11 +596,11 @@ describe("The Websocket Change Manager Class", function() {
             m = conversation.createMessage({
                 parts: [{
                     body: "B1",
-                    mimeType: "text/plain"
+                    mimeType: "text/plain2"
                 },
                 {
                     body: "B2",
-                    mimeType: "text/plain2"
+                    mimeType: "text/plain3"
                 }]
             }).presend();
 
@@ -626,7 +631,12 @@ describe("The Websocket Change Manager Class", function() {
             var onMessagePartChange = layer.Core.Message.prototype._onMessagePartChange;
             spyOn(layer.Core.Message.prototype, '_onMessagePartChange');
 
-            m = conversation.createMessage("hello").presend();
+            m = conversation.createMessage({
+                parts: [{
+                    body: "hello",
+                    mimeType: "text/plain2"
+                }]
+            }).presend();
             expect(m.parts.length).toEqual(1);
             expect(m.parts[0].body).toEqual("hello");
 

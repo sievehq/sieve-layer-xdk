@@ -14,8 +14,7 @@
  */
 
 import Root from './root';
-import Xhr from './xhr';
-import Util from '../util';
+import Util, { xhr } from '../util';
 import version from '../version';
 
 class TelemetryMonitor extends Root {
@@ -56,7 +55,7 @@ class TelemetryMonitor extends Root {
     }
 
     this.client.on('state-change', this.trackEvent, this);
-    Xhr.addConnectionListener(this.trackRestPerformance.bind(this));
+    xhr.addConnectionListener(this.trackRestPerformance.bind(this));
     this.setupReportingInterval();
   }
 
@@ -288,7 +287,7 @@ class TelemetryMonitor extends Root {
     const records = this.state.records
       .filter(record => record !== doNotSendCurrentRecord);
     if (records.length) {
-      Xhr({
+      xhr({
         sync: false,
         method: 'POST',
         url: this.telemetryUrl,

@@ -45,5 +45,5 @@ if (typeof module !== 'undefined' && module.exports) {
   layerUI.setupMixins(config);
 } else {
   window.layerUIConfig = config;
-  console.log('Customization.js results stashed in window.layerUIConfig but you must apply it using layerUI.setupMixins(layerUIConfig)');
+  console.log('Customization.js results stashed in window.layerUIConfig but you must apply it using Layer.UI.setupMixins(layerUIConfig)');
 }

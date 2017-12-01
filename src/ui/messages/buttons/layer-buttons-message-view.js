@@ -7,7 +7,6 @@
  */
 import { registerComponent } from '../../components/component';
 import '../../components/layer-action-button/layer-action-button';
-import '../../components/layer-url-button/layer-url-button';
 import '../../components/layer-choice-button/layer-choice-button';
 import MessageViewMixin from '../message-view-mixin';
 import { Constants } from '../../base';
@@ -101,13 +100,6 @@ registerComponent('layer-buttons-message-view', {
               tooltip: button.tooltip,
               event: button.event,
               data: button.data,
-            });
-            break;
-          case 'url':
-            // Not supported at this time
-            widget = this.createElement('layer-url-button', {
-              text: button.text,
-              url: button.url,
             });
             break;
           case 'choice':

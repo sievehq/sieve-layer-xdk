@@ -5,8 +5,7 @@
  *
  * ```
  * TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
- * model = new TextModel({ text: "hello world" });
- * model.generateMessage(conversation, message => message.send());
+ * model = new TextModel({ text: "hello world" }).send({ conversation });
  * ```
  *
  * The Text Message can also represent a more formal and structured message with
@@ -19,8 +18,7 @@
  *    title: 'Apache Licence 2.0',
  *    subtitle: 'Please note our licensing',
  *    author: 'The Apache Software Foundation'
- * });
- * model.generateMessage(conversation, message => message.send());
+ * }).send({ conversation });
  * ```
  *
  * A Text Message should be sent by instantiating a Text Message Model, calling `generateMessage()`

@@ -22,69 +22,101 @@ describe('layer-age', function() {
     expect(el.date).toEqual(d);
   });
 
-  it('Should use todayFormat if today', function() {
+  it("Should accept an ageRenderer", function() {
+    var f = jasmine.createSpy('age');
+    el.ageRenderer = f;
     var d = new Date();
-    spyOn(d, "toLocaleString").and.callThrough();
-    el.todayFormat = {hour: 'numeric'};
-    el.weekFormat = {minute: 'numeric'};
-    el.defaultFormat = {month: 'numeric'};
-    el.olderFormat = {year: 'numeric'};
     el.date = d;
-    expect(d.toLocaleString).toHaveBeenCalledWith('lookup', el.todayFormat);
-    expect(el.innerHTML).toEqual(d.toLocaleString('lookup', el.todayFormat));
+    expect(el.ageRenderer).toBe(f);
+    el.onRender();
+    expect(f).toHaveBeenCalledWith(d);
   });
 
-  it('Should use weekFormat if week', function() {
-    var d = new Date();
-    d.setDate(d.getDate() - 3);
-    spyOn(d, "toLocaleString").and.callThrough();
-    el.todayFormat = {hour: 'numeric'};
-    el.weekFormat = {minute: 'numeric'};
-    el.defaultFormat = {month: 'numeric'};
-    el.olderFormat = {year: 'numeric'};
-    el.date = d;
-    expect(d.toLocaleString).toHaveBeenCalledWith('lookup', el.weekFormat);
-    expect(el.innerHTML).toEqual(d.toLocaleString('lookup', el.weekFormat));
+  it('Should handle absense of value', function() {
+    el.onRender();
+    expect(el.innerHTML).toEqual("Never Used");
   });
 
-  it('Should use olderFormat if not this year', function() {
+  it('Should handle minutes ago', function() {
     var d = new Date();
-    d.setFullYear(d.getFullYear() - 3);
-    spyOn(d, "toLocaleString").and.callThrough();
-    el.todayFormat = {hour: 'numeric'};
-    el.weekFormat = {minute: 'numeric'};
-    el.defaultFormat = {month: 'numeric'};
-    el.olderFormat = {year: 'numeric'};
     el.date = d;
-    expect(d.toLocaleString).toHaveBeenCalledWith('lookup', el.olderFormat);
-    expect(el.innerHTML).toEqual(d.toLocaleString('lookup', el.olderFormat));
+
+    el.onRender();
+    expect(el.innerHTML).toEqual("");
+
+    d.setMinutes(d.getMinutes() - 1);
+    el.onRender();
+    expect(el.innerHTML).toEqual("1 min ago");
+
+    d.setMinutes(d.getMinutes() - 1);
+    el.onRender();
+    expect(el.innerHTML).toEqual("2 mins ago");
+
+    d.setMinutes(d.getMinutes() - 98);
+    el.onRender();
+    expect(el.innerHTML).toEqual("100 mins ago");
+
+    d.setMinutes(d.getMinutes() - 20);
+    el.onRender();
+    expect(el.innerHTML).not.toEqual("120 mins ago");
   });
 
-  it('Should use defaultFormat if this year; will fail stupid test if run first week of january', function() {
+  it('Should handle hours ago', function() {
     var d = new Date();
-    d.setDate(d.getDate() - 8);
-    spyOn(d, "toLocaleString").and.callThrough();
-    el.todayFormat = {hour: 'numeric'};
-    el.weekFormat = {minute: 'numeric'};
-    el.defaultFormat = {month: 'numeric'};
-    el.olderFormat = {year: 'numeric'};
     el.date = d;
-    expect(d.toLocaleString).toHaveBeenCalledWith('lookup', el.defaultFormat);
-    expect(el.innerHTML).toEqual(d.toLocaleString('lookup', el.defaultFormat));
+
+    d.setMinutes(d.getMinutes() - 120);
+    el.onRender();
+    expect(el.innerHTML).toEqual("2 hours ago");
+
+    d.setHours(d.getHours() - 10);
+    el.onRender();
+    expect(el.innerHTML).toEqual("12 hours ago");
+
+    d.setHours(d.getHours() - 30);
+    el.onRender();
+    expect(el.innerHTML).toEqual("42 hours ago");
+
+    d.setHours(d.getHours() - 10);
+    el.onRender();
+    expect(el.innerHTML).not.toEqual("52 hours ago");
   });
 
-  it('Should rerender to empty', function() {
+  it('Should handle days ago', function() {
     var d = new Date();
     el.date = d;
-    el.date = null;
-    expect(el.innerHTML).toEqual('');
+
+    d.setDate(d.getDate() - 2);
+    el.onRender();
+    expect(el.innerHTML).toEqual("2 days ago");
+
+    d.setDate(d.getDate() - 10);
+    el.onRender();
+    expect(el.innerHTML).toEqual("12 days ago");
+
+    d.setDate(d.getDate() - 30);
+    el.onRender();
+    expect(el.innerHTML).toEqual("42 days ago");
+
+    d.setDate(d.getDate() - 30);
+    el.onRender();
+    expect(el.innerHTML).not.toEqual("72 days ago");
   });
 
-  it("Should use dateRenderer if provided", function() {
-    var f = function() {return "Some Day";}
-    el.dateRenderer = f;
+  it('Should handle months ago', function() {
     var d = new Date();
     el.date = d;
-    expect(el.innerHTML).toEqual("Some Day");
+
+    d.setMonth(d.getMonth() - 2);
+    el.onRender();
+    expect(el.innerHTML).toEqual("2 months ago");
+
+    d.setMonth(d.getMonth() - 9);
+    el.onRender();
+    expect(el.innerHTML).toEqual("11 months ago");
+
+    d.setMonth(d.getMonth() - 1);
+    el.onRender();
+    expect(el.innerHTML).not.toEqual("12 months ago");
   });
 });

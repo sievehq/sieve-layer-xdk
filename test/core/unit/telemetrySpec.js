@@ -371,7 +371,7 @@ describe("The TelemetryMonitor class", function() {
       it("Should have some values", function() {
         expect(monitor.getEnvironment().platform).toEqual(jasmine.any(String));
         expect(monitor.getEnvironment().platform).toEqual(jasmine.any(String));
-        expect(monitor.getEnvironment().layer_sdk_version).toMatch(/^\d+\.\d+\.\d+$/);
+        expect(monitor.getEnvironment().layer_sdk_version).toMatch(/^\d+\.\d+\.\d/);
         expect(monitor.getEnvironment().platform).toEqual(jasmine.any(String));
       });
 

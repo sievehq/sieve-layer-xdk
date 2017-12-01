@@ -1,29 +1,27 @@
 /**
  * The Layer widget renders a Last Message for a Layer.Core.Conversation.
  *
- * This is provided as a specialized component so that it can be easily redefined by your app to
- * provide your own Conversation Last Message rendering:
+ * Customize the look and feel of your Last Message withing the Layer.UI.components.ConversationsListPanel.List
+ * by overriding the `onRerender` method:
  *
  * ```
- * layer.UI.registerComponent('layer-conversation-last-message', {
- *   properties: {
- *      item: {}
- *   },
- *   methods: {
- *     created: function() {
- *       this.innerHTML = this.item.lastMessage.parts[0].body;
+ * Layer.init({
+ *   mixins: {
+ *     'layer-conversation-last-message', {
+ *        methods: {
+ *          onRerender: {
+ *            mode: Layer.UI.registerComponent.MODES.OVERWRITE,
+ *            value: function() {
+ *              this.innerHTML = this.model ? this.model.getOneLineSummary() : '';
+ *            }
+ *          }
+ *        }
  *     }
  *   }
  * });
  *
- * // Call init after custom components are defined
- * layer.init({
- *   appId:  'layer:///apps/staging/UUID'
- * });
- * ```
- *
- * @class layer.UI.components.ConversationLastMessage
- * @extends layer.UI.components.Component
+ * @class Layer.UI.components.ConversationLastMessage
+ * @extends Layer.UI.components.Component
  */
 import layerUI from '../../base';
 import { registerComponent } from '../component';
@@ -39,18 +37,23 @@ registerComponent('layer-conversation-last-message', {
     item: {
       set(newValue, oldValue) {
         if (oldValue) oldValue.off(null, null, this);
-        if (newValue) newValue.on('conversations:change', this.onRerender, this);
+        if (newValue) newValue.on('conversations:change', this._handleChangeEvent, this);
+        if (newValue && newValue.lastMessage) {
+          this.model = newValue.lastMessage.createModel();
+        } else {
+          this.model = null;
+        }
+
         this.onRender();
       },
     },
 
-    unknownHTML: {
-      value: '<div class="layer-custom-mime-type">Message</div>',
-    },
-
-    filterLastMessage: {
-      type: Function,
-    },
+    /**
+     * Message Type Model representing the Conversation's Last Message
+     *
+     * @property {Layer.Core.MessageTypeModel} model
+     */
+    model: {},
 
     /**
      * Provide a function to determine if the last message is rendered in the Conversation List.
@@ -69,46 +72,24 @@ registerComponent('layer-conversation-last-message', {
      */
   },
   methods: {
-
-    /**
-     * Constructor.
-     *
-     * @method onCreate
-     * @private
-     */
-    onCreate() {
-    },
-
+    // Lifecycle method
     onRender() {
       this.onRerender();
     },
 
-    /**
-     * Rerender this widget whenever the Layer.Core.Conversation has a change event reporting on a
-     * new `lastMessage` property.
-     *
-     * Lookup a handler for the Message, and if one is found, see if it can render a concise version of its contents.
-     * If it can, append the Renderer as a child of this node; else set innerHTML to match the Handler's label.
-     *
-     * @method
-     * @private
-     * @param {Event} evt
-     */
-    onRerender(evt) {
-      if (!evt || evt.hasProperty('lastMessage')) {
-        if (!this.filterLastMessage || this.filterLastMessage(this.item.lastMessage)) {
-          this.innerHTML = this.summarizeLastMessage();
-        }
-      }
+    // Lifecycle method
+    onRerender() {
+      this.innerHTML = this.model ? this.model.getOneLineSummary() : '';
     },
 
-    summarizeLastMessage() {
-      const message = this.item.lastMessage;
-      if (!message) return '';
-
-      const model = message.createModel();
-      const result = model ? model.getOneLineSummary() : null;
-      return result || this.unknownHTML;
+    /**
+     * Insure that any time the Layer.Core.Conversation changes, onRerender is only called if the change
+     * involves a new `lastMessage` value.
+     *
+     * @param {Event} evt
+     */
+    _handleChangeEvent(evt) {
+      if (evt.hasProperty('lastMessage')) this.onRerender();
     },
   },
 });

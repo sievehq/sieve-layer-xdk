@@ -57,7 +57,7 @@ describe('layer-identity-list', function() {
   afterEach(function() {
     try {
       jasmine.clock().uninstall();
-      layerUI.settings.appId = null;
+      Layer.UI.settings.appId = null;
       document.body.removeChild(testRoot);
       Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
@@ -84,23 +84,23 @@ describe('layer-identity-list', function() {
 
   describe("The selectedIdentities property", function() {
     it("Should mark all specified identities as selected", function() {
-      el.childNodes[10].selected = true;
-      el.childNodes[11].selected = true;
+      el.childNodes[10].isSelected = true;
+      el.childNodes[11].isSelected = true;
       el.selectedIdentities = [query.data[1], query.data[2]];
 
-      expect(el.childNodes[10].selected).toBe(false);
-      expect(el.childNodes[11].selected).toBe(false);
-      expect(el.childNodes[1].selected).toBe(true);
-      expect(el.childNodes[2].selected).toBe(true);
+      expect(el.childNodes[10].isSelected).toBe(false);
+      expect(el.childNodes[11].isSelected).toBe(false);
+      expect(el.childNodes[1].isSelected).toBe(true);
+      expect(el.childNodes[2].isSelected).toBe(true);
     });
 
     it("Should clear all selected identities", function() {
-      el.childNodes[10].selected = true;
-      el.childNodes[11].selected = true;
+      el.childNodes[10].isSelected = true;
+      el.childNodes[11].isSelected = true;
       el.selectedIdentities = null;
 
-      expect(el.childNodes[10].selected).toBe(false);
-      expect(el.childNodes[11].selected).toBe(false);
+      expect(el.childNodes[10].isSelected).toBe(false);
+      expect(el.childNodes[11].isSelected).toBe(false);
     });
   });
 
@@ -238,16 +238,17 @@ describe('layer-identity-list', function() {
     it("Should set selected state", function() {
       el.selectedIdentities = [query.data[1]];
       var result = el._generateItem(query.data[1]);
-      expect(result.selected).toBe(true);
+      expect(result.isSelected).toBe(true);
 
       el.selectedIdentities = [query.data[2]];
       var result = el._generateItem(query.data[1]);
-      expect(result.selected).toBe(false);
+      expect(result.isSelected).toBe(false);
     });
 
     it("Should set size", function() {
       el.size = "small";
       var result = el._generateItem(query.data[1]);
+      result.parentComponent = el;
       layer.Util.defer.flush();
       expect(result.size).toEqual("small");
     });
@@ -288,7 +289,7 @@ describe('layer-identity-list', function() {
   describe("The _renderSelection() method", function() {
     it("Should select and deselect appropriately", function() {
       el.firstChild.selected = true;
-      el.childNodes[1].selected = true;
+      el.childNodes[1].isSelected = true;
       el.selectedIdentities.pop();
       el.selectedIdentities.pop();
       el.selectedIdentities.push(query.data[5]);

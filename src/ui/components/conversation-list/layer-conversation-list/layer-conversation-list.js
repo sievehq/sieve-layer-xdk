@@ -1,5 +1,5 @@
 /**
- * The Layer Conversation List widget renders a scrollable, pagable list of Conversations.
+ * The Layer Conversation List widget renders a scrollable, pagable list of Conversations or Channels.
  *
  * This Component can be added to your project directly in the HTML file:
  *
@@ -24,33 +24,34 @@
  *
  * ## Common Properties
  *
- * The most common property of this widget is layer.UI.components.ConversationsListPanel.onConversationSelected, as typical use
- * of this widget is to prompt the user to select a Conversation, and use that selection elsewhere.
+ * * Layer.UI.components.ConversationsListPanel.List.onConversationSelected: Set a function to be called whenever a
+ *   Layer.Core.Conversation is selected
+ * * Layer.UI.components.ConversationsListPanel.List.selectedId: Get/Set the Selected Conversation ID
  *
- * Note that you can also listen for `layer-conversation-selected` to achieve the same result:
+ * ## Listens For
+ *
+ * Using the `listensFor` property, this widget will listen to a Layer.UI.components.Notifier when it triggers a
+ * `layer-notification-click` event, and will update the `selectedId` and select the Conversation associated with
+ * that notification.
  *
  * ```
- * document.body.addEventListener('layer-conversation-selected', function(evt) {
- *    alert(evt.detail.item.id + ' has been selected');
- * });
+ * <layer-notifier id='nodeA'></layer-notifier>
+ * <layer-conversation-list listen-to="nodeA"></layer-conversation-list>
  * ```
  *
- * You may also sometimes want to set which Conversation to mark as selected:
- *
- * ```javascript
- * conversationList.selectedConversationId = myConversation.id;
- * ```
- *
- * @class layer.UI.components.ConversationsListPanel.List
- * @extends layer.UI.components.Component
- * @mixin layerUI.mixins.List
- * @mixin layerUI.mixins.MainComponent
- * @mixin layerUI.mixins.ListSelection
- * @mixin layerUI.mixins.ListLoadIndicator
- * @mixin layerUI.mixins.EmptyList
+ * @class Layer.UI.components.ConversationsListPanel.List
+ * @extends Layer.UI.components.Component
+ * @mixin Layer.UI.mixins.List
+ * @mixin Layer.UI.mixins.ListSelection
+ * @mixin Layer.UI.mixins.MainComponent
+ * @mixin Layer.UI.mixins.ListLoadIndicator
+ * @mixin Layer.UI.mixins.EmptyList
+ * @mixin Layer.UI.mixins.SizeProperty
+ * @mixin Layer.UI.mixins.QueryEndIndicator
  */
 import Core from '../../../../core';
 import Constants from '../../../../constants';
+import UIConstants from '../../../constants';
 import { registerComponent } from '../../component';
 import List from '../../../mixins/list';
 import ListLoadIndicator from '../../../mixins/list-load-indicator';
@@ -95,17 +96,17 @@ registerComponent('layer-conversation-list', {
    * @param {Event} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Conversation} evt.detail.item   The selected Conversation
-   * @param {Event} evt.detail.originalEvent               The click event that selected the Conversation
+   * @param {Event} evt.detail.originalEvent            The click event that selected the Conversation
    */
 
   /**
-   * See layer.UI.components.ConversationsListPanel.onConversationSelected.
+   * See Layer.UI.components.ConversationsListPanel.List.onConversationSelected for usage.
    *
    * @event layer-conversation-selected
    * @param {Event} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Conversation} evt.detail.item   The selected Conversation
-   * @param {Event} evt.detail.originalEvent               The click event that selected the Conversation
+   * @param {Event} evt.detail.originalEvent            The click event that selected the Conversation
    */
 
   /**
@@ -139,37 +140,27 @@ registerComponent('layer-conversation-list', {
    * @param {Event} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Conversation} evt.detail.item
+   * @removed
    */
 
   /**
-   * See layer.UI.components.ConversationsListPanel.List.onConversationDeleted.
+   * See Layer.UI.components.ConversationsListPanel.List.onConversationDeleted.
    *
    * @event layer-conversation-deleted
    * @param {Event} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Conversation} evt.detail.item
+   * @removed
    */
 
-  events: ['layer-conversation-selected', 'layer-conversation-deleted'],
+  events: ['layer-conversation-selected'],
   properties: {
 
     /**
-     * Get/Set the selected Conversation by ID.
-     *
-     * ```javascript
-     * conversationList.selectedConversationId = myConversation.id;
-     * ```
-     *
-     * Or if using a templating engine:
-     *
-     * ```html
-     * <layer-conversation-list selected-conversation-id={{selectedConversation.id}}></layer-conversation-list>
-     * ```
-     *
-     * The above code will set the selected Conversation and render the conversation as selected.
+     * Get/Set the Conversation shown as selected in the list using the Conversation ID.
      *
      * @property {String} [selectedConversationId='']
-     * @deprecated see layer.UI.components.ConversationsListPanel.ListSelection.selectedId
+     * @deprecated see Layer.UI.components.ConversationsListPanel.List.ListSelection.selectedId
      */
     selectedConversationId: {
       set(value) {
@@ -197,10 +188,8 @@ registerComponent('layer-conversation-list', {
      * @property {Function} [deleteConversationEnabled=null]
      * @property {Layer.Core.Conversation} deleteConversationEnabled.conversation
      * @property {Boolean} deleteConversationEnabled.return
+     * @removed
      */
-    deleteConversationEnabled: {
-      type: Function,
-    },
 
     /**
      * The model to generate a Query for if a Query is not provided.
@@ -222,10 +211,10 @@ registerComponent('layer-conversation-list', {
      */
     sortBy: {
       order: -1, // needs to fire before appId and client are set
-      value: 'lastMessage',
+      value: UIConstants.CONVERSATIONS_SORT.LAST_MESSAGE,
       set(value) {
         switch (value) {
-          case 'lastMessage':
+          case UIConstants.CONVERSATIONS_SORT.LAST_MESSAGE:
             this.properties.sortBy = [{ 'lastMessage.sentAt': 'desc' }];
             break;
           default:
@@ -337,7 +326,7 @@ registerComponent('layer-conversation-list', {
      */
     dateFormat: {},
 
-
+    // See Layer.UI.mixins.SizeProperty.size
     size: {
       value: 'large',
       set(size) {
@@ -346,14 +335,25 @@ registerComponent('layer-conversation-list', {
         }
       },
     },
+
+    // See Layer.UI.mixins.SizeProperty.supportedSizes
     supportedSizes: {
       value: ['tiny', 'small', 'medium', 'large'],
     },
 
-    filterLastMessage: {
-      type: Function,
-    },
-
+    /**
+     * Provide a hash of DOM generation functions to insert custom content into.
+     *
+     * The Conversation List supports the following Content Areas:
+     *
+     * * conversationRowLeftSide: Nodes that appear to the left of each Conversation Item; defaults to rendering an Avatar or Presence widget.
+     * * conversationRowRightSide: Nodes that appear to the right of each Conversation Item; defaults to rendering a Menu Button
+     * * loadIndicator: Node for rendering the fact that Conversations are loading
+     * * emptyNode: Node for rendering the fact that there are no Conversations for this user
+     * * endOfReultsNode: Node for rendering that we have scrolled to the end of the Conversations from the server
+     *
+     * @property {Object} replaceableContent
+     */
     replaceableContent: {
       value: {
         conversationRowLeftSide(widget) {
@@ -384,7 +384,7 @@ registerComponent('layer-conversation-list', {
   },
   methods: {
     /**
-     * Generate a `layer-conversation-item` widget.
+     * Generate a Layer.UI.components.ConversationsListPanel.Item.Conversation widget.
      *
      * @method _generateItem
      * @private
@@ -394,12 +394,8 @@ registerComponent('layer-conversation-list', {
       const isChannel = conversation instanceof Core.Channel;
       const conversationWidget = document.createElement(`layer-${isChannel ? 'channel' : 'conversation'}-item`);
       conversationWidget.id = this._getItemId(conversation.id);
-      conversationWidget.deleteConversationEnabled = typeof this.deleteConversationEnabled === 'function' ?
-        this.deleteConversationEnabled(conversation) : true;
-      conversationWidget.canFullyRenderLastMessage = this.canFullyRenderLastMessage;
       conversationWidget.item = conversation;
       conversationWidget.size = this.size;
-      conversationWidget.filterLastMessage = this.filterLastMessage;
       if (this.getMenuOptions) conversationWidget.getMenuOptions = this.getMenuOptions;
       if (this.dateFormat) conversationWidget.dateFormat = this.dateFormat;
 

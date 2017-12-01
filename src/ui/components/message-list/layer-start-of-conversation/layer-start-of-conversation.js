@@ -4,7 +4,7 @@
  * TODO: Document this
  *
  * @class layer.UI.components.Age
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../../component';
 

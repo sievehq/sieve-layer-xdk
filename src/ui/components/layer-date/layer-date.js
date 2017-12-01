@@ -3,7 +3,7 @@
  *
  * This is provided as a specialized component so that it can be easily redefined by your app to
  * provide your own date formatting.  Note that most customization of date rendering can be accomplished instead
- * using layer.UI.components.ConversationPanel.dateRenderer.
+ * using Layer.UI.components.ConversationView.dateRenderer.
  *
  * ```
  * Layer.init({
@@ -22,7 +22,7 @@
  * ```
  *
  * @class layer.UI.components.Date
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../../components/component';
 

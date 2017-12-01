@@ -50,7 +50,7 @@ module.exports = {
      * Suggested practices:
      *
      * * If your not using this query elsewhere in your app, let this widget generate its own Query
-     * * If setting this from an html template, use layerUI.mixins.List.queryId instead.
+     * * If setting this from an html template, use Layer.UI.mixins.List.queryId instead.
      *
      * @property {Layer.Core.Query} [query=null]
      */
@@ -71,6 +71,23 @@ module.exports = {
       },
     },
 
+    /**
+     * Set a filter on the Query.
+     *
+     * See Layer.Core.Query.filter.  This removes the data entirely from the Query.
+     * Use it for removing Messages that are non-renderable so that no avatar, timestamp,
+     * etc... shows to the user.
+     *
+     * ```
+     * widget.queryFilter = function(item) {
+     *     return isItemInteresting(item); // Only show items that return `true`
+     * };
+     * ```
+     *
+     * @property {Function} queryFilter
+     * @property {Layer.Core.Root} queryFilter.item
+     * @property {Boolean} queryFilter.returns
+     */
     queryFilter: {
       set() {
         if (this.query) this.query.filter = this.properties.queryFilter;

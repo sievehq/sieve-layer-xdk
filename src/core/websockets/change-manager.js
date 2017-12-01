@@ -1,5 +1,5 @@
 /**
- * @class  layer.Websockets.ChangeManager
+ * @class  Layer.Core.Websockets.ChangeManager
  * @private
  *
  * This class listens for `change` events from the websocket server,
@@ -15,7 +15,7 @@ class WebsocketChangeManager {
   /**
    * Create a new websocket change manager
    *
-   *      var websocketChangeManager = new layer.Websockets.ChangeManager({
+   *      var websocketChangeManager = new Layer.Core.Websockets.ChangeManager({
    *          client: client,
    *          socketManager: client.Websockets.SocketManager
    *      });
@@ -24,7 +24,7 @@ class WebsocketChangeManager {
    * @param  {Object} options
    * @param {Layer.Core.Client} client
    * @param {layer.Websockets.SocketManager} socketManager
-   * @returns {layer.Websockets.ChangeManager}
+   * @returns {Layer.Core.Websockets.ChangeManager}
    */
   constructor(options) {
     this.client = options.client;

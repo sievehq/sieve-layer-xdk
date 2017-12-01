@@ -1,7 +1,7 @@
 /**
  *
  * @class layer.UI.handlers.message.messageViewer
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../components/component';
 

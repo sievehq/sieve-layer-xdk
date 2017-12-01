@@ -359,9 +359,8 @@ class Message extends Syncable {
    *
    * The send method takes a `notification` object. In normal use, it provides the same notification to ALL
    * recipients, but you can customize notifications on a per recipient basis, as well as embed actions into the notification.
-   * For the Full API, see https://developer.layer.com/docs/platform/messages#notification-customization.
    *
-   * For the Full API, see [Server Docs](https://developer.layer.com/docs/platform/messages#notification-customization).
+   * For the Full Notification API, see [Server Docs](https://docs.layer.com/reference/server_api/push_notifications.out).
    *
    * ```
    * message.send({
@@ -372,11 +371,11 @@ class Message extends Syncable {
    * ```
    *
    * @method send
-   * @param {Object} [notification] - Parameters for controling how the phones manage notifications of the new Message.
-   *                          See IOS and Android docs for details.
-   * @param {string} [notification.title] - Title to show on lock screen and notification bar
-   * @param {string} [notification.text] - Text of your notification
-   * @param {string} [notification.sound] - Name of an audio file or other sound-related hint
+   * @param {Object} [notification]            Parameters for controling how the phones manage notifications of the new Message.
+   *                                           See IOS and Android docs for details.
+   * @param {String} [notification.title]      Title to show on lock screen and notification bar
+   * @param {String} [notification.text]       Text of your notification
+   * @param {String} [notification.sound]      Name of an audio file or other sound-related hint
    * @return {Layer.Core.Message} this
    */
   send(notification) {
@@ -960,7 +959,7 @@ Message.prototype.parts = null;
 /**
  * Time that the message was sent.
  *
- *  Note that a locally created Layer.Core.Message will have a `sentAt` value even
+ * Note that a locally created Layer.Core.Message will have a `sentAt` value even
  * though its not yet sent; this is so that any rendering code doesn't need
  * to account for `null` values.  Sending the Message may cause a slight change
  * in the `sentAt` value.

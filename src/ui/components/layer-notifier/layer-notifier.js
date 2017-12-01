@@ -26,7 +26,7 @@
  * if notifications are required, and then call `evt.preventDefault()` to prevent the notification from showing.
  *
  * @class layer.UI.components.Notifier
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import NotifyLib from 'notifyjs';
 import { isInBackground as IsInBackground, getHandler as GetHandler } from '../../base';
@@ -60,6 +60,7 @@ registerComponent('layer-notifier', {
    * @param {Event} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Message} evt.detail.item     The Message that has triggered this notification
+   * @param {Layer.Core.MessageTypeModel} evt.detail.model     The Message Type Model that has triggered this notification
    * @param {Boolean} evt.detail.isBackground   Is the app running in the background
    * @param {String} evt.detail.type            What type of notification has been configured for this event ("desktop" or "toast")
    */
@@ -102,6 +103,7 @@ registerComponent('layer-notifier', {
    * @param {Event} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Message} evt.detail.item   The Message that has triggered this notification
+   * @param {Layer.Core.MessageTypeModel} evt.detail.model     The Message Type Model that has triggered this notification
    */
 
   /**
@@ -358,7 +360,7 @@ registerComponent('layer-notifier', {
       }
 
       if (type && type !== 'none') {
-        if (this.trigger('layer-message-notification', { item: message, type, isBackground })) {
+        if (this.trigger('layer-message-notification', { item: message, model: message.createModel(), type, isBackground })) {
           if (type === 'desktop' && this.properties.userEnabledDesktopNotifications) {
             this.desktopNotify(evt.message);
           } else if (type === 'toast') {
@@ -403,7 +405,7 @@ registerComponent('layer-notifier', {
           closeOnClick: true,
           notifyClick: () => {
             window.focus();
-            this.trigger('layer-notification-click', { item: message });
+            this.trigger('layer-notification-click', { item: message, model: message.createModel() });
             this.onDesktopClick(message);
           },
         });
@@ -509,7 +511,10 @@ registerComponent('layer-notifier', {
       if (this.properties.toastMessage) {
         evt.preventDefault();
         evt.stopPropagation();
-        this.trigger('layer-notification-click', { item: this.properties.toastMessage });
+        this.trigger('layer-notification-click', {
+          item: this.properties.toastMessage,
+          model: this.properties.toastMessage.createModel()
+        });
         this.closeToast();
       }
     },

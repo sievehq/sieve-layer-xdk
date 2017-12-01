@@ -523,7 +523,7 @@ class DbManager extends Root {
    * Convert array of SyncEvent instances into SyncEvent DB Entries.
    *
    * @method _getSyncEventData
-   * @param {layer.SyncEvent[]} syncEvents
+   * @param {Layer.Core.SyncEvent[]} syncEvents
    * @return {Object[]} syncEvents
    * @private
    */
@@ -556,7 +556,7 @@ class DbManager extends Root {
    * Writes an array of SyncEvent to the Database.
    *
    * @method writeSyncEvents
-   * @param {layer.SyncEvent[]} syncEvents - Array of Sync Events to write
+   * @param {Layer.Core.SyncEvent[]} syncEvents - Array of Sync Events to write
    * @param {Function} [callback]
    */
   writeSyncEvents(syncEvents, callback) {
@@ -938,7 +938,7 @@ class DbManager extends Root {
    *
    * @method loadSyncQueue
    * @param {Function} callback
-   * @param {layer.SyncEvent[]} callback.result
+   * @param {Layer.Core.SyncEvent[]} callback.result
    */
   loadSyncQueue(callback) {
     this._loadAll('syncQueue', syncEvents => this._loadSyncEventRelatedData(syncEvents, callback));
@@ -956,7 +956,7 @@ class DbManager extends Root {
    * @private
    * @param {Object[]} syncEvents
    * @param {Function} callback
-   * @param {layer.SyncEvent[]} callback.result
+   * @param {Layer.Core.SyncEvent[]} callback.result
    */
   _loadSyncEventRelatedData(syncEvents, callback) {
     // Gather all Message IDs that are targets of operations.
@@ -995,13 +995,13 @@ class DbManager extends Root {
   }
 
   /**
-   * Turn an array of Sync Event DB Entries into an array of layer.SyncEvent.
+   * Turn an array of Sync Event DB Entries into an array of Layer.Core.SyncEvent.
    *
    * @method _loadSyncEventResults
    * @private
    * @param {Object[]} syncEvents
    * @param {Function} callback
-   * @param {layer.SyncEvent[]} callback.result
+   * @param {Layer.Core.SyncEvent[]} callback.result
    */
   _loadSyncEventResults(syncEvents, callback) {
     // If the target is present in the sync event, but does not exist in the system,
@@ -1252,7 +1252,7 @@ class DbManager extends Root {
    * A sync event is claimed by locking the table,  validating that it is still in the table... and then deleting it from the table.
    *
    * @method claimSyncEvent
-   * @param {layer.SyncEvent} syncEvent
+   * @param {Layer.Core.SyncEvent} syncEvent
    * @param {Function} callback
    * @param {Boolean} callback.result
    */

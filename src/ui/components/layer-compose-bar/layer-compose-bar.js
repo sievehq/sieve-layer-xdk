@@ -1,5 +1,5 @@
 /**
- * The Layer Composer widget provides the textarea for layer.UI.components.ConversationPanel.
+ * The Layer Composer widget provides the textarea for Layer.UI.components.ConversationView.
  *
  * It provides a self-resizing text area that resizes to the size of the entered text, and sends typing indicators as the user types.
  *
@@ -12,13 +12,15 @@
  * * Keyboard Handling: ENTER: Sends message unless its accompanied by a modifier key.  TAB: Enters a \t character unless you
  *   set `layerUI.settings.disableTabAsWhiteSpace` to true
  *
- * @class layer.UI.components.Composer
- * @extends layer.UI.components.Component
+ * @class Layer.UI.components.ComposeBar
+ * @extends Layer.UI.components.Component
  */
-import Layer from '../../../core';
+import Core from '../../../core';
 import { registerComponent } from '../component';
 import { settings } from '../../base';
+import { logger } from '../../../util';
 
+const ErrorDictionary = Core.LayerError.ErrorDictionary;
 const ENTER = 13;
 const TAB = 9;
 
@@ -33,8 +35,10 @@ registerComponent('layer-compose-bar', {
     conversation: {
       set(value) {
         if (value) this.client = value.getClient();
-        this._setTypingListenerConversation();
-        if (this.manageDisabledState) this.disabled = !Boolean(value);
+        if (this.properties.client) {
+          this._setTypingListenerConversation();
+          if (this.manageDisabledState) this.disabled = !Boolean(value);
+        }
       },
     },
 
@@ -45,7 +49,7 @@ registerComponent('layer-compose-bar', {
      */
     client: {
       set(value) {
-        if (!this.nodes.input) console.error('NO INPUT FOR COMPOSER');
+        if (!this.nodes.input) logger.error('NO INPUT FOR COMPOSER');
         if (value) {
           this.properties.typingListener = this.properties.client.createTypingListener(this.nodes.input);
           this._setTypingListenerConversation();
@@ -84,6 +88,7 @@ registerComponent('layer-compose-bar', {
         return this.nodes.input.value;
       },
     },
+
     /**
      * The text shown in the editor; this is the editor's placeholder.
      *
@@ -99,6 +104,11 @@ registerComponent('layer-compose-bar', {
       },
     },
 
+    /**
+     * Boolean indicates if the input area is empty `true` or non-empty `false`.
+     *
+     * @property {Boolean} [isEmpty=true]
+     */
     isEmpty: {
       value: true,
       type: Boolean,
@@ -107,6 +117,28 @@ registerComponent('layer-compose-bar', {
       },
     },
 
+    /**
+     * Indicates if the Compose Bar is disabled.
+     *
+     * This can be directly set using:
+     *
+     * ```
+     * composeWidget.disabled = true;
+     * ```
+     *
+     * However, note that any change to the Layer.UI.components.ComposeBar.conversation property
+     * will reset this, and set disabled based on whether or not there is a Conversation present.
+     *
+     * See Layer.UI.components.ComposeBar.manageDisabledState if your code should solely be responsible
+     * for setting the disabled state:
+     *
+     * ```
+     * composeWidget.manageDisabledState = false;
+     * composeWidget.disabled = true;
+     * ```
+     *
+     * @property {Boolean} [disabled=false]
+     */
     disabled: {
       type: Boolean,
       value: false,
@@ -116,6 +148,13 @@ registerComponent('layer-compose-bar', {
       },
     },
 
+    /**
+     * Does the widget manage its own disabled state?
+     *
+     * See Layer.UI.components.ComposeBar.disabled for more detail.
+     *
+     * @property {Boolean} [manageDisabledState=true]
+     */
     manageDisabledState: {
       type: Boolean,
       value: true,
@@ -138,7 +177,7 @@ registerComponent('layer-compose-bar', {
       this.nodes.input.addEventListener('input', this._onInput.bind(this));
 
       // Event handlers
-      this.addEventListener('layer-file-selected', this._handleAttachments.bind(this));
+      this.addEventListener('layer-model-generated', this._handleAttachments.bind(this));
       this.addEventListener('layer-send-click', this._handleSendClick.bind(this, null));
     },
 
@@ -147,12 +186,12 @@ registerComponent('layer-compose-bar', {
      *
      * @method
      * @private
-     * @param {String} value      The current value
+     * @param {String} newValue   The current value
      * @param {String} oldValue   The prior value
      */
-    _triggerChange(value, oldValue) {
-      if (value === oldValue) return;
-      this.properties.value = value;
+    _triggerChange(newValue, oldValue) {
+      if (newValue === oldValue) return;
+      this.properties.value = newValue;
 
       /**
        * This event is triggered whenever the composer value changes.
@@ -161,23 +200,25 @@ registerComponent('layer-compose-bar', {
        *
        * ```javascript
        * document.body.addEventListener('layer-compose-bar-change-value', function(evt) {
-       *   this.setState({composerValue: evt.detail.value});
+       *   this.setState({composerValue: evt.detail.newValue});
        * }
        * ```
        *
        * @event layer-compose-bar-change-value
        * @param {Event} evt
        * @param {Object} evt.detail
-       * @param {String} evt.detail.value
+       * @param {String} evt.detail.newValue
        * @param {String} evt.detail.oldValue
        */
-      this.trigger('layer-compose-bar-change-value', { value, oldValue });
+      this.trigger('layer-compose-bar-change-value', { newValue, oldValue });
 
       this.isEmpty = !Boolean(this.value);
     },
 
     /**
      * Focus on the textarea so keyboard actions enter text into it.
+     *
+     * Note that this may or may not cause mobile soft-keyboards to open up, but most likely will not.
      *
      * @method
      */
@@ -220,123 +261,143 @@ registerComponent('layer-compose-bar', {
      * widget.send(); // send the current text in the textarea
      * ```
      *
-     * ```
-     * widget.send(parts); // send custom message parts but NOT the text in the textarea
-     * ```
-     *
      * @method
-     * @param {layer.CardModels[]} optionalModels
      */
-    send(optionalModels) {
-
-      if (optionalModels) {
-        if (optionalModels.length === 1) {
-          optionalModels[0].generateMessage(this.conversation, message => this._send(message, message.parts));
-        } else {
-          const CarouselModel = Layer.Client.getMessageTypeModelClass('CarouselModel');
-          const model = new CarouselModel({
-            items: optionalModels,
-          });
-          if (this.conversation) {
-            model.generateMessage(this.conversation, message => this._send(message, message.parts));
-          } else {
-            model._generateParts(parts => this._send(null, parts));
-          }
-        }
-      } else if (this.nodes.input.value) {
-        const TextModel = Layer.Client.getMessageTypeModelClass('TextModel');
+    send() {
+      if (this.nodes.input.value) {
+        const TextModel = Core.Client.getMessageTypeModelClass('TextModel');
         const model = new TextModel({
           text: this.nodes.input.value,
         });
         if (this.conversation) {
-          model.generateMessage(this.conversation, message => this._send(message, message.parts));
+          model.generateMessage(this.conversation, message => this._send(model));
         } else {
-          model._generateParts(parts => this._send(null, parts));
+          this._send(model);
         }
         this.nodes.input.value = '';
         this._onInput({});
       }
     },
-    _send(message, parts) {
-      if (parts.length === 0) return;
 
-      /**
-       * This event is triggered before any Message is sent; used to control notifications and override sending.
-       *
-       * You can use this event to control the notifications by modifying the `evt.detail.notification` object.
-       * Note that you should modify the object but not try to replace the object.
-       *
-       * ```javascript
-       * document.body.addEventListener('layer-send-message', function(evt) {
-       *   var message = evt.detail.item;
-       *   var notification = evt.detail.notification;
-       *   notification.title = 'You have a new Message from ' + message.sender.displayName;
-       *   notification.sound = 'sneeze.aiff';
-       *   if (message.parts[0].mimeType === 'text/plain') {
-       *     notification.text = evt.detail.item.parts[0].body;
-       *   } else {
-       *     notification.text = 'You have received a file';
-       *   }
-       * }
-       * ```
-       *
-       * You can also use this event to provide your own logic for sending the Message.
-       *
-       * ```javascript
-       * document.body.addEventListener('layer-send-message', function(evt) {
-       *   var message = evt.detail.item;
-       *   evt.preventDefault();
-       *   myAsyncLookup(function(result) {
-       *     var part = new Layer.Core.MessagePart({
-       *       mimeType: 'application/json',
-       *       body: result
-       *     });
-       *     message.addPart(part);
-       *     message.send();
-       *   });
-       * });
-       * ```
-       *
-       * @event layer-send-message
-       * @param {Event} evt
-       * @param {Object} evt.detail
-       * @param {Layer.Core.MessagePart[]} evt.detail.parts   The array of message parts that will be sent
-       * @param {Layer.Core.Message} evt.detail.item          The message that was created from the parts; null if no Conversation property is set
-       * @param {Layer.Core.Conversation} evt.detail.conversation  The conversation that the message was created on; may be null if no conversation has been set.
-       * @param {Object} evt.detail.notification
-       * @param {String} evt.detail.notification.text
-       * @param {String} evt.detail.notification.title
-       * @param {String} evt.detail.notification.sound
-       */
-      let textPart = parts.filter(part => part.mimeType === 'text/plain')[0];
-      let textValue;
-      if (textPart) {
-        textValue = textPart.body;
+    /**
+     * Send a Message using the specified array of models.
+     *
+     * If its a single Message Type Model, the message will be sent as described in the model.
+     *
+     * If its an array of Message Type Models, then the models will be sent within a Carousel Message.
+     *
+     * ```
+     * widget.sendModels(models);
+     * ```
+     *
+     * Note that any text in the Text Area will be ignored when sending this.
+     *
+     * @param {Layer.Core.MessageTypeModel[]} models
+     */
+    sendModels(models) {
+      if (models.length === 0) {
+        return;
+      } else if (models.length === 1) {
+        if (this.conversation) {
+          models[0].generateMessage(this.conversation, message => this._send(models[0]));
+        } else {
+          this._send(models[0]);
+        }
       } else {
-        let textModel = parts.filter(part => part.mimeAttributes.role === 'root')
-          .map(part => this.client.getMessageTypeModel(part.id))
-          .filter(model => model.text && !model.getTitle() && !model.getFooter());
-        if (textModel) textValue = textModel.text;
+        const CarouselModel = Core.Client.getMessageTypeModelClass('CarouselModel');
+        const model = new CarouselModel({
+          items: models,
+        });
+        if (this.conversation) {
+          model.generateMessage(this.conversation, message => this._send(model));
+        } else {
+          this._send(model);
+        }
       }
+    },
+
+    /**
+     * This event is triggered before any Message is sent; used to control notifications and override sending.
+     *
+     * You can use this event to control the notifications by modifying the `evt.detail.notification` object.
+     * Note that you should modify the object but not try to replace the object.
+     *
+     * ```javascript
+     * document.body.addEventListener('layer-send-message', function(evt) {
+     *   var model = evt.detail.model;
+     *   var notification = evt.detail.notification;
+     *
+     *   notification.title = 'You have a new Message from ' + message.sender.displayName;
+     *   notification.sound = 'sneeze.aiff';
+     *   notification.text = model.text || model.title || 'New Message';
+     * }
+     * ```
+     *
+     * You can also use this event to provide your own logic for sending the Message.
+     *
+     * ```javascript
+     * document.body.addEventListener('layer-send-message', function(evt) {
+     *   var model = evt.detail.model;
+     *
+     *   // Prevent the message from being sent
+     *   evt.preventDefault();
+     *
+     *   // Perform some custom (possibly async) actions and manipulate the message before sending it
+     *   myAsyncLookup(function(result) {
+     *     var part = new Layer.Core.MessagePart({
+     *       mimeType: 'application/json',
+     *       body: result
+     *     });
+     *     model.message.addPart(part);
+     *     model.send({
+     *         conversation: myConversation,
+     *         notification: evt.detail.notification
+     *     });
+     *   });
+     * });
+     * ```
+     *
+     * @event layer-send-message
+     * @param {Event} evt
+     * @param {Object} evt.detail
+     * @param {Layer.Core.MessageTypeModel} evt.detail.model     Message Type Model for the message being sent
+     * @param {Layer.Core.Conversation} [evt.detail.conversation=null]  The conversation that the message was created on; may be null if no conversation has been set.
+     * @param {Object} evt.detail.notification         Standard Notification structure defined for Layer.Core.MessageChannel.send
+     * @param {String} evt.detail.notification.text
+     * @param {String} evt.detail.notification.title
+     * @param {String} evt.detail.notification.sound
+     */
+
+     /**
+      * The _send method takes a MessageTypeModel, adds a notification, and either sends it or allows the app to send it.
+      *
+      * If the Compose Bar does not have a Layer.Core.Conversation, then the model will not have a Message associated
+      * with it, and will not be ready to sendIf there is no Message (happens when the Compose Bar
+      * does not have an associated ), then it is ok to provide a `null` Message.  The result will
+      * not send a Layer.Core.Message, but will allow the event handler to handle it and create a Conversation if needed.
+      *
+      * @method _send
+      * @private
+      * @param {Layer.Core.MessageTypeModel} model
+      */
+    _send(model) {
+      if (!model) throw new Error(ErrorDictionary.modelParamRequired);
       const notification = {
-        text: textPart ? textValue : 'File received',
         title: `New Message from ${this.client.user.displayName}`,
+        text: model.text || model.title || model.constructor.Label + ' received',
       };
 
       if (this.trigger('layer-send-message', {
-        parts,
+        model,
         notification,
-        item: message,
         conversation: this.conversation,
       })) {
         if (!this.conversation) {
-          console.error('Unable to send message without a conversationId');
-        } else if (this.conversation instanceof Layer.Channel) {
-          this.onSend(message);
-          message.send();
+          logger.error('Unable to send message without a conversationId');
+        } else if (this.conversation instanceof Core.Channel) {
+          this.onSend(model);
         } else {
-          this.onSend(message, notification);
-          message.send(notification);
+          this.onSend(model, notification);
         }
       }
     },
@@ -345,11 +406,14 @@ registerComponent('layer-compose-bar', {
      * MIXIN HOOK: Called just before sending a message.
      *
      * @method
-     * @param {Layer.Core.Message} message
+     * @param {Layer.Core.MessageTypeModel} model
      * @param {Object} notification   See Layer.Core.Message.send for details on the notification object
      */
-    onSend(message, notification) {
-      // No-op
+    onSend(model, notification) {
+      model.send({
+        conversation: this.conversation,
+        notification
+      });
     },
 
     /**
@@ -374,6 +438,13 @@ registerComponent('layer-compose-bar', {
       }
     },
 
+    /**
+     * Any time the input field changes this method causes appropriate UI adjustments and events
+     *
+     * @method _onInput
+     * @private
+     * @param {Event} event
+     */
     _onInput(event) {
       this.onRender();
       this._triggerChange(this.nodes.input.value, this.properties.value);
@@ -406,12 +477,12 @@ registerComponent('layer-compose-bar', {
      * If a file event was detected, send some attachments.
      *
      * @method
+     * @param {CustomEvent} evt
      * @private
      */
     _handleAttachments(evt) {
-      this.send(evt.detail.models);
+      this.sendModels(evt.detail.models);
     },
   },
 });
-
 

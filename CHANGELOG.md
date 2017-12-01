@@ -20,6 +20,16 @@
     * Removed support for putting a `selectedAnswer` in the constructor for a Choice Model.  Instead use the `preselectedChoice` property.
 * Registered Message Action handlers are no longer called with `<layer-message-viewer />` as context, and instead receive inputs of `({data, model, rootModel, messageViewer})` where model and rootModel represent the model the event was triggered upon and any root Message Model (Carousel for example) that contains the model.
 * Triggering an action now first triggers a DOM level event with the name of the action. A call to `evt.preventDefault()` will prevent the Registered Message Action Handler from being called, and will let your event handler alone handle it.
+* `layer-send-message` event now passes a Layer.Core.MessageTypeModel instead of an array of Layer.Core.MessagePart objects
+* `<layer-compose-bar />` has updated its public API around creating/sending messages. Most apps should not be using this, but handy for custom widgets being embedded into the Compose Bar.
+* `<layer-file-upload-button />` events have all been redefined
+* `<layer-conversation-view />`
+    * `onSendMessage` and `layer-send-message` event properties have changed, Message is no longer a property of this event, instead `model` is provided, and `model.message` can be used if Message access is required.
+    * `autoFocusConversation` now takes Contstants rather than Strings as inputs
+* `layer-composer-change-value` and `onComposerChangeValue` events are now `layer-compose-bar-change-event` and `onComposeBarChangeValue`; `evt.detail.value` is now `evt.detail.newValue`
+* `deleteConversationEnabled` has been removed from `<layer-conversation-list />` and `<layer-conversation-item />`
+* `<layer-conversation-list />` `sortBy` property now requires values of `Layer.UI.Constants.CONVERSATIONS_SORT.LAST_MESSAGE` or `Layer.UI.Constants.CONVERSATIONS_SORT.CREATED_AT`; prior values are no longer valid
+* `<layer-identity-item />` property `selected` renamed to `isSelected`
 
 ## 1.0.0-pre1.15
 

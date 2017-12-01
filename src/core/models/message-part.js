@@ -67,10 +67,9 @@
 
 import Root from '../root';
 import Content from './content';
-import xhr from '../xhr';
 import ClientRegistry from '../client-registry';
 import LayerError, { ErrorDictionary } from '../layer-error';
-import Util, { logger } from '../../util';
+import Util, { logger, xhr } from '../../util';
 
 class MessagePart extends Root {
 
@@ -191,7 +190,12 @@ class MessagePart extends Root {
    * @return {Layer.Core.Message}
    */
   _getMessage() {
-    return this._message || this._getClient().getMessage(this.id.replace(/\/parts.*$/, ''));
+    if (this._message) {
+      return this._message;
+    } else if (this._getClient()) {
+      return this._getClient().getMessage(this.id.replace(/\/parts.*$/, ''));
+    }
+    return null;
   }
 
   /**

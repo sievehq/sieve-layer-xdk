@@ -38,7 +38,7 @@ describe("The SyncEvent Classes", function() {
     describe("The SyncEvent Class", function() {
         describe("The constructor() method", function() {
             it("Should return a SyncEvent instance", function() {
-                expect(new layer.Core.SyncEvent({})).toEqual(jasmine.any(layer.SyncEvent));
+                expect(new layer.Core.SyncEvent({})).toEqual(jasmine.any(Layer.Core.SyncEvent));
             });
 
             it("Should initialize the operation", function() {

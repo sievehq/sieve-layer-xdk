@@ -6,7 +6,7 @@
  * As a result, video heights should be fixed before any asynchronously loaded video or preview has loaded.
  *
  * @class layer.UI.handlers.message.Video
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import { registerMessageComponent } from '../../components/component';
 import normalizeSize from '../../utils/sizing';

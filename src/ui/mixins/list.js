@@ -2,7 +2,7 @@
  * A List Mixin that provides common list patterns
  *
  * @class layer.UI.mixins.List
- * @mixin layerUI.mixins.HasQuery
+ * @mixin Layer.UI.mixins.HasQuery
  */
 import Layer from '../../core';
 import Util from '../../util';
@@ -250,7 +250,7 @@ module.exports = {
     },
 
     /**
-     * Generate a unique but consistent DOM ID for each layerUI.mixins.ListItem.
+     * Generate a unique but consistent DOM ID for each Layer.UI.mixins.ListItem.
      *
      * @method _getItemId
      * @param {String} itemId
@@ -304,7 +304,7 @@ module.exports = {
      * items should use `onRenderListItem`.
      *
      * @method
-     * @param {layerUI.mixins.ListItem} widget
+     * @param {Layer.UI.mixins.ListItem} widget
      */
     onGenerateListItem(widget) {
       // No-op
@@ -364,7 +364,7 @@ module.exports = {
      *
      * @method _processAffectedWidgetsCustom
      * @private
-     * @param {layerUI.mixins.ListItem} widgets
+     * @param {Layer.UI.mixins.ListItem} widgets
      * @param {Number} firstIndex - Index in the listData array of the first item in the widgets array
      * @param {Boolean} isTopItemNew - If the top item is index 0 and its a new item rather than an "affected" item, this is true.
      */

@@ -57,7 +57,14 @@ describe('layer-conversation-last-message', function() {
       el.item = conversation;
       el.onRerender.calls.reset();
       conversation.trigger('conversations:change', {});
-      expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
+      expect(el.onRerender).not.toHaveBeenCalled();
+
+      conversation.trigger('conversations:change', {
+        property: 'lastMessage',
+        oldValue: null,
+        newValue: conversation.lastMessage,
+      });
+      expect(el.onRerender).toHaveBeenCalledWith();
     });
 
     it("Should unwire up the onRerender event if prior Conversation", function() {
@@ -65,72 +72,35 @@ describe('layer-conversation-last-message', function() {
       el.item = conversation;
       el.item = null;
       el.onRerender.calls.reset();
-      conversation.trigger('conversations:change', {});
+      conversation.trigger('conversations:change', {
+        property: 'lastMessage',
+        oldValue: null,
+        newValue: conversation.lastMessage,
+      });
       expect(el.onRerender).not.toHaveBeenCalled();
+    });
+
+    it("Should setup a model property", function() {
+      el.item = conversation;
+      expect(el.model.text).toEqual('Hello Earthlings');
+      expect(el.model).toEqual(jasmine.any(Layer.Core.Client.getMessageTypeModelClass('TextModel')));
     });
   });
 
   describe("The onRerender() method", function() {
-    it("Should generate a layer-message-text-plain saying Hello Earthlings", function() {
-      expect(el.querySelector('layer-message-text-plain')).toBe(null);
+    it("Should render results of model.getOneLineSummary", function() {
+      expect(el.innerHTML).toEqual('');
+      var model = conversation.lastMessage.createModel();
+      spyOn(model, "getOneLineSummary").and.returnValue("Frodo is a Dodo");
       el.item = conversation;
-      expect(el.querySelector('layer-message-text-plain')).not.toBe(null);
+      expect(el.innerHTML).toEqual('Frodo is a Dodo');
     });
 
-    it("Should remove the layer-message-text-plain if changing item to null", function(){
+    it("Should remove the text if changing item to null", function(){
       el.item = conversation;
+      expect(el.innerHTML).toEqual('Hello Earthlings');
       el.item = null;
-      expect(el.querySelector('layer-message-text-plain')).toBe(null);
-    });
-
-    it("Should use suitable Handler", function() {
-      message = conversation.createMessage({
-        parts: {
-          body: 'blah',
-          mimeType: 'image/png'
-        }
-      }).send();
-      el.item = conversation;
-      expect(el.querySelector('layer-message-text-plain')).toBe(null);
-      expect(el.querySelector('layer-message-image')).not.toBe(null);
-    });
-
-    it("Should replace old Handler", function() {
-      el.item = conversation;
-      expect(el.querySelector('layer-message-text-plain')).not.toBe(null);
-      expect(el.querySelector('layer-message-image')).toBe(null);
-      message = conversation.createMessage({
-        parts: {
-          body: 'blah',
-          mimeType: 'image/png'
-        }
-      }).send();
-      jasmine.clock().tick(1);
-      expect(el.querySelector('layer-message-text-plain')).toBe(null);
-      expect(el.querySelector('layer-message-image')).not.toBe(null);
-    });
-
-    it("Should generate a handler if canFullyRenderLastMessage says it can", function() {
-      el.canFullyRenderLastMessage = function() {return true;}
-      el.item = conversation;
-      expect(el.querySelector('layer-message-text-plain')).not.toBe(null);
-    });
-
-    it("Should generate a label if canFullyRenderLastMessage says it can not", function() {
-      el.canFullyRenderLastMessage = function() {return false;}
-      el.item = conversation;
-      message = conversation.createMessage({
-        parts: {
-          body: 'blah',
-          mimeType: 'image/png'
-        }
-      }).send();
-      jasmine.clock().tick(1);
-
-      expect(el.querySelector('layer-message-text-plain')).toBe(null);
-      var label = el.querySelector('.layer-custom-mime-type');
-      expect(label).not.toBe(null);
-      expect(label.innerHTML).toMatch(/Image message/);
+      expect(el.innerHTML).toEqual('');
     });
   });
 });

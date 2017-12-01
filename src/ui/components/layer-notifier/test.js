@@ -157,11 +157,11 @@ if (window.Notification) {
       });
 
       it("Should wire up client messages-notify event", function() {
-        var restoreFunc = window.layerUI.isInBackground;
-        window.layerUI.isInBackground = jasmine.createSpy('spy');
+        var restoreFunc = window.Layer.UI.isInBackground;
+        window.Layer.UI.isInBackground = jasmine.createSpy('spy');
         client.trigger('messages:notify');
-        expect(window.layerUI.isInBackground).toHaveBeenCalled();
-        window.layerUI.isInBackground = restoreFunc;
+        expect(window.Layer.UI.isInBackground).toHaveBeenCalled();
+        window.Layer.UI.isInBackground = restoreFunc;
       });
 
       it("Should wire up the click handler to onClickToast", function() {
@@ -192,8 +192,8 @@ if (window.Notification) {
         it("Should set flagTitlebarForMessage if isInBackground and notifyInTitlebar is true", function() {
           el.flagTitlebarForMessage = null;
           message.isRead = false;
-          var restoreFunc = window.layerUI.isInBackground;
-          spyOn(window.layerUI, 'isInBackground').and.returnValue(true);
+          var restoreFunc = window.Layer.UI.isInBackground;
+          spyOn(window.Layer.UI, 'isInBackground').and.returnValue(true);
 
           el._notify({message: message});
           expect(el.flagTitlebarForMessage).toBe(message);
@@ -208,20 +208,20 @@ if (window.Notification) {
           // Run 3: isInBackground is false
           el.flagTitlebarForMessage = null;
           el.notifyInTitlebar = true;
-          window.layerUI.isInBackground = restoreFunc;
-          spyOn(window.layerUI, 'isInBackground').and.returnValue(false);
+          window.Layer.UI.isInBackground = restoreFunc;
+          spyOn(window.Layer.UI, 'isInBackground').and.returnValue(false);
           el._notify({message: message});
           expect(el.flagTitlebarForMessage).toBe(null);
 
           // Restore
-          window.layerUI.isInBackground = restoreFunc;
+          window.Layer.UI.isInBackground = restoreFunc;
         });
 
         it("Should use background notification setting if isInBackground returns true", function() {
           spyOn(el, "desktopNotify");
           spyOn(el, "toastNotify");
-          var restoreFunc = window.layerUI.isInBackground;
-          spyOn(window.layerUI, 'isInBackground').and.returnValue(true);
+          var restoreFunc = window.Layer.UI.isInBackground;
+          spyOn(window.Layer.UI, 'isInBackground').and.returnValue(true);
 
           // Part 1
           el.notifyInBackground = 'desktop';
@@ -239,14 +239,14 @@ if (window.Notification) {
           expect(el.toastNotify).toHaveBeenCalledWith(message);
 
           // Cleanup
-          window.layerUI.isInBackground = restoreFunc;
+          window.Layer.UI.isInBackground = restoreFunc;
         });
 
         it("Should use foreground notification setting if isInBackground returns false", function() {
           spyOn(el, "desktopNotify");
           spyOn(el, "toastNotify");
-          var restoreFunc = window.layerUI.isInBackground;
-          spyOn(window.layerUI, 'isInBackground').and.returnValue(false);
+          var restoreFunc = window.Layer.UI.isInBackground;
+          spyOn(window.Layer.UI, 'isInBackground').and.returnValue(false);
 
           // Part 1
           el.notifyInBackground = 'desktop';
@@ -264,7 +264,7 @@ if (window.Notification) {
           expect(el.toastNotify).not.toHaveBeenCalledWith(message);
 
           // Cleanup
-          window.layerUI.isInBackground = restoreFunc;
+          window.Layer.UI.isInBackground = restoreFunc;
         });
 
         it("Should trigger the layer-message-notification event", function() {
@@ -273,8 +273,8 @@ if (window.Notification) {
           el.notifyInBackground = 'toast';
           var spy = jasmine.createSpy('onNotify');
           document.body.addEventListener('layer-message-notification', spy);
-          var restoreFunc = window.layerUI.isInBackground;
-          spyOn(window.layerUI, 'isInBackground').and.returnValue(true);
+          var restoreFunc = window.Layer.UI.isInBackground;
+          spyOn(window.Layer.UI, 'isInBackground').and.returnValue(true);
 
           // Run
           el._notify({message: message});
@@ -289,14 +289,14 @@ if (window.Notification) {
           });
 
           // Cleanup
-          window.layerUI.isInBackground = restoreFunc;
+          window.Layer.UI.isInBackground = restoreFunc;
         });
 
         it("Should prevent handling if evt.preventDefault is called", function() {
           spyOn(el, "desktopNotify");
           spyOn(el, "toastNotify");
-          var restoreFunc = window.layerUI.isInBackground;
-          spyOn(window.layerUI, 'isInBackground').and.returnValue(true);
+          var restoreFunc = window.Layer.UI.isInBackground;
+          spyOn(window.Layer.UI, 'isInBackground').and.returnValue(true);
           el.notifyInBackground = 'desktop';
           el.notifyInForeground = 'desktop';
           document.body.addEventListener('layer-message-notification', function(evt) {
@@ -311,14 +311,14 @@ if (window.Notification) {
           expect(el.toastNotify).not.toHaveBeenCalledWith(message);
 
           // Cleanup
-          window.layerUI.isInBackground = restoreFunc;
+          window.Layer.UI.isInBackground = restoreFunc;
         });
 
         it("Should do nothing if desktop notification is configured and permissions not granted", function() {
           spyOn(el, "desktopNotify");
           spyOn(el, "toastNotify");
-          var restoreFunc = window.layerUI.isInBackground;
-          spyOn(window.layerUI, 'isInBackground').and.returnValue(true);
+          var restoreFunc = window.Layer.UI.isInBackground;
+          spyOn(window.Layer.UI, 'isInBackground').and.returnValue(true);
           el.notifyInBackground = 'desktop';
           el.notifyInForeground = 'desktop';
           el.properties.userEnabledDesktopNotifications = false;
@@ -331,7 +331,7 @@ if (window.Notification) {
           expect(el.toastNotify).not.toHaveBeenCalledWith(message);
 
           // Cleanup
-          window.layerUI.isInBackground = restoreFunc;
+          window.Layer.UI.isInBackground = restoreFunc;
         });
       });
 

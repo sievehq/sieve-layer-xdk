@@ -5,9 +5,11 @@
  *
  * This widget includes a checkbox for selection.
  *
- * @class layer.UI.components.IdentitiesListPanel.Item
- * @mixin layerUI.mixins.ListItem
- * @extends layer.UI.components.Component
+ * @class Layer.UI.components.IdentitiesListPanel.Item
+ * @mixin Layer.UI.mixins.ListItem
+ * @mixin Layer.UI.mixins.SizeProperty
+ * @mixin Layer.UI.mixins.Clickable
+ * @extends Layer.UI.components.Component
  */
 import Layer from '../../../../core';
 import Util from '../../../../util';
@@ -23,14 +25,14 @@ registerComponent('layer-identity-item', {
   properties: {
 
     /**
-     * Is this user item currently selected?
+     * Is this Itentity Item currently selected?
      *
      * Setting this to true will set the checkbox to checked, and add a
      * `layer-identity-item-selected` css class.
      *
-     * @property {Boolean} [selected=false]
+     * @property {Boolean} [isSelected=false]
      */
-    selected: {
+    isSelected: {
       type: Boolean,
       noGetterFromSetter: true,
       set(value) {
@@ -38,7 +40,7 @@ registerComponent('layer-identity-item', {
         this.innerNode.classList[value ? 'add' : 'remove']('layer-identity-item-selected');
       },
       get() {
-        return this.nodes.checkbox ? this.nodes.checkbox.checked : Boolean(this.properties.selected);
+        return this.nodes.checkbox ? this.nodes.checkbox.checked : Boolean(this.properties.isSelected);
       },
     },
 
@@ -53,10 +55,13 @@ registerComponent('layer-identity-item', {
      * };
      * ```
      *
+     * Typically this would be set using Layer.UI.components.IdentitiesListPanel.List.nameRenderer
+     *
      * @property {Function}
      */
     nameRenderer: {},
 
+    // See Layer.UI.SizeProperty.size
     size: {
       value: 'medium',
       set(size) {
@@ -64,49 +69,67 @@ registerComponent('layer-identity-item', {
       },
     },
 
+    // See Layer.UI.SizeProperty.supportedSizes
     supportedSizes: {
       value: ['tiny', 'small', 'medium'],
     },
   },
   methods: {
-    /**
-     * Constructor.
-     *
-     * @method onCreate
-     * @private
-     */
+
+    // Lifecycle method
     onCreate() {
       if (!this.id) this.id = Util.generateUUID();
-      this.addClickHandler('item-click', this.nodes.listItem, this.onClick.bind(this));
+      this.addClickHandler('item-click', this.nodes.listItem, this._onClick.bind(this));
     },
 
     /**
-     * If the checkbox state changes, make sure that the class is updated.
+     * If any part of the List Item is clicked, update the checkbox/selected state
      *
+     * Trigger a `layer-identity-item-selected` or `layer-identity-item-deselected` event;
      * If the custom event is canceled, roll back the change.
      *
-     * @method onClick
+     * @method _onClick
      * @param {Event} evt
      * @private
      */
-    onClick(evt) {
+    _onClick(evt) {
       evt.stopPropagation();
-      const checked = evt.target === this.nodes.checkbox ? this.selected : !this.selected; // toggle
+      const checked = evt.target === this.nodes.checkbox ? this.isSelected : !this.isSelected; // toggle
       const identity = this.item;
 
       // Trigger the event and see if evt.preventDefault() was called
-      const customEventResult = this.trigger(`layer-identity-item-${checked ? 'selected' : 'deselected'}`, { item: identity });
+      const customEventResult = this.trigger(`layer-identity-item-${checked ? 'selected' : 'deselected'}`, {
+        item: identity,
+        originalTarget: evt.target,
+      });
 
       if (customEventResult) {
-        this.selected = checked;
+        this.isSelected = checked;
+        this.onSelection(evt);
       } else {
         evt.preventDefault();
       }
-      this.onSelection(evt);
+
     },
 
     /**
      * MIXIN HOOK: Each time a an item's selection state changes, this will be called.
+     *
+     * Useful as a way to add behaviors to a list Item whenever its state changes:
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'layer-identity-item': {
+     *        methods: {
+     *          onSelection() {
+     *            this.toggleClass('is-selected', this.isSelected);
+     *          }
+     *         }
+     *      }
+     *   }
+     * });
+     * ```
      *
      * @method onSelection
      */
@@ -114,22 +137,12 @@ registerComponent('layer-identity-item', {
       // No-op
     },
 
-    /**
-     * Render/rerender the user, showing the avatar and user's name.
-     *
-     * @method _render
-     * @private
-     */
+    // Lifecycle event
     onRender() {
       this.onRerender();
     },
 
-    /**
-     * Update the rendering of the avatar/username
-     *
-     * @method _render
-     * @private
-     */
+    // Lifecycle event
     onRerender() {
       this.nodes.avatar.users = [this.item];
       this.nodes.title.innerHTML = this.nameRenderer ? this.nameRenderer(this.item) : this.item.displayName;
@@ -139,6 +152,23 @@ registerComponent('layer-identity-item', {
 
     /**
      * Mixin Hook: Override this to use an alternate title.
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'layer-identity-item': {
+     *        methods: {
+     *          onRenderTitle: {
+     *            mode: Layer.UI.registerCompoennt.MODES.OVERWRITE,
+     *            value() {
+     *                this.nodes.title.innerHTML = "hey ho " + this.item.displayName;
+     *            }
+     *          }
+     *        }
+     *      }
+     *   }
+     * });
+     * ```
      *
      * @method onRenderTitle
      */

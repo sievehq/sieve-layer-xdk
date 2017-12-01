@@ -155,7 +155,7 @@ layerUI.processText = function(text) {
 
   const textData = {
     originalText: text,
-    text: processedText,
+    text: processedText.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;'),
   };
 
   // Iterate over each handler, calling each handler.
@@ -197,7 +197,7 @@ layerUI.statusMimeTypes = [];
 layerUI.registerStatusModel = StatusModel => layerUI.statusMimeTypes.push(StatusModel.MIMEType);
 
 /**
- * Hash of components defined using layer.UI.components.Component.
+ * Hash of components defined using Layer.UI.components.Component.
  *
  * @property {Object} components
  * @private
@@ -271,7 +271,7 @@ layerUI.itemSeparatorParentClassName = 'layer-list-item-separator-parent';
  * ```
  *
  * @method addListItemSeparator
- * @param {layerUI.mixins.ListItem} listItem    The List Item that the separator is associated with
+ * @param {Layer.UI.mixins.ListItem} listItem    The List Item that the separator is associated with
  * @param {String/HTMLElement} content          The content to put in the separator
  * @param {String} contentClass                 Create a div with this class to put the content into; this allows us to see
  *                                               if there is already a node of that class.
@@ -476,7 +476,7 @@ layerUI.registerMessageActionHandler = function registerMessageActionHandler(act
 /**
  * Register your template for use by an existing Component.
  *
- * Assumes that the specified Component has already been defined using layer.UI.components.Component.
+ * Assumes that the specified Component has already been defined using Layer.UI.components.Component.
  *
  * This can be used to associate a template with the Component, or to overwrite the default template
  * with your custom template.
@@ -649,7 +649,7 @@ layerUI.init = function init(settings) {
 };
 
 /**
- * This method is shorthand for accessing layer.UI.components.Component.registerComponent
+ * This method is shorthand for accessing Layer.UI.components.Component.registerComponent
  *
  * Note: This code is actually in components/component.js and is only attached to layerUI
  * if you require `layer-ui-web/index.js` or just `layer-ui-web`, else you have to directly

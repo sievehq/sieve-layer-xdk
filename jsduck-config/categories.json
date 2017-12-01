@@ -41,9 +41,9 @@
       {
         "name": "Main Components",
         "classes": [
-          "layer.UI.components.ConversationPanel",
-          "layer.UI.components.ConversationsListPanel.List",
-          "layer.UI.components.IdentitiesListPanel.List",
+          "Layer.UI.components.ConversationView",
+          "Layer.UI.components.ConversationsListPanel.List",
+          "Layer.UI.components.IdentitiesListPanel.List",
           "layer.UI.components.Notifier"
         ]
       },
@@ -51,7 +51,7 @@
         "name": "Utilities",
         "classes": [
           "layer.UI",
-          "layer.UI.components.Component",
+          "Layer.UI.components.Component",
           "layer.UI.adapters.react",
           "layer.UI.adapters.angular",
           "layer.UI.adapters.backbone"

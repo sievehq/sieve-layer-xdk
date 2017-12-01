@@ -4,7 +4,7 @@
  * TODO: Should be able to access mainComponent's originalChildNodes and find matching children
  *
  * @class layer.UI.components.ReplaceableContent
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../component';
 

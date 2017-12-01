@@ -52,7 +52,7 @@ const layerSample = {
     });
   },
   getIdentityToken: function(Layer, nonce, callback) {
-    Layer.Core.xhr({
+    Layer.Util.xhr({
       url: layerSample.identityProviderUrl,
       headers: {
         'Content-type': 'application/json',

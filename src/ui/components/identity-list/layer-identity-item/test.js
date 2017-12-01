@@ -26,6 +26,9 @@ describe('layer-identity-item', function() {
     el = document.createElement('layer-identity-item');
     testRoot.appendChild(el);
     el.item = client.user;
+
+    el.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
+
     layer.Util.defer.flush();
     jasmine.clock().tick(1000);
     layer.Util.defer.flush();
@@ -41,50 +44,53 @@ describe('layer-identity-item', function() {
   describe("The selected property", function() {
     it("Should update checkbox state", function() {
       expect(el.nodes.checkbox.checked).toBe(false);
-      el.selected = true;
+      el.isSelected = true;
       expect(el.nodes.checkbox.checked).toBe(true);
-      el.selected = false;
+      el.isSelected = false;
       expect(el.nodes.checkbox.checked).toBe(false);
     });
 
     it("Should update layer-identity-item-selected class", function() {
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(false);
-      el.selected = true;
+      el.isSelected = true;
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(true);
-      el.selected = false;
+      el.isSelected = false;
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(false);
     });
 
     it("Should get the checkbox state", function() {
       el.nodes.checkbox.checked = false;
-      expect(el.selected).toBe(false);
+      expect(el.isSelected).toBe(false);
       el.nodes.checkbox.checked = true;
-      expect(el.selected).toBe(true);
+      expect(el.isSelected).toBe(true);
     });
 
     it("Should get the selected state if no checkbox", function() {
       el.nodes.checkbox = null;
-      el.properties.selected = false;
-      expect(el.selected).toBe(false);
-      el.properties.selected = true;
-      expect(el.selected).toBe(true);
+      el.properties.isSelected = false;
+      expect(el.isSelected).toBe(false);
+      el.properties.isSelected = true;
+      expect(el.isSelected).toBe(true);
     });
   });
 
   describe("The size property", function() {
     it("Should pass size to the avatar", function() {
-      el.size = 'medium';
+      el.size = 'small';
       expect(el.nodes.avatar.size).toEqual('small');
 
-      el.size = 'large';
+      el.size = 'medium';
       expect(el.nodes.avatar.size).toEqual('medium');
+
+      el.size = 'large';
+      expect(el.nodes.avatar.size).toEqual('large');
     });
 
     it("Should hide or show presence and avatar", function() {
       expect(window.getComputedStyle(el.nodes.avatar).display).toEqual("block");
       expect(window.getComputedStyle(el.nodes.presence).display).toEqual("none");
 
-      el.size = 'small';
+      el.size = 'tiny';
 
       expect(window.getComputedStyle(el.nodes.avatar).display).toEqual("none");
       expect(window.getComputedStyle(el.nodes.presence).display).toEqual("block");
@@ -93,24 +99,32 @@ describe('layer-identity-item', function() {
 
   describe("The create() method", function() {
     it("Should initialize selected to true from innerHTML", function() {
-      testRoot.innerHTML = '<layer-identity-item selected="true"></layer-identity-item>';
+      testRoot.innerHTML = '<layer-identity-item is-selected="true"></layer-identity-item>';
+      testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
+
       CustomElements.takeRecords();
-      expect(testRoot.firstChild.selected).toBe(true);
+      expect(testRoot.firstChild.isSelected).toBe(true);
       layer.Util.defer.flush();
       expect(testRoot.firstChild.nodes.checkbox.checked).toBe(true);
     });
 
     it("Should initialize selected to false from innerHTML", function() {
-      testRoot.innerHTML = '<layer-identity-item selected="false"></layer-identity-item>';
+      testRoot.innerHTML = '<layer-identity-item is-selected="false"></layer-identity-item>';
+      testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
       CustomElements.takeRecords();
-      expect(testRoot.firstChild.selected).toBe(false);
+      layer.Util.defer.flush();
+
+      expect(testRoot.firstChild.isSelected).toBe(false);
       expect(testRoot.firstChild.nodes.checkbox.checked).toBe(false);
     });
 
     it("Should initialize selected with default of false from innerHTML", function() {
       testRoot.innerHTML = '<layer-identity-item></layer-identity-item>';
+      testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
       CustomElements.takeRecords();
-      expect(testRoot.firstChild.selected).toBe(false);
+      layer.Util.defer.flush();
+
+      expect(testRoot.firstChild.isSelected).toBe(false);
       expect(testRoot.firstChild.nodes.checkbox.checked).toBe(false);
     });
 
@@ -148,7 +162,7 @@ describe('layer-identity-item', function() {
     });
 
     it("Should trigger layer-identity-item-deselected", function() {
-      el.selected = true;
+      el.isSelected = true;
 
       var selectedCalled = false,
         deselectedCalled = false;
@@ -189,7 +203,7 @@ describe('layer-identity-item', function() {
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(false);
       expect(el.nodes.checkbox.checked).toBe(false);
 
-      el.selected = true;
+      el.isSelected = true;
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(true);
       expect(el.nodes.checkbox.checked).toBe(true);
       el.nodes.checkbox.click();
@@ -297,149 +311,6 @@ describe('layer-identity-item', function() {
     it("Should match if no filter", function() {
       el._runFilter(null);
       expect(el.classList.contains('layer-item-filtered')).toBe(false);
-    });
-  });
-
-  describe("Mixin list-item", function() {
-    describe("The customNodeAbove property", function() {
-      it("Should add a string", function() {
-        el.customNodeAbove = 'hello';
-        expect(el.customNodeAbove.innerHTML).toEqual('hello');
-        expect(el.firstChild).toBe(el.customNodeAbove);
-        expect(el.childNodes.length).toEqual(2);
-      });
-
-      it("Should replace a string", function() {
-        el.customNodeAbove = 'hello';
-        el.customNodeAbove = 'there';
-        expect(el.customNodeAbove.innerHTML).toEqual('there');
-        expect(el.firstChild).toBe(el.customNodeAbove);
-        expect(el.childNodes.length).toEqual(2);
-      });
-
-      it("Should remove a string", function() {
-        el.customNodeAbove = 'hello';
-        el.customNodeAbove = '';
-        expect(el.customNodeAbove).toBe(null);
-        expect(el.firstChild).toBe(el.innerNode);
-        expect(el.childNodes.length).toEqual(1);
-      });
-
-      it("Should add a node", function() {
-        var div1 = document.createElement('div');
-        el.customNodeAbove = div1;
-        expect(el.customNodeAbove).toBe(div1);
-        expect(el.firstChild).toBe(div1);
-        expect(el.childNodes.length).toEqual(2);
-      });
-
-      it("Should replace a node", function() {
-        var div1 = document.createElement('div');
-        var div2 = document.createElement('div');
-        el.customNodeAbove = div1;
-        el.customNodeAbove = div2;
-        expect(el.customNodeAbove).toBe(div2);
-        expect(el.firstChild).toBe(div2);
-        expect(el.childNodes.length).toEqual(2);
-        expect(div1.parentNode).toBe(null);
-      });
-
-      it("Should remove a node", function() {
-        var div1 = document.createElement('div');
-        el.customNodeAbove = div1;
-        el.customNodeAbove = null;
-        expect(el.customNodeAbove).toBe(null);
-        expect(el.firstChild).toBe(el.innerNode);
-        expect(el.childNodes.length).toEqual(1);
-      });
-    });
-
-    describe("The customNodeBelow property", function() {
-      it("Should add a string", function() {
-        el.customNodeBelow = 'hello';
-        expect(el.customNodeBelow.innerHTML).toEqual('hello');
-        expect(el.childNodes[1]).toBe(el.customNodeBelow);
-        expect(el.childNodes.length).toEqual(2);
-      });
-
-      it("Should replace a string", function() {
-        el.customNodeBelow = 'hello';
-        el.customNodeBelow = 'there';
-        expect(el.customNodeBelow.innerHTML).toEqual('there');
-        expect(el.childNodes[1]).toBe(el.customNodeBelow);
-        expect(el.childNodes.length).toEqual(2);
-      });
-
-      it("Should remove a string", function() {
-        el.customNodeBelow = 'hello';
-        el.customNodeBelow = '';
-        expect(el.customNodeBelow).toBe(null);
-        expect(el.firstChild).toBe(el.innerNode);
-        expect(el.childNodes.length).toEqual(1);
-      });
-
-      it("Should add a node", function() {
-        var div1 = document.createElement('div');
-        el.customNodeBelow = div1;
-        expect(el.customNodeBelow).toBe(div1);
-        expect(el.childNodes[1]).toBe(div1);
-        expect(el.childNodes.length).toEqual(2);
-      });
-
-      it("Should replace a node", function() {
-        var div1 = document.createElement('div');
-        var div2 = document.createElement('div');
-        el.customNodeBelow = div1;
-        el.customNodeBelow = div2;
-        expect(el.customNodeBelow).toBe(div2);
-        expect(el.childNodes[1]).toBe(div2);
-        expect(el.childNodes.length).toEqual(2);
-        expect(div1.parentNode).toBe(null);
-      });
-
-      it("Should remove a node", function() {
-        var div1 = document.createElement('div');
-        el.customNodeBelow = div1;
-        el.customNodeBelow = null;
-        expect(el.customNodeBelow).toBe(null);
-        expect(el.firstChild).toBe(el.innerNode);
-        expect(el.childNodes.length).toEqual(1);
-      });
-    });
-
-    describe("The innerNode property", function() {
-      it("Should point to our user data", function() {
-        expect(el.innerNode.childNodes[0].tagName).toEqual('LAYER-AVATAR');
-        expect(el.innerNode.childNodes[1].tagName).toEqual('LAYER-PRESENCE');
-        expect(el.innerNode.childNodes[2].tagName).toEqual('LABEL');
-        expect(el.innerNode.childNodes[3].tagName).toEqual('INPUT');
-      });
-    });
-
-    describe("The firstInSeries property", function() {
-      it("Should default to false", function() {
-        expect(el.classList.contains('layer-list-item-first')).toBe(false);
-      });
-      it("Should update layer-list-item-first class", function() {
-        el.firstInSeries = true;
-        expect(el.classList.contains('layer-list-item-first')).toBe(true);
-
-        el.firstInSeries = false;
-        expect(el.classList.contains('layer-list-item-first')).toBe(false);
-      });
-    })
-
-    describe("The lastInSeries property", function() {
-      it("Should default to false", function() {
-        expect(el.classList.contains('layer-list-item-last')).toBe(false);
-      });
-      it("Should update layer-list-item-last class", function() {
-        el.lastInSeries = true;
-        expect(el.classList.contains('layer-list-item-last')).toBe(true);
-
-        el.lastInSeries = false;
-        expect(el.classList.contains('layer-list-item-last')).toBe(false);
-      });
     });
   });
 });

@@ -90,7 +90,7 @@ describe("The OnlineStateManager Class", function() {
             spyOn(manager, "_connectionListener");
 
             // Run
-            layer.xhr({
+            Layer.Util.xhr({
                 url: "test"
             });
             requests.mostRecent().response({
@@ -111,7 +111,7 @@ describe("The OnlineStateManager Class", function() {
             spyOn(manager, "_connectionListener");
 
             // Run
-            layer.xhr({
+            Layer.Util.xhr({
                 url: "test"
             });
             requests.mostRecent().response({
@@ -358,7 +358,7 @@ describe("The OnlineStateManager Class", function() {
         it("Should ping the ping endpoint", function() {
             manager.checkOnlineStatus();
             var url = requests.mostRecent().url;
-            expect(url.indexOf(client.url + '/ping?client=' + client.constructor.version)).toEqual(0);
+            expect(url.indexOf(client.url + '/ping?client=' + Layer.version)).toEqual(0);
         });
 
         // Integration test which depends upon _connectionListener updating

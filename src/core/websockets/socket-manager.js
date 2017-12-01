@@ -132,7 +132,7 @@ class SocketManager extends Root {
     ```
    *
    * @method connect
-   * @param  {layer.SyncEvent} evt - Ignored parameter
+   * @param  {Layer.Core.SyncEvent} evt - Ignored parameter
    */
   connect(evt) {
     if (this.client.isDestroyed || !this.client.isOnline) return;

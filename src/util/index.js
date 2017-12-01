@@ -8,6 +8,7 @@ import uuid from 'uuid';
 import defer from './defer';
 import layerParse from './layer-parser';
 import logger from './logger';
+import xhr from './xhr';
 
 exports.atob = typeof atob === 'undefined' ? global.getNativeSupport('atob') : atob.bind(window);
 exports.btoa = typeof btoa === 'undefined' ? global.getNativeSupport('btoa') : btoa.bind(window);
@@ -433,3 +434,4 @@ exports.asciiInit = (version) => {
 };
 
 exports.logger = logger;
+exports.xhr = xhr;

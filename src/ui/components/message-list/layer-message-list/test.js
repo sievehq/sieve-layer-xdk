@@ -128,8 +128,8 @@ describe('layer-message-list', function() {
       el.properties.stuckToBottom = false;
       el.scrollTop = 0;
       spyOn(el, "_markAsRead");
-      var tmp = window.layerUI.isInBackground;
-      window.layerUI.isInBackground = function() {return false;}
+      var tmp = window.Layer.UI.isInBackground;
+      window.Layer.UI.isInBackground = function() {return false;}
       el.query = query;
       jasmine.clock().tick(150);
 
@@ -142,7 +142,7 @@ describe('layer-message-list', function() {
       expect(el._markAsRead).toHaveBeenCalled();
 
       // Cleanup
-      window.layerUI.isInBackground = tmp;
+      window.Layer.UI.isInBackground = tmp;
     });
   });
 
@@ -150,8 +150,8 @@ describe('layer-message-list', function() {
     it("Should unwire _checkVisibility from the focus event", function() {
       query.data[0].isRead = false;
       spyOn(el, "_markAsRead");
-      var tmp = window.layerUI.isInBackground;
-      window.layerUI.isInBackground = function() {return false;}
+      var tmp = window.Layer.UI.isInBackground;
+      window.Layer.UI.isInBackground = function() {return false;}
       el.query = query;
       jasmine.clock().tick(150);
       el.onDestroy();
@@ -165,7 +165,7 @@ describe('layer-message-list', function() {
       expect(el._markAsRead).not.toHaveBeenCalled();
 
       // Cleanup
-      window.layerUI.isInBackground = tmp;
+      window.Layer.UI.isInBackground = tmp;
     });
 
   });
@@ -317,16 +317,16 @@ describe('layer-message-list', function() {
   });
 
   describe("The _checkVisibility() method", function() {
-    var restoreFunc = window.layerUI.isInBackground;
+    var restoreFunc = window.Layer.UI.isInBackground;
     beforeEach(function() {
       query.data.forEach(function(message) {
         message.isRead = false;
       });
-      window.layerUI.isInBackground = function() {return false;};
+      window.Layer.UI.isInBackground = function() {return false;};
     });
 
     afterEach(function() {
-      window.layerUI.isInBackground = restoreFunc;
+      window.Layer.UI.isInBackground = restoreFunc;
     });
 
     it("Should mark visible messages as read", function() {
@@ -393,13 +393,13 @@ describe('layer-message-list', function() {
   });
 
   describe("The _markAsRead() method", function() {
-    var isInBackground = window.layerUI.isInBackground;;
+    var isInBackground = window.Layer.UI.isInBackground;;
     beforeAll(function() {
-      window.layerUI.isInBackground = function() {return false;}
+      window.Layer.UI.isInBackground = function() {return false;}
     });
 
     afterAll(function() {
-      window.layerUI.isInBackground = isInBackground;
+      window.Layer.UI.isInBackground = isInBackground;
     });
 
 

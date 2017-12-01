@@ -26,8 +26,7 @@
  *
  */
 import Root from './root';
-import xhr from './xhr';
-import Util, { logger } from '../util';
+import Util, { logger, xhr } from '../util';
 import { ACCEPT } from '../constants';
 import version from '../version';
 

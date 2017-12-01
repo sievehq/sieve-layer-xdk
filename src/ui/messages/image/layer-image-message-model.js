@@ -51,7 +51,8 @@ import 'blueimp-load-image/js/load-image-meta';
 import 'blueimp-load-image/js/load-image-exif';
 import normalizeSize from '../../utils/sizing';
 
-import Layer, { Root, Client, MessagePart, xhr, MessageTypeModel }  from '../../../core';
+import Layer, { Root, Client, MessagePart, MessageTypeModel }  from '../../../core';
+import { xhr } from '../../../util';
 
 class ImageModel extends MessageTypeModel {
 

@@ -68,6 +68,53 @@ class MessageTypeModel extends Root {
   _initializeProperties() {}
 
   /**
+   * Send this Message Type Model within the specified Conversation
+   *
+   * ```
+   * model.send({
+   *    conversation: myConversation,
+   *    notification: {
+   *      title: "New Message from " + client.user.displayName,
+   *      text: model.text || model.title || 'New Message',
+   *      souncd: 'bleep.aiff'
+   *    },
+   *    callback(message) {
+   *       console.log("Generated and sending " + message.id);
+   *       message.once('messages:sent', function(evt) {
+   *         console.log("Message Sent " + message.id);
+   *       });
+   *    }
+   * });
+   * ```
+   *
+   * The send method takes a `notification` object. In normal use, it provides the same notification to ALL
+   * recipients, but you can customize notifications on a per recipient basis, as well as embed actions into the notification.
+   *
+   * For the Full Notification API, see [Server Docs](https://docs.layer.com/reference/server_api/push_notifications.out).
+   *
+   *
+   * @method send
+   * @param {Object} options
+   * @param {Layer.Core.Container} options.conversation   The Conversation/Channel to send this message on
+   * @param {Object} [options.notification]               Parameters for controling how the phones manage notifications of the new Message.
+   *                                                      See IOS and Android docs for details.
+   * @param {String} [options.notification.title]         Title to show on lock screen and notification bar
+   * @param {String} [options.notification.text]          Text of your notification
+   * @param {String} [options.notification.sound]         Name of an audio file or other sound-related hint
+   * @param {Function} [options.callback]                 Function to call with generated Message;
+   *                                                      Message state should be "sending" but not yet
+   *                                                      received by the server
+   * @param {Layer.Core.Message} [options.callback.message]
+   * @return {Layer.Core.MessageTypeModel} this
+   */
+  send({ conversation, notification, callback }) {
+    return this.generateMessage(conversation, (message) => {
+      if (message.isNew()) message.send(notification);
+      if (callback) callback(message);
+    });
+  }
+
+  /**
    * Generate a Layer.Core.Message from this Model.
    *
    * This method returns the Message asynchronously as some models
@@ -82,8 +129,10 @@ class MessageTypeModel extends Root {
    * @param {Layer.Core.Conversation} conversation
    * @param {Function} callback
    * @param {Layer.Core.Message} callback.message
+   * @return {Layer.Core.MessageTypeModel} this
    */
   generateMessage(conversation, callback) {
+    if (this.message) return callback(this.message);
     if (!conversation) throw new Error(ErrorDictionary.conversationMissing);
     if (!(conversation instanceof Root)) throw new Error(ErrorDictionary.conversationMissing);
     this._generateParts((parts) => {
@@ -97,6 +146,7 @@ class MessageTypeModel extends Root {
       this._setupMessage(true);
       if (callback) callback(this.message);
     });
+    return this;
   }
 
   /**
@@ -609,6 +659,18 @@ class MessageTypeModel extends Root {
     return this.part ? this.part.parentId : this.__parentId;
   }
 
+  __getSender() {
+    return this.message ? this.message.sender : null;
+  }
+
+  __getSentAt() {
+    return this.message ? this.message.sentAt : null;
+  }
+
+  __getRecipientStatus() {
+    return this.message ? this.message.recipientStatus : null;
+  }
+
   /**
    * Access the Message Type Submodel's parent Message Type Model in the Model tree.
    *
@@ -803,6 +865,40 @@ MessageTypeModel.prototype.responses = null;
  */
 MessageTypeModel.prototype.currentMessageRenderer = '';
 MessageTypeModel.prototype.currentMessageRendererExpanded = '';
+
+/**
+ * Sender of the Message Model
+ *
+ * @property {Layer.Core.Identity} sender
+ */
+MessageTypeModel.prototype.sender = null;
+
+/**
+ * Time the Message was sent.
+ *
+ * Note that a locally created Layer.Core.Message.sentAt will have a `sentAt` value even
+ * though its not yet sent; this is so that any rendering code doesn't need
+ * to account for `null` values.  Sending the Message may cause a slight change
+ * in the `sentAt` value.
+ *
+ * @property {Date} sentAt
+ */
+MessageTypeModel.prototype.sender = null;
+
+/**
+ * Read/delivery State of all participants.
+ *
+ * This is an object containing keys for each participant,
+ * and a value of:
+ *
+ * * Layer.Constants.RECEIPT_STATE.SENT
+ * * Layer.Constants.RECEIPT_STATE.DELIVERED
+ * * Layer.Constants.RECEIPT_STATE.READ
+ * * Layer.Constants.RECEIPT_STATE.PENDING
+ *
+ * @type {Object}
+ */
+MessageTypeModel.prototype.recipientStatus = null;
 
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = ['change'].concat(Root._supportedEvents);

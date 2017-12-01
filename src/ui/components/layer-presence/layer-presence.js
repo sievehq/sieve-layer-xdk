@@ -36,8 +36,8 @@
  * ```
  *
  * @class layer.UI.components.Presence
- * @extends layer.UI.components.Component
- * @mixin layerUI.mixins.MainComponent
+ * @extends Layer.UI.components.Component
+ * @mixin Layer.UI.mixins.MainComponent
  */
 import Core from '../../../core';
 import { registerComponent } from '../component';

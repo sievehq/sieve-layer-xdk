@@ -3,9 +3,9 @@
  *
  * This widget appears within
  *
- * * layer.UI.components.MessagesListPanel.Item: Represents the sender of a Message
- * * layer.UI.components.ConversationsListPanel.Item.Conversation: Represents the participants of a Conversation
- * * layer.UI.components.IdentitiesListPanel.Item: Represents a user in a User List
+ * * Layer.UI.components.MessagesListPanel.Item: Represents the sender of a Message
+ * * Layer.UI.components.ConversationsListPanel.Item.Conversation: Represents the participants of a Conversation
+ * * Layer.UI.components.IdentitiesListPanel.Item: Represents a user in a User List
  *
  * Rendering is done using data from the `Layer.Core.Identity` object for each user, using the Layer.Core.Identity.avatarUrl if available to
  * add an image, or first initials from Layer.Core.Identity.firstName, Layer.Core.Identity.lastName if no avatarUrl is available.
@@ -41,7 +41,7 @@
  * * When used in a Conversations List, there may be multiple users who are participants of the Conversation.
  *
  * @class layer.UI.components.Avatar
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.components.Component
  */
 import Core from '../../../core';
 

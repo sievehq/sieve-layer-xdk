@@ -40,6 +40,10 @@ describe('layer-conversation-item', function() {
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo']
     });
+    el.item = conversation;
+
+    el.replaceableContent = Layer.UI.components['layer-conversation-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
+
     layer.Util.defer.flush();
   });
 
@@ -61,15 +65,17 @@ describe('layer-conversation-item', function() {
 
     it("Should wire up the onRerender event", function() {
       spyOn(el, "onRerender");
-      el.item = conversation;
+      var c2 = client.createConversation({
+        participants: ['layer:///identities/GolumTheCutie']
+      });
+      el.item = c2;
       el.onRerender.calls.reset();
-      conversation.trigger('conversations:change', {property: 'unreadCount', oldValue: 5, newValue: 6});
+      c2.trigger('conversations:change', {property: 'unreadCount', oldValue: 5, newValue: 6});
       expect(el.onRerender).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
     });
 
     it("Should unwire up the onRerender event if prior Conversation", function() {
       spyOn(el, "onRerender");
-      el.item = conversation;
       el.item = null;
       el.onRerender.calls.reset();
       conversation.trigger('conversations:change', {property: 'unreadCount', oldValue: 5, newValue: 6});
@@ -86,11 +92,25 @@ describe('layer-conversation-item', function() {
         week: {year: "short"},
         older: {weekday: "short"}
       };
-      layer.Util.defer.flush();
       expect(el.nodes.date.todayFormat).toEqual({hour: "number"});
       expect(el.nodes.date.defaultFormat).toEqual({minute: "short"});
       expect(el.nodes.date.weekFormat).toEqual({year: "short"});
       expect(el.nodes.date.olderFormat).toEqual({weekday: "short"});
+    });
+
+    it("Should set some properties of the date widgets format properties", function() {
+
+      el.nodes.date.todayFormat = {hour: "short"};
+
+      el.dateFormat = {
+        default: {minute: "number"}
+      };
+      expect(el.nodes.date.todayFormat).toEqual({hour: "short"});
+
+      el.dateFormat = {
+        today: {minute: "number"}
+      };
+      expect(el.nodes.date.todayFormat).toEqual({minute: "number"});
     });
   });
 

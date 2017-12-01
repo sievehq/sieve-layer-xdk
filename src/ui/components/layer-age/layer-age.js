@@ -1,10 +1,12 @@
 /**
  * The Layer Age widget renders how long ago a date is.
  *
- * TODO: Document this
+ * Used to to render how long ago an event happened, such as how long since a conversation was active.
  *
- * @class layer.UI.components.Age
- * @extends layer.UI.components.Component
+ * Provide your own renderer using the Layer.UI.components.Age.ageRenderer property.
+ *
+ * @class Layer.UI.components.Age
+ * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../component';
 
@@ -29,17 +31,6 @@ registerComponent('layer-age', {
     },
 
     /**
-     * The actual rendered string.
-     *
-     * @property {String} [value='']
-     */
-    value: {
-      set(value) {
-        this.innerHTML = value;
-      },
-    },
-
-    /**
      * Provide property to override the function used to render a date for each Message Item.
      *
      * Note that changing this will not regenerate the list; this should be set when initializing a new List.
@@ -50,7 +41,26 @@ registerComponent('layer-age', {
      * };
      * ```
      *
+     * OR:
+     *
+     * ```
+     * Layer.init({
+     *     mixins: {
+     *         'layer-age': {
+     *             properties: {
+     *                 ageRenderer: {
+     *                     value: function(value) {
+     *                         this.innerHTML = value.toLocalString();
+     *                     }
+     *                 }
+     *             }
+     *         }
+     *     }
+     * });
+     * ```
+     *
      * @property {Function} [dateRender=null]
+     * @property {Date} dateRenderer.value
      */
     ageRenderer: {},
   },
@@ -58,10 +68,11 @@ registerComponent('layer-age', {
 
     onRender: function onRender() {
       const value = this.date;
-      if (value) {
-        if (this.ageRenderer) {
-          this.value = this.ageRenderer(value);
-        } else {
+      if (this.ageRenderer) {
+        this.innerHTML = this.ageRenderer(value);
+      } else if (!value) {
+        this.innerHTML = 'Never Used';
+      } else  {
           const today = new Date();
           const twoHours = 2 * 60 * 60 * 1000;
           const twoDays = 2 * 24 * 60 * 60 * 1000;
@@ -69,30 +80,28 @@ registerComponent('layer-age', {
           if (timeDiff < twoHours) {
             const minutes = Math.floor(timeDiff/(60*1000));
             if (minutes) {
-              this.value = `${minutes} min${minutes > 1 ? 's' : ''} ago`;
+              this.innerHTML = `${minutes} min${minutes > 1 ? 's' : ''} ago`;
             } else {
-              this.value = '';
+              this.innerHTML = '';
             }
           } else if (timeDiff < twoDays) {
             const hours = Math.floor(timeDiff/(60*60*1000));
-            this.value = `${hours} hours ago`;
+            this.innerHTML = `${hours} hours ago`;
           } else {
             const monthsDiff = getMonthsDiff(today, value);
 
             if (monthsDiff < 2) {
               const days = Math.floor(timeDiff/(24*60*60*1000));
-              this.value = `${days} days ago`;
+              this.innerHTML = `${days} days ago`;
             } else if (monthsDiff < 12) {
-              this.value = `${monthsDiff} months ago`;
+              this.innerHTML = `${monthsDiff} months ago`;
             } else {
               const years = today.getFullYear() - value.getFullYear();
-              this.value = `${years} year${years > 1 ? 's' : ''} ago`;
+              this.innerHTML = `${years} year${years > 1 ? 's' : ''} ago`;
             }
           }
         }
-      } else {
-        this.value = 'Never Used';
-      }
+      },
     },
-  },
 });
+

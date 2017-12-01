@@ -115,7 +115,7 @@
  *
  * ### Events
  *
- * As part of your layer.UI.components.Component.registerComponents call you can pass in an `events` array; this is an array of strings representing events to listen for,
+ * As part of your Layer.UI.components.Component.registerComponents call you can pass in an `events` array; this is an array of strings representing events to listen for,
  * and provide as property-based event listeners.
  *
  * Example:
@@ -450,7 +450,7 @@
  * layerUI.buildAndRegisterTemplate('my-widget', '<div><button />Click me</div>');
  * ```
  *
- * @class layer.UI.components.Component
+ * @class Layer.UI.components.Component
  */
 
 
@@ -607,16 +607,16 @@ function finalizeMixinMerge(classDef) {
 
 
 function getMethod(classDef, conditionals, methods) {
-  return function runMethod(...args) {
+  return function runMixinMethods(...args) {
     let result;
     for (let i = 0; i < conditionals.length; i++) {
       if (!conditionals[i].apply(this, args)) return;
     }
 
-    methods.forEach((method) => {
+    methods.forEach(function runMixinMethodsIterator(method) {
       const resultTmp = method.apply(this, args);
       if (resultTmp !== undefined) result = resultTmp;
-    });
+    }, this);
     return result;
   };
 }
@@ -779,7 +779,9 @@ function setupProperty(classDef, prop, propertyDefHash) {
 
       this.properties[name] = value;
       if (classDef['__set_' + name] && !this.properties._internalState.disableSetters) {
-        classDef['__set_' + name].forEach(setter => setter.call(this, value, wasInit ? null : oldValue));
+        classDef['__set_' + name].forEach(function propertySetterIterator(setter) {
+          setter.call(this, value, wasInit ? null : oldValue);
+        }, this);
       }
 
       if (propDef.propagateToChildren) {
@@ -996,23 +998,30 @@ function _registerComponent(tagName) {
         const value = this.properties[prop.propertyName];
         // UNIT TEST: This line is primarily to keep unit tests from throwing errors
         if (value instanceof Layer.Root && value.isDestroyed) return;
-        if (value !== undefined && value !== null && prop.propertyName !== 'replaceableContent') {
-          // Force the setter to trigger; this will force the value to be converted to the correct type,
-          // and call all setters
-          this[prop.propertyName] = value;
+        if (prop.propertyName !== 'replaceableContent') {
+          const isValueUnset = value === undefined || value === null;
+          if (!isValueUnset) {
+            // Force the setter to trigger; this will force the value to be converted to the correct type,
+            // and call all setters
+            this[prop.propertyName] = value;
 
-          if (prop.propagateToChildren) {
-            Object.keys(this.nodes).forEach(nodeName => (this.nodes[nodeName][prop.propertyName] = value));
+            if (prop.propagateToChildren) {
+              Object.keys(this.nodes).forEach(nodeName => (this.nodes[nodeName][prop.propertyName] = value));
+            }
           }
-        }
 
 
-        // If there is no value, but the parent component has the same property name, presume it to also be
-        // propagateToChildren, and copy its value; useful for allowing list-items to automatically grab
-        // all parent propagateToChildren properties.
-        else if ((prop.propagateToChildren/* || prop.mixinWithChildren*/) && this.parentComponent) {
-          const parentValue = this.parentComponent.properties[prop.propertyName];
-          if (parentValue) this[prop.propertyName] = parentValue;
+          // If there is no value, but the parent component has the same property name, presume it to also be
+          // propagateToChildren, and copy its value; useful for allowing list-items to automatically grab
+          // all parent propagateToChildren properties.
+          if ((isValueUnset || value === prop.value) && this.parentComponent) {
+            const parentComponentProps = layerUI.components[this.parentComponent.tagName.toLocaleLowerCase()].properties;
+            const parentComponentPropDef = parentComponentProps.filter(p => p.propertyName === prop.propertyName)[0];
+            if (parentComponentPropDef && parentComponentPropDef.propagateToChildren) {
+              const parentValue = this.parentComponent.properties[prop.propertyName];
+              if (parentValue) this[prop.propertyName] = parentValue;
+            }
+          }
         }
       });
       this.properties._internalState.inPropInit = [];
@@ -1292,10 +1301,23 @@ registerComponent.MODES = {
 
 
 const standardClassProperties = {
+  /**
+   * Provide a hash of DOM generation functions to insert custom content into.
+   *
+   * @property {Object} replaceableContent
+   */
   replaceableContent: {},
   _layerEventSubscriptions: {
     value: [],
   },
+
+  /**
+   * Set an array of CSS Classes; replaces any previous CSS classes that were part of this array.
+   *
+   * Typically used to intiialize a component with initial classes rather than for maintaining the set of classes.
+   *
+   * @property {String[]} cssClassList
+   */
   cssClassList: {
     set(newValue, oldValue) {
       if (newValue) {
@@ -1313,7 +1335,19 @@ const standardClassProperties = {
       }
     },
   },
+
+  /**
+   * Refers to the parent Layer.UI.Component that contains this Component.
+   *
+   * @property {Layer.UI.Component} parentComponent
+   */
   parentComponent: {},
+
+  /**
+   * Refers to the top level containing Component that contains this Component
+   *
+   * @property {Layer.UI.Component} mainComponent
+   */
   mainComponent: {
     get() {
       if (!this.properties.parentComponent) return this;
@@ -1323,9 +1357,23 @@ const standardClassProperties = {
       return this.properties.mainComponent;
     },
   },
+
+  /**
+   * Get/set the Layer.Core.Client used by this widget.
+   *
+   * @property {Layer.Core.Client} client
+   */
   client: {
     propagateToChildren: true,
   },
+
+  /**
+   * Set an array of DOM IDs that this widget will listen to events from.
+   *
+   * Each Component has specific events that it listens to; typically these are only generated by a few other widgets.
+   *
+   * @property {String[]} listenTo
+   */
   listenTo: {
     value: [],
     set(value) {
@@ -1464,7 +1512,7 @@ const standardClassMethods = {
    * });
    * ```
    *
-   * layer.UI.components.Component.events can be used to generate properties to go with your events, allowing
+   * Layer.UI.components.Component.events can be used to generate properties to go with your events, allowing
    * the following widget property to be used:
    *
    * ```

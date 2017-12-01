@@ -33,8 +33,8 @@
  *
  * ## Key Properties
  *
- * * layer.UI.components.ConversationPanel.conversationId (attribute-name: `conversation-id`): Set what conversation is being viewed
- * * layer.UI.components.ConversationPanel.queryId (attribute-name: `query-id`): If your app already has a Layer.Core.Query, you can provide it to this widget to render and page through its Messages.  If you don't have a Layer.Core.Query instance, this widget will generate one for you.
+ * * Layer.UI.components.ConversationView.conversationId (attribute-name: `conversation-id`): Set what conversation is being viewed
+ * * Layer.UI.components.ConversationView.queryId (attribute-name: `query-id`): If your app already has a Layer.Core.Query, you can provide it to this widget to render and page through its Messages.  If you don't have a Layer.Core.Query instance, this widget will generate one for you.
  *
  * NOTE: If you provide your own Query, you must update its predicate when changing Conversations.
  *
@@ -42,17 +42,18 @@
  *
  * Events listed here come from either this component, or its subcomponents.
  *
- * * {@link layer.UI.components.Composer#layer-send-message layer-send-message}: User has requested their Message be sent
- * * {@link layer.UI.components.TypingIndicator#layer-typing-indicator-change layer-typing-indicator-change}: Someone in the Conversation has started/stopped typing
+ * * {@link Layer.UI.components.ComposeBar#layer-send-message layer-send-message}: User has requested their Message be sent
+ * * {@link Layer.UI.components.TypingIndicator#layer-typing-indicator-change layer-typing-indicator-change}: Someone in the Conversation has started/stopped typing
  *
- * @class layer.UI.components.ConversationPanel
- * @extends layer.UI.components.Component
- * @mixin layerUI.mixins.MainComponent
- * @mixin layerUI.mixins.HasQuery
- * @mixin layerUI.mixins.FileDropTarget
+ * @class Layer.UI.components.ConversationView
+ * @extends Layer.UI.components.Component
+ * @mixin Layer.UI.mixins.MainComponent
+ * @mixin Layer.UI.mixins.HasQuery
+ * @mixin Layer.UI.mixins.FileDropTarget
  */
 import Core from '../../../core';
 import Constants from '../../../constants';
+import UIConstants from '../../constants';
 import { registerComponent } from '../component';
 import MainComponent from '../../mixins/main-component';
 import HasQuery from '../../mixins/has-query';
@@ -75,22 +76,39 @@ registerComponent('layer-conversation-view', {
    * ```javascript
    * conversationPanel.onSendMessage = function(evt) {
    *   evt.preventDefault();
-   *   var message = evt.detail.item;
+   *   var model = evt.detail.model;
+   *   var notification = evt.detail.notification;
+   *   var conversation = evt.detail.conversation;
+   *
+   *   // Perform various (possibly async) tasks
    *   myAsyncLookup(function(result) {
    *     var part = new Layer.Core.MessagePart({
    *       mimeType: 'application/json',
    *       body: result
    *     });
-   *     message.addPart(part);
-   *     message.send();
+   *     model.generateMessage(conversation, function(message) {
+   *        message.addPart(part);
+   *        model.send({ notification });
+   *     });
    *   });
    * };
+   * ```
+   *
+   * You can also use this event to modify the notification before its sent:
+   *
+   * ```
+   * conversationPanel.onSendMessage = function(evt) {
+   *   var notification = evt.detail.notification;
+   *   notification.title = "New Notification Title";
+   *   notification.text = "New Notification Text";
+   * });
    * ```
    *
    * @property {Function} onSendMessage
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {Layer.Core.Message} evt.detail.item
+   * @param {Layer.Core.MessageTypeModel} evt.detail.model
+   * @param {Object} evt.detail.notification
    */
 
   /**
@@ -101,22 +119,38 @@ registerComponent('layer-conversation-view', {
    * ```javascript
    * document.body.addEventListener('layer-send-message', function(evt) {
    *   evt.preventDefault();
-   *   var message = evt.detail.item;
+   *   var model = evt.detail.model;
+   *   var notification = evt.detail.notification;
+   *   var conversation = evt.detail.conversation;
+   *
+   *   // Perform various (possibly async) tasks
    *   myAsyncLookup(function(result) {
    *     var part = new Layer.Core.MessagePart({
    *       mimeType: 'application/json',
    *       body: result
    *     });
-   *     message.addPart(part);
-   *     message.send();
+   *     model.generateMessage(conversation, function(message) {
+   *        message.addPart(part);
+   *        model.send({ notification });
+   *     });
    *   });
+   * });
+   * ```
+   *
+   * You can also use this event to modify the notification before its sent:
+   *
+   * ```
+   * document.body.addEventListener('layer-send-message', function(evt) {
+   *   var notification = evt.detail.notification;
+   *   notification.title = "New Notification Title";
+   *   notification.text = "New Notification Text";
    * });
    * ```
    *
    * @event layer-send-message
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {Layer.Core.Message} evt.detail.item
+   * @param {Layer.Core.MessageTypeModel} evt.detail.model
    * @param {Object} evt.detail.notification
    */
 
@@ -137,7 +171,7 @@ registerComponent('layer-conversation-view', {
    * @param {Event} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Message} evt.detail.item
-   * @removed 2.0, use menu options callback to perform any needed actions or trigger any needed events
+   * @removed Use menu options callback to perform any needed actions or trigger any needed events
    */
 
   /**
@@ -157,7 +191,7 @@ registerComponent('layer-conversation-view', {
    * @param {Event} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Message} evt.detail.item
-   * @removed 2.0, use menu options callback to perform any needed actions or trigger any needed events
+   * @removed Use menu options callback to perform any needed actions or trigger any needed events
    */
 
   /**
@@ -224,19 +258,18 @@ registerComponent('layer-conversation-view', {
    * This is not a cancelable event.
    *
    * ```javascript
-   * conversationPanel.onComposerChangeValue = function(evt) {
-   *   this.setState({composerValue: evt.detail.value});
+   * conversationPanel.onComposeBarChangeValue = function(evt) {
+   *   this.setState({composerValue: evt.detail.newValue});
    * }
    * ```
    *
-   * @property {Function} onComposerChangeValue
+   * @property {Function} onComposeBarChangeValue
    * @param {Event} evt
    * @param {Object} evt.detail
-   * @param {String} evt.detail.value
+   * @param {String} evt.detail.newValue
    * @param {String} evt.detail.oldValue
    */
-  events: ['layer-send-message', 'layer-typing-indicator-change',
-    'layer-compose-bar-change-value'],
+  events: ['layer-send-message', 'layer-typing-indicator-change', 'layer-compose-bar-change-value'],
 
   properties: {
 
@@ -253,8 +286,8 @@ registerComponent('layer-conversation-view', {
      * This Conversation ID specifies what conversation to render and interact with.
      * This property needs to be changed any time you change to view a different Conversation.
      *
-     * Alternative: See layer.UI.components.LayerConversation.conversation property.  Strings however are easier to stick
-     * into html template files.
+     * Alternative: See Layer.UI.components.ConversationView.conversation property.  Strings however are easier to stick
+     * into html and template files.
      *
      * ```
      * function selectConversation(selectedConversation) {
@@ -286,9 +319,9 @@ registerComponent('layer-conversation-view', {
     },
 
     /**
-     * If you have an initial conversation id, but what this property to be otherwise ignored.
+     * Use this to initialize with a specific Conversation ID; value will be ignored after initialization.
      *
-     * When to use this? You have set your Conversation Panel to `listen-to` your Conversation List,
+     * When to use this? You have set your Conversation View to `listen-to` your Conversation List,
      * but you still want to be able to set an initial conversation.  Any changes to this property
      * will be ignored.
      *
@@ -308,7 +341,7 @@ registerComponent('layer-conversation-view', {
      * This Conversation ID specifies what conversation to render and interact with.
      * This property needs to be changed any time you change to view a different Conversation.
      *
-     * Alternative: See layer.UI.components.LayerConversation.conversationId property for an easier property to use
+     * Alternative: See Layer.UI.components.ConversationView.conversationId property for an easier property to use
      * within html templates.
      *
      * ```
@@ -328,13 +361,12 @@ registerComponent('layer-conversation-view', {
       },
     },
 
-    // Docs in mixins/has-query.js; new behavior here is that any change to hasGeneratedQuery means
-    // that now THIS component is responsible for managing the query predicate; call _setupConversation to see that done.
+    // Docs in mixins/has-query.js; new behavior here is to call _setupQuery to setup an initial Query
     hasGeneratedQuery: {
-      set(value) {
-        if (value && this.conversationId && this.client) this._setupConversation();
-      },
       type: Boolean,
+      set(value) {
+        if (value && this.conversation && this.client) this._setupQuery();
+      },
     },
 
     /**
@@ -345,25 +377,27 @@ registerComponent('layer-conversation-view', {
      *
      * Possible values:
      *
-     * * always
-     * * desktop-only
-     * * never
+     * * Layer.UI.CONSTANTS.FOCUS.ALWAYS
+     * * Layer.UI.CONSTANTS.FOCUS.DESKTOP_ONLY
+     * * Layer.UI.CONSTANTS.FOCUS.NEVER
      *
      * Note that the definition we'd like to have for desktop-only is any device that automatically opens
-     * an on-screen keyboard.  There are no good techniques for that.  But if we detect your on an Android device
-     * we're going to assume it uses an on-screen keyboard.
+     * an on-screen keyboard.  There are no good techniques for that.  But some basic tests will be used
+     * to see if it looks like a phone/tablet/touch-screen.
      *
      * @property {String} [autoFocusConversation=desktop-only]
      */
     autoFocusConversation: {
-      value: 'desktop-only',
+      value: UIConstants.FOCUS.DESKTOP_ONLY,
     },
 
     // Docs in mixins/main-component.js
     client: {
       set(value) {
         if (value) {
-          if (!this.conversation && this.conversationId) this.conversation = value.getObject(this.conversationId, true);
+          if (!this.conversation && this.conversationId) {
+            this.conversation = value.getObject(this.conversationId, true);
+          }
           if (this.conversation) this._setupConversation();
         }
       },
@@ -379,11 +413,19 @@ registerComponent('layer-conversation-view', {
      *     widget.customNodeAbove = document.createElement('hr');
      *     widget.customNodeBelow = document.createElement('hr');
      *   }
-     *  });
+     * });
+     *
+     * var model = message.createModel(); // retrieves existing model
+     * if (model.title) {
+     *    var separator = document.createElement('div');
+     *    separator.innerHTML = model.title;
+     *    separator.classList.add('separator');
+     *    widget.customNodeAbove = separator;
+     * }
      * ```
      *
      * @property {Function} onRenderListItem
-     * @property {layer.UI.components.MessagesListPanel.Item} onRenderListItem.widget
+     * @property {Layer.UI.components.MessagesListPanel.Item} onRenderListItem.widget
      *    One row of the list
      * @property {Layer.Core.Message[]} onRenderListItem.items
      *    full set of messages in the list
@@ -484,10 +526,17 @@ registerComponent('layer-conversation-view', {
 
 
     /**
-     * Provide a function that returns the menu items for the given Conversation.
+     * Provide a function that returns the menu items for each Message Item.
      *
-     * Note that this is called each time the user clicks on a menu button to open the menu,
-     * but is not dynamic in that it will regenerate the list as the Conversation's properties change.
+     * > *Note*
+     * >
+     * > This is called each time the user clicks on a menu button next to a message to open the menu,
+     * but is not dynamic in that it will regenerate the list while its open.
+     *
+     * > *Note*
+     * >
+     * > This only works if your `<layer-message-item-sent />` or `<layer-message-item-received />` has a `<layer-menu-button layer-id='menuButton'/>`;
+     * > The `layer-id` is required... unless explicitly setting `messageListItem.nodes.menuButton = <layer-menu-button />;`
      *
      * Format is:
      *
@@ -521,9 +570,9 @@ registerComponent('layer-conversation-view', {
         this.nodes.list.getMenuOptions = value;
       }
     },
+
     /**
-     * This iteration of this property is not dynamic; it will be applied to all future Conversation Items,
-     * but not to the currently generated items.
+     * Date formatter configuration for the Message Items within the Message List.
      *
      * Use this to configure how dates are rendered.
      * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString for details
@@ -548,7 +597,11 @@ registerComponent('layer-conversation-view', {
      * }
      * ```
      *
-     * @property {Object}
+     * > *Note*
+     * >
+     * > This only works if `<layer-message-item-sent />` or `<layer-message-item-received />` has a `<layer-date layer-id='date' />` within it.
+     *
+     * @property {Object} dateFormat
      */
     dateFormat: {
       set() {
@@ -588,8 +641,8 @@ registerComponent('layer-conversation-view', {
      * Use this to get/set the text in the Compose bar.
      *
      * ```
+     * // Populate the Compose Bar with text
      * widget.composeText = 'This text will appear in the editor within the compose bar';
-     * var message = conversation.createMessage(widget.composeText);
      * ```
      *
      * @property {String} [composeText='']
@@ -604,7 +657,7 @@ registerComponent('layer-conversation-view', {
     },
 
     /**
-     * Use this to get/set the text in the Compose bar.
+     * Use this to get/set the placeholder text in the Compose bar.
      *
      * ```
      * widget.composePlaceholder = 'Enter a message. Or dont. It really doesnt matter.';
@@ -648,6 +701,26 @@ registerComponent('layer-conversation-view', {
       value: Core.Query.Message,
     },
 
+    /**
+     * Width of this UI Component.
+     *
+     * * Should update any time the window resizes.
+     * * Should lack a value until its added to the DOM (use `onAttach` lifecycle event to detect this)
+     * * *Does not* get updated when panels are reflowed for reasons _other_ than the window resizeing
+     *
+     * Changes in width will cause a CSS class to be added that is one of:
+     *
+     * * `layer-conversation-view-width-small`: Width is less than 460px
+     * * `layer-conversation-view-width-medium`: Width is between 460 and 600
+     * * `layer-conversation-view-width-large`: Width is greater than or equal to 600
+     *
+     * > *Note*
+     * >
+     * > Any measure of width by the browser uses Virtual Pixels rather than Actual Pixels.  So,
+     * > an 800px wide device may still show up as only 360px wide depending on Viewport and other settings.
+     *
+     * @property {Number} width
+     */
     width: {
       set(newValue, oldValue) {
         this.toggleClass('layer-conversation-view-width-small', newValue < 460);
@@ -657,25 +730,52 @@ registerComponent('layer-conversation-view', {
     },
   },
   methods: {
+    // Lifecycle method; wire up to detect UI Size changes;
+    // TODO: make tracking width a Mixin behavior to be shared with other components
     onCreate() {
       this.properties._handleResize = this._handleResize.bind(this);
       window.addEventListener('resize', this.properties._handleResize);
     },
 
+    // Lifecycle method for initializing the width
     onAttach() {
       this.width = this.clientWidth;
     },
 
+    // Cleanup any global event handlers
     onDestroy() {
       window.removeEventListener('resize', this.properties._handleResize);
     },
 
+    /**
+     * Any time there is a change that could impact the width, update the width property.
+     *
+     * @method _handleResize
+     * @private
+     */
     _handleResize() {
       this.width = this.clientWidth;
     },
 
     /**
-     * When a key is pressed and text is not focused, focus on the composer
+     * When a key is pressed and text is not focused, focus on the composer.
+     *
+     * Use a mixin to override this method to prevent this behavior:
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'layer-conversation-view': {
+     *        methods: {
+     *          onKeyDown: {
+     *            mode: Layer.UI.registerComponent.MODES.OVERWRITE,
+     *            value: function() {}
+     *          }
+     *        }
+     *     }
+     *   }
+     * });
+     * ```
      *
      * @method onKeyDown
      */
@@ -697,23 +797,17 @@ registerComponent('layer-conversation-view', {
     },
 
     /**
-     * Send the Message that the user has typed in... or that you have specified.
+     * Send the Message that the user has typed in.
      *
      * ```
      * widget.composeText = "Hello world";
      * widget.send(); // send the current text in the textarea
      * ```
      *
-     * ```
-     * widget.send(parts); // send custom message parts but NOT the text in the textarea
-     * ```
-     *
      * @method
-     * @param {Layer.Core.MessagePart[]} optionalParts
      */
-    send(optionalParts) {
-      const args = optionalParts ? [optionalParts] : [];
-      this.nodes.composer.send(...args);
+    send() {
+      this.nodes.composer.send();
     },
 
     /**
@@ -757,6 +851,61 @@ registerComponent('layer-conversation-view', {
       this.nodes.list.conversation = conversation;
       this.nodes.composer.conversation = conversation;
       this.nodes.typingIndicators.conversation = conversation;
+      this._setupQuery();
+      if (this.shouldAutoFocusConversation(navigator)) this.focusText();
+    },
+
+    /**
+     * Determine if the Conversation should automatically call Layer.UI.components.ConversationView.focusText based on the Layer.UI.components.ConversationView.autoFocusConversation property
+     *
+     * Typically you would configure the Layer.UI.components.ConversationView.autoFocusConversation property to change behaviors.  However, if using UIConstants.FOCUS.DESKTOP_ONLY
+     * and wanting to provide your own definition of whether this is a desktop or not, you can override this method:
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'layer-conversation-view': {
+     *        methods: {
+     *          shouldAutoFocusConversation: {
+     *            mode: Layer.UI.registerComponent.MODES.OVERWRITE,
+     *            value: function() {
+     *              return false;
+     *            }
+     *          }
+     *       }
+     *     }
+     *   }
+     * });
+     * ```
+     *
+     * @method shouldAutoFocusConversation
+     * @param {options} options
+     * @param {String} options.userAgent
+     * @param {Number} options.maxTouchPoints
+     * @returns {Boolean}
+     */
+    shouldAutoFocusConversation({ userAgent = '', maxTouchPoints }) {
+      switch (this.autoFocusConversation) {
+        case UIConstants.FOCUS.ALWAYS:
+          return true;
+        case UIConstants.FOCUS.DESKTOP_ONLY:
+          if (maxTouchPoints !== undefined && maxTouchPoints > 0) return false;
+          return !(userAgent.match(/(mobile|android|phone)/i));
+        case UIConstants.FOCUS.NEVER:
+          return false;
+      }
+      return false;
+    },
+
+    /**
+     * Setup the generated query; does nothing if Layer.UI.components.ConversationView.hasGeneratedQuery is `false`.
+     *
+     * @method _setupQuery
+     * @private
+     */
+    _setupQuery() {
+      const conversation = this.properties.conversation;
+      if (!conversation) return;
       if (this.hasGeneratedQuery) {
         if (conversation instanceof Core.Conversation) {
           this.query.update({
@@ -772,19 +921,7 @@ registerComponent('layer-conversation-view', {
           });
         }
       }
-      if (this.shouldAutoFocusConversation(navigator)) this.focusText();
-    },
-    shouldAutoFocusConversation({ userAgent = '', maxTouchPoints }) {
-      switch (this.autoFocusConversation) {
-        case 'always':
-          return true;
-        case 'desktop-only':
-          if (maxTouchPoints !== undefined && maxTouchPoints > 0) return false;
-          return !(userAgent.match(/(mobile|android|phone)/i));
-        case 'never':
-          return false;
-      }
-    },
+    }
   },
   listeners: {
     'layer-conversation-selected': function conversationSelected(evt) {

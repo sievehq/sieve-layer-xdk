@@ -18,7 +18,7 @@ import layerUI from '../base';
  *
 * Calling this will expose the following React Components:
  *
- * * ConversationPanelView: A wrapper around a layer.UI.components.ConversationPanel
+ * * ConversationPanelView: A wrapper around a Layer.UI.components.ConversationView
  * * ConversationsListView: A wrapper around a layer.UI.components.ConversationsListPanel
  * * IdentitiesListView: A wrapper around a layer.UI.components.IdentitiesListPanel
  * * NotifierView: A wrapper around a layer.UI.components.misc.Notifier

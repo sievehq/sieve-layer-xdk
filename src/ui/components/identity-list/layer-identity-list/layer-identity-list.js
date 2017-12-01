@@ -1,7 +1,8 @@
 /**
  * The Layer User List renders a pagable list of Layer.Core.Identity objects, and allows the user to select people to talk with.
  *
- * This is typically used for creating/updating Conversation participant lists.
+ * This is typically used for creating/updating Conversation participant lists, also usable for listing who
+ * is a part of an existing Layer.Core.Conversation or Layer.Core.Channel.
  *
  * This Component can be added to your project directly in the HTML file:
  *
@@ -15,13 +16,16 @@
  * var identitylist = document.createElement('layer-identity-list');
  * ```
  *
- * And then its properties can be set as:
+ * ## Common Properties
+ *
+ * * Layer.UI.components.IdentitiesListPanel.List.selectedIdentities: Get/set the currently selected Identities in the List
+ * * Layer.UI.components.IdentitiesListPanel.List.onIdentitySelected: Set a function to be called when an Identity is selected
+ * * Layer.UI.components.IdentitiesListPanel.List.onIdentityDeselected: Set a function to be called when an Identity is deselected
  *
  * ```javascript
- * var identityList = document.querySelector('layer-identity-list');
  * identityList.selectedIdentities = [identity3, identity6];
  * identityList.onIdentitySelected = identityList.onIdentityDeselected = function(evt) {
- *    log("The new selected users are: ", identityList.selectedIdentities);
+ *    log("The new selected users are: ", identityList.selectedIdentities.map(identity => identity.displayName).join(', '));
  * }
  * ```
  *
@@ -29,14 +33,19 @@
  *
  * Events listed here come from either this component, or its subcomponents.
  *
- * * {@link layer.UI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected}: User has clicked to unselect an Identity
- * * {@link layer.UI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected}: User has clicked to select an Identity
+ * * {@link Layer.UI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected}: User has clicked to unselect an Identity
+ * * {@link Layer.UI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected}: User has clicked to select an Identity
  *
- * @class layer.UI.components.IdentitiesListPanel.List
- * @extends layer.UI.components.Component
- * @mixin layerUI.mixins.List
- * @mixin layerUI.mixins.MainComponent
- * @mixin layerUI.mixins.ListLoadIndicator
+ * @class Layer.UI.components.IdentitiesListPanel.List
+ * @extends Layer.UI.components.Component
+ * @mixin Layer.UI.mixins.List
+ * @mixin Layer.UI.mixins.MainComponent
+ * @mixin Layer.UI.mixins.ListLoadIndicator
+ * @mixin Layer.UI.mixins.HasQuery
+ * @mixin Layer.UI.mixins.ListLoadIndicator
+ * @mixin Layer.UI.mixins.SizeProperty
+ * @mixin Layer.UI.mixins.EmptyList
+ * @mixin Layer.UI.mixinis.QueryEndIndicator
  */
 import Core from '../../../../core';
 import Util from '../../../../util';
@@ -61,8 +70,7 @@ registerComponent('layer-identity-list', {
    *      var identityAdded = evt.detail.item;
    *      var selectedIdentities = evt.target.selectedIdentities;
    *
-   *      // To prevent the UI from proceding to add the identity to the selectedIdentities:
-   *      // Note that identityAdded is not yet in selectedIdentities so that you may prevent it from being added.
+   *      // Note that identityAdded is not yet in selectedIdentities so that you may prevent it from being added using:
    *      evt.preventDefault();
    *    };
    * ```
@@ -74,8 +82,7 @@ registerComponent('layer-identity-list', {
    *      var identityAdded = evt.detail.item;
    *      var selectedIdentities = evt.target.selectedIdentities;
    *
-   *      // To prevent the UI from proceding to add the identity to the selectedIdentities:
-   *      // Note that identityAdded is not yet in selectedIdentities so that you may prevent it from being added.
+   *      // Note that identityAdded is not yet in selectedIdentities so that you may prevent it from being added using:
    *      evt.preventDefault();
    *    });
    * ```
@@ -85,10 +92,11 @@ registerComponent('layer-identity-list', {
    * @param {Object} evt.detail
    * @param {Layer.Core.Identity} evt.detail.item
    */
-  /**
+
+   /**
    * A identity selection change has occurred
    *
-   * See the {@link layer.UI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected} event for more detail.
+   * See the {@link Layer.UI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected} event for more detail.
    *
    * @property {Function} onIdentitySelected
    * @param {Event} evt
@@ -103,8 +111,7 @@ registerComponent('layer-identity-list', {
    *      var identityRemoved = evt.detail.item;
    *      var selectedIdentities = evt.target.selectedIdentities;
    *
-   *      // To prevent the UI from proceding to add the identity to the selectedIdentities:
-   *      // Note that identityRemoved is still in selectedIdentities so that you may prevent it from being removed.
+   *      // Note that identityRemoved is not yet removed from selectedIdentities so that you may prevent it from being removed using:
    *      evt.preventDefault();
    *    };
    *
@@ -114,8 +121,7 @@ registerComponent('layer-identity-list', {
    *      var identityRemoved = evt.detail.item;
    *      var selectedIdentities = evt.target.selectedIdentities;
    *
-   *      // To prevent the UI from proceding to add the identity to the selectedIdentities:
-   *      // Note that identityRemoved is still in selectedIdentities so that you may prevent it from being removed.
+   *      // Note that identityRemoved is not yet removed from selectedIdentities so that you may prevent it from being removed using:
    *      evt.preventDefault();
    *    });
    *
@@ -124,10 +130,11 @@ registerComponent('layer-identity-list', {
    * @param {Object} evt.detail
    * @param {Layer.Core.Identity} evt.detail.item
    */
+
   /**
    * A identity selection change has occurred
    *
-   * See the {@link layer.UI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected} event for more detail.
+   * See the {@link Layer.UI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected} event for more detail.
    *
    * @property {Function} onIdentityDeselected
    * @param {Event} evt
@@ -182,7 +189,7 @@ registerComponent('layer-identity-list', {
     /**
      * Provide property to override the function used to render a name for each Identity Item.
      *
-     * Note that changing this function will not rerender the list.
+     * Note that changing this function will not rerender the list; it should be set on initializing the component.
      *
      * ```javascript
      * identitiesList.nameRenderer = function(identity) {
@@ -196,11 +203,13 @@ registerComponent('layer-identity-list', {
       type: Function,
     },
 
+    // See Layer.UI.mixins.SizeProperty.size
     size: {
       value: 'medium',
       propagateToChildren: true,
     },
 
+    // See Layer.UI.mixins.SizeProperty.supportedSizes
     supportedSizes: {
       value: ['tiny', 'small', 'medium'],
     },
@@ -216,6 +225,18 @@ registerComponent('layer-identity-list', {
       value: Core.Query.Identity,
     },
 
+    /**
+     * Provide a hash of DOM generation functions to insert custom content into.
+     *
+     * The Identity List supports the following Content Areas:
+     *
+     * * identityRowRightSide: Nodes that appear to the right of each Identity Item; defaults to rendering a checkbox
+     * * loadIndicator: Node for rendering the fact that Identities are loading
+     * * emptyNode: Node for rendering the fact that there are no Identities for this user
+     * * endOfReultsNode: Node for rendering that we have scrolled to the end of the Identities from the server
+     *
+     * @property {Object} replaceableContent
+     */
     replaceableContent: {
       value: {
         identityRowRightSide(widget) {
@@ -231,12 +252,7 @@ registerComponent('layer-identity-list', {
   },
   methods: {
 
-    /**
-     * Constructor.
-     *
-     * @method onCreate
-     * @private
-     */
+    // Lifecycle method
     onCreate() {
       if (!this.id) this.id = Util.generateUUID();
       this.properties.selectedIdentities = [];
@@ -246,9 +262,9 @@ registerComponent('layer-identity-list', {
     },
 
     /**
-     * Handle a user Selection event triggered by a layer.UI.components.IdentitiesListPanel.Item.
+     * Handle a user Selection event triggered by a Layer.UI.components.IdentitiesListPanel.Item.
      *
-     * Adds the Identity to the selectedIdentities array.
+     * Adds the Identity to Layer.UI.components.IdentitiesListPanel.List.selectedIdentities.
      *
      * @method _handleIdentitySelect
      * @private
@@ -272,9 +288,9 @@ registerComponent('layer-identity-list', {
 
 
     /**
-     * Handle a user Deselection event triggered by a layer.UI.components.IdentitiesListPanel.Item
+     * Handle a user Deselection event triggered by a Layer.UI.components.IdentitiesListPanel.Item.
      *
-     * Removes the identity from the selectedIdentities array.
+     * Removes the identity from Layer.UI.components.IdentitiesListPanel.List.selectedIdentities.
      *
      * @method _handleIdentityDeselect
      * @private
@@ -297,7 +313,7 @@ registerComponent('layer-identity-list', {
     },
 
     /**
-     * Append a layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
+     * Append a Layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
      *
      * @method _generateItem
      * @param {Layer.Core.Identity} identity
@@ -308,7 +324,7 @@ registerComponent('layer-identity-list', {
       identityWidget.item = identity;
       identityWidget.id = this._getItemId(identity.id);
       identityWidget.nameRenderer = this.nameRenderer;
-      identityWidget.selected = this.selectedIdentities.indexOf(identity) !== -1;
+      identityWidget.isSelected = this.selectedIdentities.indexOf(identity) !== -1;
       identityWidget._runFilter(this.filter);
       return identityWidget;
     },
@@ -348,10 +364,10 @@ registerComponent('layer-identity-list', {
       const selectedIds = this.selectedIdentities.map(identity => '#' + this._getItemId(identity.id));
       const nodesToSelect = this.selectedIdentities.length ? this.querySelectorAllArray(selectedIds.join(', ')) : [];
       selectedNodes.forEach((node) => {
-        if (nodesToSelect.indexOf(node) === -1) node.selected = false;
+        if (nodesToSelect.indexOf(node) === -1) node.isSelected = false;
       });
       nodesToSelect.forEach((node) => {
-        if (selectedNodes.indexOf(node) === -1) node.selected = true;
+        if (selectedNodes.indexOf(node) === -1) node.isSelected = true;
       });
     },
   },
