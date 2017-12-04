@@ -565,6 +565,7 @@ class MessagePart extends Root {
     if (part.content && this._content) {
       this._content.downloadUrl = part.content.download_url;
       this._content.expiration = new Date(part.content.expiration);
+      // TODO: May need to invalidate this.body, but need to identify the conditions where this happens
     } else {
        const textual = this.isTextualMimeType();
 

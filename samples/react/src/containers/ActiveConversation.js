@@ -392,6 +392,16 @@ export default class ActiveConversation extends Component {
           });
           model.generateMessage(conversation, message => message.send());
         }.bind(this),
+      },
+      {
+        text: 'Create Feedback Message',
+        method: function() {
+          const FeedbackModel = Layer.Core.Client.getMessageTypeModelClass('FeedbackModel');
+          const model = new FeedbackModel({
+            enabledFor: client.user.id,
+          });
+          model.generateMessage(conversation, message => message.send());
+        }.bind(this),
       }
     ];
   };

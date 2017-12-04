@@ -100,8 +100,11 @@ import './messages/product/layer-product-view';
 import './messages/models/layer-person-model';
 import './messages/models/layer-organization-model';
 
-import './messages/message-type-list/message-type-list-view';
-import './messages/message-type-list/message-type-list-model';
+import './messages/feedback/layer-feedback-view';
+import './messages/feedback/layer-feedback-expanded-view';
+import './messages/feedback/layer-feedback-model';
+
+import './messages/layer-message-viewer-expanded.js';
 
 import { animatedScrollTo, animatedScrollLeftTo } from './utils/animated-scroll';
 import MessageHandler from './mixins/message-handler';

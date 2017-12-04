@@ -27,6 +27,7 @@ class MessageTypeModel extends Root {
 
     if (!this.customData) this.customData = {};
     this.currentMessageRenderer = this.constructor.messageRenderer;
+    this.currentMessageRendererExpanded = this.constructor.messageRendererExpanded;
     this.childParts = [];
     this.initializeProperties();
     if (this.message) {
@@ -426,6 +427,7 @@ MessageTypeModel.prototype.locked = false;
 MessageTypeModel.prototype.responses = null;
 
 MessageTypeModel.prototype.currentMessageRenderer = '';
+MessageTypeModel.prototype.currentMessageRendererExpanded = '';
 
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = ['change'].concat(Root._supportedEvents);

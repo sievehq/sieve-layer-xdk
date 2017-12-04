@@ -4,8 +4,10 @@
  * @extends layer.UI.components.Component
  */
 import { registerComponent } from '../components/component';
+import Clickable from '../mixins/clickable';
 
 registerComponent('layer-titled-display-container', {
+  mixins: [Clickable],
   style: `
     layer-titled-display-container {
       display: flex;
@@ -22,11 +24,15 @@ registerComponent('layer-titled-display-container', {
     layer-titled-display-container .layer-card-title-bar-text {
       flex-grow: 1;
     }
+    layer-titled-display-container:not(.layer-show-close-button) .layer-card-title-close-button {
+      display: none;
+    }
   `,
   template: `
   <div class="layer-card-title-bar">
     <div layer-id='icon' class="layer-card-title-bar-icon"></div>
     <div layer-id='title' class="layer-card-title-bar-text"></div>
+    <div layer-id='titleButtons' class="layer-card-title-buttons"><div layer-id='close' class="layer-card-title-close-button">&times;</div></div>
   </div>
   <div layer-id='UIContainer' class='layer-card-top'></div>
   `,
@@ -53,8 +59,18 @@ registerComponent('layer-titled-display-container', {
         this.toggleClass('layer-title-icon-empty', !Boolean(icon));
       },
     },
+    isCloseButtonShowing: {
+      value: false,
+      set(value) {
+        this.toggleClass('layer-show-close-button', value);
+      },
+    },
   },
   methods: {
+    onCreate() {
+      this.addClickHandler('close-click', this.nodes.close, this.onCloseClick.bind(this));
+    },
+
     onAfterCreate() {
       this.model.on('change', this.onRerender, this);
     },
@@ -70,6 +86,10 @@ registerComponent('layer-titled-display-container', {
     onRerender() {
        this.icon = this.properties.ui.getIconClass();
        this.title = this.properties.ui.getTitle();
+    },
+
+    onCloseClick() {
+      this.parentComponent.destroy();
     },
   },
 });
