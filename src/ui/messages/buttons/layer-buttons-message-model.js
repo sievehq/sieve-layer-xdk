@@ -164,7 +164,7 @@ class ButtonsModel extends MessageTypeModel {
 
     // For Each Choice Button Set:
     choices.forEach((button) => {
-
+      if (!button.data) button.data = {};
       // We don't yet have support for updating a Choice Model if one were to change on the server.
       // Only generate the ChoiceModel if it doesn't already exist.
       // Otherwise just make sure its `responses` get updated

@@ -1,6 +1,14 @@
-TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
+// One Button
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+model = new ButtonModel({
+ buttons: [
+   {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+ ]
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
+// Two Buttons
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
    {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"},
@@ -9,37 +17,176 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
+// Custom Event Data
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
-   {"type": "action", "text": "Kill Arthur, all his friends, his horse and his dog", "event": "kill-arthur"},
-   {"type": "action", "text": "Give Holy Grail", "event": "grant-grail"}
+   {"type": "action", "text": "Kill Arthur, all his friends, his horse and his dog", "event": "open-url", data: {url: "http://docs.layer.com"}},
+   {"type": "action", "text": "Give Holy Grail", "event": "open-url", data: {url: "http://layer.com"}}
  ]
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-  ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+// One Button and Text Model
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
+model = new ButtonModel({
+  buttons: [
+    {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+  ],
+  contentModel: new TextModel({
+    title: "Text Model Title",
+    text: "Text Model Contents"
+  })
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+// Two Buttons and Text Model
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
+model = new ButtonModel({
+  buttons: [
+    {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"},
+    {"type": "action", "text": "Give Holy Grail", "event": "grant-grail"}
+  ],
+  contentModel: new TextModel({
+    title: "Text Model Title",
+    text: "Text Model Contents"
+  })
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+// open-url, open-file buttons with a Link Message
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel')
+model = new ButtonModel({
+  buttons: [
+    {"type": "action", "text": "Open Url", "event": "open-url"},
+    {"type": "action", "text": "Open File", "event": "open-file"}
+  ],
+  contentModel: new LinkModel({
+    title: "Text Model Title",
+    description: "Layer Has Docs",
+    url: "http://docs.layer.com"
+  })
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+
+// One Choice Button set and one Regular Button
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
-   {"type": "choice", "choices": [{"text": "like", "id": "like", "tooltip": "like"}, {"text": "dislike", "id": "dislike", "tooltip": "dislike"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
-   {"type": "action", "text": "do nothing"},
-   {"type": "choice", "choices": [{"text": "helpful", "id": "helpful", "tooltip": "helpful"}, {"text": "unhelpful", "id": "unhelpful", "tooltip": "unhelpful"}], "data": {"responseName": "helpfulness", allowReslect: true}},
+   {"type": "action", "text": "open layer", event: 'open-url', data: {url: 'https://layer.com'}},
+   {"type": "choice", "choices": [
+     {"text": "like", "id": "like", "tooltip": "like"},
+     {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
+    ]}
  ]
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-  ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+// 3 button choice set with emoji characters
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+model = new ButtonModel({
+ buttons: [{
+   "type": "choice",
+   "choices": [
+     {"text": "\uD83D\uDC4D", "id": "like"},
+     {"text": "\uD83D\uDC4E", "id": "dislike"},
+     {"text": "\ud83d\udc4c", "id": "ok"},
+    ],
+  }
+ ]
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+
+// Choice Button custom responseName
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
-   {"type": "choice", "choices": [{"text": "like", "id": "like", "tooltip": "like"}, {"text": "dislike", "id": "dislike", "tooltip": "dislike"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true, enabledFor: $("layer-conversation-view").conversation.participants.filter(user => user !== client.user).map(user => user.id)}},
-   {"type": "action", "text": "do nothing"},
-   {"type": "choice", "choices": [{"text": "helpful", "id": "helpful", "tooltip": "helpful"}, {"text": "unhelpful", "id": "unhelpful", "tooltip": "unhelpful"}], "data": {"responseName": "helpfulness", allowReslect: true}},
+   {"type": "action", "text": "open layer", event: 'open-url', data: {url: 'https://layer.com'}},
+   {"type": "choice", "choices": [
+     {"text": "like", "id": "like", "tooltip": "like"},
+     {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
+    ], data: {responseName: "satisfaction"}}
+ ]
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+// Choice Buttons with allowReselect
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+model = new ButtonModel({
+ buttons: [
+   {"type": "action", "text": "open layer", event: 'open-url', data: {url: 'https://layer.com'}},
+   {"type": "choice", "choices": [
+     {"text": "like", "id": "like", "tooltip": "like"},
+     {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
+    ], "data": {allowReselect: true}}
+ ]
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+// Choice Buttons with allowReselect with preselectedChoice
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+model = new ButtonModel({
+ buttons: [
+   {"type": "action", "text": "open layer", event: 'open-url', data: {url: 'https://layer.com'}},
+   {"type": "choice", "choices": [
+     {"text": "like", "id": "like", "tooltip": "like"},
+     {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
+    ], "data": {preselectedChoice: 'dislike', allowReselect: true}}
+ ]
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+// Choice Buttons with allowDeselect
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+model = new ButtonModel({
+ buttons: [
+   {"type": "action", "text": "open layer", event: 'open-url', data: {url: 'https://layer.com'}},
+   {"type": "choice", "choices": [
+     {"text": "like", "id": "like", "tooltip": "like"},
+     {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
+    ], "data": {allowDeselect: true}}
+ ]
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+// Choice Buttons with allowMultiselect
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+model = new ButtonModel({
+ buttons: [
+   {"type": "action", "text": "open layer", event: 'open-url', data: {url: 'https://layer.com'}},
+   {"type": "choice", "choices": [
+     {"text": "like", "id": "like", "tooltip": "like"},
+     {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
+    ], "data": {allowMultiselect: true}}
+ ]
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+// Multiple Choice Sets
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+model = new ButtonModel({
+ buttons: [
+   {"type": "action", "text": "open layer", event: 'open-url', data: {url: 'https://layer.com'}},
+   {"type": "choice", "choices": [
+     {"text": "like", "id": "like", "tooltip": "like"},
+     {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
+    ], "data": {"responseName": "satisfaction", allowReselect: true}},
+  {"type": "choice", "choices": [
+    {"text": "like 2", "id": "like", "tooltip": "like"},
+    {"text": "dislike 2", "id": "dislike", "tooltip": "dislike"}
+    ], "data": {"responseName": "satisfaction2", allowReselect: true}}
  ]
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
 
-
+// Product Demo
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
@@ -160,30 +307,5 @@ model = new ButtonModel({
    name: "A pretty picture",
    imageUrls: [ "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg" ],
  })
-});
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
-
-
-
-model = new ButtonModel({
- buttons: [
-   {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"},
-   {"type": "action", "text": "Give Holy Grail", "event": "grant-grail"}
- ],
- contentModel: new TextModel({
-   text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
-   title: 'The Holy Hand Grenade',
-   author: 'King Arthur'
- })
-});
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
-
-
-
-model = new ButtonModel({
-buttons: [
- {"type": "url", "text": "Open Layer", "url": "https://layer.com"},
- {"type": "action", "text": "Give Holy Grail", "event": "grant-grail"}
-]
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());

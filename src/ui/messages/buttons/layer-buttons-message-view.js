@@ -105,7 +105,7 @@ registerComponent('layer-buttons-message-view', {
           case 'choice':
             // Generate a Choice Button (which will generate a set of its own buttons) and pass it
             // the model representing the Choice.
-            model = this.model.choices[button.data.responseName || 'selected'];
+            model = this.model.choices[button.data.responseName || 'selection'];
             if (model) {
               widget = this.createElement('layer-choice-button', {
                 model,
