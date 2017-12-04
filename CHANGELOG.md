@@ -1,6 +1,10 @@
 # Web XDK Change Log
 
-# 1.0.0-pre1.14
+## 1.0.0-pre1.15
+
+* Adds the Feedback Message Type
+
+## 1.0.0-pre1.14
 
 * Fixes bug in Message Grouping where Status Messages are treated as part of the grouping
 * Adds a `filter` callback to `Layer.Core.Query` and a `filterMessages` property to the `ConversationView`: ```
