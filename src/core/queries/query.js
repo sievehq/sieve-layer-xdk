@@ -9,12 +9,10 @@
  *
  *      // 2. Passing properties directly
  *      var conversationQuery = client.createQuery({
- *        client: client,
  *        model: layer.Core.Query.Conversation,
  *        sortBy: [{'createdAt': 'desc'}]
  *      });
  *      var channelQuery = client.createQuery({
- *        client: client,
  *        model: layer.Core.Query.Channel
  *      });
  *

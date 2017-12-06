@@ -61,6 +61,9 @@ layer-message-viewer.layer-feedback-view {
   &.layer-feedback-enabled .layer-card-top {
     color: @color-darkblue;
     background-color: white;
+    span:hover {
+      color: darken(@color-darkblue, 12%);
+    }
   }
 
   &:not(.layer-feedback-enabled) .layer-card-top {
@@ -76,16 +79,23 @@ layer-feedback-expanded-view {
     .layer-feedback-view-ratings {
       color: @color-darkblue;
       background-color: white;
+      span:hover {
+        color: darken(@color-darkblue, 12%);
+      }
     }
   }
 
   &:not(.layer-feedback-enabled) {
     .layer-feedback-view-ratings {
       color: @color-role-font-standard;
-      background-color: @color-g4;
+      background-color: @color-g2;
     }
     .layer-feedback-view-comment {
-      background-color: @color-g4;
+      background-color: @color-g2;
+
+      &:empty {
+        display: none;
+      }
     }
   }
 
@@ -119,6 +129,11 @@ layer-feedback-expanded-view {
       border-radius: 4px;
       background-color: @card-button-selected-background;
       color: @card-button-selected-text;
+
+      &:hover:not(:disabled) {
+        background-color: darken(@card-button-selected-background, 5%);
+        color: @card-button-selected-text;
+      }
     }
   }
 }

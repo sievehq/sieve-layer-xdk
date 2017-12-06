@@ -32,7 +32,7 @@ registerComponent('layer-feedback-view', {
   methods: {
 
     getIconClass() {
-      return 'layer-poll-view-icon';
+      return 'layer-feedback-view-icon';
     },
     getTitle() {
       return this.model.title;
@@ -48,23 +48,23 @@ registerComponent('layer-feedback-view', {
       this.messageViewer.toggleClass('layer-feedback-enabled', this.model.isEditable());
       let text = '';
       for (let i = 1; i <= 5; i++) {
-        text += '<span>' + ((i  <= rating) ? '\u2605' : '\u2606') + '</span>';
+        text += '<span>' + ((i <= rating) ? '\u2605' : '\u2606') + '</span>';
       }
       this.innerHTML = text;
     },
 
     _onClick(evt) {
       if (!this.model.isEditable()) return;
-      var target = evt.target;
+      let target = evt.target;
       if (target.tagName !== 'SPAN') target = target.parentNode;
       if (target.tagName === 'SPAN') {
-        var spans = Array.prototype.slice.call(this.childNodes);
-        var index = spans.indexOf(target);
+        const spans = Array.prototype.slice.call(this.childNodes);
+        const index = spans.indexOf(target);
         if (index !== -1) {
           this.model.rating = index + 1;
         }
       }
-    }
+    },
   },
 });
 

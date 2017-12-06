@@ -38,7 +38,9 @@ layer-titled-display-container {
     margin-right: 8px;
   }
   .layer-card-title-bar-text {
-    font-size: 1rem;
+    color: @color-black;
+    font-size: @font-medium;
+    font-weight: normal;
   }
 
   .layer-card-title-buttons {
@@ -48,6 +50,9 @@ layer-titled-display-container {
     .layer-card-title-close-button {
       cursor: pointer;
       font-size: 30px;
+      &:hover {
+        font-weight: bold;
+      }
     }
   }
 }

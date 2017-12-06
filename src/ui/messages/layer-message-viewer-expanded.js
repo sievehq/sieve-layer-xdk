@@ -6,8 +6,11 @@
  * @extends Layer.UI.components.Component
  */
 import { registerComponent } from '../components/component';
+import Clickable from '../mixins/clickable';
+
 
 registerComponent('layer-message-viewer-expanded', {
+  mixins: [Clickable],
   style: `layer-message-viewer-expanded {
     position: absolute;
     width: 100%;
@@ -35,9 +38,32 @@ registerComponent('layer-message-viewer-expanded', {
   template: '<div class="layer-message-viewer-expanded-inner" layer-id="inner"></div>',
 
   properties: {
-    model: {}
+    model: {},
   },
   methods: {
+    onCreate() {
+      this.addClickHandler('dialog-click', this, this.onClick.bind(this));
+    },
+    onAfterCreate() {
+      if (this.parentComponent) {
+        this.properties.onConversationClose = this.onClose.bind(this);
+        this.properties.parentComponentCached = this.parentComponent;
+        this.parentComponent.addEventListener('layer-conversation-panel-change', this.properties.onConversationClose);
+      }
+    },
+    onClick(evt) {
+      if (evt.target === this) this.onClose();
+    },
+    onDestroy() {
+      if (this.properties.onConversationClose) {
+        delete this.properties.parentComponentCached;
+        delete this.properties.onConversationClose;
+      }
+    },
+    onClose() {
+      this.properties.parentComponentCached.removeEventListener('layer-conversation-panel-change', this.properties.onConversationClose);
+      this.destroy();
+    },
     onRender() {
       const cardUIType = this.model.currentMessageRendererExpanded;
       this.classList.add(cardUIType);

@@ -111,8 +111,6 @@ class MessagePart extends Root {
     if (!this.mimeAttributes) this.mimeAttributes = {};
     this.mimeType = this._moveMimeTypeToAttributes(this.mimeType);
 
-    if (!this.size && this.body) this.size = this.body.length;
-
     // Don't expose encoding; blobify it if its encoded.
     if (options.encoding === 'base64') {
       this.body = Util.base64ToBlob(this.body, this.mimeType);
@@ -133,6 +131,8 @@ class MessagePart extends Root {
 
     if (this._content) {
       this.size = this._content.size;
+    } else if (!this.size && this.body) {
+      this.size = Util.isBlob(this.body) ? this.body.size : this.body.length;
     }
 
     // If our textual content is a blob, turning it into text is asychronous, and can't be done in the synchronous constructor
@@ -425,8 +425,8 @@ class MessagePart extends Root {
    */
   _sendBlob(client) {
     /* istanbul ignore else */
-    Util.blobToBase64(this.body, (base64data) => {
-      if (base64data.length < 2048) {
+    if (this.body.size < 2048) {
+      Util.blobToBase64(this.body, (base64data) => {
         const body = base64data.substring(base64data.indexOf(',') + 1);
         const obj = {
           body,
@@ -435,10 +435,10 @@ class MessagePart extends Root {
         };
         obj.encoding = 'base64';
         this.trigger('parts:send', obj);
-      } else {
-        this._generateContentAndSend(client);
-      }
-    });
+      });
+    } else {
+      this._generateContentAndSend(client);
+    }
   }
 
   /**

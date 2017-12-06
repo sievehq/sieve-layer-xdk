@@ -36,6 +36,7 @@ class FeedbackModel extends MessageTypeModel {
     const rating = this.rating;
     const comment = this.comment;
     super._parseMessage(payload);
+
     if (this.responses) {
       this._processNewResponses();
     }
@@ -53,7 +54,7 @@ class FeedbackModel extends MessageTypeModel {
   sendFeedback() {
     if (this.getClient().user.id !== this.enabledFor) return;
 
-    var responseText = `${this.getClient().user.displayName} rated the experience ${this.rating} stars`;
+    const responseText = this.getSummary(this.responseMessage, false);
     this.sentAt = new Date();
 
     const participantData = {
@@ -95,12 +96,16 @@ class FeedbackModel extends MessageTypeModel {
     return this.title;
   }
 
-  getSummary() {
-    return this.summary.replace(/(\$\{.*?\})/g, (match) => {
+  getSummary(template, useYou) {
+    return template.replace(/(\$\{.*?\})/g, (match) => {
       const key = match.substring(2, match.length - 1);
-      switch(key) {
-        case 'sender':
-          return (this.getClient().user.id === this.enabledFor) ? 'You' : this.getClient().getIdentity(this.enabledFor).displayName;
+      switch (key) {
+        case 'customer':
+          if (useYou && this.getClient().user.id === this.enabledFor) {
+            return 'You';
+          } else {
+            return this.getClient().getIdentity(this.enabledFor).displayName || FeedbackModel.anonymousUserName;
+          }
         default:
           return this[key];
       }
@@ -108,17 +113,20 @@ class FeedbackModel extends MessageTypeModel {
   }
 }
 
-
 FeedbackModel.prototype.title = 'Experience Rating';
 FeedbackModel.prototype.prompt = 'Rate your experience 1-5 stars';
-FeedbackModel.prototype.summary = '${sender} rated the experience ${rating} stars';
+FeedbackModel.prototype.promptWait = 'Waiting for Feedback';
+FeedbackModel.prototype.summary = '${customer} rated the experience ${rating} stars';
+FeedbackModel.prototype.responseMessage = '${customer} rated the experience ${rating} stars';
 FeedbackModel.prototype.placeholder = 'Add a comment...';
 FeedbackModel.prototype.enabledFor = '';
 FeedbackModel.prototype.customResponseData = null;
 FeedbackModel.prototype.rating = 0;
 FeedbackModel.prototype.comment = '';
 FeedbackModel.prototype.sentAt = null;
+FeedbackModel.prototype.customer = '';
 
+FeedbackModel.anonymousUserName = 'Customer';
 FeedbackModel.Label = 'Feedback Request';
 FeedbackModel.defaultAction = 'layer-model-expanded-view';
 FeedbackModel.messageRenderer = 'layer-feedback-view';
@@ -133,15 +141,17 @@ Client.registerMessageTypeModelClass(FeedbackModel, 'FeedbackModel');
 module.exports = FeedbackModel;
 
 registerMessageActionHandler('layer-model-expanded-view', function openExpandedViewHandler(customData) {
-  var dialog = document.createElement('layer-message-viewer-expanded');
+  const dialog = document.createElement('layer-message-viewer-expanded');
   dialog.model = this.model;
-
   let node = this;
-  while (node.parentNode) {
+  while (node && node.tagName !== 'BODY' && node.tagName !== 'LAYER-CONVERSATION-VIEW') {
     node = node.parentNode;
-    if (node.parentNode.tagName === 'BODY' || node.parentNode.tagName === 'LAYER-CONVERSATION-VIEW') break;
   }
-
-  node.appendChild(dialog);
+  if (node.tagName === 'LAYER-CONVERSATION-VIEW') {
+    dialog.parentComponent = node;
+  }
+  if (node.tagName === 'BODY' || node.tagName === 'LAYER-CONVERSATION-VIEW') {
+    node.appendChild(dialog);
+  }
 });
 

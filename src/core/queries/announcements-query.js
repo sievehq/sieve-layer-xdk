@@ -2,7 +2,6 @@
  * Query class for running a Query on Announcements
  *
  *      var announcementQuery = client.createQuery({
- *        client: client,
  *        model: layer.Core.Query.Announcement
  *      });
  *

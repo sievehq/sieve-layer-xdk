@@ -2,7 +2,6 @@
  * Query class for running a Query on Channel Members
  *
  *      var membersQuery = client.createQuery({
- *        client: client,
  *        model: layer.Core.Query.Membership,
  *        predicate: 'channel.id = "layer:///channels/UUID"'
  *      });

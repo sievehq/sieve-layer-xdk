@@ -2,7 +2,6 @@
  * Query class for running a Query on Channels
  *
  *      var channelQuery = client.createQuery({
- *        client: client,
  *        model: layer.Core.Query.Channel
  *      });
  *

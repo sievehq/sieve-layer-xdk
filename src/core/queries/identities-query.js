@@ -2,7 +2,6 @@
  * Query class for running a Query on Identities
  *
  *      var identityQuery = client.createQuery({
- *        client: client,
  *        model: layer.Core.Query.Identity
  *      });
  *
