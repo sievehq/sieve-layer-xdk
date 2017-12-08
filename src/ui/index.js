@@ -36,13 +36,12 @@ import './components/layer-presence/layer-presence';
 import './components/layer-file-upload-button/layer-file-upload-button';
 import './components/layer-send-button/layer-send-button';
 import './handlers/message/layer-message-viewer';
-import './handlers/message/layer-message-video';
+import './messages/layer-message-viewer-expanded.js';
+
 import './handlers/text/autolinker';
 import './handlers/text/code-blocks';
 import './handlers/text/emoji';
-import './handlers/text/images';
 import './handlers/text/newline';
-import './handlers/text/youtube';
 import './utils/date-separator';
 
 // Load standard cards
@@ -104,8 +103,6 @@ import './messages/models/layer-organization-model';
 import './messages/feedback/layer-feedback-view';
 import './messages/feedback/layer-feedback-expanded-view';
 import './messages/feedback/layer-feedback-model';
-
-import './messages/layer-message-viewer-expanded.js';
 
 import { animatedScrollTo, animatedScrollLeftTo } from './utils/animated-scroll';
 import MessageHandler from './mixins/message-handler';

@@ -37,7 +37,7 @@ render(
   document.getElementById('root')
 );
 
-// Mobile safari hack to prevent the location bar from covering part of the UI, and causing the entire UI to scroll up/down
+// Mobile browser hack to prevent the location bar from covering part of the UI, and causing the entire UI to scroll up/down
 // on occasion
 
 if (navigator.userAgent.match(/android/i) || navigator.platform === 'iPhone' || navigator.platform === 'iPad') {

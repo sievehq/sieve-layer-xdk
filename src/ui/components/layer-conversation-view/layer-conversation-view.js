@@ -745,6 +745,8 @@ registerComponent('layer-conversation-view', {
        * });
        * ```
        *
+       * This event is **not** cancelable.
+       *
        * @event layer-conversation-panel-change
        * @param {Event} evt
        * @param {Object} evt.detail
