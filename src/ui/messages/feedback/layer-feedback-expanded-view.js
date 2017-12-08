@@ -41,7 +41,7 @@ registerComponent('layer-feedback-expanded-view', {
   template: `
     <div class='layer-feedback-view-label' layer-id='label'></div>
     <div class='layer-feedback-view-ratings' layer-id='ratings'></div>
-    <textarea maxlength='1500' class='layer-feedback-view-input' layer-id='input' placeholder='Add a comment...'></textarea>
+    <textarea class='layer-feedback-view-input' layer-id='input' placeholder='Add a comment...'></textarea>
     <div class='layer-feedback-view-comment' layer-id='comment'></div>
     <layer-action-button layer-id='button' text='Send'></layer-action-button>
   `,
