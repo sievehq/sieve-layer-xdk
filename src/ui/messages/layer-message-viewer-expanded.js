@@ -73,8 +73,13 @@ registerComponent('layer-message-viewer-expanded', {
         delete this.properties.onConversationClose;
       }
     },
+    destroy: {
+      mode: registerComponent.MODES.BEFORE,
+      value() {
+        this.properties.parentComponentCached.removeEventListener('layer-conversation-panel-change', this.properties.onConversationClose);
+      },
+    },
     onClose() {
-      this.properties.parentComponentCached.removeEventListener('layer-conversation-panel-change', this.properties.onConversationClose);
       this.destroy();
     },
     onTouchMove(evt) {
@@ -115,7 +120,7 @@ registerComponent('layer-message-viewer-expanded', {
       CustomElements.takeRecords();
       if (this.nodes.cardContainer) this.nodes.cardContainer._onAfterCreate();
       if (cardUI._onAfterCreate) cardUI._onAfterCreate();
-      if (this.nodes.cardContainer) cardUI.setupContainerClasses();
+      if (this.nodes.cardContainer) cardUI._setupContainerClasses();
     }
   }
 });

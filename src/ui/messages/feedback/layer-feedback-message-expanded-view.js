@@ -9,7 +9,7 @@
  */
 import { registerComponent } from '../../components/component';
 import { statusMimeTypes } from '../../base';
-import FeedbackModel from './layer-feedback-model';
+import FeedbackModel from './layer-feedback-message-model';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
 
@@ -36,40 +36,40 @@ function getUTF8Length(s) {
 }
 
 
-registerComponent('layer-feedback-expanded-view', {
+registerComponent('layer-feedback-message-expanded-view', {
   mixins: [MessageViewMixin, Clickable],
   template: `
-    <div class='layer-feedback-view-label' layer-id='label'></div>
-    <div class='layer-feedback-view-ratings' layer-id='ratings'></div>
-    <textarea class='layer-feedback-view-input' layer-id='input' placeholder='Add a comment...'></textarea>
-    <div class='layer-feedback-view-comment' layer-id='comment'></div>
+    <div class='layer-feedback-message-view-label' layer-id='label'></div>
+    <div class='layer-feedback-message-view-ratings' layer-id='ratings'></div>
+    <textarea class='layer-feedback-message-view-input' layer-id='input' placeholder='Add a comment...'></textarea>
+    <div class='layer-feedback-message-view-comment' layer-id='comment'></div>
     <layer-action-button layer-id='button' text='Send'></layer-action-button>
   `,
   style: `
-  layer-feedback-expanded-view {
+  layer-feedback-message-expanded-view {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     height: 100%;
     overflow-y: auto;
   }
-  layer-feedback-expanded-view .layer-feedback-view-input {
+  layer-feedback-message-expanded-view .layer-feedback-message-view-input {
     flex-grow: 1;
   }
-  layer-feedback-expanded-view:not(.layer-feedback-enabled) layer-action-button {
+  layer-feedback-message-expanded-view:not(.layer-feedback-enabled) layer-action-button {
     display: none;
   }
-  layer-feedback-expanded-view:not(.layer-feedback-enabled) .layer-feedback-view-input {
+  layer-feedback-message-expanded-view:not(.layer-feedback-enabled) .layer-feedback-message-view-input {
     display: none;
   }
-  layer-feedback-expanded-view.layer-feedback-enabled .layer-feedback-view-comment {
+  layer-feedback-message-expanded-view.layer-feedback-enabled .layer-feedback-message-view-comment {
     display: none;
   }
   `,
   properties: {
     messageViewContainerTagName: {
       noGetterFromSetter: true,
-      value: 'layer-dialog-display-container',
+      value: 'layer-dialog-message-view-container',
     },
     widthType: {
       value: 'flex-width',
@@ -80,10 +80,10 @@ registerComponent('layer-feedback-expanded-view', {
   },
   methods: {
 
-    getIconClass() {
+    _getIconClass() {
       return 'layer-feedback-view-icon';
     },
-    getTitle() {
+    _getTitle() {
       return this.model.title;
     },
 

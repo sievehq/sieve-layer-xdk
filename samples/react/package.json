@@ -6,10 +6,10 @@
     "start": "node devServer.js",
     "develop": "rm -rf node_modules/@layerhq;mkdir node_modules/@layerhq; ln -s ../../../.. node_modules/@layerhq/web-xdk;node devServer.js",
     "build": "webpack --config webpack.config.js",
-    "aws:html": "aws s3 cp index.html s3://static.layer.com/feedback/index.html",
-    "aws:build": "aws s3 cp bundle.js s3://static.layer.com/feedback/bundle.js",
-    "aws:common": "aws s3 cp common s3://static.layer.com/feedback/common --recursive",
-    "aws:layer-ui-web-theme": "aws s3 cp node_modules/@layerhq/web-xdk/themes/build/layer-basic-blue.css s3://static.layer.com/feedback/node_modules/@layerhq/web-xdk/themes/build/layer-basic-blue.css",
+    "aws:html": "aws s3 cp index.html s3://static.layer.com/carddemo/index.html",
+    "aws:build": "aws s3 cp bundle.js s3://static.layer.com/carddemo/bundle.js",
+    "aws:common": "aws s3 cp common s3://static.layer.com/carddemo/common --recursive",
+    "aws:layer-ui-web-theme": "aws s3 cp node_modules/@layerhq/web-xdk/themes/build/layer-basic-blue.css s3://static.layer.com/carddemo/node_modules/@layerhq/web-xdk/themes/build/layer-basic-blue.css",
     "release": "npm run build; npm run aws:html; npm run aws:build; npm run aws:common; npm run aws:layer-ui-web-theme"
   },
   "dependencies": {

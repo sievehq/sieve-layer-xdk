@@ -6,33 +6,33 @@
 import { registerComponent } from '../components/component';
 import Clickable from '../mixins/clickable';
 
-registerComponent('layer-dialog-display-container', {
+registerComponent('layer-dialog-message-view-container', {
   mixins: [Clickable],
   style: `
-    layer-dialog-display-container {
+    layer-dialog-message-view-container {
       display: flex;
       flex-direction: column;
       align-items: stretch;
     }
-    layer-dialog-display-container.layer-title-icon-empty .layer-card-title-bar-icon {
+    layer-dialog-message-view-container.layer-title-icon-empty .layer-card-title-bar-icon {
       display: none;
     }
-    layer-dialog-display-container .layer-card-title-bar {
+    layer-dialog-message-view-container .layer-card-title-bar {
       display: flex;
       flex-direction: row;
     }
-    layer-dialog-display-container .layer-card-title-bar-text {
+    layer-dialog-message-view-container .layer-card-title-bar-text {
       flex-grow: 1;
     }
-    layer-dialog-display-container:not(.layer-show-close-button) .layer-card-title-close-button {
+    layer-dialog-message-view-container:not(.layer-show-close-button) .layer-card-title-close-button {
       display: none;
     }
-    layer-dialog-display-container .layer-card-top {
+    layer-dialog-message-view-container .layer-card-top {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
     }
-    layer-dialog-display-container .layer-card-top > * {
+    layer-dialog-message-view-container .layer-card-top > * {
       flex-grow: 1;
     }
   `,
@@ -92,8 +92,8 @@ registerComponent('layer-dialog-display-container', {
     },
 
     onRerender() {
-       this.icon = this.properties.ui.getIconClass();
-       this.title = this.properties.ui.getTitle();
+      this.icon = this.properties.ui._getIconClass();
+      this.title = this.properties.ui._getTitle();
     },
 
     onCloseClick() {

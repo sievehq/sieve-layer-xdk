@@ -61,9 +61,9 @@ import './messages/choice/layer-choice-tiles-message-view';
 import './messages/choice/layer-choice-label-message-view';
 
 
-import './messages/layer-standard-view-container';
-import './messages/layer-titled-view-container';
-import './messages/layer-dialog-view-container';
+import './messages/layer-standard-message-view-container';
+import './messages/layer-titled-message-view-container';
+import './messages/layer-dialog-message-view-container';
 
 //import './messages/layer-list-item-container';
 import './messages/text/layer-text-message-view';
@@ -99,10 +99,11 @@ import './messages/product/layer-product-message-view';
 import './messages/models/layer-person-model';
 import './messages/models/layer-organization-model';
 
-import './messages/feedback/layer-feedback-view';
-import './messages/feedback/layer-feedback-expanded-view';
-import './messages/feedback/layer-feedback-model';
+import './messages/feedback/layer-feedback-message-view';
+import './messages/feedback/layer-feedback-message-expanded-view';
+import './messages/feedback/layer-feedback-message-model';
 
+import './message-actions/open-expanded-view-action';
 import './message-actions/open-url-action';
 import './message-actions/open-file-action';
 import './message-actions/open-map-action';

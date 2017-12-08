@@ -659,15 +659,15 @@ class MessageTypeModel extends Root {
     return this.part ? this.part.parentId : this.__parentId;
   }
 
-  __getSender() {
+  __getMessageSender() {
     return this.message ? this.message.sender : null;
   }
 
-  __getSentAt() {
+  __getMessageSentAt() {
     return this.message ? this.message.sentAt : null;
   }
 
-  __getRecipientStatus() {
+  __getMessageRecipientStatus() {
     return this.message ? this.message.recipientStatus : null;
   }
 
@@ -869,9 +869,9 @@ MessageTypeModel.prototype.currentMessageRendererExpanded = '';
 /**
  * Sender of the Message Model
  *
- * @property {Layer.Core.Identity} sender
+ * @property {Layer.Core.Identity} messageSender
  */
-MessageTypeModel.prototype.sender = null;
+MessageTypeModel.prototype.messageSender = null;
 
 /**
  * Time the Message was sent.
@@ -881,9 +881,9 @@ MessageTypeModel.prototype.sender = null;
  * to account for `null` values.  Sending the Message may cause a slight change
  * in the `sentAt` value.
  *
- * @property {Date} sentAt
+ * @property {Date} messageSentAt
  */
-MessageTypeModel.prototype.sender = null;
+MessageTypeModel.prototype.messageSentAt = null;
 
 /**
  * Read/delivery State of all participants.
@@ -898,7 +898,7 @@ MessageTypeModel.prototype.sender = null;
  *
  * @type {Object}
  */
-MessageTypeModel.prototype.recipientStatus = null;
+MessageTypeModel.prototype.messageRecipientStatus = null;
 
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = ['change'].concat(Root._supportedEvents);

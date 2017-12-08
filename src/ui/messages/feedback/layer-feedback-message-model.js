@@ -21,7 +21,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
-import ResponseModel from '../response/layer-response-model';
+import ResponseModel from '../response/layer-response-message-model';
 import { registerMessageActionHandler } from '../../base';
 
 class FeedbackModel extends MessageTypeModel {
@@ -135,9 +135,9 @@ FeedbackModel.prototype.customer = '';
 
 FeedbackModel.anonymousUserName = 'Customer';
 FeedbackModel.Label = 'Feedback Request';
-FeedbackModel.defaultAction = 'layer-model-expanded-view';
-FeedbackModel.messageRenderer = 'layer-feedback-view';
-FeedbackModel.messageRendererExpanded = 'layer-feedback-expanded-view';
+FeedbackModel.defaultAction = 'layer-open-expanded-view';
+FeedbackModel.messageRenderer = 'layer-feedback-message-view';
+FeedbackModel.messageRendererExpanded = 'layer-feedback-message-expanded-view';
 FeedbackModel.MIMEType = 'application/vnd.layer.feedback+json';
 
 Root.initClass.apply(FeedbackModel, [FeedbackModel, 'FeedbackModel']);
@@ -147,18 +147,4 @@ Client.registerMessageTypeModelClass(FeedbackModel, 'FeedbackModel');
 
 module.exports = FeedbackModel;
 
-registerMessageActionHandler('layer-model-expanded-view', function openExpandedViewHandler(customData) {
-  const dialog = document.createElement('layer-message-viewer-expanded');
-  dialog.model = this.model;
-  let node = this;
-  while (node && node.tagName !== 'BODY' && node.tagName !== 'LAYER-CONVERSATION-VIEW') {
-    node = node.parentNode;
-  }
-  if (node.tagName === 'LAYER-CONVERSATION-VIEW') {
-    dialog.parentComponent = node;
-  }
-  if (node.tagName === 'BODY' || node.tagName === 'LAYER-CONVERSATION-VIEW') {
-    node.appendChild(dialog);
-  }
-});
 

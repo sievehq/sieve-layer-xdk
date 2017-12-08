@@ -9,15 +9,15 @@
  */
 import { registerComponent } from '../../components/component';
 import { statusMimeTypes } from '../../base';
-import FeedbackModel from './layer-feedback-model';
+import FeedbackModel from './layer-feedback-message-model';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
 
-registerComponent('layer-feedback-view', {
+registerComponent('layer-feedback-message-view', {
   mixins: [MessageViewMixin, Clickable],
 
   style: `
-  layer-feedback-view {
+  layer-feedback-message-view {
     display: flex;
     flex-direction: row;
   }
@@ -25,7 +25,7 @@ registerComponent('layer-feedback-view', {
   properties: {
     messageViewContainerTagName: {
       noGetterFromSetter: true,
-      value: 'layer-titled-display-container',
+      value: 'layer-titled-message-view-container',
     },
     widthType: {
       value: 'flex-width',
@@ -33,16 +33,16 @@ registerComponent('layer-feedback-view', {
   },
   methods: {
 
-    getIconClass() {
+    _getIconClass() {
       return 'layer-feedback-view-icon';
     },
-    getTitle() {
+    _getTitle() {
       return this.model.title;
     },
 
     onCreate() {
       this.addClickHandler('pre-rating', this, this._onClick.bind(this));
-      this.classList.add('layer-feedback-view-ratings');
+      this.classList.add('layer-feedback-message-view-ratings');
     },
 
     onRerender() {

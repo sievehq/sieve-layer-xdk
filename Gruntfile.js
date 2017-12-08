@@ -420,7 +420,12 @@ module.exports = function (grunt) {
       fileGroup.src.forEach(function(file, index) {
         files.push(file);
         // TODO: Generalize this to not only work with lib-es6
-        convert(file, file.replace(/^lib-es6/, fileGroup.dest));
+        try {
+          convert(file, file.replace(/^lib-es6/, fileGroup.dest));
+        } catch(e) {
+          console.error('Failed to convert ' + file + ' to babel');
+          throw(e);
+        }
       });
     });
   });
