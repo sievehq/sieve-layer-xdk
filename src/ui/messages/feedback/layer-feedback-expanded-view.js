@@ -67,7 +67,7 @@ registerComponent('layer-feedback-expanded-view', {
   properties: {
     messageViewContainerTagName: {
       noGetterFromSetter: true,
-      value: 'layer-titled-display-container',
+      value: 'layer-dialog-display-container',
     },
     widthType: {
       value: 'flex-width',

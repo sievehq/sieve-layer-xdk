@@ -3,8 +3,11 @@
   model = new FeedbackModel({
     title: "Experience Rooting", // Optional, defaults to Experience Rating
     prompt: "Rate your experiment 1-5 beakers", // Optional, defaults to Rate your experience 1-5 stars
+    promptWait: "Waiting for more Beakers",
+    summary: "${rating} stars",
+    responseMessage: "Rated ${rating} beakers by ${customer}",
     placeholder: "Tell us that you love us", // Optional, defaults to "Add a comment..."
-    enabledFor: "layer:///identities/user_id",
+    enabledFor: ["layer:///identities/user_id"], // Only a single Identity is supported
     customResponseData: {hey: "ho"},
    });
    model.generateMessage($("layer-conversation-view").conversation, message => message.send())
@@ -16,14 +19,15 @@
  */
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
 import ResponseModel from '../response/layer-response-model';
-import { ErrorDictionary } from '../../../core/layer-error';
 import { registerMessageActionHandler } from '../../base';
 
 class FeedbackModel extends MessageTypeModel {
   _generateParts(callback) {
     const body = this._initBodyWithMetadata([
-      'title', 'prompt', 'placeholder', 'enabledFor', 'customResponseData',
+      'title', 'prompt', 'placeholder', 'customResponseData',
     ]);
+    if (this.enabledFor && this.enabledFor.length) body.enabled_for = this.enabledFor;
+
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
       body: JSON.stringify(body),
@@ -47,12 +51,12 @@ class FeedbackModel extends MessageTypeModel {
 
   isEditable() {
     if (this.sentAt) return false;
-    if (this.getClient().user.id !== this.enabledFor) return false;
+    if (this.enabledFor[0] !== this.getClient().user.id) return false;
     return true;
   }
 
   sendFeedback() {
-    if (this.getClient().user.id !== this.enabledFor) return;
+    if (this.enabledFor[0] !== this.getClient().user.id) return;
 
     const responseText = this.getSummary(this.responseMessage, false);
     this.sentAt = new Date();
@@ -84,7 +88,7 @@ class FeedbackModel extends MessageTypeModel {
   }
 
   _processNewResponses() {
-    const data = this.responses.participantData[this.enabledFor.substring('layer:///identities/'.length)];
+    const data = this.responses.participantData[this.enabledFor[0].substring('layer:///identities/'.length)];
     if (data.rating) {
       this.rating = data.rating;
       this.comment = data.comment;
@@ -101,10 +105,10 @@ class FeedbackModel extends MessageTypeModel {
       const key = match.substring(2, match.length - 1);
       switch (key) {
         case 'customer':
-          if (useYou && this.getClient().user.id === this.enabledFor) {
+          if (useYou && this.enabledFor[0] === this.getClient().user.userId) {
             return 'You';
           } else {
-            return this.getClient().getIdentity(this.enabledFor).displayName || FeedbackModel.anonymousUserName;
+            return this.getClient().getIdentity(this.enabledFor[0]).displayName || FeedbackModel.anonymousUserName;
           }
         default:
           return this[key];

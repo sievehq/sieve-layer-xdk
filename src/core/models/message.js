@@ -1143,4 +1143,3 @@ Message._supportedEvents = [
 Root.initClass.apply(Message, [Message, 'Message']);
 Syncable.subclasses.push(Message);
 module.exports = Message;
-

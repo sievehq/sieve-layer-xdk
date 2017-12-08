@@ -398,7 +398,7 @@ export default class ActiveConversation extends Component {
         method: function() {
           const FeedbackModel = Layer.Core.Client.getMessageTypeModelClass('FeedbackModel');
           const model = new FeedbackModel({
-            enabledFor: client.user.id,
+            enabledFor: [client.user.id],
           });
           model.generateMessage(conversation, message => message.send());
         }.bind(this),
@@ -407,6 +407,7 @@ export default class ActiveConversation extends Component {
   };
 
   filterMessages(message) {
+    return true;// remove this to enable filtering
     const model = layerClient.createMessageTypeModel(message);
     if (model && model instanceof ResponseModel && message.sender === layerClient.user) return false;
     return true;

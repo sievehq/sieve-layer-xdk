@@ -66,6 +66,7 @@ import './messages/choice/layer-choice-label-view';
 
 import './messages/layer-standard-display-container';
 import './messages/layer-titled-display-container';
+import './messages/layer-dialog-display-container';
 //import './messages/layer-list-item-container';
 import './messages/text/layer-text-view';
 import './messages/text/layer-text-model';

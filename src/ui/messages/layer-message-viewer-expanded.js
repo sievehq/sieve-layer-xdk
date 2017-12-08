@@ -39,12 +39,23 @@ registerComponent('layer-message-viewer-expanded', {
 
   properties: {
     model: {},
+    managePopState: {
+      value: true,
+    },
   },
   methods: {
     onCreate() {
       this.addClickHandler('dialog-click', this, this.onClick.bind(this));
+      this.addEventListener('touchmove', this.onTouchMove.bind(this));
+      this.properties.boundPopStateListener = this.popStateListener.bind(this);
+    },
+    popStateListener(evt) {
+      this.destroy();
     },
     onAfterCreate() {
+      history.pushState({ dialog: this.model.id }, '');
+
+      if (this.managePopState) window.addEventListener('popstate', this.properties.boundPopStateListener);
       if (this.parentComponent) {
         this.properties.onConversationClose = this.onClose.bind(this);
         this.properties.parentComponentCached = this.parentComponent;
@@ -53,8 +64,10 @@ registerComponent('layer-message-viewer-expanded', {
     },
     onClick(evt) {
       if (evt.target === this) this.onClose();
+      evt.stopPropagation(); // do not propagate up to the Conversation View
     },
     onDestroy() {
+      if (this.managePopState) window.removeEventListener('popstate', this.properties.boundPopStateListener);
       if (this.properties.onConversationClose) {
         delete this.properties.parentComponentCached;
         delete this.properties.onConversationClose;
@@ -63,6 +76,10 @@ registerComponent('layer-message-viewer-expanded', {
     onClose() {
       this.properties.parentComponentCached.removeEventListener('layer-conversation-panel-change', this.properties.onConversationClose);
       this.destroy();
+    },
+    onTouchMove(evt) {
+      if (evt.target === this || evt.target === this.firstChild) evt.preventDefault();
+      evt.stopPropagation();
     },
     onRender() {
       const cardUIType = this.model.currentMessageRendererExpanded;

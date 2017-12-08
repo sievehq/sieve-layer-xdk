@@ -153,7 +153,7 @@ class MessageTypeModel extends Root {
       if (!this.part.body) this.part.fetchContent();
       this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
       this._triggerAsync('change');
-    } else if (part.nodeId === this.part.nodeId) {
+    } else if (this.part && part.nodeId === this.part.nodeId) {
       this.part = part;
       this._handlePartChanges();
     }

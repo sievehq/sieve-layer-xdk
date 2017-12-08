@@ -3,6 +3,7 @@ body,
 body > * {
   margin: 0;
   padding: 0;
+  overflow-y: hidden;
 }
 body {
   height: 100vh;
@@ -101,6 +102,11 @@ layer-conversation-list {
   padding: 4px 6px;
   margin-left: 4px;
 }
+/* For mobile testing:
+.left-panel {
+  display: none !important;
+}*/
+
 
 /* Main Layout */
 .left-panel,
