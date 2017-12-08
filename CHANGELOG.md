@@ -1,6 +1,16 @@
 # Web XDK Change Log
 
-# 1.0.0-pre1.14
+## 1.0.0-pre1.15
+
+1. Adds a Feedback Message Type
+2. Adds an Expanded Message Viewer/dialog
+3. Adds better test for Message Part to see if its < 2KB
+4. Adds a destroy method to all UI Components that can be called to destroy a Components
+5. `<layer-conversation-view />` Now has a `layer-conversation-panel-change` event
+6. Adds sample app code for making app fit and titles/composer not slide out of view
+7. General Cleanup
+
+## 1.0.0-pre1.14
 
 * Fixes bug in Message Grouping where Status Messages are treated as part of the grouping
 * Adds a `filter` callback to `Layer.Core.Query` and a `filterMessages` property to the `ConversationView`: ```

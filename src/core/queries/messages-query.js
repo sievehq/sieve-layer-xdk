@@ -2,7 +2,6 @@
  * Query class for running a Query on Messages
  *
  *      var messageQuery = client.createQuery({
- *        client: client,
  *        model: layer.Core.Query.Message,
  *        predicate: 'conversation.id = "layer:///conversations/UUID"'
  *      });

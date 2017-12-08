@@ -3,7 +3,6 @@
  *
  *
  *      var conversationQuery = client.createQuery({
- *        client: client,
  *        model: layer.Core.Query.Conversation,
  *        sortBy: [{'createdAt': 'desc'}]
  *      });

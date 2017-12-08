@@ -36,13 +36,12 @@ import './components/layer-presence/layer-presence';
 import './components/layer-file-upload-button/layer-file-upload-button';
 import './components/layer-send-button/layer-send-button';
 import './handlers/message/layer-message-viewer';
-import './handlers/message/layer-message-video';
+import './messages/layer-message-viewer-expanded.js';
+
 import './handlers/text/autolinker';
 import './handlers/text/code-blocks';
 import './handlers/text/emoji';
-import './handlers/text/images';
 import './handlers/text/newline';
-import './handlers/text/youtube';
 import './utils/date-separator';
 
 // Load standard cards
@@ -66,6 +65,7 @@ import './messages/choice/layer-choice-label-view';
 
 import './messages/layer-standard-display-container';
 import './messages/layer-titled-display-container';
+import './messages/layer-dialog-display-container';
 //import './messages/layer-list-item-container';
 import './messages/text/layer-text-view';
 import './messages/text/layer-text-model';
@@ -100,8 +100,9 @@ import './messages/product/layer-product-view';
 import './messages/models/layer-person-model';
 import './messages/models/layer-organization-model';
 
-import './messages/message-type-list/message-type-list-view';
-import './messages/message-type-list/message-type-list-model';
+import './messages/feedback/layer-feedback-view';
+import './messages/feedback/layer-feedback-expanded-view';
+import './messages/feedback/layer-feedback-model';
 
 import { animatedScrollTo, animatedScrollLeftTo } from './utils/animated-scroll';
 import MessageHandler from './mixins/message-handler';

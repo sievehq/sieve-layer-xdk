@@ -27,6 +27,7 @@ class MessageTypeModel extends Root {
 
     if (!this.customData) this.customData = {};
     this.currentMessageRenderer = this.constructor.messageRenderer;
+    this.currentMessageRendererExpanded = this.constructor.messageRendererExpanded;
     this.childParts = [];
     this.initializeProperties();
     if (this.message) {
@@ -152,7 +153,7 @@ class MessageTypeModel extends Root {
       if (!this.part.body) this.part.fetchContent();
       this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
       this._triggerAsync('change');
-    } else if (part.nodeId === this.part.nodeId) {
+    } else if (this.part && part.nodeId === this.part.nodeId) {
       this.part = part;
       this._handlePartChanges();
     }
@@ -426,6 +427,7 @@ MessageTypeModel.prototype.locked = false;
 MessageTypeModel.prototype.responses = null;
 
 MessageTypeModel.prototype.currentMessageRenderer = '';
+MessageTypeModel.prototype.currentMessageRendererExpanded = '';
 
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = ['change'].concat(Root._supportedEvents);

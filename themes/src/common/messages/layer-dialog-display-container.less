@@ -1,4 +1,16 @@
-layer-titled-display-container {
+.layer-message-viewer-expanded-inner > layer-dialog-display-container {
+  & > .layer-card-top {
+    overflow: hidden; // prevent images from spilling out of bounds
+    border-radius:  0px 0px 0px 0px;
+    & > * {
+      border-radius: 0px 0px 4px 4px;
+    }
+  }
+
+}
+
+
+layer-dialog-display-container {
   & > .layer-card-top {
     overflow: hidden; // prevent images from spilling out of bounds
     border-radius:  0px 0px @message-item-border-radius @message-item-border-radius;
@@ -29,5 +41,18 @@ layer-titled-display-container {
     color: @color-black;
     font-size: @font-medium;
     font-weight: normal;
+  }
+
+  .layer-card-title-buttons {
+    position: absolute;
+    right: 30px;
+
+    .layer-card-title-close-button {
+      cursor: pointer;
+      font-size: 30px;
+      &:hover {
+        font-weight: bold;
+      }
+    }
   }
 }

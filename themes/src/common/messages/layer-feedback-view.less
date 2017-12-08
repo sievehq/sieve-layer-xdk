@@ -1,0 +1,141 @@
+// Overrides stretchy behavior of Status Messages
+body layer-message-item-status layer-message-viewer.layer-message-item-main.layer-feedback-view {
+  flex-grow: 0;
+}
+
+layer-message-viewer.layer-feedback-view {
+  cursor: pointer;
+}
+
+layer-feedback-view, layer-feedback-expanded-view {
+
+}
+
+layer-feedback-expanded-view:not(.layer-feedback-enabled), layer-feedback-view:not(.layer-feedback-enabled) {
+  .layer-feedback-view-ratings span {
+    opacity: 0.4;
+  }
+}
+
+layer-feedback-expanded-view.layer-feedback-enabled {
+  .layer-feedback-view-ratings {
+    span {
+      cursor: pointer;
+    }
+  }
+}
+
+layer-feedback-view.layer-feedback-enabled,
+layer-feedback-expanded-view:not(.layer-feedback-enabled) {
+  .layer-feedback-view-ratings {
+    span {
+      cursor: default;
+    }
+  }
+}
+
+.layer-feedback-view-ratings {
+  font-size: 2.0rem;
+  text-align: center;
+  padding: 4px 0px;
+  min-height: 40px;
+
+  span + span {
+    margin-left: 1.5rem;
+  }
+  span:first-child {
+    margin-left: 0.7rem;
+  }
+  span:last-child {
+    margin-right: 0.7rem;
+  }
+}
+
+layer-feedback-view {
+  font-size: 2.0rem;
+  text-align: center;
+  padding: 4px 0px;
+  overflow: hidden;
+}
+
+layer-message-viewer.layer-feedback-view {
+  &.layer-feedback-enabled .layer-card-top {
+    color: @color-darkblue;
+    background-color: white;
+    span:hover {
+      color: darken(@color-darkblue, 12%);
+    }
+  }
+
+  &:not(.layer-feedback-enabled) .layer-card-top {
+    color: @color-role-font-standard;
+    opacity: 0.4;
+    background-color: @color-g4;
+  }
+}
+
+layer-feedback-expanded-view {
+  background-color: @color-g1;
+  &.layer-feedback-enabled {
+    .layer-feedback-view-ratings {
+      color: @color-darkblue;
+      background-color: white;
+      span:hover {
+        color: darken(@color-darkblue, 12%);
+      }
+    }
+  }
+
+  &:not(.layer-feedback-enabled) {
+    .layer-feedback-view-ratings {
+      color: @color-role-font-standard;
+      background-color: @color-g2;
+    }
+    .layer-feedback-view-comment {
+      background-color: @color-g2;
+
+      &:empty {
+        display: none;
+      }
+    }
+  }
+
+  .layer-feedback-view-input, .layer-feedback-view-comment, .layer-feedback-view-ratings {
+    border-radius: 4px;
+    margin: 4px 13px;
+    border: solid 1px @color-g2;
+  }
+
+  .layer-feedback-view-ratings {
+    font-size: 2.0rem;
+    text-align: center;
+    padding: 4px 0px;
+  }
+
+  .layer-feedback-view-label {
+    text-align: center;
+    font-size: @font-small;
+    color: @color-role-font-light;
+    padding: 16px 0px 12px 0px;
+  }
+
+  .layer-feedback-view-input, .layer-feedback-view-comment {
+    padding: 16px;
+    font-size: @font-large;
+    resize: none;
+  }
+
+  layer-action-button {
+    margin: 4px 13px 10px 13px;
+    button {
+      border-radius: 4px;
+      background-color: @card-button-selected-background;
+      color: @card-button-selected-text;
+
+      &:hover:not(:disabled) {
+        background-color: darken(@card-button-selected-background, 5%);
+        color: @card-button-selected-text;
+      }
+    }
+  }
+}

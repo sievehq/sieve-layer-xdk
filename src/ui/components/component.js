@@ -1197,6 +1197,7 @@ function _registerComponent(tagName) {
 
       // Wait 10 seconds after its been removed, then check to see if its still removed from the dom before doing cleanup and destroy.
       setTimeout(() => {
+        if (this.properties._internalState.onDestroyCalled) return;
         if (!document.body.contains(this) && !document.head.contains(this) && this.trigger('layer-widget-destroyed')) {
           this.onDestroy();
         }
@@ -1673,6 +1674,12 @@ const standardClassMethods = {
       .forEach(subscribedObject => subscribedObject.off(null, null, this));
     this.properties._layerEventSubscriptions = [];
     this.classList.add('layer-node-destroyed');
+  },
+  destroy: function() {
+    if (this.parentNode) {
+      this.parentNode.removeChild(this);
+    }
+    this.onDestroy();
   },
 };
 

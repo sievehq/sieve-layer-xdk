@@ -733,6 +733,27 @@ registerComponent('layer-conversation-view', {
         return;
       }
 
+      /**
+       * Triggered whenever the Conversation is changed (or initialially set).
+       *
+       * Allows apps to hook into it and update state to match any changes to Conversation.
+       *
+       * ```
+       * document.body.addEventListener('layer-conversation-panel-change', function(evt) {
+       *     var newConversation = evt.detail.conversation;
+       *     myRenderContentForConversation(newConversation);
+       * });
+       * ```
+       *
+       * This event is **not** cancelable.
+       *
+       * @event layer-conversation-panel-change
+       * @param {Event} evt
+       * @param {Object} evt.detail
+       * @param {Layer.Core.Conversation} evt.detail.conversation
+       */
+      this.trigger('layer-conversation-panel-change', { conversation });
+
       this.nodes.list.conversation = conversation;
       this.nodes.composer.conversation = conversation;
       this.nodes.typingIndicators.conversation = conversation;
