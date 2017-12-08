@@ -4,7 +4,10 @@
     title: "Experience Rooting", // Optional, defaults to Experience Rating
     prompt: "Rate your experiment 1-5 beakers", // Optional, defaults to Rate your experience 1-5 stars
     promptWait: "Waiting for more Beakers",
-    summary: "${rating} stars",
+
+    // ${rating} extracts this.rating; ${customer} gets the customer's displayName... or "You" if rated by the customer viewing it.
+    summary: "${rating} stars by ${customer}",
+    // ${rating} extracts this.rating; ${customer} gets the customer's displayName (but not "You" as all users will see the same message)
     responseMessage: "Rated ${rating} beakers by ${customer}",
     placeholder: "Tell us that you love us", // Optional, defaults to "Add a comment..."
     enabledFor: ["layer:///identities/user_id"], // Only a single Identity is supported
