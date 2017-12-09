@@ -30,7 +30,7 @@ module.exports = {
     model: {
       set(model, oldModel) {
         if (oldModel) oldModel.off(null, null, this);
-        if (model) model.on('change', this.onRerender, this);
+        if (model) model.on('message-type-model:change', this.onRerender, this);
       },
     },
 

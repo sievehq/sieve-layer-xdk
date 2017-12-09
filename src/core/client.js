@@ -338,7 +338,7 @@ class Client extends ClientAuth {
 
   trigger(eventName, evt) {
     this._triggerLogger(eventName, evt);
-    super.trigger(eventName, evt);
+    return super.trigger(eventName, evt);
   }
 
   /**

@@ -54,8 +54,8 @@ registerComponent('layer-standard-message-view-container', {
     model: {
       set(newModel, oldModel) {
         if (oldModel) oldModel.off(null, null, this);
-        if (newModel) this.model.on('change', this.onRerender, this);
-      }
+        if (newModel) this.model.on('message-type-model:change', this.onRerender, this);
+      },
     },
 
     /**

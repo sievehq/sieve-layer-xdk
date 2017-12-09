@@ -187,7 +187,7 @@ class ButtonsModel extends MessageTypeModel {
         const model = new ChoiceModel(obj);
 
         this.choices[model.responseName] = model;
-        model.on('change', () => this.on('change'));
+        model.on('message-type-model:change', evt => this.trigger('message-type-model:change', evt));
 
         // Update the preselectedChoice based on any responses
         if (model.responses) {

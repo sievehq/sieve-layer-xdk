@@ -112,11 +112,38 @@ class LinkModel extends MessageTypeModel {
     }, (result) => {
       if (result.success) {
         this.html = result.data;
-        if (!this.title) this.title = this._getArticleMeta(TitleRegEx);
-        if (!this.description) this.description = this._getArticleMeta(DescriptionRegEx);
-        if (!this.imageUrl) this.imageUrl = this._getArticleMeta(ImageRegEx);
-        if (!this.author) this.author = this._getArticleMeta(AuthorRegEx);
-        this.trigger('change');
+        if (!this.title) {
+          this.title = this._getArticleMeta(TitleRegEx);
+          this._triggerAsync('message-type-model:change', {
+            property: 'title',
+            oldValue: '',
+            newValue: this.title,
+          });
+        }
+        if (!this.description) {
+          this.description = this._getArticleMeta(DescriptionRegEx);
+          this._triggerAsync('message-type-model:change', {
+            property: 'description',
+            oldValue: '',
+            newValue: this.description,
+          });
+        }
+        if (!this.imageUrl) {
+          this.imageUrl = this._getArticleMeta(ImageRegEx);
+          this._triggerAsync('message-type-model:change', {
+            property: 'imageUrl',
+            oldValue: '',
+            newValue: this.imageUrl,
+          });
+        }
+        if (!this.author) {
+          this.author = this._getArticleMeta(AuthorRegEx);
+          this._triggerAsync('message-type-model:change', {
+            property: 'author',
+            oldValue: '',
+            newValue: this.author,
+          });
+        }
       }
       callback(result.success, result);
     });

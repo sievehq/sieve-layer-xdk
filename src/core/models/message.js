@@ -905,7 +905,7 @@ class Message extends Syncable {
 
   trigger(evtName, args) {
     this._clearObject();
-    super.trigger(evtName, args);
+    return super.trigger(evtName, args);
   }
 
   /**

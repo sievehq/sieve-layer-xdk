@@ -161,14 +161,29 @@ class ImageModel extends MessageTypeModel {
     // Change events occur when fetching external content for these MessageParts and
     // triggers change events so that UIs can rerender with all image data.
     this.childParts.forEach((part) => {
-      switch(part.mimeAttributes.role) {
+      switch (part.mimeAttributes.role) {
         case 'source':
           this.source = part;
-          part.on('messageparts:change', () => this.trigger('change'), this);
+          const oldUrl = part.url;
+          part.on('url-loaded', () => {
+            this._triggerAsync('message-type-model:change', {
+              property: 'source',
+              oldValue: oldUrl,
+              newValue: part.url,
+            });
+          }, this);
           break;
         case 'preview':
           this.preview = part;
-          part.on('messageparts:change', () => this.trigger('change'), this);
+          if (!part.body) {
+            part.on('content-loaded', () => {
+              this._triggerAsync('message-type-model:change', {
+                property: 'preview',
+                oldValue: null,
+                newValue: part.body,
+              });
+            }, this);
+          }
           break;
       }
     });

@@ -359,7 +359,7 @@ class MessageTypeModel extends Root {
    */
   _handlePartChanges(evt) {
     this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
-    this._triggerAsync('change');
+    //this._triggerAsync('message-type-model:change');
   }
 
   /**
@@ -403,7 +403,7 @@ class MessageTypeModel extends Root {
       part.on('messageparts:change', this._handlePartChanges, this);
       if (!this.part.body) this.part.fetchContent();
       this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
-      this._triggerAsync('change');
+      //this._triggerAsync('message-type-model:change');
     } else if (this.part && part.nodeId === this.part.nodeId) {
       this.part = part;
       this._handlePartChanges();
@@ -584,7 +584,7 @@ class MessageTypeModel extends Root {
    * * Initializing this model from the Message; `__updateResponses` is not called during initialization
    * * Updating this model after a `responsesummary` part is added or updated
    *
-   * Note that `this.trigger('change')` is called by the `_handlePartAdded` and `_handlePartChanged` methods above.
+   * (DISABLED) Note that `this.trigger('message-type-model:change')` is called by the `_handlePartAdded` and `_handlePartChanged` methods above.
    *
    * @param {Object} newResponse
    * @param {Object} oldResponse
@@ -684,7 +684,7 @@ class MessageTypeModel extends Root {
   }
 
   /**
-   * Multiple calls to _triggerAsync('change') should be replaced by a single 'change' event.
+   * Multiple calls to _triggerAsync('message-type-model:change') should be replaced by a single 'message-type-model:change' event.
    *
    * @private
    * @method
@@ -693,10 +693,10 @@ class MessageTypeModel extends Root {
     if (this.isDestroyed) return;
     let hasChange = false;
     this._delayedTriggers = this._delayedTriggers.filter(evt => {
-      if (evt[0] === 'change' && !hasChange) {
+      if (evt[0] === 'message-type-model:change' && !hasChange) {
         hasChange = true;
         return true;
-      } else if (evt[0] === 'change') {
+      } else if (evt[0] === 'message-type-model:change') {
         return false;
       } else {
         return true;
@@ -900,8 +900,12 @@ MessageTypeModel.prototype.messageSentAt = null;
  */
 MessageTypeModel.prototype.messageRecipientStatus = null;
 
+MessageTypeModel.bubbleEventParent = 'getClient';
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
-MessageTypeModel._supportedEvents = ['change'].concat(Root._supportedEvents);
+MessageTypeModel._supportedEvents = [
+  'message-type-model:change',
+  'message-type-model:customization',
+].concat(Root._supportedEvents);
 Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel']);
 module.exports = MessageTypeModel;
 

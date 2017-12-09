@@ -73,7 +73,7 @@ registerComponent('layer-link-message-view', {
         this.isHeightAllocated = true;
       } else if (!this.model.part.body) {
         // Once the external content has loaded, update isHeightAllocated
-        this.model.on('change', () => {
+        this.model.on('message-type-model:change', () => {
           // If there is an imageUrl, then the image load event handler above will update isHeightAllocated later.
           if (this.model.part.body && !this.model.imageUrl) {
             this.isHeightAllocated = true;

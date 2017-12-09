@@ -18,7 +18,8 @@ const MessageTypeModelNameHash = {};
 
 module.exports = {
   events: [
-
+    'message-type-model:change',
+    'message-type-model:customization',
   ],
   lifecycle: {
     constructor(options) {

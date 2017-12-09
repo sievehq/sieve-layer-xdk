@@ -105,6 +105,7 @@ class ChoiceModel extends MessageTypeModel {
    * @param {Object} payload    Metadata describing the Choice Message
    */
   _parseMessage(payload) {
+    const initialSelectedAnswer = this.selectedAnswer;
     // Explicitly protect us from this illegal usage.
     delete payload.selectedAnswer;
 
@@ -125,8 +126,14 @@ class ChoiceModel extends MessageTypeModel {
 
     if (this.__selectedAnswer === null && this.preselectedChoice) this.selectedAnswer = this.preselectedChoice;
 
-    // __updateSelectedAnswer is not called by the setter durring intialization; call it explicitly.
-    if (this.selectedAnswer) this.__updateSelectedAnswer(this.selectedAnswer);
+    // Trigger a change event if there was a prior answer
+    if (this.selectedAnswer !== initialSelectedAnswer) {
+      this._triggerAsync('message-type-model:change', {
+        propertyName: 'selectedAnswer',
+        oldValue: initialSelectedAnswer,
+        newValue: this.selectedAnswer,
+      });
+    }
   }
 
   /**
@@ -236,6 +243,7 @@ class ChoiceModel extends MessageTypeModel {
   _selectMultipleAnswers(answerData) {
     let action;
     const id = answerData.id;
+    const initialSelectedAnswer = this.selectedAnswer;
 
     // Get the customResponseData of the specified Choice
     const choiceItem = this.getChoiceById(id);
@@ -284,13 +292,12 @@ class ChoiceModel extends MessageTypeModel {
     }
 
     // Generate the Response Message
+    const text = this._getSelectionMessageText(action, selectedText, choiceItem);
     const responseModel = new ResponseModel({
       participantData,
       responseTo: this.message.id,
       responseToNodeId: this.parentId || this.nodeId,
-      displayModel: new TextModel({
-        text: this._getSelectionMessageText(action, selectedText, choiceItem),
-      }),
+      displayModel: text ? new TextModel({ text }) : null,
     });
 
     // Technically, one shouldn't ever perform these actions on a message that hasn't yet been sent.
@@ -304,7 +311,11 @@ class ChoiceModel extends MessageTypeModel {
     this.selectedAnswer = selectedAnswers.join(',');
 
     // Tell the UIs to update
-    this.trigger('change');
+    this._triggerAsync('message-type-model:change', {
+      property: 'selectedAnswer',
+      newValue: this.selectedAnswer,
+      oldValue: initialSelectedAnswer,
+    });
 
     // We generate local changes, we generate more local changes then the server sends us the first changes
     // which we need to ignore. Pause 6 seconds and wait for all changes to come in before rendering changes
@@ -346,6 +357,7 @@ class ChoiceModel extends MessageTypeModel {
    * @param {String} answerData.id   ID of the choice that is to be selected
    */
   _selectSingleAnswer(answerData) {
+    const initialSelectedAnswer = this.selectedAnswer;
     let action = 'selected';
     let id = answerData.id;
     const choiceItem = this.getChoiceById(id);
@@ -384,13 +396,12 @@ class ChoiceModel extends MessageTypeModel {
     }
 
     // Create teh Response Message
+    const text = this._getSelectionMessageText(action, selectedText, choiceItem);
     const responseModel = new ResponseModel({
       participantData,
       responseTo: this.message.id,
       responseToNodeId: this.parentId || this.nodeId,
-      displayModel: new TextModel({
-        text: this._getSelectionMessageText(action, selectedText, choiceItem),
-      }),
+      displayModel: text ? new TextModel({ text }) : null,
     });
 
     // Technically, one shouldn't ever perform these actions on a message that hasn't yet been sent.
@@ -402,8 +413,11 @@ class ChoiceModel extends MessageTypeModel {
 
     // Update the selected answer and update the UI
     this.selectedAnswer = id;
-    this.trigger('change');
-
+    this._triggerAsync('message-type-model:change', {
+      property: 'selectedAnswer',
+      newValue: this.selectedAnswer,
+      oldValue: initialSelectedAnswer,
+    });
     // We generate local changes, we generate more local changes then the server sends us the first changes
     // which we need to ignore. Pause 6 seconds and wait for all changes to come in before rendering changes
     // from the server after a user change.
@@ -417,7 +431,7 @@ class ChoiceModel extends MessageTypeModel {
   /**
    * Generate a textual message describing the state change.
    *
-   * Triggers `generate-text-message` event to allow for customizing the text message.
+   * Triggers `message-type-model:customization` event to allow for customizing the text message.
    *
    * @param {String} action
    * @param {String} selectedText
@@ -426,16 +440,18 @@ class ChoiceModel extends MessageTypeModel {
   _getSelectionMessageText(action, selectedText, choiceItem) {
     const nameOfChoice = this._getNameOfChoice();
     const namePhrase = (nameOfChoice ? ` for "${nameOfChoice}"` : '');
-    const data = {
-      text: `${this.getClient().user.displayName} ${action} "${selectedText}"${namePhrase}`,
+    const defaultText = `${this.getClient().user.displayName} ${action} "${selectedText}"${namePhrase}`;
+
+    const evt = this.trigger('message-type-model:customization', {
+      cancelable: true,
+      type: 'generate-response-message',
+      text: defaultText,
       choice: choiceItem,
       action,
-    };
-
-    this.trigger('generate-text-message', {
-      data,
     });
-    return data.text;
+    if (evt.canceled) return null;
+    if (evt.returnedValue) return evt.returnedValue;
+    return defaultText;
   }
 
   /**
@@ -509,17 +525,6 @@ class ChoiceModel extends MessageTypeModel {
     return this.choices[index];
   }
 
-  /**
-   * Any time this.selectedAnswer is set, the updateSelectedAnswer handler is called triggering change events.
-   *
-   * @method __updateSelectedAnswer
-   * @private
-   * @param {String} newValue
-   * @param {String} oldValue
-   */
-  __updateSelectedAnswer() {
-    this._triggerAsync('change');
-  }
 
   // Used to render Last Message in the Conversation List
   getOneLineSummary() {
@@ -900,24 +905,6 @@ ChoiceModel._supportedEvents = [
    */
   'gather-custom-response-data',
 
-  /**
-   * Triggered when generating textual message for the Response Message.
-   *
-   * ```
-   * choiceModel.on('generate-text-message', function(evt) {
-   *    var oldText = evt.data.text;
-   *    evt.data.text = client.user.displayName + ' is done';
-   * });
-   * ```
-   *
-   * @event generate-text-message
-   * @param {Layer.Core.LayerEvent} evt
-   * @param {Object} evt.data
-   * @param {String} evt.data.text
-   * @param {String} evt.data.action
-   * @param {Layer.UI.messages.ChoiceMessageItemModel} evt.data.choice
-   */
-  'generate-text-message',
 ].concat(MessageTypeModel._supportedEvents);
 
 // Register the Class

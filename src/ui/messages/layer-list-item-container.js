@@ -59,7 +59,7 @@ registerComponent('layer-list-item-container', {
   methods: {
 
     onAfterCreate() {
-      this.model.on('change', this.onRerender, this);
+      this.model.on('message-type-model:change', this.onRerender, this);
     },
 
     /**

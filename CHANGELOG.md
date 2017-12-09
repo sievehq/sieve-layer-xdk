@@ -31,6 +31,11 @@
 * `<layer-conversation-list />` `sortBy` property now requires values of `Layer.UI.Constants.CONVERSATIONS_SORT.LAST_MESSAGE` or `Layer.UI.Constants.CONVERSATIONS_SORT.CREATED_AT`; prior values are no longer valid
 * `<layer-identity-item />` property `selected` renamed to `isSelected`
 * Choice Model now has a `selectedChoice` property (Readonly, single-select only) to get the Choice object that is currently selected
+* Message Type Models no longer emit a `change` event, and now intsead emit a `message-type-model:change` event.
+* Message Type Models now emit a `message-type-model:customization` event to allow for customization of behaviors
+* Layer.Core.LayerEvent (i.e. any event triggered by non-UI-components) now supports
+  * `evt.preventDefault()`: Can be called on any event where `evt.cancelable` is `true` to prevent a default behavior (very few uses of this at the moment)
+  * `evt.returnValue()`: Can be called on any event that is providing an opportunity for you to provide an alternate value for it to use.  Currently used by some `message-type-model:customization` events
 
 ## 1.0.0-pre1.15
 

@@ -47,8 +47,19 @@ class FeedbackModel extends MessageTypeModel {
     if (this.responses) {
       this._processNewResponses();
     }
-    if (this.rating !== rating || this.comment !== comment) {
-      this._triggerAsync('change');
+    if (this.rating !== rating) {
+      this._triggerAsync('message-type-model:change', {
+        property: 'rating',
+        newValue: this.rating,
+        oldValue: rating,
+      });
+    }
+    if (this.comment !== comment) {
+      this._triggerAsync('message-type-model:change', {
+        property: 'comment',
+        newValue: this.comment,
+        oldValue: comment,
+      });
     }
   }
 
@@ -87,7 +98,16 @@ class FeedbackModel extends MessageTypeModel {
       responseModel.generateMessage(this.message.getConversation(), message => message.send());
     }
 
-    this._triggerAsync('change');
+    this._triggerAsync('message-type-model:change', {
+      property: 'comment',
+      newValue: this.comment,
+      oldValue: comment,
+    });
+    this._triggerAsync('message-type-model:change', {
+      property: 'rating',
+      newValue: this.rating,
+      oldValue: rating,
+    });
   }
 
   _processNewResponses() {

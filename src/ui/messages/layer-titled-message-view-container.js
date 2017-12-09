@@ -61,7 +61,7 @@ registerComponent('layer-titled-message-view-container', {
   },
   methods: {
     onAfterCreate() {
-      this.model.on('change', this.onRerender, this);
+      this.model.on('message-type-model:change', this.onRerender, this);
     },
 
     /**
@@ -73,8 +73,8 @@ registerComponent('layer-titled-message-view-container', {
     },
 
     onRerender() {
-       this.icon = this.properties.ui._getIconClass();
-       this.title = this.properties.ui._getTitle();
+      this.icon = this.properties.ui._getIconClass();
+      this.title = this.properties.ui._getTitle();
     },
   },
 });

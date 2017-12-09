@@ -391,10 +391,10 @@ class Root extends EventClass {
    * @method trigger
    * @param {string} eventName    Name of the event that one should subscribe to in order to receive this event
    * @param {Mixed} arg           Values that will be placed within a Layer.Core.LayerEvent
-   * @return {Layer.Core.Root} this
+   * @return {Layer.Core.LayerEvent} evt
    */
   trigger(...args) {
-    if (this._disableEvents) return this;
+    if (this._disableEvents) return null;
     return this._trigger(...args);
   }
 
@@ -405,6 +405,7 @@ class Root extends EventClass {
    * @private
    * @param {string} eventName    Name of the event that one should subscribe to in order to receive this event
    * @param {Mixed} arg           Values that will be placed within a Layer.Core.LayerEvent
+   * @return {Layer.Core.LayerEvent} evt
    */
   _trigger(...args) {
     if (!Util.includes(this.constructor._supportedEvents, args[0])) {
@@ -424,6 +425,8 @@ class Root extends EventClass {
       parentValue = (typeof parentValue === 'function') ? parentValue.apply(this) : parentValue;
       if (parentValue) parentValue.trigger(...computedArgs);
     }
+
+    return computedArgs[1];
   }
 
   /**
