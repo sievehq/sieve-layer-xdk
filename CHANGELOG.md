@@ -30,6 +30,7 @@
 * `deleteConversationEnabled` has been removed from `<layer-conversation-list />` and `<layer-conversation-item />`
 * `<layer-conversation-list />` `sortBy` property now requires values of `Layer.UI.Constants.CONVERSATIONS_SORT.LAST_MESSAGE` or `Layer.UI.Constants.CONVERSATIONS_SORT.CREATED_AT`; prior values are no longer valid
 * `<layer-identity-item />` property `selected` renamed to `isSelected`
+* Choice Model now has a `selectedChoice` property (Readonly, single-select only) to get the Choice object that is currently selected
 
 ## 1.0.0-pre1.15
 

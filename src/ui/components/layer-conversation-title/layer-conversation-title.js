@@ -5,7 +5,7 @@
  * provide your own Conversation titles:
  *
  * ```
- * layer.UI.registerComponent('layer-conversation-title', {
+ * Layer.UI.registerComponent('layer-conversation-title', {
  *    properties: {
  *      item: {
  *        set: function(value) {
@@ -16,7 +16,7 @@
  * });
  *
  * // Call init after custom components are defined
- * layer.init({
+ * Layer.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
@@ -43,16 +43,7 @@ registerComponent('layer-conversation-title', {
     },
   },
   methods: {
-
-    /**
-     * Constructor.
-     *
-     * @method onCreate
-     * @private
-     */
-    onCreate() {
-    },
-
+    // Lifecycle method
     onRender() {
       this.onRerender();
     },
@@ -92,6 +83,18 @@ registerComponent('layer-conversation-title', {
       }
     },
 
+    /**
+     * Sort the names when listing participants as part of the title
+     *
+     * 1. Filter out the authenticated user; they know they are in the conversation
+     * 2. Filter out anyone without a name
+     * 3. Sort any bot after any user
+     * 4. Sort users with first/last names ahead of those with only a displayName
+     * 5. Otherwise maintain the order of the `participants` array (arbitrary order)
+     *
+     * @method _sortNames
+     * @private
+     */
     _sortNames() {
       const participants = this.item.participants;
       return participants

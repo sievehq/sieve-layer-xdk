@@ -8,9 +8,9 @@
  * Changing the `conversationId` is as simple as:
  *
  * ```javascript
- *  function selectConversation(conversation) {
- *    conversationPanel.conversationId = conversation.id;
- *  }
+ * function selectConversation(conversation) {
+ *   conversationPanel.conversationId = conversation.id;
+ * }
  * ```
  *
  * or if using a templating engine, something like this would also work for setting the `conversationId`:

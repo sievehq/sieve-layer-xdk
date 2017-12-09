@@ -1,5 +1,5 @@
 /**
- * The Layer widget renders a Last Message for a Layer.Core.Conversation.
+ * The Layer widget renders the Layer.Core.Conversation.lastMessage.
  *
  * Customize the look and feel of your Last Message withing the Layer.UI.components.ConversationsListPanel.List
  * by overriding the `onRerender` method:
@@ -19,11 +19,13 @@
  *     }
  *   }
  * });
+ * ```
+ *
+ * This may be used to render more than just a one line of text as well; rendering Interactive Messages for example.
  *
  * @class Layer.UI.components.ConversationLastMessage
  * @extends Layer.UI.components.Component
  */
-import layerUI from '../../base';
 import { registerComponent } from '../component';
 
 registerComponent('layer-conversation-last-message', {
@@ -87,6 +89,7 @@ registerComponent('layer-conversation-last-message', {
      * involves a new `lastMessage` value.
      *
      * @param {Event} evt
+     * @private
      */
     _handleChangeEvent(evt) {
       if (evt.hasProperty('lastMessage')) this.onRerender();

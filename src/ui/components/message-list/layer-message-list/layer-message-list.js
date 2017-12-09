@@ -773,6 +773,7 @@ registerComponent('layer-message-list', {
      */
     _renderPagedDataDone(affectedItems, fragment, evt) {
       if (!fragment) return; // called without fragment to trigger mixin versions of _renderPagedDataDone
+      if (this.properties._internalState.onDestroyCalled) return;
 
       // Find the nodes of all affected items in both the document and the fragment,
       // and call processAffectedWidgets on them

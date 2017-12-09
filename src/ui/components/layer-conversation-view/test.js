@@ -6,9 +6,6 @@ describe('layer-conversation-view', function() {
     setTimeout(done, 1000);
   });
 
-  afterEach(function() {
-    jasmine.clock().uninstall();
-  });
 
   beforeEach(function() {
     jasmine.clock().install();
@@ -57,9 +54,10 @@ describe('layer-conversation-view', function() {
   });
 
   afterEach(function() {
+    jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
     Layer.Core.Client.removeListenerForNewClient();
-    if (el) el.onDestroy();
+    if (el) el.destroy();
   });
 
   describe('Event Handling', function() {

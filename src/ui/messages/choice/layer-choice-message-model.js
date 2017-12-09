@@ -483,7 +483,7 @@ class ChoiceModel extends MessageTypeModel {
   }
 
 
-  /**
+  /*
    * Get the selected answer; we use this because we want to allow `null` to indicate that this is unset but still return '' as the actual value.
    *
    * @method __getSelectedAnswer
@@ -491,6 +491,22 @@ class ChoiceModel extends MessageTypeModel {
    */
   __getSelectedAnswer() {
     return this.__selectedAnswer || '';
+  }
+
+  /*
+   * Get the selected answer text
+   *
+   * @method __getSelectedChoice
+   * @returns {String}
+   */
+  __getSelectedChoice() {
+    if (this.allowMultiselect) return null;
+
+    const selectedId = this.__selectedAnswer;
+    if (!selectedId) return '';
+
+    const index = this.getChoiceIndexById(selectedId);
+    return this.choices[index];
   }
 
   /**
@@ -765,6 +781,23 @@ ChoiceModel.prototype.currentMessageRenderer = null;
  * @property {String} selectedAnswer
  */
 ChoiceModel.prototype.selectedAnswer = null;
+
+
+/**
+ * Get the currently selected choice object; returns null if `allowMultiselect=true`
+ *
+ * ```
+ * if (choiceModel.selectedChoice.id == 'red') {
+ *    alert('red');
+ * }
+ * ```
+ *
+ * NOTE: The getter will return empty string if it has no value.
+ *
+ * @property {String} selectedChoice
+ * @readonly
+ */
+ChoiceModel.prototype.selectedChoice = null;
 
 /**
  * Provide a preselectedChoice for any new Message that needs a choice preselected.

@@ -1723,10 +1723,13 @@ const standardClassMethods = {
     this.properties._layerEventSubscriptions = [];
     this.classList.add('layer-node-destroyed');
   },
-  destroy: function() {
+  destroy: function destroy() {
     if (this.parentNode) {
       this.parentNode.removeChild(this);
     }
+    Object.keys(this.nodes || {}).forEach((name) => {
+      if (this.nodes[name].destroy) this.nodes[name].destroy();
+    });
     this.onDestroy();
   },
 };
