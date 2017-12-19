@@ -542,7 +542,7 @@ Channel.nextPosition = 18446744073709552000;
 
 /**
  * Prefix to use when generating an ID for instances of this class
- * @type {String}
+ * @property {String}
  * @static
  * @private
  */

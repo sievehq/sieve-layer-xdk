@@ -706,13 +706,13 @@ class SyncManager extends Root {
 
 /**
  * Websocket Manager for getting socket state.
- * @type {layer.Websockets.SocketManager}
+ * @property {layer.Websockets.SocketManager}
  */
 SyncManager.prototype.socketManager = null;
 
 /**
  * Websocket Request Manager for sending requests.
- * @type {Layer.Core.Websockets.RequestManager}
+ * @property {Layer.Core.Websockets.RequestManager}
  */
 SyncManager.prototype.requestManager = null;
 
@@ -721,13 +721,13 @@ SyncManager.prototype.requestManager = null;
  *
  * Sync Manager uses online status to determine if it can fire sync-requests.
  * @private
- * @type {layer.OnlineStateManager}
+ * @property {layer.OnlineStateManager}
  */
 SyncManager.prototype.onlineManager = null;
 
 /**
  * The array of Layer.Core.SyncEvent instances awaiting to be fired.
- * @type {Layer.Core.SyncEvent[]}
+ * @property {Layer.Core.SyncEvent[]}
  */
 SyncManager.prototype.queue = null;
 
@@ -735,7 +735,7 @@ SyncManager.prototype.queue = null;
  * The array of Layer.Core.SyncEvent instances awaiting to be fired.
  *
  * Receipts can generally just be fired off all at once without much fretting about ordering or dependencies.
- * @type {Layer.Core.SyncEvent[]}
+ * @property {Layer.Core.SyncEvent[]}
  */
 SyncManager.prototype.receiptQueue = null;
 
@@ -749,7 +749,7 @@ SyncManager.prototype.client = null;
  *
  * If the server is returning 502, 503 or 504 errors, exponential backoff
  * should never wait longer than this number of seconds (60 seconds)
- * @type {Number}
+ * @property {Number}
  * @static
  */
 SyncManager.MAX_UNAVAILABLE_RETRY_WAIT = 60;
@@ -764,7 +764,7 @@ SyncManager.MAX_UNAVAILABLE_RETRY_WAIT = 60;
  * shows 3 times in a row, there is likely a CORS error.
  * Note that CORS errors appear to javascript as a status=0 error,
  * which is the same as if the client were offline.
- * @type {number}
+ * @property {number}
  * @static
  */
 SyncManager.MAX_RETRIES_BEFORE_CORS_ERROR = 3;
@@ -772,7 +772,7 @@ SyncManager.MAX_RETRIES_BEFORE_CORS_ERROR = 3;
 /**
  * Abort request after this number of retries.
  *
- * @type {number}
+ * @property {number}
  * @static
  */
 SyncManager.MAX_RETRIES = 20;

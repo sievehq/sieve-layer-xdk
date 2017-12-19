@@ -132,7 +132,7 @@ SyncEvent.prototype.id = '';
  * Indicates whether the request completed successfully.
  *
  * Set by Layer.Core.SyncManager.
- * @type {Boolean}
+ * @property {Boolean}
  */
 SyncEvent.prototype.success = null;
 
@@ -144,7 +144,7 @@ SyncEvent.prototype.success = null;
  * a persistence layer that persists the SyncManager's queue
  * must have serializable callbacks (object id + method name; not a function)
  * or must accept that callbacks are not always fired.
- * @type {Function}
+ * @property {Function}
  */
 SyncEvent.prototype.callback = null;
 
@@ -153,7 +153,7 @@ SyncEvent.prototype.callback = null;
  *
  * Retries are only counted if its a 502 or 503
  * error.  Set and managed by Layer.Core.SyncManager.
- * @type {Number}
+ * @property {Number}
  */
 SyncEvent.prototype.retryCount = 0;
 
@@ -161,7 +161,7 @@ SyncEvent.prototype.retryCount = 0;
  * The target of the request.
  *
  * Any Component; typically a Conversation or Message.
- * @type {Layer.Core.Root}
+ * @property {Layer.Core.Root}
  */
 SyncEvent.prototype.target = null;
 
@@ -172,13 +172,13 @@ SyncEvent.prototype.target = null;
  * Conversation fails to get created.
  *
  * NOTE: May prove redundant with the target property and needs further review.
- * @type {Layer.Core.Root[]}
+ * @property {Layer.Core.Root[]}
  */
 SyncEvent.prototype.depends = null;
 
 /**
  * Data field of the xhr call; can be an Object or string (including JSON string)
- * @type {Object}
+ * @property {Object}
  */
 SyncEvent.prototype.data = null;
 
@@ -187,7 +187,7 @@ SyncEvent.prototype.data = null;
  * consider it to no longer be firing.  Under normal conditions, firing will be set to false explicitly.
  * This check insures that any failure of that process does not leave us stuck with a firing request
  * blocking the queue.
- * @type {number}
+ * @property {number}
  * @static
  */
 SyncEvent.FIRING_EXPIRATION = 1000 * 15;
@@ -195,7 +195,7 @@ SyncEvent.FIRING_EXPIRATION = 1000 * 15;
 /**
  * After checking the database to see if this event has been claimed by another browser tab,
  * how long to wait before flagging it as failed, in the event of no-response.  Measured in ms.
- * @type {number}
+ * @property {number}
  * @static
  */
 SyncEvent.VALIDATION_EXPIRATION = 500;
@@ -264,7 +264,7 @@ class XHRSyncEvent extends SyncEvent {
 
 /**
  * How long before the request times out?
- * @type {Number} [timeout=15000]
+ * @property {Number} [timeout=15000]
  */
 XHRSyncEvent.prototype.timeout = 15000;
 

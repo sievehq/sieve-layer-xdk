@@ -133,7 +133,7 @@ class ChannelMessage extends Message {
  *      m.isRead = true;
  *
  * This will automatically notify the server that the message was read by your user.
- * @type {Boolean}
+ * @property {Boolean}
  */
 ChannelMessage.prototype.isRead = false;
 

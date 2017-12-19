@@ -857,7 +857,7 @@ class Conversation extends Container {
  * use addParticipants, removeParticipants and replaceParticipants
  * to manipulate the array.
  *
- * @type {Layer.Core.Identity[]}
+ * @property {Layer.Core.Identity[]}
  */
 Conversation.prototype.participants = null;
 
@@ -865,7 +865,7 @@ Conversation.prototype.participants = null;
 /**
  * Number of unread messages in the conversation.
  *
- * @type {number}
+ * @property {number}
  */
 Conversation.prototype.unreadCount = 0;
 
@@ -876,7 +876,7 @@ Conversation.prototype.unreadCount = 0;
  * There are no limits to how many non-distinct Conversations you have have
  * among a set of participants.
  *
- * @type {boolean}
+ * @property {boolean}
  */
 Conversation.prototype.distinct = true;
 
@@ -884,7 +884,7 @@ Conversation.prototype.distinct = true;
  * The last Layer.Core.Message.ConversationMessage to be sent/received for this Conversation.
  *
  * Value may be a Message that has been locally created but not yet received by server.
- * @type {Layer.Core.Message.ConversationMessage}
+ * @property {Layer.Core.Message.ConversationMessage}
  */
 Conversation.prototype.lastMessage = null;
 
@@ -917,7 +917,7 @@ Conversation.eventPrefix = 'conversations';
  * was returned but does not exactly match your request.
  *
  * Used in `conversations:sent` events.
- * @type {String}
+ * @property {String}
  * @static
  */
 Conversation.FOUND_WITHOUT_REQUESTED_METADATA = 'FoundMismatch';
@@ -925,7 +925,7 @@ Conversation.FOUND_WITHOUT_REQUESTED_METADATA = 'FoundMismatch';
 
 /**
  * Prefix to use when generating an ID for instances of this class
- * @type {String}
+ * @property {String}
  * @static
  * @private
  */

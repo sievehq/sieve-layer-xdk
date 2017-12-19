@@ -36,7 +36,7 @@ registerMessageComponent('layer-message-viewer', {
     /**
      * The model to be rendered by some UI within this Viewer.
      *
-     * @type {Layer.Core.MessageTypeModel} model
+     * @property {Layer.Core.MessageTypeModel} model
      */
     model: {
       set(model) {
@@ -53,7 +53,7 @@ registerMessageComponent('layer-message-viewer', {
      * model identifies a Message Part within it that has a position within the Message Part
      * tree and determines what part of the message this UI Component will render.
      *
-     * @type {Layer.Core.Message} message
+     * @property {Layer.Core.Message} message
      */
     message: {
       set(message) {
@@ -74,7 +74,7 @@ registerMessageComponent('layer-message-viewer', {
      *
      * Currently can only be used to replace 'layer-standard-view-container' with a custom value.
      *
-     * @type {String} messageViewContainerTagName
+     * @property {String} messageViewContainerTagName
      */
     messageViewContainerTagName: {
       noGetterFromSetter: true,
@@ -104,7 +104,7 @@ registerMessageComponent('layer-message-viewer', {
      * * rounded-bottom: full border, rounded bottom, square top
      * * none: no border
      *
-     * @type {String} cardBorderStyle
+     * @property {String} cardBorderStyle
      */
     cardBorderStyle: {
       set(newValue, oldValue) {
@@ -126,7 +126,7 @@ registerMessageComponent('layer-message-viewer', {
      * * Layer.UI.Constants.WIDTH.ANY: No minimum, maximum is all available width; generallay does not look like a card
      * * Layer.UI.Constants.WIDTH.FLEX: card that has a minimum and a maximum but tries for an optimal size for its contents
      *
-     * @type {String} widthType
+     * @property {String} widthType
      */
     widthType: {
       set(newValue, oldValue) {

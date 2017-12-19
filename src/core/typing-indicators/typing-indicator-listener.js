@@ -237,14 +237,14 @@ class TypingIndicatorListener extends Root {
 
 /**
  * setTimeout ID for polling for states to transition
- * @type {Number}
+ * @property {Number}
  * @private
  */
 TypingIndicatorListener.prototype._pollId = 0;
 
 /**
  * ID of the client this instance is associated with
- * @type {String}
+ * @property {String}
  */
 TypingIndicatorListener.prototype.clientId = '';
 

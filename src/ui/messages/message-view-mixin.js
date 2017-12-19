@@ -13,7 +13,7 @@ module.exports = {
     /**
      * Indicates that this UI Component is a Message Type View
      *
-     * @type {Boolean} [isMessageTypeView=true]
+     * @property {Boolean} [isMessageTypeView=true]
      * @readonly
      */
     isMessageTypeView: {
@@ -25,7 +25,7 @@ module.exports = {
      *
      * Any change event triggered by this model should trigger a call to this UI's `onRerender`
      *
-     * @type {Layer.Core.MessageTypeModel} model
+     * @property {Layer.Core.MessageTypeModel} model
      */
     model: {
       set(newModel, oldModel) {
@@ -42,14 +42,14 @@ module.exports = {
      *
      * See Layer.UI.handlers.message.MessageViewer.cardBorderStyle for more detail.
      *
-     * @type {String} cardBorderStyle
+     * @property {String} cardBorderStyle
      */
     cardBorderStyle: {},
 
     /**
      * Pointer to the Layer.UI.handlers.message.MessageViewer that contains this Message Type View.
      *
-     * @type {Layer.UI.handlers.message.MessageViewer} messageViewer
+     * @property {Layer.UI.handlers.message.MessageViewer} messageViewer
      */
     messageViewer: {},
 
@@ -62,7 +62,7 @@ module.exports = {
      * * Layer.UI.Constants.WIDTH.ANY: No minimum, maximum is all available width; generallay does not look like a card
      * * Layer.UI.Constants.WIDTH.FLEX: card that has a minimum and a maximum but tries for an optimal size for its contents
      *
-     * @type {String} widthType
+     * @property {String} widthType
      */
     widthType: {},
 
@@ -71,7 +71,7 @@ module.exports = {
      *
      * Default is 192px
      *
-     * @type {Number} preferredMinWidth
+     * @property {Number} preferredMinWidth
      */
     preferredMinWidth: {
       get() {
@@ -84,7 +84,7 @@ module.exports = {
      *
      * Default is 1000px
      *
-     * @type {Number} preferredMaxWidth
+     * @property {Number} preferredMaxWidth
      */
     preferredMaxWidth: {
       get() {
@@ -98,7 +98,7 @@ module.exports = {
      * Any Message Type Model needing to calculate the height should default this property to `false`
      * and change it to `true` once the height has been set.
      *
-     * @type {Boolean} isHeightAllocated
+     * @property {Boolean} isHeightAllocated
      */
     isHeightAllocated: {
       value: true,

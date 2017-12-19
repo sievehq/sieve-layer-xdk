@@ -711,7 +711,7 @@ class MessageTypeModel extends Root {
 /**
  * Unique identifier, derived from the associated Part ID.
  *
- * @type {string}
+ * @property {string}
  */
 MessageTypeModel.prototype.id = '';
 
@@ -719,7 +719,7 @@ MessageTypeModel.prototype.id = '';
  * Property to reference the Parent node this model's Message Part's Parent Message Part within the Message Part Tree.
  *
  * @protected
- * @type {String}
+ * @property {String}
  */
 MessageTypeModel.prototype.parentId = null;
 
@@ -727,14 +727,14 @@ MessageTypeModel.prototype.parentId = null;
  * Node Identifier to uniquely identify this Message Part such that a Parent ID can reference it.
  *
  * @readonly
- * @type {String}
+ * @property {String}
  */
 MessageTypeModel.prototype.nodeId = null;
 
 /**
  * Message for this Message Model
  *
- * @type {Layer.Core.Message}
+ * @property {Layer.Core.Message}
  */
 MessageTypeModel.prototype.message = null;
 
@@ -743,7 +743,7 @@ MessageTypeModel.prototype.message = null;
  *
  * It is assumed to be used by this model if they are its children in the MessagePart tree.
  *
- * @type {Layer.Core.MessagePart[]}
+ * @property {Layer.Core.MessagePart[]}
  */
 MessageTypeModel.prototype.childParts = null;
 
@@ -761,7 +761,7 @@ MessageTypeModel.prototype.childParts = null;
  * For example, you might stick Product IDs into your Product Message so that when your server receives
  * a Product Message it has all the info needed to lookup the full details.
  *
- * @type {Object}
+ * @property {Object}
  */
 MessageTypeModel.prototype.customData = null;
 
@@ -779,7 +779,7 @@ MessageTypeModel.prototype.customData = null;
  * });
  * ```
  *
- * @type {Object}
+ * @property {Object}
  */
 MessageTypeModel.prototype.action = null;
 
@@ -789,7 +789,7 @@ MessageTypeModel.prototype.action = null;
  * Actions are strings that are put into events and which are intercepted and
  * interpreted either by `<layer-message-viewer />` or by the app.
  *
- * @type {String}
+ * @property {String}
  */
 MessageTypeModel.prototype.actionEvent = '';
 
@@ -801,14 +801,14 @@ MessageTypeModel.prototype.actionEvent = '';
  * This can be used to provide a product-id to buy if showing a Product with an Image Message instead of a Product Message.
  * This can be used to provide the properties used by the action where the values in the model itself aren't suitable/available.
  *
- * @type {Object}
+ * @property {Object}
  */
 MessageTypeModel.prototype.actionData = null;
 
 /**
  * Root Part defining this Model
  *
- * @type {Layer.Core.MessagePart}
+ * @property {Layer.Core.MessagePart}
  */
 MessageTypeModel.prototype.part = null;
 
@@ -818,7 +818,7 @@ MessageTypeModel.prototype.part = null;
  * The role is defined by the MessagePart for this Model, and
  * determines what this Model means to its Parent Model in the Model tree.
  *
- * @type {String}
+ * @property {String}
  */
 MessageTypeModel.prototype.role = null;
 
@@ -826,7 +826,7 @@ MessageTypeModel.prototype.role = null;
  * Are responses enabled for this Message?
  *
  * @ignore
- * @type {Boolean}
+ * @property {Boolean}
  */
 //MessageTypeModel.prototype.locked = false;
 
@@ -849,7 +849,7 @@ MessageTypeModel.prototype.role = null;
  * TODO: should normalize to `participantData`
  * TODO: should represent this with a custom class and not Object.
  *
- * @type {Object}
+ * @property {Object}
  */
 MessageTypeModel.prototype.responses = null;
 
@@ -870,7 +870,7 @@ MessageTypeModel.prototype.responses = null;
  * }
  * ```
  *
- * @type {String}
+ * @property {String}
  */
 MessageTypeModel.prototype.currentMessageRenderer = '';
 MessageTypeModel.prototype.currentMessageRendererExpanded = '';
@@ -905,7 +905,7 @@ MessageTypeModel.prototype.messageSentAt = null;
  * * Layer.Constants.RECEIPT_STATE.READ
  * * Layer.Constants.RECEIPT_STATE.PENDING
  *
- * @type {Object}
+ * @property {Object}
  */
 MessageTypeModel.prototype.messageRecipientStatus = null;
 

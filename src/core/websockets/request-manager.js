@@ -299,7 +299,7 @@ WebsocketRequestManager.prototype._nextRequestId = 1;
 
 /**
  * The Client that owns this.
- * @type {Layer.Core.Client}
+ * @property {Layer.Core.Client}
  */
 WebsocketRequestManager.prototype.client = null;
 

@@ -11,21 +11,21 @@
 module.exports = {
   /**
    * Typing has started/resumed
-   * @type {String}
+   * @property {String}
    * @static
    */
   STARTED: 'started',
 
   /**
    * Typing has paused
-   * @type {String}
+   * @property {String}
    * @static
    */
   PAUSED: 'paused',
 
   /**
    * Typing has finished
-   * @type {String}
+   * @property {String}
    * @static
    */
   FINISHED: 'finished',

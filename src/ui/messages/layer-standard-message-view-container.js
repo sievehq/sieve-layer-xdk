@@ -49,7 +49,7 @@ registerComponent('layer-standard-message-view-container', {
     /**
      * The Layer.Core.MessageTypeModel whose data is rendered here.
      *
-     * @type {Layer.Core.MessageTypeModel} model
+     * @property {Layer.Core.MessageTypeModel} model
      */
     model: {
       set(newModel, oldModel) {
@@ -61,7 +61,7 @@ registerComponent('layer-standard-message-view-container', {
     /**
      * The Layer.UI.messages.MessageViewMixin that is wrapped by this UI Component.
      *
-     * @type {Layer.UI.messages.MessageViewMixin} ui
+     * @property {Layer.UI.messages.MessageViewMixin} ui
      */
     ui: {
       set() {
@@ -75,7 +75,7 @@ registerComponent('layer-standard-message-view-container', {
     /**
      * The title to render in the metadata section of the UI
      *
-     * @type {String} title
+     * @property {String} title
      */
     title: {
       set(title) {
@@ -87,7 +87,7 @@ registerComponent('layer-standard-message-view-container', {
     /**
      * The description to render in the metadata section of the UI
      *
-     * @type {String} description
+     * @property {String} description
      */
     description: {
       set(description) {
@@ -99,7 +99,7 @@ registerComponent('layer-standard-message-view-container', {
     /**
      * The footer to render in the metadata section of the UI
      *
-     * @type {String} footer
+     * @property {String} footer
      */
     footer: {
       set(footer) {
@@ -114,7 +114,7 @@ registerComponent('layer-standard-message-view-container', {
      * The presence/absence of the metadata section can also affect how a Message is sized and styled.
      *
      * @readonly
-     * @type {Boolean} isShowingMetadata
+     * @property {Boolean} isShowingMetadata
      */
     isShowingMetadata: {
       get() {
@@ -130,7 +130,7 @@ registerComponent('layer-standard-message-view-container', {
      * However, some of them may need this ability, so the MessageViewer will ask it,
      * and it can forward the request on to its UI if it doesn't care.
      *
-     * @type {String} cardBorderStyle
+     * @property {String} cardBorderStyle
      */
     cardBorderStyle: {
       noGetterFromSetter: true,

@@ -1150,7 +1150,7 @@ class ClientAuthenticator extends Root {
 /**
  * State variable; indicates that client is currently authenticated by the server.
  * Should never be true if isConnected is false.
- * @type {Boolean}
+ * @property {Boolean}
  * @readonly
  */
 ClientAuthenticator.prototype.isAuthenticated = false;
@@ -1158,7 +1158,7 @@ ClientAuthenticator.prototype.isAuthenticated = false;
 /**
  * State variable; indicates that client is currently connected to server
  * (may not be authenticated yet)
- * @type {Boolean}
+ * @property {Boolean}
  * @readonly
  */
 ClientAuthenticator.prototype.isConnected = false;
@@ -1167,7 +1167,7 @@ ClientAuthenticator.prototype.isConnected = false;
  * State variable; indicates that client is ready for the app to use.
  * Use the 'ready' event to be notified when this value changes to true.
  *
- * @type {boolean}
+ * @property {boolean}
  * @readonly
  */
 ClientAuthenticator.prototype.isReady = false;
@@ -1179,7 +1179,7 @@ ClientAuthenticator.prototype.isReady = false;
  * and has not called `logout()`.  A client that is connected will receive reauthentication
  * events in the form of `challenge` events.
  *
- * @type {boolean}
+ * @property {boolean}
  * @readonly
  */
 ClientAuthenticator.prototype._wantsToBeAuthenticated = false;
@@ -1187,7 +1187,7 @@ ClientAuthenticator.prototype._wantsToBeAuthenticated = false;
 /**
  * If presence is enabled, then your presence can be set/restored.
  *
- * @type {Boolean} [isPresenceEnabled=true]
+ * @property {Boolean} [isPresenceEnabled=true]
  */
 ClientAuthenticator.prototype.isPresenceEnabled = true;
 
@@ -1196,21 +1196,21 @@ ClientAuthenticator.prototype.isPresenceEnabled = true;
  *
  * To find your Layer Application ID, see your Layer Developer Dashboard.
  *
- * @type {String}
+ * @property {String}
  */
 ClientAuthenticator.prototype.appId = '';
 
 /**
  * Identity information about the authenticated user.
  *
- * @type {Layer.Core.Identity}
+ * @property {Layer.Core.Identity}
  */
 ClientAuthenticator.prototype.user = null;
 
 /**
  * Your current session token that authenticates your requests.
  *
- * @type {String}
+ * @property {String}
  * @readonly
  */
 ClientAuthenticator.prototype.sessionToken = '';
@@ -1218,7 +1218,7 @@ ClientAuthenticator.prototype.sessionToken = '';
 /**
  * Time that the last challenge was issued
  *
- * @type {Number}
+ * @property {Number}
  * @private
  */
 ClientAuthenticator.prototype._lastChallengeTime = 0;
@@ -1227,7 +1227,7 @@ ClientAuthenticator.prototype._lastChallengeTime = 0;
  * URL to Layer's Web API server.
  *
  * Only muck with this if told to by Layer Staff.
- * @type {String}
+ * @property {String}
  */
 ClientAuthenticator.prototype.url = 'https://api.layer.com';
 
@@ -1235,43 +1235,43 @@ ClientAuthenticator.prototype.url = 'https://api.layer.com';
  * URL to Layer's Websocket server.
  *
  * Only muck with this if told to by Layer Staff.
- * @type {String}
+ * @property {String}
  */
 ClientAuthenticator.prototype.websocketUrl = 'wss://websockets.layer.com';
 
 /**
  * Web Socket Manager
- * @type {Layer.Core.Websockets.SocketManager}
+ * @property {Layer.Core.Websockets.SocketManager}
  */
 ClientAuthenticator.prototype.socketManager = null;
 
 /**
  * Web Socket Request Manager
- * @type {Layer.Core.Websockets.RequestManager}
+ * @property {Layer.Core.Websockets.RequestManager}
  */
 ClientAuthenticator.prototype.socketRequestManager = null;
 
 /**
  * Web Socket Manager
- * @type {Layer.Core.Websockets.ChangeManager}
+ * @property {Layer.Core.Websockets.ChangeManager}
  */
 ClientAuthenticator.prototype.socketChangeManager = null;
 
 /**
  * Service for managing online as well as offline server requests
- * @type {Layer.Core.SyncManager}
+ * @property {Layer.Core.SyncManager}
  */
 ClientAuthenticator.prototype.syncManager = null;
 
 /**
  * Service for managing online/offline state and events
- * @type {Layer.Core.OnlineStateManager}
+ * @property {Layer.Core.OnlineStateManager}
  */
 ClientAuthenticator.prototype.onlineManager = null;
 
 /**
  * If this is a trusted device, then we can write personal data to persistent memory.
- * @type {boolean}
+ * @property {boolean}
  */
 ClientAuthenticator.prototype.isTrustedDevice = false;
 
@@ -1308,20 +1308,20 @@ ClientAuthenticator.prototype.isPersistenceEnabled = false;
  *        }
  *      });
  *
- * @type {Object}
+ * @property {Object}
  */
 ClientAuthenticator.prototype.persistenceFeatures = null;
 
 /**
  * Database Manager for read/write to IndexedDB
- * @type {Layer.Core.DbManager}
+ * @property {Layer.Core.DbManager}
  */
 ClientAuthenticator.prototype.dbManager = null;
 
 /**
  * If a display name is not loaded for the session owner, use this name.
  *
- * @type {string}
+ * @property {string}
  */
 ClientAuthenticator.prototype.defaultOwnerDisplayName = 'You';
 
@@ -1332,7 +1332,7 @@ ClientAuthenticator.prototype.defaultOwnerDisplayName = 'You';
  *
  * Typically used in conjunction with the `online` event.
  *
- * @type {boolean}
+ * @property {boolean}
  */
 Object.defineProperty(ClientAuthenticator.prototype, 'isOnline', {
   enumerable: true,
@@ -1350,7 +1350,7 @@ Object.defineProperty(ClientAuthenticator.prototype, 'isOnline', {
  *    * Layer.Constants.LOG.INFO
  *    * Layer.Constants.LOG.DEBUG
  *
- * @type {number}
+ * @property {number}
  */
 Object.defineProperty(ClientAuthenticator.prototype, 'logLevel', {
   enumerable: false,
@@ -1363,7 +1363,7 @@ Object.defineProperty(ClientAuthenticator.prototype, 'logLevel', {
  *
  * Could also just use client.user.userId
  *
- * @type {string} userId
+ * @property {string} userId
  */
 Object.defineProperty(ClientAuthenticator.prototype, 'userId', {
   enumerable: true,
@@ -1377,7 +1377,7 @@ Object.defineProperty(ClientAuthenticator.prototype, 'userId', {
  * Time to be offline after which we don't do a WebSocket Events.replay,
  * but instead just refresh all our Query data.  Defaults to 30 hours.
  *
- * @type {number}
+ * @property {number}
  * @static
  */
 ClientAuthenticator.ResetAfterOfflineDuration = 1000 * 60 * 60 * 30;
@@ -1397,7 +1397,7 @@ ClientAuthenticator.TimeBetweenReauths = 30 * 1000;
  * List of events supported by this class
  * @static
  * @protected
- * @type {string[]}
+ * @property {string[]}
  */
 ClientAuthenticator._supportedEvents = [
   /**

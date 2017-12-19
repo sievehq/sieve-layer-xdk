@@ -364,14 +364,14 @@ class Syncable extends Root {
 /**
  * Unique identifier.
  *
- * @type {string}
+ * @property {string}
  */
 Syncable.prototype.id = '';
 
 /**
  * URL to access the object on the server.
  *
- * @type {string}
+ * @property {string}
  * @readonly
  * @protected
  */
@@ -383,7 +383,7 @@ Syncable.prototype.url = '';
  * This value is not tied to when it was first created on the server.  Creating a new instance
  * based on server data will result in a new `localCreateAt` value.
  *
- * @type {Date}
+ * @property {Date}
  */
 Syncable.prototype.localCreatedAt = null;
 
@@ -392,7 +392,7 @@ Syncable.prototype.localCreatedAt = null;
  * Layer.Core.Client that the object belongs to.
  *
  * Actual value of this string matches the appId.
- * @type {string}
+ * @property {string}
  * @protected
  * @readonly
  */
@@ -401,7 +401,7 @@ Syncable.prototype.clientId = '';
 /**
  * Temporary property indicating that the instance was loaded from local database rather than server.
  *
- * @type {boolean}
+ * @property {boolean}
  * @private
  */
 Syncable.prototype._fromDB = false;
@@ -417,7 +417,7 @@ Syncable.prototype._fromDB = false;
  *  * layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
  *  * layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
  *
- * @type {string}
+ * @property {string}
  */
 Syncable.prototype.syncState = SYNC_STATE.NEW;
 
@@ -427,7 +427,7 @@ Syncable.prototype.syncState = SYNC_STATE.NEW;
  * Counts down to zero; once it reaches zero, all sync
  * requests have been completed.
  *
- * @type {Number}
+ * @property {Number}
  * @private
  */
 Syncable.prototype._syncCounter = 0;
@@ -451,7 +451,7 @@ Syncable.prototype._syncCounter = 0;
  * Locally created objects are treated as websocket created objects since
  * once created we get a websocket create event for them.
  *
- * @type {String} [_loadType=queried]
+ * @property {String} [_loadType=queried]
  * @private
  */
 Syncable.prototype._loadType = 'queried';
@@ -468,7 +468,7 @@ Syncable.enableOpsIfNew = false;
 /**
  * Is the object loading from the server?
  *
- * @type {boolean}
+ * @property {boolean}
  */
 Object.defineProperty(Syncable.prototype, 'isLoading', {
   enumerable: true,

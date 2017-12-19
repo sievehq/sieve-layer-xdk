@@ -416,7 +416,7 @@ __updateParts(parts) {
  *      m.isRead = true;
  *
  * This will automatically notify the server that the message was read by your user.
- * @type {Boolean}
+ * @property {Boolean}
  */
 ConversationMessage.prototype.isRead = false;
 
@@ -431,7 +431,7 @@ ConversationMessage.prototype.isRead = false;
  * * Layer.Constants.RECEIPT_STATE.READ
  * * Layer.Constants.RECEIPT_STATE.PENDING
  *
- * @type {Object}
+ * @property {Object}
  */
 ConversationMessage.prototype.recipientStatus = null;
 
@@ -448,7 +448,7 @@ ConversationMessage.prototype.recipientStatus = null;
  *
  * See Layer.Core.Message.ConversationMessage.recipientStatus for a more detailed report.
  *
- * @type {String}
+ * @property {String}
  */
 ConversationMessage.prototype.readStatus = Constants.RECIPIENT_STATE.NONE;
 
@@ -466,7 +466,7 @@ ConversationMessage.prototype.readStatus = Constants.RECIPIENT_STATE.NONE;
  * See Layer.Core.Message.ConversationMessage.recipientStatus for a more detailed report.
  *
  *
- * @type {String}
+ * @property {String}
  */
 ConversationMessage.prototype.deliveryStatus = Constants.RECIPIENT_STATE.NONE;
 

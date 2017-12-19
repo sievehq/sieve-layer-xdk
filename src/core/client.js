@@ -621,7 +621,7 @@ class Client extends ClientAuth {
  * Array of items to be checked to see if they can be uncached.
  *
  * @private
- * @type {Layer.Core.Root[]}
+ * @property {Layer.Core.Root[]}
  */
 Client.prototype._scheduleCheckAndPurgeCacheItems = null;
 
@@ -629,7 +629,7 @@ Client.prototype._scheduleCheckAndPurgeCacheItems = null;
  * Time that the next call to _runCheckAndPurgeCache() is scheduled for in ms since 1970.
  *
  * @private
- * @type {number}
+ * @property {number}
  */
 Client.prototype._scheduleCheckAndPurgeCacheAt = 0;
 
@@ -640,7 +640,7 @@ Client.prototype._scheduleCheckAndPurgeCacheAt = 0;
  * No content nor identifiable information is gathered, only
  * usage and performance metrics.
  *
- * @type {Boolean}
+ * @property {Boolean}
  */
 Client.prototype.telemetryEnabled = true;
 
@@ -659,7 +659,7 @@ Client.prototype.telemetryMonitor = null;
  * the object local for a little while.  Default is 2 hours before checking to see if
  * the object is part of a Query or can be uncached.  Value is in miliseconds.
  * @static
- * @type {number}
+ * @property {number}
  */
 
 Client.CACHE_PURGE_INTERVAL = 2 * 60 * 60 * 1000; // 2 hours * 60 minutes per hour * 60 seconds per minute * 1000 miliseconds/second

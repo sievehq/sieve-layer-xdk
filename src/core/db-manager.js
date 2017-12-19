@@ -1287,53 +1287,53 @@ class DbManager extends Root {
 }
 
 /**
- * @type {Layer.Core.Client} Layer Client instance
+ * @property {Layer.Core.Client} Layer Client instance
  */
 DbManager.prototype.client = null;
 
 /**
- * @type {boolean} is the db connection open
+ * @property {boolean} is the db connection open
  */
 DbManager.prototype.isOpen = false;
 
 /**
- * @type {boolean} is the db connection will not open
+ * @property {boolean} is the db connection will not open
  * @private
  */
 DbManager.prototype._isOpenError = false;
 
 /**
- * @type {boolean} Is reading/writing messages allowed?
+ * @property {boolean} Is reading/writing messages allowed?
  * @private
  */
 DbManager.prototype._permission_messages = false;
 
 /**
- * @type {boolean} Is reading/writing conversations allowed?
+ * @property {boolean} Is reading/writing conversations allowed?
  * @private
  */
 DbManager.prototype._permission_conversations = false;
 
 /**
- * @type {boolean} Is reading/writing channels allowed?
+ * @property {boolean} Is reading/writing channels allowed?
  * @private
  */
 DbManager.prototype._permission_channels = false;
 
 /**
- * @type {boolean} Is reading/writing identities allowed?
+ * @property {boolean} Is reading/writing identities allowed?
  * @private
  */
 DbManager.prototype._permission_identities = false;
 
 /**
- * @type {boolean} Is reading/writing unsent server requests allowed?
+ * @property {boolean} Is reading/writing unsent server requests allowed?
  * @private
  */
 DbManager.prototype._permission_syncQueue = false;
 
 /**
- * @type IDBDatabase
+ * @property IDBDatabase
  */
 DbManager.prototype.db = null;
 
@@ -1345,7 +1345,7 @@ DbManager.prototype.db = null;
  *    layer.Core.DbManager.MaxPartSize = 5000;
  *
  * @static
- * @type {Number}
+ * @property {Number}
  */
 DbManager.MaxPartSize = 250000;
 

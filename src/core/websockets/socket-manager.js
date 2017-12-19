@@ -711,21 +711,21 @@ class SocketManager extends Root {
 
 /**
  * Is the websocket connection currently open?
- * @type {Boolean}
+ * @property {Boolean}
  */
 SocketManager.prototype.isOpen = false;
 
 /**
  * setTimeout ID for calling connect()
  * @private
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype._reconnectId = 0;
 
 /**
  * setTimeout ID for calling _connectionFailed()
  * @private
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype._connectionFailedId = 0;
 
@@ -743,7 +743,7 @@ SocketManager.prototype._lastGetCounterId = 0;
 
 /**
  * Time in miliseconds since the last call to _validateSessionBeforeReconnect
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype._lastValidateSessionRequest = 0;
 
@@ -751,39 +751,39 @@ SocketManager.prototype._lastValidateSessionRequest = 0;
  * Frequency with which the websocket checks to see if any websocket notifications
  * have been missed.  This test is done by calling `getCounter`
  *
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype.pingFrequency = 30000;
 
 /**
  * Delay between reconnect attempts
  *
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype.maxDelaySecondsBetweenReconnect = 30;
 
 /**
  * The Client that owns this.
- * @type {Layer.Core.Client}
+ * @property {Layer.Core.Client}
  */
 SocketManager.prototype.client = null;
 
 /**
  * The Socket Connection instance
- * @type {Websocket}
+ * @property {Websocket}
  */
 SocketManager.prototype._socket = null;
 
 /**
  * Is the websocket connection being closed by a call to close()?
  * If so, we can ignore any errors that signal the socket as closing.
- * @type {Boolean}
+ * @property {Boolean}
  */
 SocketManager.prototype._closing = false;
 
 /**
  * Number of failed attempts to reconnect.
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype._lostConnectionCount = 0;
 

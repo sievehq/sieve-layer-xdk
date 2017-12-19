@@ -356,7 +356,7 @@ class Identity extends Syncable {
 
 /**
  * Display name for the User or System Identity.
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.displayName = '';
 
@@ -364,13 +364,13 @@ Identity.prototype.displayName = '';
  * The Identity matching `Layer.Core.Client.user` will have this be true.
  *
  * All other Identities will have this as false.
- * @type {boolean}
+ * @property {boolean}
  */
 Identity.prototype.sessionOwner = false;
 
 /**
  * ID of the Client this Identity is associated with.
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.clientId = '';
 
@@ -378,19 +378,19 @@ Identity.prototype.clientId = '';
  * Is this a Full Identity or Basic Identity?
  *
  * Note that Service Identities are always considered to be Basic.
- * @type {boolean}
+ * @property {boolean}
  */
 Identity.prototype.isFullIdentity = false;
 
 /**
  * Unique ID for this User.
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.userId = '';
 
 /**
  * Optional URL for the user's icon.
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.avatarUrl = '';
 
@@ -399,7 +399,7 @@ Identity.prototype.avatarUrl = '';
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.firstName = '';
 
@@ -408,7 +408,7 @@ Identity.prototype.firstName = '';
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.lastName = '';
 
@@ -417,7 +417,7 @@ Identity.prototype.lastName = '';
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.emailAddress = '';
 
@@ -426,7 +426,7 @@ Identity.prototype.emailAddress = '';
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.phoneNumber = '';
 
@@ -435,7 +435,7 @@ Identity.prototype.phoneNumber = '';
  *
  * Full Identities Only.
  *
- * @type {Object}
+ * @property {Object}
  */
 Identity.prototype.metadata = null;
 
@@ -444,19 +444,19 @@ Identity.prototype.metadata = null;
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.publicKey = '';
 
 /**
  * @static
- * @type {string} The Identity represents a user.  Value used in the Layer.Core.Identity.type field.
+ * @property {string} The Identity represents a user.  Value used in the Layer.Core.Identity.type field.
  */
 Identity.UserType = 'user';
 
 /**
  * @static
- * @type {string} The Identity represents a bot.  Value used in the Layer.Core.Identity.type field.
+ * @property {string} The Identity represents a bot.  Value used in the Layer.Core.Identity.type field.
  */
 Identity.BotType = 'bot';
 
@@ -465,7 +465,7 @@ Identity.BotType = 'bot';
  *
  * * A bot? Use Layer.Core.Identity.BotType
  * * A User? Use Layer.Core.Identity.UserType
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.type = Identity.UserType;
 

@@ -168,7 +168,7 @@ class WebsocketChangeManager {
 
 /**
  * The Client that owns this.
- * @type {Layer.Core.Client}
+ * @property {Layer.Core.Client}
  */
 WebsocketChangeManager.prototype.client = null;
 

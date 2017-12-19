@@ -688,7 +688,7 @@ function initClass(newClass, className) {
  * A destroyed object will likely cause errors in any attempt
  * to call methods on it, and will no longer trigger events.
  *
- * @type {boolean}
+ * @property {boolean}
  * @readonly
  */
 Root.prototype.isDestroyed = false;
@@ -700,7 +700,7 @@ Root.prototype.isDestroyed = false;
  * The internal ID is gaurenteed not to change within the lifetime of the Object/session;
  * it is possible, on creating a new object, for its `id` property to change.
  *
- * @type {string}
+ * @property {string}
  * @readonly
  */
 Root.prototype.internalId = '';
@@ -708,7 +708,7 @@ Root.prototype.internalId = '';
 /**
  * True while we are in the constructor.
  *
- * @type {boolean}
+ * @property {boolean}
  * @readonly
  */
 Root.prototype.isInitializing = true;
@@ -716,14 +716,14 @@ Root.prototype.isInitializing = true;
 /**
  * Objects that this object is listening for events from.
  *
- * @type {Layer.Core.Root[]}
+ * @property {Layer.Core.Root[]}
  * @private
  */
 Root.prototype._layerEventSubscriptions = null;
 
 /**
  * Disable all events triggered on this object.
- * @type {boolean}
+ * @property {boolean}
  * @private
  */
 Root.prototype._disableEvents = false;

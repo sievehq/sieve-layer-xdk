@@ -933,7 +933,7 @@ class Message extends Syncable {
  * Client that the Message belongs to.
  *
  * Actual value of this string matches the appId.
- * @type {string}
+ * @property {string}
  * @readonly
  */
 Message.prototype.clientId = '';
@@ -941,7 +941,7 @@ Message.prototype.clientId = '';
 /**
  * Conversation ID or Channel ID that this Message belongs to.
  *
- * @type {string}
+ * @property {string}
  * @readonly
  */
 Message.prototype.conversationId = '';
@@ -951,7 +951,7 @@ Message.prototype.conversationId = '';
  *
  * Use Layer.Core.Message.addPart to modify this array.
  *
- * @type {Layer.Core.MessagePart[]}
+ * @property {Layer.Core.MessagePart[]}
  * @readonly
  */
 Message.prototype.parts = null;
@@ -964,7 +964,7 @@ Message.prototype.parts = null;
  * to account for `null` values.  Sending the Message may cause a slight change
  * in the `sentAt` value.
  *
- * @type {Date}
+ * @property {Date}
  * @readonly
  */
 Message.prototype.sentAt = null;
@@ -972,7 +972,7 @@ Message.prototype.sentAt = null;
 /**
  * Time that the first delivery receipt was sent by your
  * user acknowledging receipt of the message.
- * @type {Date}
+ * @property {Date}
  * @readonly
  */
 Message.prototype.receivedAt = null;
@@ -989,7 +989,7 @@ Message.prototype.receivedAt = null;
  *        {message.sender.displayName || message.sender.name}
  *      </span>
  *
- * @type {Layer.Core.Identity}
+ * @property {Layer.Core.Identity}
  * @readonly
  */
 Message.prototype.sender = null;
@@ -1004,7 +1004,7 @@ Message.prototype.sender = null;
  * all claim the same position)
  * 3. Each successive message within a conversation should expect a higher position.
  *
- * @type {Number}
+ * @property {Number}
  * @readonly
  */
 Message.prototype.position = 0;
@@ -1012,14 +1012,14 @@ Message.prototype.position = 0;
 /**
  * Hint used by Layer.Core.Client on whether to trigger a messages:notify event.
  *
- * @type {boolean}
+ * @property {boolean}
  * @private
  */
 Message.prototype._notify = false;
 
 /**
  * This property is here for convenience only; it will always be the opposite of isRead.
- * @type {Boolean}
+ * @property {Boolean}
  * @readonly
  */
 Object.defineProperty(Message.prototype, 'isUnread', {
@@ -1049,7 +1049,7 @@ Object.defineProperty(Message.prototype, 'isUnread', {
  *    attributeName2: [...]
  * }
  * ```
- * @type {Object}
+ * @property {Object}
  * @private
  */
 Message.prototype._mimeAttributeMap = null;
@@ -1060,7 +1060,7 @@ Message.prototype._mimeAttributeMap = null;
  * If the part was created after the message was sent, or the part was updated after the
  * part was sent then this will have a value.
  *
- * @type {Date}
+ * @property {Date}
  */
 Message.prototype.updatedAt = null;
 
