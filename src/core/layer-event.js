@@ -73,11 +73,11 @@ class LayerEvent {
   }
 
   /**
-   * Call Layer.Core.LayerEvent.preventDefault on any event that is Cancelable to prevent its default behavior.
+   * Call Layer.Core.LayerEvent.cancel on any event that is Cancelable to prevent its default behavior.
    *
    * @method
    */
-  preventDefault() {
+  cancel() {
     if (this.cancelable) {
       this.canceled = true;
     }
@@ -198,7 +198,7 @@ LayerEvent.prototype.target = null;
 LayerEvent.prototype.eventName = '';
 
 /**
- * If the event is cancelable, then call Layer.Core.LayerEvent.preventDefault to update this value.
+ * If the event is cancelable, then call Layer.Core.LayerEvent.cancel to update this value.
  *
  * @property {Boolean} [canceled=false]
  * @readonly
@@ -206,7 +206,7 @@ LayerEvent.prototype.eventName = '';
 LayerEvent.prototype.canceled = false;
 
 /**
- * Is the event cancelable; if so then one could call Layer.Core.LayerEvent.preventDefault on it
+ * Is the event cancelable; if so then one could call Layer.Core.LayerEvent.cancel on it
  *
  * @property {Boolean} [cancelable=false]
  * @readonly
@@ -218,6 +218,6 @@ LayerEvent.prototype.cancelable = false;
  *
  * @property {Any} returnedValue
  */
-LayerEvent.prototype.returnedValue = false;
+LayerEvent.prototype.returnedValue = null;
 
 module.exports = LayerEvent;

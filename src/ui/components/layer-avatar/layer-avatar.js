@@ -3,9 +3,9 @@
  *
  * This widget appears within
  *
- * * Layer.UI.components.MessagesListPanel.Item: Represents the sender of a Message
+ * * Layer.UI.components.MessageListPanel.Item: Represents the sender of a Message
  * * Layer.UI.components.ConversationsListPanel.Item.Conversation: Represents the participants of a Conversation
- * * Layer.UI.components.IdentitiesListPanel.Item: Represents a user in a User List
+ * * Layer.UI.components.IdentityListPanel.Item: Represents a user in a User List
  *
  * Rendering is done using data from the `Layer.Core.Identity` object for each user, using the Layer.Core.Identity.avatarUrl if available to
  * add an image, or first initials from Layer.Core.Identity.firstName, Layer.Core.Identity.lastName if no avatarUrl is available.
@@ -41,7 +41,7 @@
  * * When used in a Conversations List, there may be multiple users who are participants of the Conversation.
  *
  * @class layer.UI.components.Avatar
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import Core from '../../../core';
 
@@ -143,7 +143,7 @@ registerComponent('layer-avatar', {
 
       // Add the "cluster" css if rendering multiple users
       // No classList.toggle due to poor IE11 support
-      this.classList[users.length > 1 ? 'add' : 'remove']('layer-avatar-cluster');
+      this.toggleClass('layer-avatar-cluster', users.length > 1);
       if (users.length === 1 && this.showPresence && users[0].getClient().isPresenceEnabled) {
         this.nodes.presence = document.createElement('layer-presence');
         this.nodes.presence.classList.add('layer-presence-within-avatar');

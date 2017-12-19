@@ -305,8 +305,8 @@ class Query extends Root {
    *
    * @method update
    * @param  {Object} options
-   * @param {string} [options.predicate] - A new predicate for the query
-   * @param {string} [options.model] - A new model for the Query
+   * @param {String} [options.predicate] - A new predicate for the query
+   * @param {String} [options.model] - A new model for the Query
    * @param {number} [paginationWindow] - Increase/decrease our result size to match this pagination window.
    * @return {Layer.Core.Query} this
    */
@@ -568,7 +568,7 @@ class Query extends Root {
    *
    * @method _getItem
    * @private
-   * @param  {string} id
+   * @param  {String} id
    * @return {Object} Conversation, Message, etc... object or instance
    */
   _getItem(id) {
@@ -581,7 +581,7 @@ class Query extends Root {
    *
    * @method _getIndex
    * @private
-   * @param  {string} id
+   * @param  {String} id
    * @return {number}
    */
   _getIndex(id) {
@@ -602,7 +602,7 @@ class Query extends Root {
    *
    * @method _handleEvents
    * @private
-   * @param {string} eventName - "messages:add", "conversations:change"
+   * @param {String} eventName - "messages:add", "conversations:change"
    * @param {Layer.Core.LayerEvent} evt
    */
   _handleEvents(eventName, evt) {
@@ -706,7 +706,7 @@ class Query extends Root {
    * @method _updateNextFromId
    * @private
    * @param {number} index - Current index of the nextFromId
-   * @returns {string} - Next ID or empty string
+   * @returns {String} - Next ID or empty string
    */
   _updateNextFromId(index) {
     if (index > 0) return this.data[index - 1].id;
@@ -734,7 +734,7 @@ Query.prefixUUID = 'layer:///queries/';
  * Query for Conversations.
  *
  * Use this value in the Layer.Core.Query.model property.
- * @type {string}
+ * @property {String} Conversation
  * @static
  */
 Query.Conversation = 'Conversation';
@@ -743,7 +743,7 @@ Query.Conversation = 'Conversation';
  * Query for Channels.
  *
  * Use this value in the Layer.Core.Query.model property.
- * @type {string}
+ * @property {String} Channel
  * @static
  */
 Query.Channel = 'Channel';
@@ -752,7 +752,7 @@ Query.Channel = 'Channel';
  * Query for Messages.
  *
  * Use this value in the Layer.Core.Query.model property.
- * @type {string}
+ * @property {String} Message
  * @static
  */
 Query.Message = 'Message';
@@ -761,7 +761,7 @@ Query.Message = 'Message';
  * Query for Announcements.
  *
  * Use this value in the Layer.Core.Query.model property.
- * @type {string}
+ * @property {String} Announcement
  * @static
  */
 Query.Announcement = 'Announcement';
@@ -770,7 +770,7 @@ Query.Announcement = 'Announcement';
  * Query for Identities.
  *
  * Use this value in the Layer.Core.Query.model property.
- * @type {string}
+ * @property {String} Identity
  * @static
  */
 Query.Identity = 'Identity';
@@ -779,7 +779,7 @@ Query.Identity = 'Identity';
  * Query for Members of a Channel.
  *
  * Use this value in the Layer.Core.Query.model property.
- * @type {string}
+ * @property {String}
  * @static
  */
 Query.Membership = 'Membership';
@@ -789,7 +789,7 @@ Query.Membership = 'Membership';
  *
  * This value of Layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as immutable objects.
  *
- * @type {string}
+ * @property {String}
  * @static
  */
 Query.ObjectDataType = 'object';
@@ -799,7 +799,7 @@ Query.ObjectDataType = 'object';
  *
  * This value of Layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as instances.
  *
- * @type {string}
+ * @property {String}
  * @static
  */
 Query.InstanceDataType = 'instance';
@@ -807,7 +807,7 @@ Query.InstanceDataType = 'instance';
 /**
  * Set the maximum page size for queries.
  *
- * @type {number}
+ * @property {number}
  * @static
  */
 Query.MaxPageSize = 100;
@@ -815,7 +815,7 @@ Query.MaxPageSize = 100;
 /**
  * Access the number of results currently loaded.
  *
- * @type {Number}
+ * @property {Number}
  * @readonly
  */
 Object.defineProperty(Query.prototype, 'size', {
@@ -829,7 +829,7 @@ Object.defineProperty(Query.prototype, 'size', {
  *
  * Will be 0 until the first query has successfully loaded results.
  *
- * @type {Number}
+ * @property {Number}
  * @readonly
  */
 Query.prototype.totalSize = 0;
@@ -838,7 +838,7 @@ Query.prototype.totalSize = 0;
 /**
  * Access to the client so it can listen to websocket and local events.
  *
- * @type {Layer.Core.Client}
+ * @property {Layer.Core.Client}
  * @protected
  * @readonly
  */
@@ -850,7 +850,7 @@ Query.prototype.client = null;
  * Array of data resulting from the Query; either a Layer.Core.Root subclass.
  *
  * or plain Objects
- * @type {Object[]}
+ * @property {Object[]}
  * @readonly
  */
 Query.prototype.data = null;
@@ -868,7 +868,7 @@ Query.prototype.data = null;
  *
  * Value can be set via constructor and Layer.Core.Query.update().
  *
- * @type {String}
+ * @property {String}
  * @readonly
  */
 Query.prototype.model = '';
@@ -887,7 +887,7 @@ Query.prototype.model = '';
  * This Query API is designed only for use with 'object' at this time; waiting for updates to server for
  * this functionality.
  *
- * @type {String}
+ * @property {String}
  * @readonly
  */
 Query.prototype.returnType = 'object';
@@ -899,7 +899,7 @@ Query.prototype.returnType = 'object';
  * * Query.ObjectDataType
  * * Query.InstanceDataType
  *
- * @type {String}
+ * @property {String}
  * @readonly
  */
 Query.prototype.dataType = Query.InstanceDataType;
@@ -919,7 +919,7 @@ Query.prototype.dataType = Query.InstanceDataType;
  *
  * Note that the server will only permit 100 at a time.
  *
- * @type {Number}
+ * @property {Number}
  * @readonly
  */
 Query.prototype.paginationWindow = 100;
@@ -945,7 +945,7 @@ Query.prototype.paginationWindow = 100;
  * Why such limitations? Why this structure?  The server will be exposing a Query API at which point the
  * above sort options will make a lot more sense, and full sorting will be provided.
  *
- * @type {String}
+ * @property {String}
  * @readonly
  */
 Query.prototype.sortBy = null;
@@ -953,7 +953,7 @@ Query.prototype.sortBy = null;
 /**
  * This value tells us what to reset the paginationWindow to when the query is redefined.
  *
- * @type {Number}
+ * @property {Number}
  * @private
  */
 Query.prototype._initialPaginationWindow = 100;
@@ -970,7 +970,7 @@ Query.prototype._initialPaginationWindow = 100;
  *
  * Note that both ' and " are supported.
  *
- * @type {string}
+ * @property {String}
  * @readonly
  */
 Query.prototype.predicate = null;
@@ -989,7 +989,7 @@ Query.prototype.predicate = null;
  * };
  * ```
  *
- * @type {Function}
+ * @property {Function}
  */
 Query.prototype.filter = null;
 
@@ -1011,7 +1011,7 @@ Query.prototype.filter = null;
  *          });
  *      }
  *
- * @type {Boolean}
+ * @property {Boolean}
  * @readonly
  */
 Query.prototype.isFiring = false;
@@ -1019,7 +1019,7 @@ Query.prototype.isFiring = false;
 /**
  * True if we have reached the last result, and further paging will just return []
  *
- * @type {Boolean}
+ * @property {Boolean}
  * @readonly
  */
 Query.prototype.pagedToEnd = false;
@@ -1029,7 +1029,7 @@ Query.prototype.pagedToEnd = false;
  *
  * If multiple requests are inflight, the response
  * matching this request is the ONLY response we will process.
- * @type {String}
+ * @property {String}
  * @private
  */
 Query.prototype._firingRequest = '';
@@ -1043,7 +1043,7 @@ Query.prototype._firingRequest = '';
  * belongs at the end despite skipping over other items of data.  Paging should not be from this new item, but
  * only the last item pulled via this query from the server.
  *
- * @type {string}
+ * @property {String}
  */
 Query.prototype._nextServerFromId = '';
 
@@ -1056,7 +1056,7 @@ Query.prototype._nextServerFromId = '';
  * belongs at the end despite skipping over other items of data.  Paging should not be from this new item, but
  * only the last item pulled via this query from the database.
  *
- * @type {string}
+ * @property {String}
  */
 Query.prototype._nextDBFromId = '';
 

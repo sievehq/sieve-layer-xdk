@@ -1,8 +1,8 @@
 /**
  * The Layer Notifier widget can show Desktop Notifications when your app is in the background,
- * and Toast notifications when your app is in the foreground.
+ * Toast notifications when your app is in the foreground, and can add a badge to your tab's titlebar.
  *
- * You can customize the toast styling and layout by providing a custom Template.
+ * You can customize the toast layout by providing a custom Template.
  *
  * Add this to your page as:
  *
@@ -22,11 +22,28 @@
  * and the new message is already visible to the user.  However,
  * this widget does not know what conversation is currently visible, so its up to you to manage this.
  *
- * Provide a layer.UI.components.misc.Notifier.onMessageNotification handler to perform tests to see
+ * A workaround for managing this is to have the Conversation View `listen-to` the Notifier; it will prevent the Notifier from showing
+ * a toast for visible messages.
+ *
+ * ```
+ * <layer-conversation-view listen-to='mynotifier'></layer-conversation-view>
+ * <layer-notifier id='mynotifier'></layer-notifier>
+ * ```
+ *
+ * If not using `listen-to`, then provide a Layer.UI.components.misc.Notifier.onMessageNotification handler to perform tests to see
  * if notifications are required, and then call `evt.preventDefault()` to prevent the notification from showing.
  *
- * @class layer.UI.components.Notifier
- * @extends Layer.UI.components.Component
+ * ```
+ * document.body.addEventListener('layer-message-notification', function(evt) {
+ *     if (evt.detail.isBackground) return; // always toast if the event occurred while the window is in the background
+ *     if (evt.detail.item.conversationId !== conversationView.conversation.id) return; // If the conversation is not viewed, allow the toast to occur
+ *     evt.preventDefault(); // Stop the toast from occuring
+ * });
+ * ```
+ *
+ * @class Layer.UI.components.Notifier
+ * @extends Layer.UI.Component
+ * @mixin Layer.UI.mixins.Clickable
  */
 import NotifyLib from 'notifyjs';
 import { isInBackground as IsInBackground, getHandler as GetHandler } from '../../base';
@@ -190,7 +207,7 @@ registerComponent('layer-notifier', {
      * after reloading the app; its assumed that the user who reloads your app has seen what they want
      * to see, and that the purpose of this indicator is to flag new stuff that should bring them back to your window.
      *
-     * See layer.UI.components.Notifier.notifyCharacterForTitlebar for more controls.
+     * See Layer.UI.components.Notifier.notifyCharacterForTitlebar for more controls.
      *
      * @property {String} notifyInTitleBar
      */
@@ -202,7 +219,7 @@ registerComponent('layer-notifier', {
     /**
      * Set a character or string to prefix your window titlebar with when there are unread messages.
      *
-     * This property is used if layer.UI.components.Notifier.notifyInTitlebar is enabled.
+     * This property is used if Layer.UI.components.Notifier.notifyInTitlebar is enabled.
      *
      * @property {String} notifyCharacterForTitlebar
      */
@@ -213,10 +230,10 @@ registerComponent('layer-notifier', {
     /**
      * Set to true to force the notifier to show the unread badge in the titlebar, or set to false to force it to remove this.
      *
-     * Use this at runtime to modify the badging behavior, use layer.UI.components.Notifier.notifyInTitlebar to enable/disable
+     * Use this at runtime to modify the badging behavior, use Layer.UI.components.Notifier.notifyInTitlebar to enable/disable
      * badging.  Treat this as state rather than setting.
      *
-     * If you want to just set the badge until the message is marked as read, use layer.UI.components.Notifier.flagTitlebarForMessage
+     * If you want to just set the badge until the message is marked as read, use Layer.UI.components.Notifier.flagTitlebarForMessage
      *
      * @property {Boolean} flagTitlebar
      */
@@ -304,12 +321,7 @@ registerComponent('layer-notifier', {
   },
   methods: {
 
-    /**
-     * Constructor.
-     *
-     * @method onCreate
-     * @private
-     */
+    // Lifecycle method
     onCreate() {
       this.addClickHandler('item-click', this, this.onClickToast.bind(this));
       this.addEventListener('transitionend', this._afterTransition.bind(this), true);
@@ -437,6 +449,20 @@ registerComponent('layer-notifier', {
     /**
      * MIXIN HOOK: User has clicked on a desktop notification.
      *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'layer-notifier': {
+     *       methods: {
+     *         onDesktopClick(message) {
+     *           showConversation(message.getConversation());
+     *         }
+     *       }
+     *     }
+     *   }
+     * });
+     * ```
+     *
      * @method
      * @param {Layer.Core.Message} message
      */
@@ -452,13 +478,13 @@ registerComponent('layer-notifier', {
      */
     toastNotify(message) {
       this.closeToast();
-      const placeholder = this.querySelector('.layer-message-item-placeholder');
       const rootPart = message.getRootPart();
 
       if (rootPart) {
         this.nodes.avatar.users = [message.sender];
         this.nodes.title.innerHTML = message.sender.displayName;
-        this.nodes.viewer.message = message;
+        this.properties.model = message.createModel();
+        this.nodes.message.innerHTML = this.properties.model.getOneLineSummary();
 
         if (this.properties._toastTimeout) clearTimeout(this.properties._toastTimeout);
 
@@ -491,7 +517,6 @@ registerComponent('layer-notifier', {
         this.properties.message = null;
         this.properties.model = null;
         this.properties.rootPart = null;
-        this.nodes.viewer.innerHTML = '';
 
         clearTimeout(this.properties._toastTimeout);
         this.properties._toastTimeout = 0;
@@ -502,6 +527,20 @@ registerComponent('layer-notifier', {
 
     /**
      * MIXIN HOOK: The user has clicked on the toast dialog.
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'layer-notifier': {
+     *       methods: {
+     *         onClickToast(evt) {
+     *           showConversation(this.properties.toastMessage.getConversation());
+     *         }
+     *       }
+     *     }
+     *   }
+     * });
+     * ```
      *
      * @method onClickToast
      * @private

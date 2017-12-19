@@ -17,7 +17,7 @@ import layerUI from '../base';
  *
  * * ConversationPanel: A wrapper around a Layer.UI.components.ConversationView
  * * ConversationsList: A wrapper around a layer.UI.components.ConversationsListPanel
- * * IdentitiesList: A wrapper around a layer.UI.components.IdentitiesListPanel
+ * * IdentitiesList: A wrapper around a layer.UI.components.IdentityListPanel
  * * Notifier: A wrapper around a layer.UI.components.misc.Notifier
  * * SendButton: A wrapper around a layer.UI.components.SendButton
  * * FileUploadButton: A wrapper around a layer.UI.components.FileUploadButton

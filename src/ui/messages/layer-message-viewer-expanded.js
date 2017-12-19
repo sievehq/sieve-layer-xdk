@@ -2,8 +2,9 @@
  * A dialog for showing a Message Type Model in an expanded full (or near-full) screen view.
  *
  *
- * @class Layer.UI.message.MessageViewerExpanded
- * @extends Layer.UI.components.Component
+ * @class Layer.UI.messages.MessageViewerExpanded
+ * @extends Layer.UI.Component
+ * @mixin Layer.UI.mixins.Clickable
  */
 import { registerComponent } from '../components/component';
 import Clickable from '../mixins/clickable';

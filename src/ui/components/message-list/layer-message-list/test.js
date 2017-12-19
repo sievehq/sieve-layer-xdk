@@ -517,31 +517,52 @@ describe('layer-message-list', function() {
   });
 
   describe("The _inSameGroup() method", function() {
-    it("Should return true if same sender and within layerUI.settings.messageGroupTimeSpan seconds", function() {
+    it("Should return true if same sender and within Layer.UI.settings.messageGroupTimeSpan seconds", function() {
       var m1 = conversation.createMessage("m1");
-      var m2 = conversation.createMessage("m1");
+      var w1 = document.createElement('layer-message-item-sent');
       m1.sentAt = new Date();
+      w1.item = m1;
+
+      var m2 = conversation.createMessage("m1");
+      var w2 = document.createElement('layer-message-item-sent');
       m2.sentAt = new Date();
-      m2.sentAt.setSeconds(m2.sentAt.getSeconds() + layerUI.settings.messageGroupTimeSpan/1000 - 1);
-      expect(el._inSameGroup(m1, m2)).toBe(true);
+      m2.sentAt.setSeconds(m2.sentAt.getSeconds() + Layer.UI.settings.messageGroupTimeSpan/1000 - 1);
+      w2.item = m2;
+
+      expect(el._inSameGroup(w1, w2)).toBe(true);
+      w1.destroy();w2.destroy();
     });
 
     it("Should return false if the senders do not match", function() {
       var m1 = conversation.createMessage("m1");
-      var m2 = conversation.createMessage("m2");
+      var w1 = document.createElement('layer-message-item-sent');
       m1.sentAt = new Date();
+      w1.item = m1;
+
+      var m2 = conversation.createMessage("m1");
+      var w2 = document.createElement('layer-message-item-sent');
       m2.sentAt = new Date();
       m2.sender = user1;
-      expect(el._inSameGroup(m1, m2)).toBe(false);
+      w2.item = m2;
+
+      expect(el._inSameGroup(w1, w2)).toBe(false);
+      w1.destroy();w2.destroy();
     });
 
-    it("Should return false if outside of layerUI.settings.messageGroupTimeSpan seconds", function() {
+    it("Should return false if outside of Layer.UI.settings.messageGroupTimeSpan seconds", function() {
       var m1 = conversation.createMessage("m1");
-      var m2 = conversation.createMessage("m1");
+      var w1 = document.createElement('layer-message-item-sent');
       m1.sentAt = new Date();
+      w1.item = m1;
+
+      var m2 = conversation.createMessage("m1");
+      var w2 = document.createElement('layer-message-item-sent');
       m2.sentAt = new Date();
-      m2.sentAt.setSeconds(m2.sentAt.getSeconds() + layerUI.settings.messageGroupTimeSpan/1000 + 10);
-      expect(el._inSameGroup(m1, m2)).toBe(false);
+      m2.sentAt.setSeconds(m2.sentAt.getSeconds() + Layer.UI.settings.messageGroupTimeSpan/1000 + 10);
+      w2.item = m2;
+
+      expect(el._inSameGroup(w1, w2)).toBe(false);
+      w1.destroy();w2.destroy();
     });
   });
 
@@ -949,7 +970,7 @@ describe('layer-message-list', function() {
       spyOn(el, "_renderPagedDataDone");
       el._renderPagedData({type: 'data', data: []});
       jasmine.clock().tick(1000);
-      expect(el._renderPagedDataDone).not.toHaveBeenCalled();
+      expect(el._renderPagedDataDone).toHaveBeenCalledWith([], null, {type: 'data', data: []});
       expect(el.properties.lastPagedAt).toBe(0);
     });
   });

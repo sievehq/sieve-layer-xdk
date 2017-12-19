@@ -163,7 +163,7 @@ class ButtonsModel extends MessageTypeModel {
     const choices = this.buttons.filter(button => button.type === 'choice');
 
     // For Each Choice Button Set:
-    choices.forEach((button) => {
+    choices.forEach((button, index) => {
       if (!button.data) button.data = {};
       // We don't yet have support for updating a Choice Model if one were to change on the server.
       // Only generate the ChoiceModel if it doesn't already exist.
@@ -176,6 +176,7 @@ class ButtonsModel extends MessageTypeModel {
           message: this.message,
           parentId: this.nodeId,
           responses: this.responses,
+          id: ButtonsModel.prefixUUID + uuid(this.message.id) + '/parts/buttonchoice' + index,
         };
 
         // Copy all data from button.data into the object for the Choice Model.

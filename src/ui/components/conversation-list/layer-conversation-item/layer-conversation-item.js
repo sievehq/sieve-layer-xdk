@@ -11,7 +11,7 @@
  * * Badges for unread messages (currently just adds a css class so styling can change if there are any unread messages)
  *
  * @class Layer.UI.components.ConversationsListPanel.Item.Conversation
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.ListItem
  * @mixin Layer.UI.mixins.SizeProperty
  * @mixin Layer.UI.mixins.ListItemSelection
@@ -134,7 +134,7 @@ registerComponent('layer-conversation-item', {
      *
      * @property {Function} getMenuOptions
      * @property {Layer.Core.Conversation} getMenuOptions.conversation
-     * @property {Object[]} getMenuOptions.returns
+     * @property {Object[]} getMenuOptions.return
      */
     getMenuOptions: {
       type: Function,
@@ -186,7 +186,7 @@ registerComponent('layer-conversation-item', {
       if (this.nodes.presence) this.nodes.presence.item = users.length === 1 ? users[0] : null;
 
       // Setup the unread style
-      this.classList[isUnread ? 'add' : 'remove']('layer-conversation-unread-messages');
+      this.toggleClass('layer-conversation-unread-messages', isUnread);
     },
 
     /**

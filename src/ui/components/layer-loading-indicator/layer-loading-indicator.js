@@ -1,10 +1,9 @@
 /**
  * The Layer Loading Spinner/indicator
  *
- * @class layer.UI.components.LoadingIndicator
- * @extends Layer.UI.components.Component
+ * @class Layer.UI.components.LoadingIndicator
+ * @extends Layer.UI.Component
  */
-import layerUI from '../../base';
 import { registerComponent } from '../component';
 
 registerComponent('layer-loading-indicator', {

@@ -24,17 +24,13 @@
       flex-direction: column;
       flex-grow: 1;
     }
-    layer-notifier layer-message-text-plain {
-      overflow: hidden;
-      max-height: 200px;
-    }
   </style>
+  <layer-avatar layer-id='avatar' size='medium'></layer-avatar>
   <div class='layer-message-item-main' layer-id='container'>
     <div class='layer-notifier-title'>
-      <layer-avatar layer-id='avatar' size='small'></layer-avatar>
       <span layer-id='title'></span>
     </div>
-    <layer-message-viewer layer-id='viewer'></layer-message-viewer>
+    <div class='layer-notifier-message' layer-id='message'></div>
   </div>
 </template>
 <script>

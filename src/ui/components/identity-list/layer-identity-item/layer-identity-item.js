@@ -5,11 +5,11 @@
  *
  * This widget includes a checkbox for selection.
  *
- * @class Layer.UI.components.IdentitiesListPanel.Item
+ * @class Layer.UI.components.IdentityListPanel.Item
  * @mixin Layer.UI.mixins.ListItem
  * @mixin Layer.UI.mixins.SizeProperty
  * @mixin Layer.UI.mixins.Clickable
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import Layer from '../../../../core';
 import Util from '../../../../util';
@@ -45,19 +45,9 @@ registerComponent('layer-identity-item', {
     },
 
     /**
-     * Provide property to override the function used to render a name for each Identity Item.
+     * @inheritdoc Layer.UI.components.IdentityListPanel.List#nameRenderer
      *
-     * Note that changing this will not regenerate the list; this should be set when initializing a new List.
-     *
-     * ```javascript
-     * identityItem.nameRenderer = function(identity) {
-     *    return 'Dark Lord ' + identity.firstName;
-     * };
-     * ```
-     *
-     * Typically this would be set using Layer.UI.components.IdentitiesListPanel.List.nameRenderer
-     *
-     * @property {Function}
+     * @property {Function} nameRenderer
      */
     nameRenderer: {},
 

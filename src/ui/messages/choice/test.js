@@ -1091,7 +1091,7 @@ describe('Choice Message Components', function() {
     });
 
     describe("Event Tests", function() {
-      it("Should use the gather-custom-response-data event", function() {
+      it("Should use the message-type-model:customization event", function() {
         var model = new ChoiceModel({
           label: "hello",
           allowMultiselect: true,
@@ -1111,19 +1111,19 @@ describe('Choice Message Components', function() {
         });
 
         var called = false;
-        model.once('gather-custom-response-data', function(evt) {
-          called = true;
+        model.once('message-type-model:customization', function(evt) {
+          if (evt.type === 'layer-choice-model-generate-response-message') {
+            called = true;
 
-          // Posttest
-          expect(evt).toEqual(jasmine.objectContaining({
-            choice: jasmine.objectContaining({ id: 'bb' }),
-            choiceCustomResponseData: {hey: "ho10", a: "bbb"},
-            fullCustomResponseData:  {
-              hey: "ho",
-              there: "goes"
-            },
-            action: 'selected'
-          }));
+            // Posttest
+            expect(evt).toEqual(jasmine.objectContaining({
+              choice: jasmine.objectContaining({ id: 'bb' }),
+              model: this,
+              text: "Frodo the Dodo selected b for hello",
+              nameOfChoice: "hello",
+              action: 'selected'
+            }));
+          }
         });
 
         model.selectAnswer({ id: "bb" });
@@ -1131,17 +1131,18 @@ describe('Choice Message Components', function() {
 
         // Test 2:
         called = false;
-        model.once('gather-custom-response-data', function(evt) {
-          called = true;
-          expect(evt).toEqual(jasmine.objectContaining({
-            choice: jasmine.objectContaining({ id: 'bb' }),
-            choiceCustomResponseData: {hey: "ho10", a: "bbb"},
-            fullCustomResponseData:  {
-              hey: "ho",
-              there: "goes"
-            },
-            action: 'deselected'
-          }));
+        model.once('message-type-model:customization', function(evt) {
+          if (evt.type === 'layer-choice-model-generate-response-message') {
+            called = true;
+            // Posttest
+            expect(evt).toEqual(jasmine.objectContaining({
+              choice: jasmine.objectContaining({ id: 'bb' }),
+              model: this,
+              text: "Frodo the Dodo selected b for hello",
+              nameOfChoice: "hello",
+              action: 'deselected'
+            }));
+          }
         });
         model.selectAnswer({ id: "bb" });
         expect(called).toBe(true);
@@ -1162,13 +1163,14 @@ describe('Choice Message Components', function() {
         });
         spyOn(model, "_sendResponse");
         var called = false;
-        model.on('generate-text-message', function(evt) {
-          called = true;
-          expect(evt.data.text.length > 0).toBe(true);
-          expect(evt.data.choice).toBe(model.choices[1]);
-          expect(evt.data.action).toEqual('selected');
-
-          evt.data.text = 'hey ho';
+        model.once('message-type-model:customization', function(evt) {
+          if (evt.type === 'layer-choice-model-generate-response-message') {
+            called = true;
+            expect(evt.text.length > 0).toBe(true);
+            expect(evt.choice).toBe(model.choices[1]);
+            expect(evt.action).toEqual('selected');
+            evt.returnValue('hey ho');
+          }
         });
 
         model.selectAnswer({id: "bb"});

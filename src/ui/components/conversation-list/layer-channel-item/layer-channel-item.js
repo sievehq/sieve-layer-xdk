@@ -12,7 +12,7 @@
  *
  * @class Layer.UI.components.ConversationsListPanel.Item.Channel
  * @experimental
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../../components/component';
 import ListItem from '../../../mixins/list-item';

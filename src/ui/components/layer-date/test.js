@@ -30,8 +30,8 @@ describe('layer-date', function() {
     el.defaultFormat = {month: 'numeric'};
     el.olderFormat = {year: 'numeric'};
     el.date = d;
-    expect(d.toLocaleString).toHaveBeenCalledWith('lookup', el.todayFormat);
-    expect(el.innerHTML).toEqual(d.toLocaleString('lookup', el.todayFormat));
+    expect(d.toLocaleString).toHaveBeenCalledWith(navigator.language, el.todayFormat);
+    expect(el.innerHTML).toEqual(d.toLocaleString(navigator.language, el.todayFormat));
   });
 
   it('Should use weekFormat if week', function() {
@@ -43,8 +43,8 @@ describe('layer-date', function() {
     el.defaultFormat = {month: 'numeric'};
     el.olderFormat = {year: 'numeric'};
     el.date = d;
-    expect(d.toLocaleString).toHaveBeenCalledWith('lookup', el.weekFormat);
-    expect(el.innerHTML).toEqual(d.toLocaleString('lookup', el.weekFormat));
+    expect(d.toLocaleString).toHaveBeenCalledWith(navigator.language, el.weekFormat);
+    expect(el.innerHTML).toEqual(d.toLocaleString(navigator.language, el.weekFormat));
   });
 
   it('Should use olderFormat if not this year', function() {
@@ -56,8 +56,8 @@ describe('layer-date', function() {
     el.defaultFormat = {month: 'numeric'};
     el.olderFormat = {year: 'numeric'};
     el.date = d;
-    expect(d.toLocaleString).toHaveBeenCalledWith('lookup', el.olderFormat);
-    expect(el.innerHTML).toEqual(d.toLocaleString('lookup', el.olderFormat));
+    expect(d.toLocaleString).toHaveBeenCalledWith(navigator.language, el.olderFormat);
+    expect(el.innerHTML).toEqual(d.toLocaleString(navigator.language, el.olderFormat));
   });
 
   it('Should use defaultFormat if this year; will fail stupid test if run first week of january', function() {
@@ -69,8 +69,8 @@ describe('layer-date', function() {
     el.defaultFormat = {month: 'numeric'};
     el.olderFormat = {year: 'numeric'};
     el.date = d;
-    expect(d.toLocaleString).toHaveBeenCalledWith('lookup', el.defaultFormat);
-    expect(el.innerHTML).toEqual(d.toLocaleString('lookup', el.defaultFormat));
+    expect(d.toLocaleString).toHaveBeenCalledWith(navigator.language, el.defaultFormat);
+    expect(el.innerHTML).toEqual(d.toLocaleString(navigator.language, el.defaultFormat));
   });
 
   it('Should rerender to empty', function() {

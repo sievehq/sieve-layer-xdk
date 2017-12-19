@@ -1,19 +1,21 @@
 /**
- * The Layer Message Item widget renders a single Message synopsis.
+ * The Layer Message Item component renders a single Message, typically for use within a Message List.
  *
- * This is designed to go inside of the layerUI.MessageList widget.  This widget renders the framework of information that goes around a Message,
- * but leaves it up to custom handlers to render the contents and assorted MIME Types of the messages.
+ * This is designed to go inside of the Layer.UI.components.MessageListPanel.List component.
+ * This component renders the framework of information that goes around a Message,
+ * but leaves it up to subcomponents to render the contents and assorted MIME Types of the messages.
  *
- * This Component has two named templates:
+ * This Component has three named and customizable templates:
  *
  * * `layer-message-item-sent`: Rendering for Messages sent by the owner of this Session
  * * `layer-message-item-received`: Rendering for Messages sent by other users
+ * * `layer-message-item-status`: Rendering for Messages that are rendered as Status Messages
  *
  * ## CSS Classes
  *
  * * When sending a message, if using `presend()` the message item will have the CSS class `layer-message-preview` until its sent
  * * The tagName used to render the content within the message item will be used as a class name of the parent item.
- *   If using a `<layer-message-text-plain />` widget within the item, the item itself will receive the `layer-message-text-plain` CSS class
+ *   If using a `<layer-message-viewer />` widget within the item, the item itself will receive the `layer-message-viewer` CSS class
  * * `layer-unread-message` will be applied to any message that the user has received but which hasn't been marked as read
  * * `layer-message-status-read-by-all`: All receipients of your user's message have read the message
  * * `layer-message-status-read-by-some`: Some receipients of your user's message have read the message
@@ -25,33 +27,53 @@
  * * `layer-list-item-last`: The message is the last in a series of messages from the same sender and within the same block of time
  * * `layer-list-item-first`: The message is the first in a series of messages from the same sender and within the same block of time
  *
+ * ## Customization
+ *
+ * The recommended way to customize a Message Item is using Replaceable Content.  While this can be set as a property upon the Message Item,
+ * its typically simpler to set it as a property upon the Message List or even the Conversation View.
+ *
+ * ```
+ * conversationView.replaceableContent = {
+ *     messageRowRightSide: function(messageItemComponent) {
+ *        var message = messageItemComponent.item;
+ *        if (message.sender.sessionOwner) {
+ *            var div = document.createElement('div');
+ *            div.innerHTML = 'some stuff that the message sender should see goes here';
+ *            return div;
+ *        } else {
+ *            var div = document.createElement('div');
+ *            div.innerHTML = 'some stuff that the message recipient should see goes here';
+ *            return div;
+ *        }
+ *     }
+ * };
+ * ```
+ *
+ * The following Replaceable Content keys are built into the templates:
+ *
+ * * messageRowRightSide
+ * * messageRowLeftSide
+ * * messageRowHeader
+ * * messageRowFooter
+ *
+ * Any component that you define and put into any of these areas will have an `item` property set containing the currently
+ * rendered Layer.Core.Message.
+ *
  * ## Advanced Customization
  *
- * The simple way to customize the widget is to modify its template.
- * For more advanced customizations where the Message Item widget needs new properties, methods and capabilities, you have two options:
+ * For more advanced customizations where the Message Item widget needs new properties, methods and capabilities, the Message Item
+ * can be enhanced via Mixin
  *
- * 1. Define a custom `<layer-message-item/>` widget; this works but your now entirely responsible for all of its
- *    behaviors, and can not easily integrate fixes and enhancements added to this repo. This is discussed in more
- *    detail at [docs.layer.com](https://docs.layer.com).
- * 2. Enhance the provided widget with Mixins.  Below illustrates an example of a mixin.
+ * The following example adds a selection checkbox to each Message Item;
  *
- * A Custom Mixin can be used to add Properties and Methods to this class.
- * Any method of this class can be enhanced using a Custom Mixin, however the following methods are recommended
- * as sufficient for most solutions:
+ * * It adds a selected property that gets/sets the Checkbox state
+ * * It adds custom handling during onCreate to add a checkbox to the DOM and wire up its event handler
+ * * It adds initialization of the checkbox state
+ * * It adds triggering of a `custom-message-checkbox-change` event on the DOM that can be listened for
+ *   using `document.addEventListener('custom-message-checkbox-change', handler)
  *
- * * Layer.UI.components.MessagesListPanel.List.onCreate: Your widget has just been created; it has a DOM node, it has child
- *   nodes, *it has no properties*, nor does not yet have a `parentNode`.
- *   Provide an `onCreate` if there is any DOM manipulation you want to do any initialization.  (DOM Manipulation here should NOT depend
- *   upon property values).
- * * Layer.UI.components.MessagesListPanel.List.onAttach: Your widget now has a `parentNode`.  This is solely for initialization
- *   code that depends upon looking at the `parentNode`, and is not commonly used.
- * * Layer.UI.components.MessagesListPanel.List.onRender: Your Message Item widget has just been rendered for the first time.
- *   Your widget should have an `item` at this point and any property-based dom manipulation can be done at this time.
- *
- * The following example adds a search bar to the Message List
  * ```
- * layer.UI.init({
- *   appId: 'my-app-id',
+ * Layer.init({
  *   mixins: {
  *     'layer-messages-item': {
  *       properties: {
@@ -74,13 +96,11 @@
  *           this.appendChild(this.nodes.checkbox);
  *         },
  *
- *         // When the widget has been rendered is a good time to do any property based dom manipulation
- *         onRender: function() {
+ *         onAfterCreate: function() {
  *          this.nodes.checkbox.checked = this.selected;
  *         },
  *
- *         // Search is run whenver the user changes the search text, app changes the search text,
- *         // or new messages arrive that need to be searched
+ *         // Allow the app to get updates to selection state changes for all Message Items
  *         _handleCustomCheckboxEvent(evt) {
  *           this.trigger('custom-message-checkbox-change', {
  *             isChecked: this.selected,
@@ -93,29 +113,34 @@
  * });
  * ```
  *
- * @class Layer.UI.components.MessagesListPanel.Item
+ * @class Layer.UI.components.MessageListPanel.Item
  * @mixins Layer.UI.mixins.ListItem
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
-import Layer from '../../../core';
 import Constants from '../../../constants';
 import Util from '../../../util';
 import '../layer-replaceable-content/layer-replaceable-content';
+import ListItem from '../../mixins/list-item';
 
 module.exports = {
+  mixins: [ListItem],
   properties: {
 
     /**
      * Rather than sort out `instanceof` operations, you can use `isMessageListItem` to test to see if a widget represents a Message Item.
      *
-     * A Message Item only shows up in a MessageList; other places where Messages are rendered (layer-notifier, layer-conversation-last-message, etc...) are
+     * A Message Item only shows up in a MessageList; other places where Messages are rendered (layer-notifier,
+     * layer-conversation-last-message, etc...) are
      * NOT Message Items, and may need to keep its content more compact.
+     *
+     * @property {Boolean} [isMessageListItem=true]
+     * @readonly
      */
     isMessageListItem: {
       value: true,
     },
 
-    // Every List Item has an item property, here it represents the Conversation to render
+    // Every List Item has an item property, here it represents the Message to render
     item: {},
 
     /**
@@ -127,17 +152,16 @@ module.exports = {
      * }
      * ```
      *
-     * @property {Function}
+     * @property {Function} getDeleteEnabled
+     * @removed
      */
-    getDeleteEnabled: {
-      type: Function,
-    },
 
     /**
-     * HTML Tag to generate for the current content
+     * HTML Tag to generate for the current content.
      *
      * @private
-     * @property {String}
+     * @deprecated  Here for backwards compatability only; all messages should be rendered using Layer.UI.handlers.message.MessageViewer
+     * @property {String} _contentTag
      */
     _contentTag: {
       set(newTag, oldTag) {
@@ -147,43 +171,31 @@ module.exports = {
     },
 
     /**
-     * Provide property to override the function used to render a date for each Message Item.
+     * @inheritdoc Layer.UI.components.MessageListPanel.List#dateRenderer
      *
-     * Note that changing this will not regenerate the list; this should be set when initializing a new List.
-     *
-     * ```javascript
-     * messageItem.dateRenderer = function(date) {
-     *    return date.toISOString();
-     * };
-     * ```
-     *
-     * @property {Function}
+     * @property {Function} [dateRenderer=null]
+     * @property {Date} dateRenderer.date
+     * @property {String} dateRenderer.return
      */
     dateRenderer: {},
 
+    /**
+     * @inheritdoc Layer.UI.components.MessageListPanel.List#dateFormat
+     *
+     * @property {Object} [dateFormat=]
+     * @property {Object} [dateFormat.today={hour: 'numeric', minute: 'numeric'}]
+     * @property {Object} [dateFormat.week={ weekday: 'short', hour: 'numeric', minute: 'numeric' }]
+     * @property {Object} [dateFormat.older={ month: 'short', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }]
+     * @property {Object} [dateFormat.default={ month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }]
+     */
     dateFormat: {},
 
     /**
-     * Provide a function that returns the menu items for the given Conversation.
-     *
-     * Note that this is called each time the user clicks on a menu button to open the menu,
-     * but is not dynamic in that it will regenerate the list as the Conversation's properties change.
-     *
-     * Format is:
-     *
-     * ```
-     * widget.getMenuOptions = function(conversation) {
-     *   return [
-     *     {text: "label1", method: method1},
-     *     {text: "label2", method: method2},
-     *     {text: "label3", method: method3}
-     *   ];
-     * }
-     * ```
+     * @inheritdoc Layer.UI.components.MessageListPanel.List#getMenuOptions
      *
      * @property {Function} getMenuOptions
-     * @property {Layer.Core.Conversation} getMenuOptions.conversation
-     * @property {Object[]} getMenuOptions.returns
+     * @property {Layer.Core.Message} getMenuOptions.message
+     * @property {Object[]} getMenuOptions.return
      */
     getMenuOptions: {
       type: Function,
@@ -191,32 +203,30 @@ module.exports = {
     },
 
     /**
-     * Provide property to override the function used to render a date for each Message Item.
+     * @inheritdoc Layer.UI.components.MessageListPanel.List#messageStatusRenderer
      *
-     * Note that changing this will not regenerate the list; this should be set when initializing a new List.
-     *
-     * ```javascript
-     * messageItem.messageStatusRenderer = function(message) {
-     *    return message.readStatus === layer.Constants.RECIPIENT_STATE.ALL ? 'read' : 'processing...';
-     * };
-     * ```
-     *
-     * @property {Function}
+     * @property {Function} [messageStatusRenderer=null]
+     * @property {Layer.Core.Message} messageStatusRenderer.message
+     * @property {String} messageStatusRenderer.return
      */
     messageStatusRenderer: {},
+    cssClassList: {
+      value: ['layer-message-item'],
+    },
   },
   methods: {
-    onCreate: function onCreate() {
-      this.classList.add('layer-message-item');
-    },
 
+    // Lifecycle method sets up date widget
     onAfterCreate() {
       const dateFormat = this.dateFormat;
       if (dateFormat && this.nodes.date) {
-        Object.keys(dateFormat).forEach(formatName => (this.nodes.date[formatName + 'Format'] = dateFormat[formatName]));
+        Object.keys(dateFormat).forEach((formatName) => {
+          this.nodes.date[formatName + 'Format'] = dateFormat[formatName];
+        });
       }
     },
 
+    // Lifecycle method sets up the Message to render
     onRender: function onRender() {
       try {
 
@@ -253,6 +263,7 @@ module.exports = {
       }
     },
 
+    // Lifecycle method handles rendering of mutable properties of the message
     onRerender() {
       const readStatus = this.properties.item.readStatus;
       const deliveryStatus = this.properties.item.deliveryStatus;
@@ -289,7 +300,10 @@ module.exports = {
         messageHandler.parentComponent = this;
         messageHandler.message = this.item;
         this.nodes.messageHandler = messageHandler;
-        this.nodes.messageViewer.parentNode.removeChild(this.nodes.messageViewer);
+        if (this.nodes.messageViewer) {
+          this.nodes.messageViewer.parentNode.removeChild(this.nodes.messageViewer);
+          delete this.nodes.messageViewer;
+        }
         this.nodes.content.appendChild(messageHandler);
       }
       Util.defer(() => {

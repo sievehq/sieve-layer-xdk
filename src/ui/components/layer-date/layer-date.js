@@ -2,8 +2,12 @@
  * The Layer Date widget renders a date.
  *
  * This is provided as a specialized component so that it can be easily redefined by your app to
- * provide your own date formatting.  Note that most customization of date rendering can be accomplished instead
- * using Layer.UI.components.ConversationView.dateRenderer.
+ * provide your own date formatting.  Note that there are four techniques for formatting Dates:
+ *
+ * 1. Use Layer.UI.components.ConversationView.dateFormat to specify formatting options
+ * 2. Use Layer.UI.components.ConversationView.dateRenderer to provide your own string generation
+ * 3. Use Mixins to customize the `onRender` method
+ * 4. Define a whole new `<layer-date />` widget
  *
  * ```
  * Layer.init({
@@ -21,13 +25,31 @@
  * });
  * ```
  *
- * @class layer.UI.components.Date
- * @extends Layer.UI.components.Component
+ *
+ *
+ * @class Layer.UI.components.Date
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 
 const LayerDate = {
   properties: {
+
+    /**
+     * The format setting to use if no other format is provided.
+     *
+     * ```
+     * widget.defaultFormat = {
+     *     hour: '2-digit',
+     *     minute: '2-digit'
+     * };
+     * ```
+     *
+     * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString for details
+     * on the parameters that are supported by `toLocaleString`.
+     *
+     * @property {Object} defaultFormat
+     */
     defaultFormat: {
       value: { hour: '2-digit', minute: '2-digit' },
       set(value) {
@@ -42,6 +64,18 @@ const LayerDate = {
       },
     },
 
+    /**
+     * The format options to use if rendering a date that is today.
+     *
+     * widget.todayFormat = {
+     *     hour: '2-digit',
+     *     minute: '2-digit',
+     *     year: 'numeric'
+     * };
+     * ```
+     *
+     * @property {Object} todayFormat
+     */
     todayFormat: {
       set(value) {
         if (typeof value === 'string') {
@@ -55,6 +89,16 @@ const LayerDate = {
       },
     },
 
+    /**
+     * The format options to use if rendering a date that is not today, but is this week.
+     *
+     * widget.weekFormat = {
+     *     weekday: "short"
+     * };
+     * ```
+     *
+     * @property {Object} weekFormat
+     */
     weekFormat: {
       set(value) {
         if (typeof value === 'string') {
@@ -67,6 +111,20 @@ const LayerDate = {
         this.onRender();
       },
     },
+
+    /**
+     * The format options to use if rendering a date that is not from this week
+     *
+     * widget.olderFormat = {
+     *     weekday: "short",
+     *     hour: '2-digit',
+     *     minute: '2-digit',
+     *     year: 'numeric'
+     * };
+     * ```
+     *
+     * @property {Object} olderFormat
+     */
     olderFormat: {
       set(value) {
         if (typeof value === 'string') {
@@ -83,8 +141,6 @@ const LayerDate = {
     /**
      * Date to be rendered
      *
-     * TODO: We do not need seconds in a typical date output; need to investigate how to do that with localizations
-     *
      * @property {Date} [date=null]
      */
     date: {
@@ -95,7 +151,7 @@ const LayerDate = {
     },
 
     /**
-     * The actual rendered string.
+     * The `value` is the HTML to be rendered; similar to `innerHTML` but allows for processing if needed.
      *
      * @property {String} [value='']
      */

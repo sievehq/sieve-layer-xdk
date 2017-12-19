@@ -1,36 +1,59 @@
 /**
  * The Layer Menu renders a menu absolutely positioned beside the specified node.
  *
+ * Typically this is used in conjunction with Layer.UI.components.MenuButton.
+ *
+ * This example shows it being used without the MenuButton:
+ *
  * ```
- * var menuButton = document.createElement('layer-menu-button');
- * menuButton.item = message;
- * menuButton.options = [
- *   {text: "delete", method: function(item) {item.delete(Layer.Constants.DELETION_MODE.ALL);}
+ * var menuNode = document.createElement('layer-menu');
+ * document.body.appendChild(menuNode);
+ *
+ * var myMessage = message;
+ * menuNode.items = [
+ *   {text: "delete", method: function() {myMessage.delete(Layer.Constants.DELETION_MODE.ALL);}  },
+ *   {text: "favorite", method: function() {myMarkFavorite(myMessage);}  }
  * ];
+ * menuNode.near = document.getElementById('showMenuNextToThisNode');
+ * menuNode.isShowing = true;
  * ```
  *
- * @class layer.UI.components.MenuButton
- * @extends Layer.UI.components.Component
+ * @class Layer.UI.components.Menu
+ * @extends Layer.UI.Component
+ * @mixin Layer.UI.mixins.Clickable
  */
-import Layer from '../../../core';
-import Constants from '../../../constants';
 import { registerComponent } from '../../components/component';
 import Clickable from '../../mixins/clickable';
+import { logger } from '../../../util';
 
 registerComponent('layer-menu', {
   mixins: [Clickable],
   properties: {
-    options: {
+
+    /**
+     * Array of menu items.
+     *
+     * Each Menu item consists of `{text: "menu text", method: function() {yourAction()}}`.
+     *
+     * @property {Object[]} items
+     * @property {String} items.text      Menu text; written to innerHTML so it can be used to generate structured items
+     * @property {Function} items.method  Function to call if/when the menu text is selected
+     */
+    items: {
       set(value) {
         const menu = document.createElement('div');
         menu.classList.add('layer-menu-button-menu-list');
+
+        // Generate the menu items
         value.forEach((option) => {
           const menuItem = document.createElement('div');
           menuItem.classList.add('layer-menu-button-menu-item');
           menuItem.innerHTML = option.text;
-          this.addClickHandler('menu-item-click', menuItem, evt => option.method());
+          this.addClickHandler('menu-item-click', menuItem, () => option.method());
           menu.appendChild(menuItem);
         });
+
+        // Add the menu to the DOM
         if (this.firstChild) {
           this.replaceChild(menu, this.firstChild);
         } else {
@@ -40,7 +63,11 @@ registerComponent('layer-menu', {
     },
 
     /**
-     * Different buttons may need menus of differing widths; set it here and its applied by the button, not style sheet.
+     * Different buttons may need menus of differing widths; set it here and its applied by the button, not style sheet (sets `minWidth`).
+     *
+     * ```
+     * menu.width = 200;
+     * ```
      *
      * @proeprty {Number} [menuWidth=100]
      */
@@ -52,6 +79,17 @@ registerComponent('layer-menu', {
       },
     },
 
+    /**
+     * Change showing state to hidden (`false`) or shown (`true`)
+     *
+     * Show the menu with:
+     *
+     * ```
+     * menu.isShowing = true;
+     * ```
+     *
+     * @property {Boolean} [isShowing=false]
+     */
     isShowing: {
       set(value) {
         if (value) {
@@ -61,6 +99,17 @@ registerComponent('layer-menu', {
       },
     },
 
+    /**
+     * Show the menu near this DOM node.
+     *
+     * Show the menu next to a Conversation Item:
+     *
+     * ```
+     * menu.near = myConversationItem;
+     * ```
+     *
+     * @property {HTMLElement} [near=null]
+     */
     near: {
       set(value) {
         if (value && this.isShowing) this._showNear(value);
@@ -69,27 +118,34 @@ registerComponent('layer-menu', {
   },
   methods: {
 
-    /**
-     * Constructor.
-     *
-     * @method onCreate
-     * @private
-     */
+    // Lifecycle
     onCreate() {
       this.addClickHandler('background-click', document, this.onDocumentClick.bind(this));
     },
 
+    // Cleanup
     onDestroy() {
       this.removeClickHandler('background-click', document);
     },
 
+    /**
+     * Whenever anything is clicked in the document, change Layer.UI.components.Menu.isShowing to `false`
+     * @param {Event} evt
+     */
     onDocumentClick(evt) {
       if (this.isShowing) this.isShowing = false;
     },
 
 
+    /**
+     * Attempts to render the menu near the node specified by Layer.UI.components.Menu.near.
+     *
+     * @method _showNear
+     * @private
+     */
     _showNear() {
       const node = this.near;
+      if (!node) return logger.error('layer-menu widget requires a near property that refers to the DOM node near where the menu should be shown');
       const bounds = node.getBoundingClientRect();
       if (bounds.right + this.menuWidth > document.body.clientWidth) {
         this.style.left = '';

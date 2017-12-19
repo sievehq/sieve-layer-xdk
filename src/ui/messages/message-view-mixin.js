@@ -28,9 +28,12 @@ module.exports = {
      * @type {Layer.Core.MessageTypeModel} model
      */
     model: {
-      set(model, oldModel) {
+      set(newModel, oldModel) {
         if (oldModel) oldModel.off(null, null, this);
-        if (model) model.on('message-type-model:change', this.onRerender, this);
+        if (newModel) {
+          newModel.on('message-type-model:change', this.onRerender, this);
+          newModel.on('message-type-model:customization', this._forwardEvent, this);
+        }
       },
     },
 
@@ -105,11 +108,12 @@ module.exports = {
         }
       },
     },
+
+    cssClassList: {
+      value: ['layer-message-type-view'],
+    },
   },
   methods: {
-    onCreate() {
-      this.classList.add('layer-message-type-view');
-    },
 
     /**
      * Core part of the UI Lifecycle, called after onAfterCreate.
@@ -155,6 +159,19 @@ module.exports = {
         !this.model.getTitle() && !this.model.getDescription() && !this.model.getFooter());
     },
 
+    /**
+     * Any customization event from the model should be sent via the UI as well.
+     *
+     * If `evt.preventDefault()` was called on the UI event, call `evt.cancel()`
+     *
+     * @param {Layer.Core.LayerEvent} evt
+     */
+    _forwardEvent(evt) {
+      evt.modelName = this.model.constructor.name;
+      if (!this.trigger(evt.type || evt.eventName, evt)) {
+        evt.cancel();
+      }
+    },
 
     onDestroy() {
       delete this.properties.messageViewer;

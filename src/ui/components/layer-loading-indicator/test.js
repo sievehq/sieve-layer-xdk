@@ -2,12 +2,12 @@ describe('layer-loading-indicator', function() {
   var el;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     el = document.createElement('layer-loading-indicator');
     layer.Util.defer.flush();
   });
@@ -15,7 +15,9 @@ describe('layer-loading-indicator', function() {
   afterEach(function() {
     Layer.Core.Client.removeListenerForNewClient();
   });
-  it("Should have tests", function() {
-    expect(1).toEqual(0);
+  it("Should be so dumb it doesn't need tests", function() {
+    expect(el.properties).toEqual(jasmine.objectContaining({
+      _internalState: jasmine.objectContaining({}),
+    }));
   });
 });

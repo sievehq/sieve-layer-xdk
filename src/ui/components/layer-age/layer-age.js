@@ -6,7 +6,7 @@
  * Provide your own renderer using the Layer.UI.components.Age.ageRenderer property.
  *
  * @class Layer.UI.components.Age
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../component';
 

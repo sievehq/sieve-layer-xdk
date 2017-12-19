@@ -1,22 +1,21 @@
 /**
  * The Layer Typing Indicator widget renders a short description of who is currently typing into the current Conversation.
  *
- * This is designed to go inside of the layerUI.Conversation widget.
+ * This is designed to go inside of the Layer.UI.components.ConversationView widget.
  *
  * The simplest way to customize the behavior of this widget is using the `layer-typing-indicator-change` event.
  *
- * TODO: Provide a Layer.UI.components.ConversationView.typingIndicatorRenderer property
- *
  * @class Layer.UI.components.TypingIndicator
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 
 /**
  * Custom handler to use for rendering typing indicators.
  *
- * By calling `evt.preventDefault()` on the event you can provide your own custom typing indicator text to this widget:
+ * By calling `evt.preventDefault()` on the event you can prevent the default rendering,
+ * and provide your own custom typing indicator text to this widget:
  *
- * ```javascript
+ * ```
  * document.body.addEventListener('layer-typing-indicator-change', function(evt) {
  *    evt.preventDefault();
  *    var widget = evt.target;
@@ -34,7 +33,7 @@
  * if a plain textual message doesn't suffice.
  *
  * @event layer-typing-indicator-change
- * @param {Event} evt
+ * @param {CustomEvent} evt
  * @param {Object} evt.detail
  * @param {Layer.Core.Identity[]} evt.detail.typing
  * @param {Layer.Core.Identity[]} evt.detail.paused
@@ -45,6 +44,10 @@ registerComponent('layer-typing-indicator', {
   properties: {
     /**
      * The Conversation whose typing indicator activity we are reporting on.
+     *
+     * This should be expected to change repeatedly during the lifespan of the widget.
+     *
+     * Should clear the indicator text if conversation is set to null.
      *
      * @property {Layer.Core.Conversation} [conversation=null]
      */
@@ -65,9 +68,9 @@ registerComponent('layer-typing-indicator', {
     },
 
     /**
-     * The Client we are connected with; we need it to receive typing indicator events from the WebSDK.
+     * The Client we are connected with; we need it to receive typing indicator events.
      *
-     * This property is typically set indirectly by setting the layerUI.TypingIndicator.conversation.
+     * This property is typically set indirectly by setting the Layer.UI.components.TypingIndicator.conversation.
      *
      * @property {Layer.Core.Client} [client=null]
      */
@@ -86,23 +89,12 @@ registerComponent('layer-typing-indicator', {
     value: {
       set(text) {
         this.nodes.panel.innerHTML = text || '';
-        // classList.toggle doesn't work right in IE11
-        this.classList[text ? 'add' : 'remove']('layer-typing-occuring');
+        this.toggleClass('layer-typing-occuring', text);
       },
     },
   },
   methods: {
-
-    /**
-     * Constructor.
-     *
-     * @method onCreate
-     * @private
-     */
-    onCreate() {
-
-    },
-
+    // Lifecycle method
     onRender() {
       if (this.conversation && this.conversation.id) {
         const data = this.client.getTypingState(this.conversation.id);
@@ -125,17 +117,23 @@ registerComponent('layer-typing-indicator', {
         const customEvtResult = this.trigger('layer-typing-indicator-change', {
           typing: evt.typing,
           paused: evt.paused,
-          widget: this,
         });
 
         // If the app lets us handle the event, set the value of this widget to something appropriate
         if (customEvtResult) {
-          this.showAsTyping(evt.typing);
+          this._showAsTyping(evt.typing);
         }
       }
     },
 
-    showAsTyping(identities) {
+    /**
+     * Render typing indicator text listing the users who are typing.
+     *
+     * @method
+     * @private
+     * @param {Layer.Core.Identity[]} identities
+     */
+    _showAsTyping(identities) {
       const names = identities.map(user => user.firstName || user.displayName || user.lastName).filter(name => name);
       switch (names.length) {
         case 0:

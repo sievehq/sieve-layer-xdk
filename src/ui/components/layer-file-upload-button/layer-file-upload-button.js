@@ -1,25 +1,28 @@
 /**
- * The Layer file upload button widget allows users to select a File to send.
+ * The Layer file upload button component allows users to select a File to send.
  *
- * Its assumed that this button will be used within the layer.UI.components.ComposeButtonPanel:
+ * This UI Component is typically used within the Layer.UI.components.ComposeBar:
  *
  * ```
- * myConversationPanel.composeButtons = [
- *    document.createElement('layer-file-upload-button')
- * ];
+ * myConversationView.replaceableContent = {
+ *    composerButtonPanelRight: function() {
+ *      document.createElement('layer-file-upload-button')
+ *    }
+ * };
  * ```
  *
- * * Generates a `layer-files-selected` event when files are selected, prior to generating models; you can call `evt.preventDefault()` on this event to prevent further processing
- * * Generates a `layer-model-generated` event after generating models from the selected files. This event is received by
+ * * Generates a `layer-files-selected` event when files are selected, prior to generating models; you can call `evt.preventDefault()`
+ *   on this event to prevent further processing
+ * * Generates a `layer-models-generated` event after generating models from the selected files. This event is received by
  *   the Compose Bar if this widget is inside of the Compose Bar, and it will handle this event.  You can intercept
  *   this event and call `evt.stopPropgation()` to prevent the Compose Bar from receiving this event.
  *
- * @class layer.UI.components.FileUploadButton
- * @extends Layer.UI.components.Component
+ * @class Layer.UI.components.FileUploadButton
+ * @extends Layer.UI.Component
+ * @mixin Layer.UI.mixins.Clickable
  */
-import Layer, { MessagePart } from '../../../core';
+import Layer from '../../../core';
 import Util from '../../../util';
-import layerUI from '../../base';
 import { registerComponent } from '../component';
 import Clickable from '../../mixins/clickable';
 
@@ -53,17 +56,23 @@ registerComponent('layer-file-upload-button', {
       type: Boolean,
       set(newValue) {
         this.nodes.input.multiple = newValue;
-      }
+      },
+    },
+
+    /**
+     * Any File with one of these MIME Types will have a Layer.UI.messages.ImageMessageModel generated.
+     *
+     * Use this property to customize what MIME Types to watch for and treat as Images.
+     *
+     * @property {String[]}
+     */
+    imageTypes: {
+      value: ['image/gif', 'image/png', 'image/jpeg', 'image/svg'],
     },
   },
   methods: {
 
-    /**
-     * Constructor.
-     *
-     * @method onCreate
-     * @private
-     */
+    // Lifecycle
     onCreate() {
       this.nodes.input.id = Util.generateUUID();
       this.nodes.label.setAttribute('for', this.nodes.input.id);
@@ -104,7 +113,7 @@ registerComponent('layer-file-upload-button', {
        * });
        * ```
        *
-       * You can alter the `files` array as needed prior to doing further processing.
+       * You can alter the `files` array as needed and then allow processing to continue (not call `evt.preventDefault()`)
        *
        * ```
        * document.body.addEventListener('layer-files-selected', function(evt) {
@@ -119,19 +128,21 @@ registerComponent('layer-file-upload-button', {
        * @event layer-files-selected
        * @param {Object} evt
        * @param {Object} evt.detail
-       * @param {layer.CardModel[]} evt.detail.models
+       * @param {File} evt.detail.files
        */
       if (this.trigger('layer-files-selected', { files })) {
-        const imageTypes = ['image/gif', 'image/png', 'image/jpeg', 'image/svg'];
         const ImageModel = Layer.Client.getMessageTypeModelClass('ImageModel');
         const FileModel = Layer.Client.getMessageTypeModelClass('FileModel');
 
+        // Generate Message Type Models for each File
         const models = files.map((file) => {
           const options = { source: file };
           if (files.length > 1 && file.name) {
             options.title = file.name;
           }
-          if (imageTypes.indexOf(file.type) !== -1) {
+
+          // Generate either an Image or File Model
+          if (this.imageTypes.indexOf(file.type) !== -1) {
             return new ImageModel(options);
           } else {
             return new FileModel(options);
@@ -139,17 +150,17 @@ registerComponent('layer-file-upload-button', {
         });
 
         /**
-         * This widget triggers a `layer-model-generated` event when the user selects files.
+         * This widget triggers a `layer-models-generated` event when the user selects files.
          * This event is captured and stopped from propagating by the Layer.UI.components.ComposeBar.
-         * If using it outside of the composer, this event can be used to receive the MessageParts generated
+         * If using it outside of the composer, this event can be used to receive the Message Type Models generated
          * for the selected files.
          *
-         * @event layer-model-generated
+         * @event layer-models-generated
          * @param {Object} evt
          * @param {Object} evt.detail
          * @param {Layer.Core.MessageTypeModel[]} evt.detail.models
          */
-        this.trigger('layer-model-generated', { models });
+        this.trigger('layer-models-generated', { models });
       }
     },
   },

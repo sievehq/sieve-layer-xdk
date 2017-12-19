@@ -1,7 +1,7 @@
 /**
  *
  * @class
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
@@ -52,7 +52,7 @@ registerComponent('layer-message-type-list-view', {
           model: item,
           parentNode: this,
         });
-        ui.classList.add('layer-root-card');
+        ui.classList.add('layer-root-viewer');
       });
     },
   },

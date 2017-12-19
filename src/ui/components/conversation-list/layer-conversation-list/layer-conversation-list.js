@@ -40,7 +40,7 @@
  * ```
  *
  * @class Layer.UI.components.ConversationsListPanel.List
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.ListSelection
  * @mixin Layer.UI.mixins.MainComponent
@@ -279,7 +279,7 @@ registerComponent('layer-conversation-list', {
      *
      * @property {Function} getMenuOptions
      * @property {Layer.Core.Conversation} getMenuOptions.conversation
-     * @property {Object[]} getMenuOptions.returns
+     * @property {Object[]} getMenuOptions.return
      */
     getMenuOptions: {
       type: Function,

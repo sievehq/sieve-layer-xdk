@@ -3,7 +3,7 @@
  *
  * @class Layer.UI.messages.LinkMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 
 import { registerComponent } from '../../components/component';

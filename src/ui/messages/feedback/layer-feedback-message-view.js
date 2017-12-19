@@ -5,7 +5,7 @@
  * @class Layer.UI.messages.FeedbackMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @mixin Layer.UI.messages.Clickable
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import { statusMimeTypes } from '../../base';
@@ -30,6 +30,9 @@ registerComponent('layer-feedback-message-view', {
     widthType: {
       value: 'flex-width',
     },
+    cssClassList: {
+      value: ['layer-feedback-message-view-ratings'],
+    },
   },
   methods: {
 
@@ -42,7 +45,6 @@ registerComponent('layer-feedback-message-view', {
 
     onCreate() {
       this.addClickHandler('pre-rating', this, this._onClick.bind(this));
-      this.classList.add('layer-feedback-message-view-ratings');
     },
 
     onRerender() {

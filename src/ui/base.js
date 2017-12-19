@@ -78,6 +78,9 @@ const layerUI = {
  * @property {Object} [settings.defaultHandler]    The default message renderer for messages not matching any other handler
  * @property {String[]} [settings.textHandlers=['autolinker', 'emoji', 'newline']] Specify which text handlers you want
  *    Note that any custom handlers you add do not need to be in the settings, they can be called after calling `init()` using layerUI.registerTextHandler.
+ * @property {Number} [settings.destroyAfterDetachDelay=10000] How long to wait after a Component is removed from the document before destroying it.
+ *   Note that a common use case is to remove it, and then insert it elsewhere. This causes a remove, and this delay helps insure that the insertion
+ *   happens and we can test for this and prevent destroying.
  */
 layerUI.settings = {
   appId: '',
@@ -88,6 +91,7 @@ layerUI.settings = {
     tagName: 'layer-message-unknown',
   },
   textHandlers: ['autolinker', 'emoji', 'newline'],
+  destroyAfterDetachDelay: 10000,
 };
 
 /**
@@ -149,6 +153,7 @@ layerUI.sanitizeText = function(text) {
  * @returns {String}
  */
 layerUI.processText = function(text) {
+  if (text === '') return text;
   if (!layerUI.textHandlersOrdered) this._setupOrderedHandlers();
 
   const processedText = layerUI.sanitizeText(text);
@@ -197,7 +202,7 @@ layerUI.statusMimeTypes = [];
 layerUI.registerStatusModel = StatusModel => layerUI.statusMimeTypes.push(StatusModel.MIMEType);
 
 /**
- * Hash of components defined using Layer.UI.components.Component.
+ * Hash of components defined using Layer.UI.Component.
  *
  * @property {Object} components
  * @private
@@ -373,7 +378,7 @@ layerUI.adapters = {
  * @param {Layer.Core.Message} options.handlesMessage.message    Message to test and handle with our handler if it matches
  * @param {HTMLElement} options.handlesMessage.container     The container that this will be rendered within; typically identifies a specific
  *                                                          layerUI.MessageList or layerUI.ConversationItem.
- * @param {Boolean} options.handlesMessage.returns          Return true to signal that this handler accepts this Message.
+ * @param {Boolean} options.handlesMessage.return          Return true to signal that this handler accepts this Message.
  * @param {String} options.tagName                          Dom node to create if this handler accepts the Message.
  * @param {Number} [options.order=0]                        Some handlers may need to be tested before other handlers to control which one gets
  *                                                          selected; Defaults to order=0, this handler is first
@@ -476,7 +481,7 @@ layerUI.registerMessageActionHandler = function registerMessageActionHandler(act
 /**
  * Register your template for use by an existing Component.
  *
- * Assumes that the specified Component has already been defined using Layer.UI.components.Component.
+ * Assumes that the specified Component has already been defined using Layer.UI.Component.
  *
  * This can be used to associate a template with the Component, or to overwrite the default template
  * with your custom template.
@@ -649,7 +654,7 @@ layerUI.init = function init(settings) {
 };
 
 /**
- * This method is shorthand for accessing Layer.UI.components.Component.registerComponent
+ * This method is shorthand for accessing Layer.UI.Component.registerComponent
  *
  * Note: This code is actually in components/component.js and is only attached to layerUI
  * if you require `layer-ui-web/index.js` or just `layer-ui-web`, else you have to directly

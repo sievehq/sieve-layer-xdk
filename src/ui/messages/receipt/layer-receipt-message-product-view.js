@@ -2,7 +2,7 @@
  * Subcomponent of Layer.UI.messages.ReceiptView for rendering individual Product Models
  *
  * @class Layer.UI.messages.ReceiptMessageProductView
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 

@@ -410,6 +410,7 @@ describe('layer-conversation-view', function() {
 
   describe("The disable property", function() {
     it("Should pass the property to the list", function() {
+      layer.Util.defer.flush();
       el.disable = true;
       expect(el.nodes.list.disable).toBe(true);
       el.disable = false;

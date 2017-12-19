@@ -7,7 +7,7 @@
  *
  * @class Layer.UI.messages.ResponseMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
@@ -15,7 +15,7 @@ import { Constants } from '../../base';
 
 registerComponent('layer-response-message-view', {
   mixins: [MessageViewMixin],
-  style: `layer-message-viewer.layer-response-message-view {}`,
+  style: 'layer-message-viewer.layer-response-message-view {}',
   properties: {
 
     // widthType is derived from the Response's contentView if there is one

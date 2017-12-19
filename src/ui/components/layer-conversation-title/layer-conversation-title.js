@@ -22,7 +22,7 @@
  * ```
  *
  * @class layer.UI.components.ConversationTitle
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 

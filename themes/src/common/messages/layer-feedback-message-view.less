@@ -61,7 +61,7 @@ layer-feedback-message-view {
 layer-message-viewer.layer-feedback-message-view {
   &.layer-feedback-enabled .layer-card-top {
     color: @color-darkblue;
-    background-color: white;
+    background-color: @color-white;
     span:hover {
       color: darken(@color-darkblue, 12%);
     }
@@ -79,7 +79,7 @@ layer-feedback-message-expanded-view {
   &.layer-feedback-enabled {
     .layer-feedback-message-view-ratings {
       color: @color-darkblue;
-      background-color: white;
+      background-color: @color-white;
       span:hover {
         color: darken(@color-darkblue, 12%);
       }
@@ -129,12 +129,12 @@ layer-feedback-message-expanded-view {
     margin: 4px 13px 10px 13px;
     button {
       border-radius: 4px;
-      background-color: @card-button-selected-background;
-      color: @card-button-selected-text;
+      background-color: @button-message-type-selected-background;
+      color: @button-message-type-selected-text;
 
       &:hover:not(:disabled) {
-        background-color: darken(@card-button-selected-background, 5%);
-        color: @card-button-selected-text;
+        background-color: darken(@button-message-type-selected-background, 5%);
+        color: @button-message-type-selected-text;
       }
     }
   }

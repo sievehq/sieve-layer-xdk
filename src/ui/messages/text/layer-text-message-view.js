@@ -3,7 +3,7 @@
  *
  * @class Layer.UI.messages.TextMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
@@ -13,7 +13,7 @@ registerComponent('layer-text-message-view', {
   style: `layer-text-message-view {
     display: block;
   }
-  .layer-root-card.layer-text-message-view > * > .layer-card-top {
+  .layer-root-viewer.layer-text-message-view > * > .layer-card-top {
     display: block;
   }
   `,

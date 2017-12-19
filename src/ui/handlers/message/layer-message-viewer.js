@@ -10,13 +10,14 @@
  * * `model`: The model unambiguously specifies what `message` and what `rootPart` are to be used for this Message Viewer
  *
  * @class Layer.UI.handlers.message.MessageViewer
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
+ * @mixin Layer.UI.mixins.Clickable
  */
 import { registerMessageComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
 import Clickable from '../../mixins/clickable';
 
-import { messageActionHandlers, components } from '../../base';
+import { messageActionHandlers } from '../../base';
 
 
 registerMessageComponent('layer-message-viewer', {
@@ -164,8 +165,8 @@ registerMessageComponent('layer-message-viewer', {
       if (!this.model) return;
 
       // The rootPart is typically the Root Part of the message, but the Card View may be asked to render subcards
-      // Clearly differentiate a top level Root Part from subparts using the layer-root-card css class
-      if (this.model.part === this.message.getRootPart()) this.classList.add('layer-root-card');
+      // Clearly differentiate a top level Root Part from subparts using the layer-root-viewer css class
+      if (this.model.part === this.message.getRootPart()) this.classList.add('layer-root-viewer');
 
       const cardUIType = this.model.currentMessageRenderer;
       this.classList.add(cardUIType);

@@ -2,7 +2,7 @@ describe('layer-membership-list', function() {
   var el, testRoot, client, query, channel;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -25,7 +25,7 @@ describe('layer-membership-list', function() {
     });
     channel.syncState = layer.Constants.SYNC_STATE.SYCNED;
 
-    if (!layer.UI.components['layer-conversation-view']) layer.UI.init({layer: layer});
+    if (!Layer.UI.components['layer-conversation-view']) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-membership-list');
@@ -62,7 +62,7 @@ describe('layer-membership-list', function() {
   afterEach(function() {
     try {
       jasmine.clock().uninstall();
-      layerUI.settings.appId = null;
+      Layer.UI.settings.appId = null;
       document.body.removeChild(testRoot);
       Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
@@ -174,7 +174,7 @@ describe('layer-membership-list', function() {
       el.childNodes[1].classList.add('layer-item-filtered');
       el.childNodes[2].classList.add('layer-item-filtered');
       el.filter = 'User 4';
-      expect(el.querySelectorAllArray('layer-membership-item:not(.layer-item-filtered)')[0]).toBe(el.childNodes[4]);
+      expect(el.querySelectorAllArray('layer-membership-item:not(.layer-item-filtered)')[0]).toBe(el.childNodes[5]);
     });
   });
 });

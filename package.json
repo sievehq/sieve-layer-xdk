@@ -3,6 +3,10 @@
   "version": "1.0.0-pre2.0",
   "description": "The Layer eXperience SDK for Web provides a library for talking to Layer Services, and a library of widgets to simplify adding chat capabilities into your application.",
   "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "layerhq/web-xdk"
+  },
   "scripts": {
     "build": "grunt build",
     "samplebuild": "grunt samples",
@@ -20,6 +24,7 @@
     "backbone-events-standalone": "^0.2.7",
     "base64-js": "^1.2.0",
     "blueimp-load-image": "^2.9.0",
+    "grunt-jsduck": "^1.0.1",
     "layer-patch": "^1.1.0",
     "notifyjs": "^2.0.3",
     "remarkable-emoji": "^0.1.3",

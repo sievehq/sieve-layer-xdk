@@ -18,9 +18,9 @@
  *
  * ## Common Properties
  *
- * * Layer.UI.components.IdentitiesListPanel.List.selectedIdentities: Get/set the currently selected Identities in the List
- * * Layer.UI.components.IdentitiesListPanel.List.onIdentitySelected: Set a function to be called when an Identity is selected
- * * Layer.UI.components.IdentitiesListPanel.List.onIdentityDeselected: Set a function to be called when an Identity is deselected
+ * * {@link #selectedIdentities}: Get/set the currently selected Identities in the List
+ * * {@link #onIdentitySelected}: Set a function to be called when an Identity is selected
+ * * {@link #onIdentityDeselected}: Set a function to be called when an Identity is deselected
  *
  * ```javascript
  * identityList.selectedIdentities = [identity3, identity6];
@@ -33,11 +33,11 @@
  *
  * Events listed here come from either this component, or its subcomponents.
  *
- * * {@link Layer.UI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected}: User has clicked to unselect an Identity
- * * {@link Layer.UI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected}: User has clicked to select an Identity
+ * * {@link #layer-identity-deselected}: User has clicked to unselect an Identity
+ * * {@link #layer-identity-selected}: User has clicked to select an Identity
  *
- * @class Layer.UI.components.IdentitiesListPanel.List
- * @extends Layer.UI.components.Component
+ * @class Layer.UI.components.IdentityListPanel.List
+ * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.MainComponent
  * @mixin Layer.UI.mixins.ListLoadIndicator
@@ -93,15 +93,13 @@ registerComponent('layer-identity-list', {
    * @param {Layer.Core.Identity} evt.detail.item
    */
 
-   /**
-   * A identity selection change has occurred
-   *
-   * See the {@link Layer.UI.components.IdentitiesListPanel.List#layer-identity-selected layer-identity-selected} event for more detail.
+  /**
+   * @inheritdoc #event-layer-identity-selected
    *
    * @property {Function} onIdentitySelected
-   * @param {Event} evt
-   * @param {Object} evt.detail
-   * @param {Layer.Core.Identity} evt.detail.item
+   * @property {Event} evt
+   * @property {Object} evt.detail
+   * @property {Layer.Core.Identity} evt.detail.item
    */
 
   /**
@@ -132,9 +130,7 @@ registerComponent('layer-identity-list', {
    */
 
   /**
-   * A identity selection change has occurred
-   *
-   * See the {@link Layer.UI.components.IdentitiesListPanel.List#layer-identity-deselected layer-identity-deselected} event for more detail.
+   * @inheritdoc #event-layer-identity-deselected
    *
    * @property {Function} onIdentityDeselected
    * @param {Event} evt
@@ -262,9 +258,9 @@ registerComponent('layer-identity-list', {
     },
 
     /**
-     * Handle a user Selection event triggered by a Layer.UI.components.IdentitiesListPanel.Item.
+     * Handle a user Selection event triggered by a Layer.UI.components.IdentityListPanel.Item.
      *
-     * Adds the Identity to Layer.UI.components.IdentitiesListPanel.List.selectedIdentities.
+     * Adds the Identity to {@link #selectedIdentities}.
      *
      * @method _handleIdentitySelect
      * @private
@@ -288,9 +284,9 @@ registerComponent('layer-identity-list', {
 
 
     /**
-     * Handle a user Deselection event triggered by a Layer.UI.components.IdentitiesListPanel.Item.
+     * Handle a user Deselection event triggered by a Layer.UI.components.IdentityListPanel.Item.
      *
-     * Removes the identity from Layer.UI.components.IdentitiesListPanel.List.selectedIdentities.
+     * Removes the identity from {@link #selectedIdentities}.
      *
      * @method _handleIdentityDeselect
      * @private
@@ -313,7 +309,7 @@ registerComponent('layer-identity-list', {
     },
 
     /**
-     * Append a Layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
+     * Append a Layer.UI.components.IdentityListPanel.Item to the Document Fragment
      *
      * @method _generateItem
      * @param {Layer.Core.Identity} identity

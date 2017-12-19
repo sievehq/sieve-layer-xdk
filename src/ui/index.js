@@ -24,17 +24,7 @@ import './adapters/backbone';
 import './adapters/react';
 
 // Load Main Components
-import './components/conversation-list/layer-conversation-list/layer-conversation-list';
-import './components/identity-list/layer-identity-list/layer-identity-list';
-import './components/membership-list-panel/layer-membership-list/layer-membership-list';
-import './components/layer-conversation-view/layer-conversation-view';
-import './components/layer-notifier/layer-notifier';
-import './components/layer-presence/layer-presence';
-
-
-// Load standard utilities
-import './components/layer-file-upload-button/layer-file-upload-button';
-import './components/layer-send-button/layer-send-button';
+import './components/';
 import './handlers/message/layer-message-viewer';
 import './messages/layer-message-viewer-expanded.js';
 

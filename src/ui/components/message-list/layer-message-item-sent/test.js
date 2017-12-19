@@ -1,8 +1,8 @@
 describe('layer-message-item', function() {
-  var el, testRoot, client, conversation, message, user1;
+  var el, testRoot, client, conversation, message, user1, currentTagName, currentTagCounter = 0;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -36,18 +36,28 @@ describe('layer-message-item', function() {
 
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-item-sent');
-    el._contentTag = 'layer-message-text-plain';
+
+    currentTagCounter++;
+    currentTagName = 'test-message-handler-' + currentTagCounter;
+    Layer.UI.registerComponent(currentTagName, {
+      properties: {
+        message: {}
+      }
+    });
+
+
+    el._contentTag = currentTagName;
     testRoot.appendChild(el);
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
     message = conversation.createMessage("M 0000").send();
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(1);
   });
 
@@ -61,7 +71,7 @@ describe('layer-message-item', function() {
       spyOn(el, "onRerender");
 
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       expect(el.onRender).toHaveBeenCalledWith();
       el.onRender.calls.reset();
 
@@ -79,7 +89,7 @@ describe('layer-message-item', function() {
 
       var m2 = conversation.createMessage("m2").send();
       el.item = m2;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       el.item = message;
 
       m2.trigger("messages:change", {});
@@ -105,25 +115,53 @@ describe('layer-message-item', function() {
 
   describe("The dateRenderer property", function() {
     it("Should be passed to the sentAt widget", function() {
+      el.destroy();
+      el = document.createElement('layer-message-item-sent');
+      el._contentTag = currentTagName;
+      var date = document.createElement("layer-date");
+      date.setAttribute('layer-id', 'date');
+      el.replaceableContent = {
+        messageRowRightSide: date,
+      };
       var f = function() {};
       el.dateRenderer = f;
       el.item = message;
-      layer.Util.defer.flush();
+      testRoot.appendChild(el);
+      Layer.Util.defer.flush();
+
       expect(el.nodes.date.dateRenderer).toBe(f);
     });
   });
 
   describe("The getMenuOptions property", function() {
     it("Should set the list getMenuOptions property", function() {
+      el.destroy();
+      el = document.createElement('layer-message-item-sent');
+      el._contentTag = currentTagName;
+      var button = document.createElement("layer-menu-button");
+      button.setAttribute('layer-id', 'menuButton');
+      el.replaceableContent = {
+        messageRowRightSide: button,
+      };
+
       var f = function() {};
       el.getMenuOptions = f;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       expect(el.nodes.menuButton.getMenuOptions).toBe(f);
     });
   });
 
   describe("The dateFormat property", function() {
     it("Should set the date widgets format properties", function() {
+      el.destroy();
+      el = document.createElement('layer-message-item-sent');
+      el._contentTag = currentTagName;
+      var date = document.createElement("layer-date");
+      date.setAttribute('layer-id', 'date');
+      el.replaceableContent = {
+        messageRowRightSide: date,
+      };
+
 
       el.dateFormat = {
         today: {hour: "number"},
@@ -131,7 +169,7 @@ describe('layer-message-item', function() {
         week: {year: "short"},
         older: {weekday: "short"}
       };
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       expect(el.nodes.date.todayFormat).toEqual({hour: "number"});
       expect(el.nodes.date.defaultFormat).toEqual({minute: "short"});
       expect(el.nodes.date.weekFormat).toEqual({year: "short"});
@@ -141,10 +179,19 @@ describe('layer-message-item', function() {
 
   describe("The messageStatusRenderer property", function() {
     it("Should be passed to the sentAt widget", function() {
+      el.destroy();
+      el = document.createElement('layer-message-item-sent');
+      el._contentTag = currentTagName;
+      var status = document.createElement("layer-message-status");
+      status.setAttribute('layer-id', 'status');
+      el.replaceableContent = {
+        messageRowRightSide: status,
+      };
+
       var f = function() {};
       el.messageStatusRenderer = f;
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       el.onRender();
       expect(el.nodes.status.messageStatusRenderer).toBe(f);
     });
@@ -152,8 +199,20 @@ describe('layer-message-item', function() {
 
   describe("The onRender() method", function() {
     it("Should setup the layer-sender-name", function() {
+      el.destroy();
+      el = document.createElement('layer-message-item-sent');
+      el._contentTag = currentTagName;
+      el.replaceableContent = {
+        messageRowHeader: function messageRowHeader(widget) {
+          const div = document.createElement('div');
+          div.setAttribute('layer-id', 'sender');
+          div.classList.add('layer-sender-name');
+          return div;
+        }
+      };
+
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       // Test with an avatar
       expect(el.querySelector('.layer-sender-name').innerHTML).toEqual(message.sender.displayName);
@@ -162,46 +221,77 @@ describe('layer-message-item', function() {
       delete el.nodes.sender;
       el.item = null;
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
     });
 
     it("Should setup the layer-avatar", function() {
-      el.item = message;
-      layer.Util.defer.flush();
+      el.destroy();
+      el = document.createElement('layer-message-item-sent');
+      el._contentTag = currentTagName;
+      el.replaceableContent = {
+        messageRowHeader: function messageRowHeader(widget) {
+          const avatar = document.createElement('layer-avatar');
+          avatar.size = 'small';
+          avatar.showPresence = false;
+          avatar.setAttribute('layer-id', 'avatar');
+          return avatar;
+        }
+      };
 
-      // Test with an avatar
+
+      el.item = message;
+      Layer.Util.defer.flush();
+
+      // Test with an avatar that lacks a presence
       expect(el.querySelector('layer-avatar').users).toEqual([message.sender]);
-      expect(el.querySelector('layer-presence')).toBe(null);
+      expect(el.nodes.avatar.querySelector('layer-presence')).toBe(null);
 
       // Test without an avatar; basically verifying it does not throw an error if this is missing
       delete el.nodes.avatar;
       el.item = null;
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
     });
 
     it("Should setup the layer-date", function() {
+      el.destroy();
+      el = document.createElement('layer-message-item-sent');
+      el._contentTag = currentTagName;
+      var date = document.createElement("layer-date");
+      date.setAttribute('layer-id', 'date');
+      el.replaceableContent = {
+        messageRowRightSide: date,
+      };
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       expect(el.querySelector('layer-date').date).toEqual(message.sentAt);
 
       // Test without a date; basically verifying it does not throw an error if this is missing
       delete el.nodes.date;
       el.item = null;
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
     });
 
     it("Should setup the layer-message-status", function() {
+      el.destroy();
+      el = document.createElement('layer-message-item-sent');
+      el._contentTag = currentTagName;
+      var status = document.createElement("layer-message-status");
+      status.setAttribute('layer-id', 'status');
+      el.replaceableContent = {
+        messageRowRightSide: status,
+      };
+
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       expect(el.querySelector('layer-message-status').item).toEqual(message);
 
       // Test without a status; basically verifying it does not throw an error if this is missing
       delete el.nodes.status;
       el.item = null;
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
     });
 
 
@@ -209,46 +299,35 @@ describe('layer-message-item', function() {
     it("Should call _applyContentTag", function() {
       spyOn(el, "_applyContentTag");
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       expect(el._applyContentTag).toHaveBeenCalledWith();
     });
 
     it("Should call rerender", function() {
       spyOn(el, "onRerender");
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       expect(el.onRerender).toHaveBeenCalledWith();
-    });
-
-    it("Should manage the delete widgets enabled property", function() {
-      el.getDeleteEnabled = function() {return false;}
-      el.item = message;
-      expect(el.nodes.delete.enabled).toBe(false);
-
-      el.getDeleteEnabled = function() {return true;}
-      el.item = null;
-      el.item = message;
-      expect(el.nodes.delete.enabled).toBe(true);
     });
   });
 
   describe("The rerender() method", function() {
     it("Should setup read css", function() {
       el.item = message;
-      layer.Util.defer.flush();
-      message.readStatus = layer.Constants.RECIPIENT_STATE.ALL;
+      Layer.Util.defer.flush();
+      message.readStatus = Layer.Constants.RECIPIENT_STATE.ALL;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-read-by-all')).toBe(true);
       expect(el.classList.contains('layer-message-status-read-by-some')).toBe(false);
       expect(el.classList.contains('layer-message-status-read-by-none')).toBe(false);
 
-      message.readStatus = layer.Constants.RECIPIENT_STATE.SOME;
+      message.readStatus = Layer.Constants.RECIPIENT_STATE.SOME;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-read-by-all')).toBe(false);
       expect(el.classList.contains('layer-message-status-read-by-some')).toBe(true);
       expect(el.classList.contains('layer-message-status-read-by-none')).toBe(false);
 
-      message.readStatus = layer.Constants.RECIPIENT_STATE.NONE;
+      message.readStatus = Layer.Constants.RECIPIENT_STATE.NONE;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-read-by-all')).toBe(false);
       expect(el.classList.contains('layer-message-status-read-by-some')).toBe(false);
@@ -257,20 +336,20 @@ describe('layer-message-item', function() {
 
     it("Should setup delivery css", function() {
       el.item = message;
-      layer.Util.defer.flush();
-      message.deliveryStatus = layer.Constants.RECIPIENT_STATE.ALL;
+      Layer.Util.defer.flush();
+      message.deliveryStatus = Layer.Constants.RECIPIENT_STATE.ALL;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-delivered-to-all')).toBe(true);
       expect(el.classList.contains('layer-message-status-delivered-to-some')).toBe(false);
       expect(el.classList.contains('layer-message-status-delivered-to-none')).toBe(false);
 
-      message.deliveryStatus = layer.Constants.RECIPIENT_STATE.SOME;
+      message.deliveryStatus = Layer.Constants.RECIPIENT_STATE.SOME;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-delivered-to-all')).toBe(false);
       expect(el.classList.contains('layer-message-status-delivered-to-some')).toBe(true);
       expect(el.classList.contains('layer-message-status-delivered-to-none')).toBe(false);
 
-      message.deliveryStatus = layer.Constants.RECIPIENT_STATE.NONE;
+      message.deliveryStatus = Layer.Constants.RECIPIENT_STATE.NONE;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-delivered-to-all')).toBe(false);
       expect(el.classList.contains('layer-message-status-delivered-to-some')).toBe(false);
@@ -279,19 +358,19 @@ describe('layer-message-item', function() {
 
     it("Should setup pending css", function() {
       el.item = message;
-      layer.Util.defer.flush();
-      message.syncState = layer.Constants.SYNC_STATE.SAVING;
+      Layer.Util.defer.flush();
+      message.syncState = Layer.Constants.SYNC_STATE.SAVING;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-pending')).toBe(true);
 
-      message.syncState = layer.Constants.SYNC_STATE.SYNCED;
+      message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-pending')).toBe(false);
     });
 
     it("Should setup unread css", function() {
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       message.isRead = false;
       el.onRerender();
       expect(el.classList.contains('layer-unread-message')).toBe(true);
@@ -305,7 +384,7 @@ describe('layer-message-item', function() {
   describe("The _applyContentTag() method", function() {
     it("Should create the element specified in _contentTag", function() {
       el.item = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       el._contentTag = "img";
       el.nodes.content = document.createElement('div');
       el.appendChild(el.nodes.content);
@@ -316,25 +395,25 @@ describe('layer-message-item', function() {
 
     it("Should setup message properties", function() {
       el.item = message;
-      layer.Util.defer.flush();
-      el._contentTag = 'layer-message-text-plain';
+      Layer.Util.defer.flush();
+      el._contentTag = currentTagName;
       el.nodes.content = document.createElement('div');
       el.appendChild(el.nodes.content);
       el.properties.item = message;
 
       el._applyContentTag();
-      var handler = el.querySelector('layer-message-text-plain');
+      var handler = el.querySelector(currentTagName);
 
       expect(handler.message).toEqual(message);
     });
 
     // Dont know how to test this
     it("Should propagate the message handlers height to the content node", function() {
-      layer.UI.registerMessageHandler({
+      Layer.UI.registerMessageHandler({
         tagName: 'test-handler-height',
         handlesMessage: function(message, container) {return message.parts[0].mimeType=='text/height-test';}
       });
-      layer.UI.registerComponent('test-handler-height', {
+      Layer.UI.registerComponent('test-handler-height', {
         methods: {
           onRender: function() {
             this.style.height = "234px";
@@ -343,10 +422,10 @@ describe('layer-message-item', function() {
       });
 
       el.item = conversation.createMessage({parts: [{mimeType: "text/height-test", body: "bbb"}]});
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       el._contentTag = 'test-handler-height';
       el._applyContentTag();
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(el.nodes.content.style.height).toEqual("234px");
     });

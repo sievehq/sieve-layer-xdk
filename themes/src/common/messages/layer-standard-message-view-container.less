@@ -33,7 +33,7 @@ layer-message-viewer:not(.layer-card-width-any-width) > layer-standard-message-v
   overflow: hidden; // prevent images from spilling out of bounds
   border-radius: 16px 16px 0px 0px;
   max-height: 450px;
-  background-color: @card-container-core-ui-background;
+  background-color: @message-type-container-core-ui-background;
   border-bottom: solid 1px @color-g2;
 }
 
@@ -51,16 +51,16 @@ layer-standard-message-view-container, layer-list-item-container {
   }
 
   .layer-card-title {
-    color: @card-container-title-color;
+    color: @message-type-container-title-color;
   }
 
   .layer-card-description {
-    color: @card-container-description-color;
+    color: @message-type-container-description-color;
     font-size: 0.8rem;
   }
 
   .layer-card-footer {
-    color: @card-container-footer-color;
+    color: @message-type-container-footer-color;
     font-size: 0.75rem;
   }
 }

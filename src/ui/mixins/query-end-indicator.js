@@ -8,7 +8,7 @@
  *
  * This mixin requires "layer-id=endOfResultsNode" to exist in the template for any component using this mixin.
  *
- * @class layer.UI.mixins.QueryEndIndicator
+ * @class Layer.UI.mixins.QueryEndIndicator
  */
 import Util from '../../util';
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
     isEndOfResults: {
       value: false,
       set(value) {
-        this.classList[value && !this.isEmptyList ? 'add' : 'remove']('layer-end-of-results');
+        this.toggleClass('layer-end-of-results', value && !this.isEmptyList);
       },
     },
 

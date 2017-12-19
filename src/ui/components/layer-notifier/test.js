@@ -3,7 +3,7 @@ if (window.Notification) {
     var el, testRoot, client, conversation, message;
 
     beforeAll(function(done) {
-      if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+      if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
       setTimeout(done, 1000);
     });
 
@@ -19,7 +19,7 @@ if (window.Notification) {
       });
       client._clientAuthenticated();
 
-      if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+      if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
       testRoot = document.createElement('div');
       document.body.appendChild(testRoot);
       el = document.createElement('layer-notifier');
@@ -152,7 +152,7 @@ if (window.Notification) {
     describe("The created() method", function() {
       it("Should setup the avatar, title and container", function() {
         expect(el.nodes.avatar.tagName).toEqual('LAYER-AVATAR');
-        expect(el.nodes.title.classList.contains('layer-notifier-title')).toBe(true);
+        expect(el.nodes.title.parentNode.classList.contains('layer-notifier-title')).toBe(true);
         expect(el.nodes.container.classList.contains('layer-message-item-main')).toBe(true);
       });
 
@@ -285,7 +285,8 @@ if (window.Notification) {
           expect(args[0].detail).toEqual({
             type: 'toast',
             isBackground: true,
-            item: message
+            item: message,
+            model: message.createModel()
           });
 
           // Cleanup
@@ -462,20 +463,19 @@ if (window.Notification) {
           expect(el.nodes.title.innerHTML.indexOf(message.sender.displayName)).not.toEqual(-1);
         });
 
-        it("Should generate a layer-message-text-plain content", function() {
-          expect(el.querySelectorAllArray('layer-message-text-plain').length).toEqual(0);
+        it("Should set message area", function() {
+          expect(el.nodes.message.innerHTML).toEqual("");
           el.toastNotify(message);
-          expect(el.querySelectorAllArray('layer-message-text-plain').length).toEqual(1);
+          expect(el.nodes.message.innerHTML).toEqual("Hello");
         });
 
-        it("Should replace the layer-message-text-plain content", function() {
-          expect(el.querySelectorAllArray('layer-message-text-plain').length).toEqual(0);
+        it("Should replace the message area", function() {
+          expect(el.nodes.message.innerHTML).toEqual("");
           el.toastNotify(message);
           el.toastNotify(conversation.createMessage("test 2"));
           el.toastNotify(conversation.createMessage("test 3"));
           el.toastNotify(conversation.createMessage("test 4"));
-          expect(el.querySelectorAllArray('layer-message-text-plain').length).toEqual(1);
-
+          expect(el.nodes.message.innerHTML).toEqual("test 4");
         });
 
         it("Should listen for the message to be read and call closeToast", function() {
@@ -484,7 +484,7 @@ if (window.Notification) {
 
           // Run
           el.toastNotify(message);
-          expect(el.closeToast).not.toHaveBeenCalled();
+          el.closeToast.calls.reset();
           message.trigger('messages:change', {});
           expect(el.closeToast).not.toHaveBeenCalled();
           message.isRead = true;
@@ -498,7 +498,7 @@ if (window.Notification) {
 
           // Run
           el.toastNotify(message);
-          expect(el.closeToast).not.toHaveBeenCalled();
+          el.closeToast.calls.reset();
           message.trigger('destroy');
           expect(el.closeToast).toHaveBeenCalled();
         });
@@ -513,6 +513,7 @@ if (window.Notification) {
       describe("The closeToast() method", function() {
         it("Should clear the layer-notifier-toast css class", function() {
           el.classList.add('layer-notifier-toast');
+          el.toastNotify(message);
           el.closeToast();
           expect(el.classList.contains('layer-notifier-toast')).toBe(false);
         });
@@ -526,7 +527,7 @@ if (window.Notification) {
           // Posttest
           spyOn(el, "closeToast");
           el.toastNotify(message);
-          expect(el.closeToast).not.toHaveBeenCalled();
+          el.closeToast.calls.reset();
           message.trigger('messages:change', {});
           expect(el.closeToast).not.toHaveBeenCalled();
           message.isRead = true;
@@ -535,6 +536,7 @@ if (window.Notification) {
         });
 
         it("Should clear timeouts", function() {
+          el.toastNotify(message);
           el.properties._toastTimeout = 5;
           el.closeToast();
           expect(el.properties._toastTimeout).toEqual(0);
@@ -571,7 +573,8 @@ if (window.Notification) {
           var args = spy1.calls.allArgs()[0];
           expect(args.length).toEqual(1);
           expect(args[0].detail).toEqual({
-            item: message
+            item: message,
+            model: message.createModel()
           });
         });
       });

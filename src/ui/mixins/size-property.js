@@ -20,7 +20,7 @@ module.exports = {
 
         } else {
           this.supportedSizes.forEach(size =>
-            this.classList[size === newValue ? 'add' : 'remove']('layer-size-' + size));
+            this.toggleClass('layer-size-' + size, size === newValue));
         }
       },
     },

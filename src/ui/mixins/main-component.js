@@ -70,11 +70,6 @@ module.exports = {
       order: 2,
       set(value) {
         if (value) {
-          if (value.telemetryMonitor) {
-            value.telemetryMonitor.on('telemetry-environment', (evt) => {
-              evt.environment.layer_ui_sdk_version = version;
-            });
-          }
           value.on('destroy', (evt) => {
             if (evt.target === value) this.properties.client = null;
           }, this);

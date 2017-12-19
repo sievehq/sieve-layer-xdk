@@ -36,6 +36,9 @@
 * Layer.Core.LayerEvent (i.e. any event triggered by non-UI-components) now supports
   * `evt.preventDefault()`: Can be called on any event where `evt.cancelable` is `true` to prevent a default behavior (very few uses of this at the moment)
   * `evt.returnValue()`: Can be called on any event that is providing an opportunity for you to provide an alternate value for it to use.  Currently used by some `message-type-model:customization` events
+* Layer.UI.Menu `options` property is now an `items` property
+* `<layer-status-message />` can now be configured with properties without having to completely rewrite the `onRender` method for each customization
+* CSS Class `layer-root-card` renamed to `layer-root-viewer`
 
 ## 1.0.0-pre1.15
 

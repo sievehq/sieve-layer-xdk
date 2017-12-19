@@ -24,7 +24,7 @@
  * This may be used to render more than just a one line of text as well; rendering Interactive Messages for example.
  *
  * @class Layer.UI.components.ConversationLastMessage
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../component';
 

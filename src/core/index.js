@@ -1,3 +1,6 @@
+/**
+ * @class Layer.Core
+ */
 const Core = {};
 
 Core.Root = require('./root');

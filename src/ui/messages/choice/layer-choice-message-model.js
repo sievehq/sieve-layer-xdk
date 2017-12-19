@@ -29,6 +29,24 @@
  * For more information on what goes into each Choice in the `choices` array,
  * see Layer.UI.messages.ChoiceMessageItemModel.
  *
+ * ## Customization
+ *
+ * The model triggers an event before sending a Layer.UI.messages.ResponseMessageModel which allows an app to:
+ *
+ * * Prevent the Response Message from being sent
+ * * Customize the text of the Response Message
+ * * Subscribe to events from either the Layer.Core.Client or via the DOM
+ *
+ * Typically one would subscribe to these events at the UI level, but they are also exposed at the model _and_ Layer.Core.Client level as well:
+ *
+ * ```
+ * client.on('message-type-model:customization', function(evt) {
+ *   if (evt.type === 'layer-choice-model-generate-response-message') {
+ *     evt.returnValue(`${evt.nameOfChoice}: ${this.getClient().user.displayName} has ${evt.action} ${evt.choice.text}`);
+ *   }
+ * });
+ * ```
+ *
  * @class Layer.UI.messages.ChoiceMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
@@ -271,14 +289,6 @@ class ChoiceModel extends MessageTypeModel {
       [this.responseName]: selectedAnswers.join(','),
     };
 
-    // Copy in all customResponseData... but first give the app a chance to modify the customResponseData
-    this.trigger('gather-custom-response-data', {
-      choice: this.getChoiceById(id),
-      choiceCustomResponseData: choiceItem.customResponseData,
-      fullCustomResponseData: this.customResponseData,
-      action,
-    });
-
     if (this.customResponseData) {
       Object.keys(this.customResponseData).forEach((key) => {
         participantData[key] = this.customResponseData[key];
@@ -291,8 +301,53 @@ class ChoiceModel extends MessageTypeModel {
       });
     }
 
+    // Update the selectedAnswer property
+    this.selectedAnswer = selectedAnswers.join(',');
+
+    // Tell the UIs to update
+    this._triggerAsync('message-type-model:change', {
+      property: 'selectedAnswer',
+      newValue: this.selectedAnswer,
+      oldValue: initialSelectedAnswer,
+    });
+
+    this._generateResponseMessage({
+      action, selectedText, choiceItem, participantData,
+    });
+
+    // We generate local changes, we generate more local changes then the server sends us the first changes
+    // which we need to ignore. Pause 6 seconds and wait for all changes to come in before rendering changes
+    // from the server after a user change.
+    if (this._pauseUpdateTimeout) clearTimeout(this._pauseUpdateTimeout);
+    this._pauseUpdateTimeout = setTimeout(() => {
+      this._pauseUpdateTimeout = 0;
+      if (this.responses && this.message && !this.message.isNew()) this._processNewResponses();
+    }, 6000);
+  }
+
+  _generateResponseMessage({ action, selectedText, choiceItem, participantData }) {
     // Generate the Response Message
-    const text = this._getSelectionMessageText(action, selectedText, choiceItem);
+    const nameOfChoice = this._getNameOfChoice();
+    const namePhrase = (nameOfChoice ? ` for "${nameOfChoice}"` : '');
+    let text = `${this.getClient().user.displayName} ${action} "${selectedText}"${namePhrase}`;
+
+    // UI will trigger evt.type (choice-model-generate-response-message)
+    const evt = this.trigger('message-type-model:customization', {
+      cancelable: true,
+      type: 'layer-choice-model-generate-response-message',
+      choice: choiceItem,
+      model: this,
+      text,
+      action,
+      nameOfChoice,
+    });
+
+    // If evt.cancel() was called (or from the UI event: evt.preventDefault()) do not send the Response Message
+    if (evt.canceled) return;
+
+    // If evt.returnValue(text) was called  (or from the UI event evt.detail.returnValue(text)  ) then use the provided text for the Response Message
+    if (evt.returnedValue !== null) text = evt.returnedValue;
+
     const responseModel = new ResponseModel({
       participantData,
       responseTo: this.message.id,
@@ -306,25 +361,6 @@ class ChoiceModel extends MessageTypeModel {
     if (!this.message.isNew()) {
       responseModel.generateMessage(this.message.getConversation(), message => this._sendResponse(message));
     }
-
-    // Update the selectedAnswer property
-    this.selectedAnswer = selectedAnswers.join(',');
-
-    // Tell the UIs to update
-    this._triggerAsync('message-type-model:change', {
-      property: 'selectedAnswer',
-      newValue: this.selectedAnswer,
-      oldValue: initialSelectedAnswer,
-    });
-
-    // We generate local changes, we generate more local changes then the server sends us the first changes
-    // which we need to ignore. Pause 6 seconds and wait for all changes to come in before rendering changes
-    // from the server after a user change.
-    if (this._pauseUpdateTimeout) clearTimeout(this._pauseUpdateTimeout);
-    this._pauseUpdateTimeout = setTimeout(() => {
-      this._pauseUpdateTimeout = 0;
-      if (this.responses && this.message && !this.message.isNew()) this._processNewResponses();
-    }, 6000);
   }
 
   /**
@@ -378,13 +414,6 @@ class ChoiceModel extends MessageTypeModel {
       [this.responseName]: id,
     };
 
-    // Copy in all customResponseData... but first give the app a chance to modify the customResponseData
-    this.trigger('gather-custom-response-data', {
-      choice: this.getChoiceById(answerData.id),
-      choiceCustomResponseData: choiceItem.customResponseData,
-      fullCustomResponseData: this.customResponseData,
-      action,
-    });
     if (this.customResponseData) {
       Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
     }
@@ -395,22 +424,6 @@ class ChoiceModel extends MessageTypeModel {
       });
     }
 
-    // Create teh Response Message
-    const text = this._getSelectionMessageText(action, selectedText, choiceItem);
-    const responseModel = new ResponseModel({
-      participantData,
-      responseTo: this.message.id,
-      responseToNodeId: this.parentId || this.nodeId,
-      displayModel: text ? new TextModel({ text }) : null,
-    });
-
-    // Technically, one shouldn't ever perform these actions on a message that hasn't yet been sent.
-    // however rather than reject that entirely, we simply insure that we only send a Response Message
-    // for a Message that is shared among the participants.
-    if (!this.message.isNew()) {
-      responseModel.generateMessage(this.message.getConversation(), message => this._sendResponse(message));
-    }
-
     // Update the selected answer and update the UI
     this.selectedAnswer = id;
     this._triggerAsync('message-type-model:change', {
@@ -418,6 +431,11 @@ class ChoiceModel extends MessageTypeModel {
       newValue: this.selectedAnswer,
       oldValue: initialSelectedAnswer,
     });
+
+    this._generateResponseMessage({
+      action, selectedText, choiceItem, participantData,
+    });
+
     // We generate local changes, we generate more local changes then the server sends us the first changes
     // which we need to ignore. Pause 6 seconds and wait for all changes to come in before rendering changes
     // from the server after a user change.
@@ -436,23 +454,53 @@ class ChoiceModel extends MessageTypeModel {
    * @param {String} action
    * @param {String} selectedText
    * @param {Layer.UI.messages.ChoiceMessageItemModel} choiceItem   The item selected/deselected
+   * @return {Layer.Core.LayerEvent}
    */
-  _getSelectionMessageText(action, selectedText, choiceItem) {
+  /*_getSelectionMessageText(action, selectedText, choiceItem) {
     const nameOfChoice = this._getNameOfChoice();
     const namePhrase = (nameOfChoice ? ` for "${nameOfChoice}"` : '');
     const defaultText = `${this.getClient().user.displayName} ${action} "${selectedText}"${namePhrase}`;
 
+    / **
+     * Whenever the Choice Model is about to send a Response Message, this event is triggered.
+     *
+     * Use this event to customize the Response Message
+     *
+     * ```
+     * client.on('message-type-model:customization', function(evt) {
+     *     if (evt.detail.type === 'generate-response-message') {
+     *         evt.returnValue("I have " + (evt.detail.choice === 'selected' ? "clicked " : "unclicked ") + evt.detail.choice.text);
+     *     }
+     * });
+     * ```
+     *
+     * The value provided to the event via Layer.Core.LayerEvent.returnValue will become the Text Message
+     * used within the Response Message.
+     *
+     * Alternatively, one could call `evt.preventDefault()`; this will prevent the Response Message from being sent.
+     *
+     * @event 'message-type-model:customization'
+     * @param {CustomEvent} evt
+     * @param {Object} detail
+     * @param {Boolean} evt.detail.cancelable   This event is cancelable and will respond to `evt.preventDefault()`
+     * @param {String} evt.detail.type          "generate-response-message" will accompany events for this model
+     * @param {String} evt.detail.text          This is the text that the Choice Model will use for its Response Message
+     * @param {Object} evt.detail.choice        This is the Choice Object that the user selected
+     * @param {String} evt.detail.action        Either "selected" or "deselected"
+     * @param {Layer.UI.messages.ChoiceMessageModel} evt.detail.model  This Choice Model
+     * /
     const evt = this.trigger('message-type-model:customization', {
       cancelable: true,
       type: 'generate-response-message',
       text: defaultText,
       choice: choiceItem,
+      model: this,
       action,
     });
-    if (evt.canceled) return null;
+    if (evt.canceled) return false;
     if (evt.returnedValue) return evt.returnedValue;
     return defaultText;
-  }
+  }*/
 
   /**
    * Send the actual Response Message.
@@ -880,30 +928,6 @@ ChoiceModel.MIMEType = 'application/vnd.layer.choice+json';
 ChoiceModel.messageRenderer = 'layer-choice-message-view';
 
 ChoiceModel._supportedEvents = [
-  /**
-   * Triggered before using customResponseData; allows app to customize
-   * the customResponseData based on the selection.
-   *
-   * ```
-   * choiceModel.on('gather-custom-response-data', function(evt) {
-   *     if (evt.action === 'selected') {
-   *         evt.fullCustomResponseData.property1 = 'value1';
-   *     } else {
-   *         evt.choiceCustomResponseData.property1 = 'value2';
-   *     }
-   * });
-   * ```
-   *
-   * @event gather-custom-response-data
-   * @param {Layer.Core.LayerEvent} evt
-   * @param {String} evt.action   One of "selected" or "deselected"
-   * @param {Object} evt.choice   The Choice option that was selected/deselected
-   * @param {Object} evt.fullCustomResponseData   The customResponseData object for the full Choice Model.  Changes can be made to this
-   *                              but note that any changes will still be present for the next selection event (if multiple selections are allowed)
-   * @param {Object} evt.choiceCustomResponseData  If the Choice has its own `customResponseData`, this will be provided in the event. Changes can be made
-   *                              to this, but will still be present should this choice be deselected later in the session.
-   */
-  'gather-custom-response-data',
 
 ].concat(MessageTypeModel._supportedEvents);
 

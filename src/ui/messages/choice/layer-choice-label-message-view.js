@@ -5,7 +5,7 @@
  *
  * @class Layer.UI.messages.ChoiceLabelMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 
@@ -36,10 +36,9 @@ registerComponent('layer-choice-label-message-view', {
      */
     onRerender() {
       this.nodes.label.innerHTML = this.model.label;
-      const selectedIndex = this.model.getChoiceIndexById(this.model.selectedChoice);
-
-      this.nodes.choice.innerHTML = selectedIndex !== -1 ? this.model.getText(selectedIndex) : '';
-      this.toggleClass('layer-choice-no-selection', selectedIndex === -1);
+      const choice = this.model.selectedChoice;
+      this.nodes.choice.innerHTML = choice ? choice.text : '';
+      this.toggleClass('layer-choice-no-selection', !choice);
     },
   },
 });

@@ -3,7 +3,7 @@
  *
  * @class Layer.UI.messages.ImageMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import { settings as UISettings } from '../../index';
@@ -147,7 +147,7 @@ registerComponent('layer-image-message-view', {
      * @private
      */
     _getMaxMessageWidth() {
-      if (this.messageViewer.classList.contains('layer-root-card')) {
+      if (this.messageViewer.classList.contains('layer-root-viewer')) {
         const parent = this.messageViewer.parentNode;
         if (!parent || !parent.clientWidth) return 0;
 

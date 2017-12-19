@@ -173,7 +173,8 @@ export default class ActiveConversation extends Component {
                   {"text": "Give Holy Grail", "id": "grail"}
                 ],
                 "data": {
-                  "responseName": "deal-with-arthur"
+                  "responseName": "deal-with-arthur",
+                  "allowReselect": true
                 }
               }
             ],

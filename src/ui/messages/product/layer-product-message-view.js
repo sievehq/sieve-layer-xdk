@@ -6,7 +6,7 @@
  *
  * @class Layer.UI.messages.ProductMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
@@ -31,16 +31,20 @@ registerComponent('layer-product-message-view', {
   layer-product-message-view.layer-no-image .layer-card-top {
     display: none;
   }
+  layer-product-message-view .layer-card-product-description:empty,
+  layer-product-message-view .layer-card-product-choices:empty,
+  layer-product-message-view .layer-card-product-name:empty,
+  layer-product-message-view .layer-card-product-header:empty,
+  layer-product-message-view .layer-card-product-price:empty {
+    display: none;
+  }
   `,
   template: `
     <div layer-id='UIContainer' class='layer-card-top'>
       <img layer-id="image" />
     </div>
     <div class="layer-card-body-outer">
-        <div class="layer-card-product-header">
-          <div layer-id="brand" class="layer-card-product-brand"></div>
-          <div layer-id="model" class="layer-card-product-model"></div>
-        </div>
+        <div class="layer-card-product-header" layer-id="brand" ></div>
         <div layer-id="name" class="layer-card-product-name"></div>
 
         <div layer-id="price" class="layer-card-product-price"></div>

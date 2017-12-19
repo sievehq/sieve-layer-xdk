@@ -20,7 +20,7 @@ import layerUI from '../base';
  *
  * * ConversationPanelView: A wrapper around a Layer.UI.components.ConversationView
  * * ConversationsListView: A wrapper around a layer.UI.components.ConversationsListPanel
- * * IdentitiesListView: A wrapper around a layer.UI.components.IdentitiesListPanel
+ * * IdentitiesListView: A wrapper around a layer.UI.components.IdentityListPanel
  * * NotifierView: A wrapper around a layer.UI.components.misc.Notifier
  * * SendButton: An optional button that can be provided to ConversationPanelView's `composeButtons` property
  *   to add a simple Send button to the Composer

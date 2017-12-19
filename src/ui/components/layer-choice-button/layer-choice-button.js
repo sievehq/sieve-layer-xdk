@@ -1,7 +1,11 @@
 /**
+ * A Button Set driven by a Layer.UI.messages.ChocieMessageModel.
  *
- * @class
- * @extends Layer.UI.components.Component
+ * The main input is the {@link #model}, and any events are delivered to and handled by that model
+ *
+ * @class Layer.UI.components.ChoiceButton
+ * @extends Layer.UI.Component
+ * @mixin Layer.UI.mixins.Clickable
  */
 import { registerComponent } from '../component';
 import Clickable from '../../mixins/clickable';
@@ -25,6 +29,11 @@ registerComponent('layer-choice-button', {
   `,
   // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
+    /**
+     * Set all choices enabled or disabled
+     *
+     * @property {Boolean} [disabled=false]
+     */
     disabled: {
       type: Boolean,
       set(value) {
@@ -36,14 +45,14 @@ registerComponent('layer-choice-button', {
 
   methods: {
     /**
-     * @method
+     * Each choice in the model is represented by a Layer.UI.components.ActionButton; generate those buttons and add them to the DOM.
+     *
+     * If any of the action buttons is clicked, it will trigger this widget's _onClick method.
+     *
+     * @method onAfterCreate
      */
-    onCreate() {
-
-    },
-
     onAfterCreate() {
-      this.model.on('change', this.onRerender, this);
+      this.model.on('message-type-model:change', this.onRerender, this);
       this.properties.buttons = [];
       this.model.choices.forEach((choice, index) => {
         const widget = this.createElement('layer-action-button', {
@@ -66,8 +75,11 @@ registerComponent('layer-choice-button', {
     },
 
     /**
+     * Whenever the model changes, update the selection state of all buttons.
      *
-     * @method
+     * Also update any text/tooltip whenever the model changes.
+     *
+     * @method onRerender
      */
     onRerender() {
       if (!this.model.allowReselect) {
@@ -87,7 +99,14 @@ registerComponent('layer-choice-button', {
     },
 
 
-    _onClick({ choice, widget }, evt) {
+    /**
+     * When clicked, find the associated Layer.UI.messages.MessageViewer and call its `_runAction` method.
+     *
+     * @param {Object} boundData
+     * @param {Object} choice   The choice represented by this button
+     * @param {Event} evt
+     */
+    _onClick({ choice }, evt) {
       evt.preventDefault();
       evt.stopPropagation();
 

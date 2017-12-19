@@ -46,7 +46,7 @@
  * * {@link Layer.UI.components.TypingIndicator#layer-typing-indicator-change layer-typing-indicator-change}: Someone in the Conversation has started/stopped typing
  *
  * @class Layer.UI.components.ConversationView
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.MainComponent
  * @mixin Layer.UI.mixins.HasQuery
  * @mixin Layer.UI.mixins.FileDropTarget
@@ -338,7 +338,7 @@ registerComponent('layer-conversation-view', {
     /**
      * The Conversation being shown by this panel.
      *
-     * This Conversation ID specifies what conversation to render and interact with.
+     * This Conversation specifies what conversation to render and interact with.
      * This property needs to be changed any time you change to view a different Conversation.
      *
      * Alternative: See Layer.UI.components.ConversationView.conversationId property for an easier property to use
@@ -425,7 +425,7 @@ registerComponent('layer-conversation-view', {
      * ```
      *
      * @property {Function} onRenderListItem
-     * @property {Layer.UI.components.MessagesListPanel.Item} onRenderListItem.widget
+     * @property {Layer.UI.components.MessageListPanel.Item} onRenderListItem.widget
      *    One row of the list
      * @property {Layer.Core.Message[]} onRenderListItem.items
      *    full set of messages in the list
@@ -457,6 +457,8 @@ registerComponent('layer-conversation-view', {
      * ```
      *
      * @property {Function} [dateRenderer=null]
+     * @property {Date} dateRenderer.date
+     * @property {String} dateRenderer.return
      */
     dateRenderer: {
       type: Function,
@@ -479,6 +481,8 @@ registerComponent('layer-conversation-view', {
      * See Layer.Core.Message for more information on the properties available to determine a message's status.
      *
      * @property {Function} [messageStatusRenderer=null]
+     * @property {Layer.Core.Message} messageStatusRenderer.message
+     * @property {String} messageStatusRenderer.return
      */
     messageStatusRenderer: {
       type: Function,
@@ -531,12 +535,14 @@ registerComponent('layer-conversation-view', {
      * > *Note*
      * >
      * > This is called each time the user clicks on a menu button next to a message to open the menu,
-     * but is not dynamic in that it will regenerate the list while its open.
+     * > but is not dynamic in that it will regenerate the list while its open.
+     *
+     * Also...
      *
      * > *Note*
      * >
      * > This only works if your `<layer-message-item-sent />` or `<layer-message-item-received />` has a `<layer-menu-button layer-id='menuButton'/>`;
-     * > The `layer-id` is required... unless explicitly setting `messageListItem.nodes.menuButton = <layer-menu-button />;`
+     * > The `layer-id` is required to setup `widget.nodes.menuButton`
      *
      * Format is:
      *
@@ -552,7 +558,7 @@ registerComponent('layer-conversation-view', {
      *
      * @property {Function} getMenuOptions
      * @property {Layer.Core.Message} getMenuOptions.message
-     * @property {Object[]} getMenuOptions.returns
+     * @property {Object[]} getMenuOptions.return
      */
     getMenuOptions: {
       type: Function,
@@ -601,7 +607,11 @@ registerComponent('layer-conversation-view', {
      * >
      * > This only works if `<layer-message-item-sent />` or `<layer-message-item-received />` has a `<layer-date layer-id='date' />` within it.
      *
-     * @property {Object} dateFormat
+     * @property {Object} [dateFormat=]
+     * @property {Object} [dateFormat.today={hour: 'numeric', minute: 'numeric'}]
+     * @property {Object} [dateFormat.week={ weekday: 'short', hour: 'numeric', minute: 'numeric' }]
+     * @property {Object} [dateFormat.older={ month: 'short', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }]
+     * @property {Object} [dateFormat.default={ month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }]
      */
     dateFormat: {
       set() {

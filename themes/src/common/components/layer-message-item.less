@@ -122,54 +122,6 @@ layer-message-list {
       margin-bottom: 2px;
       margin-top: 2px;
     }
-
-    /* The Message Content refers to the image, text or other content, and ommits any information about
-      * sender, date, status, etc... */
-    .layer-message-item-content {
-      display: inline-block;
-    }
-    /* Only text-plain messages get the full-on chat bubble treatment; so make sure they get suitable padding
-      * between text and bubble borders.
-      */
-    layer-message-text-plain .layer-message-text {
-      padding: 8px 12px;
-    }
-
-    /* Give all messages the basic bubble treatment */
-    layer-message-text-plain .layer-message-text, layer-message-image canvas, layer-message-video video {
-      border-radius: @message-item-border-radius;
-    }
-
-    .layer-message-text-plain-after-text {
-      margin-top: 6px;
-    }
-  }
-
-  /* Styling for content from Text Processor's afterText properties */
-  .layer-parsed-image {
-    height: 200px;
-  }
-
-  &.layer-message-preview .layer-list-item {
-    .layer-message-text, layer-message-image canvas, layer-message-video video {
-      opacity: 0.5;
-    }
-  }
-
-
-  /*
-  * Custom formatting for Messages received by the session owner.
-  */
-  layer-message-item-received {
-    /* Apply the chat participant text colors, and assign that color to any links to avoid blue-on-blue type scenarios. */
-    layer-message-text-plain .layer-message-text {
-      color: @message-item-bubble-received-color;
-      background-color: @message-item-bubble-received-background-color;
-
-      a, a:visited, a:focus, a:active {
-        color: @message-item-bubble-received-color;
-      }
-    }
   }
 
   /* Left/Right panel layout */
@@ -222,11 +174,6 @@ layer-message-list {
   * Custom formatting for Messages sent by the session owner.
   */
   layer-message-item-sent .layer-list-item {
-    layer-message-text-plain .layer-message-text, layer-message-image canvas, layer-message-video video {
-      color: @message-item-bubble-text-sent-color;
-      margin: 0px;
-    }
-
     .layer-message-footer {
       text-align: right;
     }
@@ -257,7 +204,8 @@ layer-message-list {
       }
 
       layer-text-message-view {
-        padding: 4px 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
       }
     }
   }

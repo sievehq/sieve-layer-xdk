@@ -201,17 +201,18 @@ class MessageTypeModel extends Root {
     // an "anonymous" submodel may be created, such as is done when the ButonModel creates a ChoiceModel
     // that is not directly associated with a part, but is indirectly associated (handled via `parentId` property)
     if (this.part) {
-      // The Model ID is derived from the Message ID so that they are linked together in a 1-to-1 relationship.
-      this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
+      if (!this.id) {
+        // The Model ID is derived from the Message ID so that they are linked together in a 1-to-1 relationship.
+        this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
+      }
+
+      // Call handlePartChanges any message edits that update a part.
+      this.part.on('messageparts:change', this._handlePartChanges, this);
 
       // Gather all of the Child Nodes so that any subclass can directly iterate over relevant parts
       this.childParts = this.message.getPartsMatchingAttribute({
         'parent-node-id': this.nodeId,
       });
-
-
-      // Call handlePartChanges any message edits that update a part.
-      this.part.on('messageparts:change', this._handlePartChanges, this);
       this.childParts.forEach(part => part.on('messageparts:change', this._handlePartChanges, this));
     } else {
       this.childParts = [];
@@ -358,8 +359,9 @@ class MessageTypeModel extends Root {
    * @param {Layer.Core.LayerEvent} evt
    */
   _handlePartChanges(evt) {
-    this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
-    //this._triggerAsync('message-type-model:change');
+    if (this.part) {
+      this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
+    }
   }
 
   /**
@@ -377,7 +379,7 @@ class MessageTypeModel extends Root {
     const partIndex = this.childParts.indexOf(removedPart);
     if (partIndex !== -1) {
       this.childParts.splice(partIndex, 1);
-      this._handlePartChanges();
+      this._handlePartChanges(removeEvt);
     }
   }
 
@@ -406,14 +408,14 @@ class MessageTypeModel extends Root {
       //this._triggerAsync('message-type-model:change');
     } else if (this.part && part.nodeId === this.part.nodeId) {
       this.part = part;
-      this._handlePartChanges();
+      this._handlePartChanges(addEvt);
     }
 
     // If the Message Part for this Model has been replaced by a new Part with the same nodeId,
     // Update the model to point to it.
     else if (part.nodeId === this.part.nodeId) {
       this.part = part;
-      this._handlePartChanges();
+      this._handlePartChanges(addEvt);
     }
   }
 
@@ -707,6 +709,13 @@ class MessageTypeModel extends Root {
 }
 
 /**
+ * Unique identifier, derived from the associated Part ID.
+ *
+ * @type {string}
+ */
+MessageTypeModel.prototype.id = '';
+
+/**
  * Property to reference the Parent node this model's Message Part's Parent Message Part within the Message Part Tree.
  *
  * @protected
@@ -901,6 +910,7 @@ MessageTypeModel.prototype.messageSentAt = null;
 MessageTypeModel.prototype.messageRecipientStatus = null;
 
 MessageTypeModel.bubbleEventParent = 'getClient';
+
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = [
   'message-type-model:change',

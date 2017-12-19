@@ -2,7 +2,7 @@
  * This container wraps simpler Layer.UI.messages.MessageViewMixin and adds a metadata section below the UI.
  *
  * @class Layer.UI.messages.StandardMessageViewContainer
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../components/component';
 import Base from '../base';
@@ -169,7 +169,7 @@ registerComponent('layer-standard-message-view-container', {
       this.footer = model.getFooter();
 
       if (this.ui.parentComponent === this) this.ui._setupContainerClasses();
-      this.classList[!this.isShowingMetadata ? 'add' : 'remove']('layer-card-no-metadata');
+      this.toggleClass('layer-card-no-metadata', !this.isShowingMetadata);
     },
 
     /**

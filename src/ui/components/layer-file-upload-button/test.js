@@ -24,42 +24,26 @@ describe('layer-file-upload-button', function() {
     expect(el.nodes.input.id.length > 0).toBe(true);
   });
 
-  it("Should call layerUI.files.processAttachments onChange", function() {
-    var spy = jasmine.createSpy('processAttachments');
-    var tmp = layerUI.files.processAttachments;
-    layerUI.files.processAttachments = spy;
-    el.nodes.input = {
-      files: []
-    }
-
-    // Run
-    el.onChange();
-
-    // Posttest
-    expect(spy).toHaveBeenCalledWith([], jasmine.any(Function));
-
-    // Cleanup
-    layerUI.files.processAttachments = tmp;
-  });
-
   it("Should set the accept attribute", function() {
     el.accept = "application/pdf";
     expect(el.nodes.input.getAttribute('accept')).toEqual("application/pdf");
   });
 
-  it("Should trigger layer-file-selected onChange", function() {
-    var part = new Layer.Core.MessagePart({body: "Frodo is a Dodo", mimeType: "text/plain"});
-    var spy = jasmine.createSpy('processAttachments').and.callFake(function(a, callback) {
-      callback([part]);
-    });
-    var tmp = layerUI.files.processAttachments;
-    layerUI.files.processAttachments = spy;
+  it("Should set the multiple attribute", function() {
+    expect(el.nodes.input.multiple).toEqual(false);
+    el.multiple = true;
+    expect(el.nodes.input.multiple).toEqual(true);
+  });
+
+  it("Should trigger layer-files-selected onChange", function() {
+    var file = new Blob(["abcdef"], {type: "crap/plain"});
     el.nodes.input = {
-      files: []
+      files: [file]
     }
 
     var eventSpy = jasmine.createSpy('eventListener');
-    document.body.addEventListener('layer-file-selected', eventSpy);
+    el.addEventListener('layer-files-selected', eventSpy);
+
 
     // Run
     el.onChange();
@@ -67,10 +51,48 @@ describe('layer-file-upload-button', function() {
     // Posttest
     var args = eventSpy.calls.allArgs()[0];
     expect(args.length).toEqual(1);
-    expect(args[0].detail).toEqual({ parts: [part] });
+    expect(args[0].detail).toEqual({ files: [file] });
+  });
 
-    // Cleanup
-    layerUI.files.processAttachments = tmp;
+  it("Should stop processing after layer-files-selected evt.preventDefault", function() {
+    var file = new Blob(["abcdef"], {type: "crap/plain"});
+    el.nodes.input = {
+      files: [file]
+    }
+
+    el.addEventListener('layer-files-selected', function(evt) {
+      evt.preventDefault();
+    });
+
+    var eventSpy = jasmine.createSpy('eventListener');
+    el.addEventListener('layer-models-generated', eventSpy);
+
+    // Run
+    el.onChange();
+
+    // Posttest
+    var args = eventSpy.calls.allArgs()[0];
+    expect(args).toBe(undefined);
+  });
+
+  it("Should trigger layer-models-generated", function() {
+    var file = new Blob(["abcdef"], {type: "crap/plain"});
+    el.nodes.input = {
+      files: [file]
+    }
+
+    var eventSpy = jasmine.createSpy('eventListener');
+    el.addEventListener('layer-models-generated', eventSpy);
+    var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel');
+
+    // Run
+    el.onChange();
+
+    // Posttest
+    var args = eventSpy.calls.allArgs()[0];
+    expect(args.length).toEqual(1);
+    expect(args[0].detail.models[0].source).toBe(file);
+    expect(args[0].detail).toEqual({ models: [jasmine.any(FileModel)] });
   });
 
   // This test causes IE to open a file dialog, and no more tests run after that.

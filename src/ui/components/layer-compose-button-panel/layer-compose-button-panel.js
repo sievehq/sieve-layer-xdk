@@ -23,7 +23,7 @@
  * ```
  *
  * @class layer.UI.components.ComposeButtonPanel
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  * @removed
  */
 import { registerComponent } from '../../../components/component';

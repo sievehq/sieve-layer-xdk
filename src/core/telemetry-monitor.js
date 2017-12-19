@@ -159,12 +159,13 @@ class TelemetryMonitor extends Root {
       platform: 'web',
       locale: (navigator.language || '').replace(/-/g, '_'), // should match the en_us format that mobile devices are using rather than the much nicer en-us
       layer_sdk_version: version,
+      layer_ui_sdk_version: 'xdk',
       domain: location.hostname,
     };
 
     // This event allows other libraries to add information to the environment object; specifically: Layer UI
     this.trigger('telemetry-environment', {
-      environment
+      environment,
     });
     return environment;
   }

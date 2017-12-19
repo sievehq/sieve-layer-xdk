@@ -2,7 +2,7 @@ describe('Components', function() {
   var el, testRoot, client, query;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -24,7 +24,7 @@ describe('Components', function() {
     it("Should call lifecycle methods in correct order", function() {
       // Setup
       var calls = [];
-      layerUI.registerComponent('lifecycle-test', {
+      Layer.UI.registerComponent('lifecycle-test', {
         properties: {
           prop1: {
             value: 55,
@@ -70,7 +70,7 @@ describe('Components', function() {
       var mixin1 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.AFTER,
+            mode: Layer.UI.registerComponent.MODES.AFTER,
             value: function() {
               calls.push('after');
             }
@@ -81,7 +81,7 @@ describe('Components', function() {
       var mixin2 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.BEFORE,
+            mode: Layer.UI.registerComponent.MODES.BEFORE,
             value: function() {
               calls.push('before');
             }
@@ -92,7 +92,7 @@ describe('Components', function() {
       var mixin3 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.DEFAULT,
+            mode: Layer.UI.registerComponent.MODES.DEFAULT,
             value: function() {
               calls.push('middle1');
             }
@@ -108,7 +108,7 @@ describe('Components', function() {
         }
       };
 
-      layerUI.registerComponent('mixin-test1', {
+      Layer.UI.registerComponent('mixin-test1', {
         mixins: [mixin1, mixin2, mixin3, mixin4],
         methods: {
           onCreate: function() {
@@ -132,7 +132,7 @@ describe('Components', function() {
       var mixin1 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.AFTER,
+            mode: Layer.UI.registerComponent.MODES.AFTER,
             value: function() {
               calls.push('after');
             }
@@ -143,7 +143,7 @@ describe('Components', function() {
       var mixin2 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.BEFORE,
+            mode: Layer.UI.registerComponent.MODES.BEFORE,
             value: function() {
               calls.push('before');
             }
@@ -154,7 +154,7 @@ describe('Components', function() {
       var mixin3 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.OVERWRITE,
+            mode: Layer.UI.registerComponent.MODES.OVERWRITE,
             value: function() {
               calls.push('overwrite');
             }
@@ -170,7 +170,7 @@ describe('Components', function() {
         }
       };
 
-      layerUI.registerComponent('mixin-test2', {
+      Layer.UI.registerComponent('mixin-test2', {
         mixins: [mixin1, mixin2, mixin3, mixin4],
         methods: {
           onCreate: function() {
@@ -195,7 +195,7 @@ describe('Components', function() {
       var mixin1 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.AFTER,
+            mode: Layer.UI.registerComponent.MODES.AFTER,
             value: function() {
               calls.push('after');
             },
@@ -207,7 +207,7 @@ describe('Components', function() {
       var mixin2 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.BEFORE,
+            mode: Layer.UI.registerComponent.MODES.BEFORE,
             value: function() {
               calls.push('before');
             },
@@ -219,7 +219,7 @@ describe('Components', function() {
       var mixin3 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.DEFAULT,
+            mode: Layer.UI.registerComponent.MODES.DEFAULT,
             value: function() {
               calls.push('middle1');
             },
@@ -236,7 +236,7 @@ describe('Components', function() {
         }
       };
 
-      layerUI.registerComponent('mixin-conditional-test1', {
+      Layer.UI.registerComponent('mixin-conditional-test1', {
         mixins: [mixin1, mixin2, mixin3, mixin4],
         methods: {
           onCreate: function() {
@@ -261,7 +261,7 @@ describe('Components', function() {
       var mixin1 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.AFTER,
+            mode: Layer.UI.registerComponent.MODES.AFTER,
             value: function() {
               calls.push('after');
             },
@@ -273,7 +273,7 @@ describe('Components', function() {
       var mixin2 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.BEFORE,
+            mode: Layer.UI.registerComponent.MODES.BEFORE,
             value: function() {
               calls.push('before');
             },
@@ -285,7 +285,7 @@ describe('Components', function() {
       var mixin3 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.DEFAULT,
+            mode: Layer.UI.registerComponent.MODES.DEFAULT,
             value: function() {
               calls.push('middle1');
             },
@@ -302,7 +302,7 @@ describe('Components', function() {
         }
       };
 
-      layerUI.registerComponent('mixin-conditional-test2', {
+      Layer.UI.registerComponent('mixin-conditional-test2', {
         mixins: [mixin1, mixin2, mixin3, mixin4],
         methods: {
           onCreate: function() {
@@ -326,7 +326,7 @@ describe('Components', function() {
       var mixin1 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.AFTER,
+            mode: Layer.UI.registerComponent.MODES.AFTER,
             value: function() {
               calls.push('after');
             },
@@ -338,7 +338,7 @@ describe('Components', function() {
       var mixin2 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.BEFORE,
+            mode: Layer.UI.registerComponent.MODES.BEFORE,
             value: function() {
               calls.push('before');
             },
@@ -350,7 +350,7 @@ describe('Components', function() {
       var mixin3 = {
         methods: {
           onCreate: {
-            mode: layerUI.registerComponent.MODES.DEFAULT,
+            mode: Layer.UI.registerComponent.MODES.DEFAULT,
             value: function() {
               calls.push('middle1');
             },
@@ -367,7 +367,7 @@ describe('Components', function() {
         }
       };
 
-      layerUI.registerComponent('mixin-conditional-test3', {
+      Layer.UI.registerComponent('mixin-conditional-test3', {
         mixins: [mixin1, mixin2, mixin3, mixin4],
         methods: {
           onCreate: function() {
@@ -387,7 +387,7 @@ describe('Components', function() {
 
     it("Should make attributes available in onCreate", function() {
       var foundValue;
-      layerUI.registerComponent('mixin-conditional-test4', {
+      Layer.UI.registerComponent('mixin-conditional-test4', {
         properties: {
           hasValue: {
             type: Number
@@ -409,7 +409,7 @@ describe('Components', function() {
 
     it("Should use default property values", function() {
       var setterCalled = false;
-      layerUI.registerComponent('property-value-test1', {
+      Layer.UI.registerComponent('property-value-test1', {
         properties: {
           hasValue: {
             type: Number,
@@ -437,7 +437,7 @@ describe('Components', function() {
 
     it("Should create new array from default property values", function() {
       var setterCalled = false;
-      layerUI.registerComponent('property-value-test2', {
+      Layer.UI.registerComponent('property-value-test2', {
         properties: {
           hasValue: {
             value: [],
@@ -463,7 +463,7 @@ describe('Components', function() {
 
     it("Should cast property setters before properties are resolved", function() {
       var setterCalled = false;
-      layerUI.registerComponent('mixin-conditional-test5', {
+      Layer.UI.registerComponent('mixin-conditional-test5', {
         properties: {
           hasValue: {
             type: Number,
@@ -490,7 +490,7 @@ describe('Components', function() {
 
     it("Should call setters in the designated order", function() {
       var calls = [];
-      layerUI.registerComponent('mixin-ordering-test1', {
+      Layer.UI.registerComponent('mixin-ordering-test1', {
         properties: {
           prop10: {
             order: 10,
@@ -544,7 +544,7 @@ describe('Components', function() {
 
     it("Should call setters only once", function() {
       var calls = [];
-      layerUI.registerComponent('mixin-ordering-test2', {
+      Layer.UI.registerComponent('mixin-ordering-test2', {
         properties: {
           prop10: {
             order: 10,
@@ -600,7 +600,7 @@ describe('Components', function() {
 
     it("Should not call the getter except from outside the setter if noGetterFromSetter", function() {
       var inGetter = false;
-      layerUI.registerComponent('mixin-prop-test1', {
+      Layer.UI.registerComponent('mixin-prop-test1', {
         properties: {
           prop10: {
             noGetterFromSetter: true,
@@ -630,7 +630,7 @@ describe('Components', function() {
         {
           properties: {
             prop10: {
-              mode: layerUI.registerComponent.MODES.AFTER,
+              mode: Layer.UI.registerComponent.MODES.AFTER,
               set: function() {results.push("mixin1");}
             }
           }
@@ -639,7 +639,7 @@ describe('Components', function() {
         {
           properties: {
             prop10: {
-              mode: layerUI.registerComponent.MODES.DEFAULT,
+              mode: Layer.UI.registerComponent.MODES.DEFAULT,
               set: function() {results.push("mixin2");}
             }
           }
@@ -648,14 +648,14 @@ describe('Components', function() {
         {
           properties: {
             prop10: {
-              mode: layerUI.registerComponent.MODES.BEFORE,
+              mode: Layer.UI.registerComponent.MODES.BEFORE,
               set: function() {results.push("mixin3");}
             }
           }
         }
       ];
 
-      layerUI.registerComponent('mixin-prop-test2', {
+      Layer.UI.registerComponent('mixin-prop-test2', {
         mixins: mixins,
         properties: {
           prop10: {
@@ -673,7 +673,7 @@ describe('Components', function() {
 
 
       results = [];
-      layerUI.registerComponent('mixin-prop-test3', {
+      Layer.UI.registerComponent('mixin-prop-test3', {
         mixins: mixins.reverse(),
         properties: {
           prop10: {
@@ -730,7 +730,7 @@ describe('Components', function() {
         }
       ];
 
-      layerUI.registerComponent('mixin-prop-test4', {
+      Layer.UI.registerComponent('mixin-prop-test4', {
         mixins: mixins,
         properties: {
         }
@@ -756,28 +756,28 @@ describe('Components', function() {
       el1.client = client
 
       // Posttest
-      expect(layer.UI.components['layer-conversation-view'].properties.filter(function(prop) {
+      expect(Layer.UI.components['layer-conversation-view'].properties.filter(function(prop) {
         return prop.propertyName === 'client'
       })[0].propagateToChildren).toBe(true);
       expect(el1.nodes.composer.client).toBe(client);
       expect(el1.nodes.typingIndicators.client).toBe(client);
       expect(el1.nodes.list.client).toBe(client);
-      expect(el1.nodes.composer.nodes.buttonPanel.client).toBe(client);
-      expect(el1.nodes.composer.nodes.buttonPanelLeft.client).toBe(client);
+      expect(el1.nodes.list.nodes.emptyNode.client).toBe(client);
+      expect(el1.nodes.list.nodes.loadIndicator.client).toBe(client);
 
       // Run Test 2
       var client2 = new Layer.Core.Client({appId: "fred55"});
       el1.client = client2;
 
       // Posttest 2
-      expect(layer.UI.components['layer-conversation-view'].properties.filter(function(prop) {
+      expect(Layer.UI.components['layer-conversation-view'].properties.filter(function(prop) {
         return prop.propertyName === 'client'
       })[0].propagateToChildren).toBe(true);
       expect(el1.nodes.composer.client).toBe(client2);
       expect(el1.nodes.typingIndicators.client).toBe(client2);
       expect(el1.nodes.list.client).toBe(client2);
-      expect(el1.nodes.composer.nodes.buttonPanel.client).toBe(client2);
-      expect(el1.nodes.composer.nodes.buttonPanelLeft.client).toBe(client2);
+      expect(el1.nodes.list.nodes.emptyNode.client).toBe(client2);
+      expect(el1.nodes.list.nodes.loadIndicator.client).toBe(client2);
     });
 
     it("Should propagate propagateToChildren properties to list items", function() {
@@ -840,7 +840,7 @@ describe('Components', function() {
       CustomElements.takeRecords();
       layer.Util.defer.flush();
 
-      expect(el1.nodes.composer.nodes.buttonPanel.mainComponent).toBe(el1);
+      expect(el1.nodes.list.nodes.emptyNode.mainComponent).toBe(el1);
     });
   });
 
@@ -858,7 +858,7 @@ describe('Components', function() {
       CustomElements.takeRecords();
       layer.Util.defer.flush();
 
-      expect(el1.nodes.composer.nodes.buttonPanel.parentComponent).toBe(el1.nodes.composer);
+      expect(el1.nodes.list.nodes.emptyNode.parentComponent).toBe(el1.nodes.list);
     });
   });
 
@@ -867,7 +867,7 @@ describe('Components', function() {
   describe("The onRender() method", function() {
     var called = false;
     beforeAll(function() {
-      layerUI.registerComponent('onrender-test1', {
+      Layer.UI.registerComponent('onrender-test1', {
         methods: {
           onRender: function() {
             called = true;
@@ -910,7 +910,7 @@ describe('Components', function() {
   describe("The onAttach() method", function() {
     it("Should be called after inserting a node", function() {
       var called = false;
-      layerUI.registerComponent('oninsert-test1', {
+      Layer.UI.registerComponent('oninsert-test1', {
         methods: {
           onAttach: function() {
             called = true;
@@ -929,7 +929,7 @@ describe('Components', function() {
 
     it("Should be called after onAfterCreate even if onAfterCreate is delayed to after insertion", function() {
       var called = false;
-      layerUI.registerComponent('oninsert-test2', {
+      Layer.UI.registerComponent('oninsert-test2', {
         properties: {
           hasValue: {}
         },
@@ -960,10 +960,128 @@ describe('Components', function() {
     });
   });
 
+  describe("The onDetach() method", function() {
+    var avatar;
+    beforeEach(function() {
+      // Run removal
+      avatar = document.createElement('layer-avatar');
+      testRoot.appendChild(avatar);
+      CustomElements.takeRecords();
+      layer.Util.defer.flush();
+    });
+    it("Should be called after removal", function() {
+      spyOn(avatar, "onDetach");
+
+      // Run
+      testRoot.removeChild(avatar);
+      CustomElements.takeRecords();
+      layer.Util.defer.flush();
+
+      // Posttest
+      expect(avatar.onDetach).toHaveBeenCalledWith();
+    });
+
+    it("Should wait and then call onDestroy", function() {
+      spyOn(avatar, "onDestroy");
+
+      // Run
+      testRoot.removeChild(avatar);
+      CustomElements.takeRecords();
+      layer.Util.defer.flush();
+      jasmine.clock().tick(10001);
+
+      // Posttest
+      expect(avatar.onDestroy).toHaveBeenCalledWith();
+    });
+
+    it("Should trigger layer-widget-destroyed and not call onDestroy if event prevented", function() {
+      spyOn(avatar, "onDestroy");
+      avatar.addEventListener('layer-widget-destroyed', function(evt) {
+        evt.preventDefault();
+      });
+
+      // Run
+      testRoot.removeChild(avatar);
+      CustomElements.takeRecords();
+      layer.Util.defer.flush();
+      jasmine.clock().tick(10001);
+
+      // Posttest
+      expect(avatar.onDestroy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("The onDestroy() method", function() {
+    var avatar;
+    beforeEach(function() {
+      // Run removal
+      avatar = document.createElement('layer-avatar');
+      testRoot.appendChild(avatar);
+      CustomElements.takeRecords();
+      layer.Util.defer.flush();
+
+      client = new Layer.Core.Client({appId: "fred53"});
+      client.user = new Layer.Core.Identity({
+        client: client,
+        id: "layer:///identities/frodo-the-dodo"
+      });
+    });
+
+    it("Should clear all subscriptions", function() {
+      var f = function() {};
+      client.user.on('identities:change', f, avatar);
+      expect(client.user._events['identities:change'].length).toEqual(1);
+      avatar.onDestroy();
+      expect(client.user._events['identities:change']).toBe(undefined);
+    });
+
+    it("Should style as destroyed using layer-node-destroyed", function() {
+      expect(avatar.classList.contains('layer-node-destroyed')).toBe(false);
+      avatar.onDestroy();
+      expect(avatar.classList.contains('layer-node-destroyed')).toBe(true);
+    });
+  });
+
+  describe("The destroy() method", function() {
+    var avatar;
+    beforeEach(function() {
+      client = new Layer.Core.Client({appId: "fred53"});
+      client.user = new Layer.Core.Identity({
+        client: client,
+        id: "layer:///identities/frodo-the-dodo"
+      });
+
+      // Run removal
+      avatar = document.createElement('layer-avatar');
+      avatar.users = [client.user];
+      testRoot.appendChild(avatar);
+      CustomElements.takeRecords();
+      layer.Util.defer.flush();
+    });
+    it("Should remove from parentNode", function() {
+      expect(avatar.parentNode).toBe(testRoot);
+      avatar.destroy();
+      expect(avatar.parentNode).not.toBe(testRoot);
+    });
+
+    it("Should destroy subcomponents", function() {
+      spyOn(avatar.nodes.presence, "onDestroy");
+      avatar.destroy();
+      expect(avatar.nodes.presence.onDestroy).toHaveBeenCalledWith();
+    });
+
+    it("Should call onDestroy", function() {
+      spyOn(avatar, "onDestroy");
+      avatar.destroy();
+      expect(avatar.onDestroy).toHaveBeenCalledWith();
+    });
+  });
+
+
   describe("The template property", function() {
     it("Should accept a string", function() {
       var called = false;
-      layerUI.registerComponent('template-test1', {
+      Layer.UI.registerComponent('template-test1', {
         template: '<label layer-id="label">Frodo must die</label>',
         methods: {
           onCreate: function() {
@@ -988,7 +1106,7 @@ describe('Components', function() {
       var called = false;
       var template = document.createElement('template');
       template.innerHTML = '<label layer-id="label">Frodo must die</label>';
-      layerUI.registerComponent('template-test2', {
+      Layer.UI.registerComponent('template-test2', {
         template: template,
         methods: {
           onCreate: function() {
@@ -1014,7 +1132,7 @@ describe('Components', function() {
       var called = false;
       var template = document.createElement('template');
       template.innerHTML = '<label layer-id="label">Frodo must die</label>';
-      layerUI.registerComponent('template-test3', {
+      Layer.UI.registerComponent('template-test3', {
         methods: {
           onCreate: function() {
             expect(this.nodes.label.tagName).toEqual('LABEL');
@@ -1024,7 +1142,7 @@ describe('Components', function() {
           }
         }
       });
-      layerUI.registerTemplate('template-test3', template);
+      Layer.UI.registerTemplate('template-test3', template);
 
       var el = document.createElement('template-test3');
       testRoot.appendChild(el);
@@ -1037,7 +1155,7 @@ describe('Components', function() {
 
     it("Should support a template sent via buildAndRegisterTemplate", function() {
       var called = false;
-      layerUI.registerComponent('template-test4', {
+      Layer.UI.registerComponent('template-test4', {
         methods: {
           onCreate: function() {
             expect(this.nodes.label.tagName).toEqual('LABEL');
@@ -1047,7 +1165,7 @@ describe('Components', function() {
           }
         }
       });
-      layerUI.buildAndRegisterTemplate('template-test4', '<label layer-id="label">Frodo must die</label>');
+      Layer.UI.buildAndRegisterTemplate('template-test4', '<label layer-id="label">Frodo must die</label>');
 
       var el = document.createElement('template-test4');
       testRoot.appendChild(el);
@@ -1062,7 +1180,7 @@ describe('Components', function() {
   describe("The listeners and listenTo behaviors", function() {
     it("Should listen for events listed by the listeners property if they come from a listenTo id", function() {
       var eventOneCalled = false, eventTwoCalled = false;
-      layerUI.registerComponent('listener-test1', {
+      Layer.UI.registerComponent('listener-test1', {
         listeners: {
           'event-one': function() {
             eventOneCalled = true;
@@ -1072,7 +1190,7 @@ describe('Components', function() {
           }
         }
       });
-      layerUI.registerComponent('listener-test1-source', {});
+      Layer.UI.registerComponent('listener-test1-source', {});
 
       var el = document.createElement('listener-test1');
       el.listenTo = 'source1,source2, source3';

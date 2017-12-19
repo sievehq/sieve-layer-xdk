@@ -6,7 +6,7 @@
  *
  * This mixin requires "layer-id=loadIndicator" to exist in the template for any component using this mixin.
  *
- * @class layer.UI.mixins.ListLoadIndicator
+ * @class Layer.UI.mixins.ListLoadIndicator
  */
 import '../components/layer-loading-indicator/layer-loading-indicator';
 
@@ -14,7 +14,7 @@ module.exports = {
   properties: {
     isDataLoading: {
       set(value) {
-        this.classList[value ? 'add' : 'remove']('layer-loading-data');
+        this.toggleClass('layer-loading-data', value);
       },
     },
 

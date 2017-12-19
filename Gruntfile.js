@@ -408,6 +408,21 @@ module.exports = function (grunt) {
           auxiliaryCommentBefore: 'istanbul ignore next'
         });
         var result = babelResult.code;
+
+        var indexOfClass = result.indexOf('@class');
+        var indexOfClassCodeBlock = (indexOfClass !== -1) ? result.lastIndexOf('/**', indexOfClass) : -1;
+        if (indexOfClassCodeBlock !== -1) {
+          var endOfClassCodeBlock = result.indexOf('*/', indexOfClassCodeBlock);
+          if (endOfClassCodeBlock !== -1) {
+            endOfClassCodeBlock += 2;
+            var prefix = result.substring(0, indexOfClassCodeBlock);
+            var classComment = result.substring(indexOfClassCodeBlock, endOfClassCodeBlock);
+            classComment = classComment.replace(/\n\s*\*/g, '\n *') + '\n';
+            var postfix =  result.substring(endOfClassCodeBlock);
+            result = classComment + prefix + postfix;
+          }
+        }
+
         grunt.file.write(outputPath, result);
       } catch(e) {
         grunt.log.writeln('Failed to process ' + file + '; ', e);
@@ -484,6 +499,9 @@ module.exports = function (grunt) {
           }
 
           // Strip out white space between tags
+          templateContents = templateContents.replace(/<!--[\s\S]*?-->/gm, '');
+
+          // Strip out HTML Comment Nodes
           templateContents = templateContents.replace(/>\s+</g, '><');
 
           // Generate the <template /> and <style> objects
@@ -494,6 +512,7 @@ module.exports = function (grunt) {
           output += '})()';
         });
       });
+
 
       //var outputES5 = output.replace(/\/\*[\s\S]*?\*\//g, '');
       var outputES5 = output;
@@ -519,7 +538,7 @@ module.exports = function (grunt) {
       var indexOfClass = outputES5.indexOf('@class');
       var indexOfClassCodeBlock = (indexOfClass !== -1) ? outputES5.lastIndexOf('/**', indexOfClass) : -1;
       if (indexOfClassCodeBlock !== -1) {
-        var endOfClassCodeBlock = outputES5.indexOf('*/', indexOfClass);
+        var endOfClassCodeBlock = outputES5.indexOf('*/', indexOfClassCodeBlock);
         if (endOfClassCodeBlock !== -1) {
           endOfClassCodeBlock += 2;
           var prefix = outputES5.substring(0, indexOfClassCodeBlock);

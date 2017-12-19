@@ -2,6 +2,7 @@
  *
  * @class layer.UI.handlers.message.messageViewer
  * @extends layer.UI.components.Component
+ * @mixin Layer.UI.mixins.Clickable
  */
 import { registerComponent } from '../components/component';
 import Clickable from '../mixins/clickable';

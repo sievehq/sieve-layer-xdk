@@ -1,7 +1,7 @@
 /**
  * Utility methods
  *
- * @class Layer.Core.ClientUtils
+ * @class Layer.Util
  */
 
 import uuid from 'uuid';
@@ -116,6 +116,21 @@ exports.sortBy = (inArray, fn, reverse) => {
  * @return {Object}     New Object
  */
 exports.clone = obj => JSON.parse(JSON.stringify(obj));
+
+/**
+ * Shallow Clone doesn't lose subpointers; for use on raw objects, not class instances.
+ *
+ *      var newObj = Utils.shallowClone(oldObj);
+ *
+ * @method
+ * @param  {Object}     Object to clone
+ * @return {Object}     New Object
+ */
+exports.shallowClone = (obj) => {
+  const result = {};
+  Object.keys(obj).forEach(keyName => (result[keyName] = obj[keyName]));
+  return result;
+};
 
 /**
  * Its necessary that the encoding algorithm for creating a URI matches the Layer Server's algorithm.

@@ -13,7 +13,7 @@
  *   set `layerUI.settings.disableTabAsWhiteSpace` to true
  *
  * @class Layer.UI.components.ComposeBar
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import Core from '../../../core';
 import { registerComponent } from '../component';
@@ -169,6 +169,7 @@ registerComponent('layer-compose-bar', {
      * @private
      */
     onCreate() {
+      // Set here rather than via cssClassList as this is dynamic
       this.classList.add('layer-compose-bar-one-line-of-text');
 
       // Setting this in the template causes errors in IE 11.
@@ -468,8 +469,7 @@ registerComponent('layer-compose-bar', {
           setTimeout(() => { this.nodes.input.style.overflow = ''; }, 1);
         }
 
-        // Note that classList.toggle doesn't work right in IE11
-        this.classList[willBeOneLine ? 'add' : 'remove']('layer-compose-bar-one-line-of-text');
+        this.toggleClass('layer-compose-bar-one-line-of-text', willBeOneLine);
       }, 10);
     },
 

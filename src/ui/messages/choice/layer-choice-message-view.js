@@ -3,7 +3,36 @@
  *
  * @class Layer.UI.messages.ChoiceMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
+ */
+
+/**
+ * To customize the Response Message text or prevent the Response Message from being sent, use this event.
+ *
+ * To prevent the Response Message from being sent (perhaps you want to create your own Response Message?) call `evt.preventDefault()`:
+ *
+ * ```
+ * document.body.addEventListener('layer-choice-model-generate-response-message', evt) {
+ *     evt.preventDefault();
+ * });
+ * ```
+ *
+ * To customize the text of the Response Message call `evt.detail.returnValue()`
+ *
+ * ```
+ * document.body.addEventListener('layer-choice-model-generate-response-message', evt) {
+ *  evt.detail.returnValue(`${evt.detail.nameOfChoice}: ${this.client.user.displayName} has ${evt.detail.action} ${evt.detail.choice.text}`);
+ * });
+ * ```
+ *
+ * @event layer-choice-model-generate-response-message
+ * @property {CustomEvent} evt
+ * @property {Layer.Core.LayerEvent} evt.detail
+ * @property {Object} evt.detail.choice           A single choice from the array of choices for the Choice Model
+ * @property {Layer.UI.messages.ChoiceMessageModel} evt.detail.model   The Choice Model that is reporting on the newly selected answer
+ * @property {String} evt.detail.text             The proposed text to send as the renderable part of the Response Message
+ * @property {String} evt.detail.action           One of "selected" or "deselected" indicating whether the user action selected or deselected a Choice
+ * @property {String} evt.detail.nameOfChoice     Proposed name for the Choice Model in order to describe what the user was answering. May be empty string.
  */
 
 import { registerComponent } from '../../components/component';
@@ -127,7 +156,7 @@ registerComponent('layer-choice-message-view', {
      * * a call to this.model.selectAnswer()
      * * Triggering a UI event that the application can intercept
      *
-     * @param {Sring} event   The actionEvent for the choice; all choices are "layer-choice-select"
+     * @param {String} event   The actionEvent for the choice; all choices are "layer-choice-select"
      * @param {Object} data   Data to run this action with; of the form `{id: answerId}`
      */
     runAction({ event, data }) {

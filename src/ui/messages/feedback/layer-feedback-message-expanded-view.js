@@ -5,7 +5,7 @@
  * @class Layer.UI.messages.FeedbackMessageExpandedView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @mixin Layer.UI.messages.Clickable
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import { statusMimeTypes } from '../../base';

@@ -3,7 +3,7 @@
  * suggesting that a developer should probably handle it.
  *
  * @class layer.UI.handlers.message.Unknown
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';

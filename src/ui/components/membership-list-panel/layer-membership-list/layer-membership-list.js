@@ -1,6 +1,6 @@
 /**
  * The Layer Membership List renders a pagable list of Layer.Core.Membership objects, and allows the user to
- * see who else is in the Channel with them.
+ * see who else is in the Layer.Core.Channel with them.
  *
  * This Component can be added to your project directly in the HTML file:
  *
@@ -14,9 +14,9 @@
  * var membersList = document.createElement('layer-membership-list');
  * ```
  *
- * @class layer.UI.components.MembershipListPanel.List
+ * @class Layer.UI.components.MembershipListPanel.List
  * @experimental This feature is incomplete, and available as Preview only.
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.MainComponent
  * @mixin Layer.UI.mixins.ListSelection
@@ -27,6 +27,8 @@ import List from '../../../mixins/list';
 import MainComponent from '../../../mixins/main-component';
 import ListSelection from '../../../mixins/list-selection';
 import '../layer-membership-item/layer-membership-item';
+
+const Channel = Core.Channel;
 
 registerComponent('layer-membership-list', {
   mixins: [List, ListSelection, MainComponent],
@@ -39,8 +41,7 @@ registerComponent('layer-membership-list', {
    *    membersList.onMembershipSelected = function(evt) {
    *      var memberSelected = evt.detail.item;
    *
-   *      // To prevent the UI from proceding to add the member to the selectedIdentities:
-   *      // Note that memberAdded is not yet in selectedIdentities so that you may prevent it from being added.
+   *      // To prevent the UI from proceding to add the member to the selectedIdentities
    *      evt.preventDefault();
    *    };
    * ```
@@ -52,23 +53,23 @@ registerComponent('layer-membership-list', {
    *      var memberSelected = evt.detail.item;
    *
    *      // To prevent the UI from proceding to add the member to the selectedIdentities:
-   *      // Note that memberAdded is not yet in selectedIdentities so that you may prevent it from being added.
    *      evt.preventDefault();
    *    });
    * ```
    *
    * @event layer-membership-selected
-   * @param {Event} evt
+   * @param {CustomEvent} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Membership} evt.detail.item
    */
+
   /**
    * A membership selection change has occurred
    *
-   * See the {@link layer.UI.components.MembershipListPanel.List#layer-membership-selected layer-membership-selected} event for more detail.
+   * See the {@link Layer.UI.components.MembershipListPanel.List#layer-membership-selected layer-membership-selected} event for more detail.
    *
    * @property {Function} onMembershipSelected
-   * @param {Event} evt
+   * @param {CustomEvent} evt
    * @param {Object} evt.detail
    * @param {Layer.Core.Membership} evt.detail.item
    */
@@ -80,7 +81,7 @@ registerComponent('layer-membership-list', {
      *
      * This property may need to be changed any time you change to view a different Channel.
      *
-     * Alternative: See layer.UI.components.MembershipListPanel.List.channel property.  Strings however are easier to stick
+     * Alternative: See Layer.UI.components.MembershipListPanel.List.channel property.  Strings however are easier to stick
      * into html template files.
      *
      * ```
@@ -95,7 +96,12 @@ registerComponent('layer-membership-list', {
      */
     channelId: {
       set(value) {
-        if (value && value.indexOf('layer:///channels') !== 0 && value.indexOf('layer:///channels') !== 0) this.properties.channelId = '';
+        // Clear the channel id if its invalid
+        if (value && value.indexOf('layer:///channels') !== 0 && value.indexOf('layer:///channels') !== 0) {
+          this.properties.channelId = '';
+        }
+
+        // Set the channel... when the client is ready.
         if (this.client && this.channelId) {
           if (this.client.isReady && !this.client.isDestroyed) {
             this.channel = this.client.getObject(this.channelId, true);
@@ -113,7 +119,7 @@ registerComponent('layer-membership-list', {
      *
      * This property may need to be changed any time you change to view a different channel.
      *
-     * Alternative: See layer.UI.components.MembershipListPanel.List.channelId property for an easier property to use
+     * Alternative: See Layer.UI.components.MembershipListPanel.List.channelId property for an easier property to use
      * within html templates.
      *
      * ```
@@ -124,11 +130,11 @@ registerComponent('layer-membership-list', {
      * }
      * ```
      *
-     * @property {Layer.Core.Channel}
+     * @property {Layer.Core.Channel} channel
      */
     channel: {
       set(value) {
-        if (value && !(value instanceof Layer.Channel)) value = this.properties.channel = null;
+        if (value && !(value instanceof Channel)) value = this.properties.channel = null;
         if (this.query) {
           this.query.update({
             predicate: value ? `channel.id = "${value.id}"` : '',
@@ -162,7 +168,7 @@ registerComponent('layer-membership-list', {
   methods: {
 
     /**
-     * Append a Layer.UI.components.IdentitiesListPanel.Item to the Document Fragment
+     * Append a Layer.UI.components.IdentityListPanel.Item to the Document Fragment
      *
      * @method _generateItem
      * @param {Layer.Core.Membership} membership

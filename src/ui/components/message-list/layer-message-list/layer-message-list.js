@@ -1,34 +1,53 @@
 /**
- * The Layer Message List widget renders a scrollable, pagable list of Layer.UI.components.MessagesListPanel.Item widgets.
+ * The Layer Message List widget renders a scrollable, pagable list of Layer.UI.components.MessageListPanel.Item widgets.
  *
- * This is designed to go inside of the layerUI.Conversation widget.
+ * This is designed to go inside of the Layer.UI.Conversation widget.
  *
- * This Component has two named templates:
+ * This Component has three named templates:
  *
  * * `layer-message-item-sent`: Rendering for Messages sent by the owner of this Session
  * * `layer-message-item-received`: Rendering for Messages sent by other users
+ * * `layer-message-item-status`: Rendering for Messages sent as Status Messages
  *
  * Messages are organized into sets where a set starts with the first message from a given user, and ends when either
  * a different user sends a Message, or a long enough pause occurs.  Each Message will have firstInSeries/lastInSeries properties,
  * and these need to be maintained as new Messages are loaded, deleted, etc...
  *
+ * ## Customization
+ *
+ * The `replaceableContent` property supports most basic customization.
+ *
+ * Each Layer.UI.components.MessageListPanel.Item can be customized this way as documented on the Item page.
+ *
+ * Any `replaceableContent` setup provided to the List will be passed onto the items.  In addition, the following
+ * replaceableContent is supported for this list:
+ *
+ * * `emptyNode`: Shown to indicate that there are no messages in this conversation
+ * * `endOfResultsNode`: Shown to indicate that the first message in the conversation has been reached; may be used to
+ *   render something like "Welcome to the start of the Conversation"
+ * * `loadIndicator`: Shown to indicate that we are fetching more messages from the server
+ *
+ * Typically these are all set on the Layer.UI.components.ConversationView which passes them down to this List:
+ *
+ * ```
+ * conversationView.replaceableContent = {
+ *     emptyNode: function(listWidget) {
+ *        var div = document.createElement('div');
+ *        div.innerHTML = 'if you want to see the messages you first need to have messages!';
+ *        return div;
+ *     }
+ * };
+ * ```
+ *
  * ## Advanced Customization
  *
- * To enhance the Message List widget with new properties, methods and capabilities, you have two options:
- *
- * 1. Define a custom `<layer-message-list/>` widget; this works but your now entirely responsible for all of its
- *    behaviors, and can not easily integrate fixes and enhancements added to this repo. Defining components is discussed in
- *    Layer.UI.components.Component.
- * 2. Enhance the provided widget with Mixins.  Details of Mixins are described in Layer.UI.components.Component.
- *    Below illustrates an example of a mixin for modifying this widget.
+ * To enhance the Message List widget with new properties, methods and capabilities, you have can add Mixins.
  *
  *
  * The following example adds a search bar to the Message List
  *
  * ```
- * layer.UI.init({
- *   appId: 'my-app-id',
- *   layer: window.layer,
+ * Layer.UI.init({
  *   mixins: {
  *     'layer-message-list': {
  *       properties: {
@@ -49,7 +68,7 @@
  *           this.nodes.searchBar = document.createElement('input');
  *           this.nodes.searchBar.classList.add('custom-search-bar');
  *           this.nodes.searchBar.addEventListener('change', this._runSearch.bind(this));
- *           this.insertBefore(this.nodes.searchBar, this.firstChild);
+ *           this.insertBefore(this.nodes.searchBar, this.nodes.listMeta.firstChild);
  *         },
  *
  *
@@ -79,20 +98,20 @@
  * });
  * ```
  *
- * @class Layer.UI.components.MessagesListPanel.List
- * @extends Layer.UI.components.Component
+ * @class Layer.UI.components.MessageListPanel.List
+ * @extends Layer.UI.Component
  *
- * @mixin layerUI.mixins.EmptyList
+ * @mixin Layer.UI.mixins.HasQuery
+ * @mixin Layer.UI.mixins.EmptyList
  * @mixin Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.ListLoadIndicator
- * @mixin layerUI.mixins.QueryEndIndicator
+ * @mixin Layer.UI.mixins.QueryEndIndicator
  */
-import Layer from '../../../../core';
 import Util from '../../../../util';
-import LayerUI from '../../../base';
+import UI from '../../../base';
 import { registerComponent } from '../../component';
 import List from '../../../mixins/list';
-import HasQuery from '../../../mixins/has-query'
+import HasQuery from '../../../mixins/has-query';
 import EmptyList from '../../../mixins/empty-list';
 import ListLoadIndicator from '../../../mixins/list-load-indicator';
 import QueryEndIndicator from '../../../mixins/query-end-indicator';
@@ -109,74 +128,45 @@ registerComponent('layer-message-list', {
   properties: {
 
     /**
-     * Supplemental property which helps drive the welcome message
+     * Supplemental property which helps drive the welcome message.
+     *
+     * This property is not used by this Component, but any child components (such as those added
+     * using `replaceableContent` AND which have a `layer-id` attribute will have this value passed to them
+     * whenever it is changed.  Typically this is used to provide the Layer.Core.Conversation to the
+     * `<layer-start-of-conversation />` widget.
      *
      * @property {Layer.Core.Conversation}
      */
     conversation: {
-      // Enables it to be made avaialble to any emptyNode, endOfConversation node, etc...  also over applies by writing to all Message Items too.
       propagateToChildren: true,
     },
 
     /**
-     * Provide property to override the function used to render a date for each Message Item.
-     *
-     * Note that changing this will not regenerate the list; this should be set when initializing a new List.
-     *
-     * ```javascript
-     * messageListPanel.dateRenderer = function(message) {
-     *    var date = message.sentAt;
-     *    return date.toISOString();
-     * };
-     * ```
+     * @inheritdoc Layer.UI.components.ConversationView#dateRenderer
      *
      * @property {Function} [dateRenderer=null]
+     * @property {Date} dateRenderer.date
+     * @property {String} dateRenderer.return
      */
     dateRenderer: {},
 
     /**
-     * Provide property to override the function used to render a date for each Message Item.
-     *
-     * Note that changing this will not regenerate the list; this should be set when initializing a new List.
-     *
-     * ```javascript
-     * messageList.messageStatusRenderer = function(message) {
-     *    return message.readStatus === layer.Constants.RECIPIENT_STATE.ALL ? 'read' : 'processing...';
-     * };
-     * ```
+     * @inheritdoc Layer.UI.components.ConversationView#messageStatusRenderer
      *
      * @property {Function} [messageStatusRenderer=null]
+     * @property {Layer.Core.Message} messageStatusRenderer.message
+     * @property {String} messageStatusRenderer.return
      */
     messageStatusRenderer: {},
 
     /**
-     * This iteration of this property is not dynamic; it will be applied to all future Conversation Items,
-     * but not to the currently generated items.
+     * @inheritdoc Layer.UI.components.ConversationView#dateFormat
      *
-     * Use this to configure how dates are rendered.
-     * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString for details
-     * on the parameters that are supported by `toLocaleString`.
-     *
-     * There are four supported inputs
-     *
-     * * `today`: How to render dates that are today
-     * * `week`: How to render dates that are not today, but within a 6 of today (note if today is
-     *   wednesday, 1 week ago is also wednesday, and rendering `wednesday` would be confusing, so its 6 rather than 7 days.
-     * * `default`: The default format to use
-     * * `older`: The format to use for dates that are in a different year and more than 6 months in the past
-     *
-     * Example:
-     *
-     * ```
-     * widget.dateFormat = {
-     *    today: {"hour": "numeric", "minute": "numeric"},
-     *    week: {"weekday": "short"},
-     *    default: {"month": "short", "day": "2-digit"},
-     *    older: {"month": "short", "year": "numeric"}
-     * }
-     * ```
-     *
-     * @property {Object}
+     * @property {Object} [dateFormat=]
+     * @property {Object} [dateFormat.today={hour: 'numeric', minute: 'numeric'}]
+     * @property {Object} [dateFormat.week={ weekday: 'short', hour: 'numeric', minute: 'numeric' }]
+     * @property {Object} [dateFormat.older={ month: 'short', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }]
+     * @property {Object} [dateFormat.default={ month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }]
      */
     dateFormat: {
       value: {
@@ -188,26 +178,11 @@ registerComponent('layer-message-list', {
     },
 
     /**
-     * Provide a function that returns the menu items for the given Conversation.
-     *
-     * Note that this is called each time the user clicks on a menu button to open the menu,
-     * but is not dynamic in that it will regenerate the list as the Conversation's properties change.
-     *
-     * Format is:
-     *
-     * ```
-     * widget.getMenuOptions = function(message) {
-     *   return [
-     *     {text: "label1", method: method1},
-     *     {text: "label2", method: method2},
-     *     {text: "label3", method: method3}
-     *   ];
-     * }
-     * ```
+     * @inheritdoc Layer.UI.components.ConversationView#getMenuOptions
      *
      * @property {Function} getMenuOptions
      * @property {Layer.Core.Message} getMenuOptions.message
-     * @property {Object[]} getMenuOptions.returns
+     * @property {Object[]} getMenuOptions.return
      */
     getMenuOptions: {
       type: Function,
@@ -220,7 +195,7 @@ registerComponent('layer-message-list', {
      * widget.disable = true;
      * ```
      *
-     * @property {Boolean}
+     * @property {Boolean} disable
      */
     disable: {
       set(value) {
@@ -246,9 +221,9 @@ registerComponent('layer-message-list', {
 
     /**
      * Note that we provide default definitions of replaceable content here rather than in the
-     * message item where it would have to be generated and then removed for each message item.
+     * message item; this could move in the future.
      *
-     * @property
+     * @property replaceableContent
      */
     replaceableContent: {
       value: {
@@ -316,12 +291,7 @@ registerComponent('layer-message-list', {
     },
   },
   methods: {
-    /**
-     * Constructor.
-     *
-     * @method onCreate
-     * @private
-     */
+    // Lifecycle method sets up intial properties and events
     onCreate() {
       if (!this.id) this.id = Util.generateUUID();
 
@@ -374,7 +344,8 @@ registerComponent('layer-message-list', {
       value() {
         if (this.properties.isSelfScrolling) return;
 
-        // If the user has scrolled within screenFullsBeforePaging of the top of the page... and if the page has enough contents to actually
+        // If the user has scrolled within screenFullsBeforePaging of the top of the page...
+        // and if the page has enough contents to actually
         // be scrollable, page the Messages.
         if (this._shouldPage() && !this.properties.delayedPagingTimeout) {
           if (this.properties.lastPagedAt + PAGING_DELAY < Date.now()) {
@@ -392,7 +363,7 @@ registerComponent('layer-message-list', {
           }
         }
 
-        // If we have scrolled to the bottom, set stuckToBottom to true, else false.
+        // If we have scrolled to the bottom/away from bottom, update stuckToBottom.
         const stuckToBottom = this.scrollHeight - 10 <= this.clientHeight + this.scrollTop;
         if (stuckToBottom !== this.properties.stuckToBottom) {
           this.properties.stuckToBottom = stuckToBottom;
@@ -411,6 +382,11 @@ registerComponent('layer-message-list', {
      * ```
      * widget.scrollTo(500);
      * ```
+     *
+     * See also:
+     *
+     * * #scrollToItem
+     * * #animatedScrollTo
      *
      * @method scrollTo
      * @param {Number} position
@@ -438,7 +414,8 @@ registerComponent('layer-message-list', {
      * ```
      *
      * @method animatedScrollTo
-     * @param {Number} [animateSpeed=200]   Number of miliseconds of animated scrolling; 0 for no animation
+     * @param {Number} position            Pixels from top of list to scroll to
+     * @param {Number} [animateSpeed=200]  Number of miliseconds of animated scrolling; 0 for no animation
      * @param {Function} [animateCallback] Function to call when animation completes
      */
     animatedScrollTo: {
@@ -447,7 +424,7 @@ registerComponent('layer-message-list', {
         if (position === this.scrollTop) return;
         this.properties.isSelfScrolling = true;
         if (this.properties.cancelAnimatedScroll) this.properties.cancelAnimatedScroll();
-        const cancel = this.properties.cancelAnimatedScroll = LayerUI.animatedScrollTo(this, position, animateSpeed, () => {
+        const cancel = this.properties.cancelAnimatedScroll = UI.animatedScrollTo(this, position, animateSpeed, () => {
           // Wait for any onScroll events to trigger before we clear isSelfScrolling and procede
           setTimeout(() => {
             if (cancel !== this.properties.cancelAnimatedScroll) return;
@@ -473,11 +450,11 @@ registerComponent('layer-message-list', {
      * running in an iFrame.  Is top.document.hasFocus() a suitable solution, or are there scenarios where top might not even be accessable due to
      * being a different domain?
      *
-     * @method
+     * @method _checkVisibility
      * @private
      */
     _checkVisibility() {
-      if (LayerUI.isInBackground() || this.disable) return;
+      if (UI.isInBackground() || this.disable) return;
 
       // The top that we can see is marked by how far we have scrolled.
       const visibleTop = this.scrollTop;
@@ -490,7 +467,7 @@ registerComponent('layer-message-list', {
         if (childOffset >= visibleTop && childOffset + child.clientHeight <= visibleBottom) {
           if (child.properties && child.properties.item && !child.properties.item.isRead) {
             // TODO: Use a scheduler rather than many setTimeout calls
-            setTimeout(() => this._markAsRead(child), LayerUI.settings.markReadDelay);
+            setTimeout(() => this._markAsRead(child), UI.settings.markReadDelay);
           }
         }
       }, this);
@@ -499,15 +476,15 @@ registerComponent('layer-message-list', {
     /**
      * Mark a the Message associated with this item as read.
      *
-     * This method validates that the Message flagged as ready to be read by `_checkVisibility()` is
+     * This method validates that the Message flagged as ready to be read by #_checkVisibility is
      * in fact still fully visible after the delay.
      *
      * @method _markAsRead
      * @private
-     * @param {Layer.UI.components.MessagesListPanel.Item} child
+     * @param {Layer.UI.components.MessageListPanel.Item} child
      */
     _markAsRead(child) {
-      if (LayerUI.isInBackground() || this.disable) return;
+      if (Layer.UI.isInBackground() || this.disable) return;
 
       const visibleTop = this.scrollTop;
       const visibleBottom = this.scrollTop + this.clientHeight;
@@ -521,10 +498,12 @@ registerComponent('layer-message-list', {
      * Append a Message to the document fragment, updating the previous messages' lastInSeries property as needed.
      *
      * @method _generateItem
+     * @parameter {Layer.Core.Message} message
+     * @returns {Layer.UI.components.MessageListPanel.Item}
      * @private
      */
     _generateItem(message) {
-      const handler = LayerUI.getHandler(message, this);
+      const handler = UI.getHandler(message, this);
       if (handler) {
         const rootPart = message.getPartsMatchingAttribute({role: 'root'})[0];
         let type;
@@ -552,20 +531,30 @@ registerComponent('layer-message-list', {
       }
     },
 
+    /**
+     * Should the provided message with the specified Root Message Part be treated as a Status Message?
+     *
+     * If there is no rootPart, then its _not_ following Message Type Model conventions, and is therefore
+     * not a Status Message.
+     *
+     * @param {Layer.Core.MessageTypeModel} rootPart
+     * @param {Layer.Core.Message} message
+     */
     _isStatusMessage(rootPart, message) {
       if (!rootPart) return false;
-      return LayerUI.statusMimeTypes.indexOf(rootPart.mimeType) !== -1;
+      return UI.statusMimeTypes.indexOf(rootPart.mimeType) !== -1;
     },
 
     /**
      * Are the two Messages in the same Group?
      *
-     * See LayerUI.settings.messageGroupTimeSpan to adjust the definition of Same Group.
+     * See Layer.UI.settings.messageGroupTimeSpan to adjust the definition of Same Group.
      *
      * @method _inSameGroup
      * @private
      * @param {Layer.UI.Component} message-item1
      * @param {Layer.UI.Component} message-item2
+     * @returns {Boolean}
      */
     _inSameGroup(m1, m2) {
       if (!m1 || !m2) return false;
@@ -573,7 +562,7 @@ registerComponent('layer-message-list', {
       const message1 = m1.item;
       const message2 = m2.item;
       const diff = Math.abs(message1.sentAt.getTime() - message2.sentAt.getTime());
-      return message1.sender === message2.sender && diff < LayerUI.settings.messageGroupTimeSpan;
+      return message1.sender === message2.sender && diff < Layer.UI.settings.messageGroupTimeSpan;
     },
 
     /**
@@ -582,7 +571,9 @@ registerComponent('layer-message-list', {
      *
      * @method _processAffectedWidgetsCustom
      * @private
-     * @param {Layer.UI.components.MessagesListPanel.Item[]} widgets
+     * @param {Layer.UI.components.MessageListPanel.Item[]} widgets
+     * @param {Number} firstIndex - Index in the listData array of the first item in the widgets array
+     * @param {Boolean} isTopItemNew - If the top item is index 0 and its a new item rather than an "affected" item, this is true.
      */
     _processAffectedWidgetsCustom(widgets, firstIndex, isTopItemNew) {
       if (widgets.length === 0) return;
@@ -595,6 +586,7 @@ registerComponent('layer-message-list', {
       if (!widgets[widgets.length - 1].nextSibling) widgets[widgets.length - 1].lastInSeries = true;
     },
 
+    // See List mixin docs
     _renderResetData: {
       mode: registerComponent.MODES.AFTER,
       value: function _renderResetData(evt) {
@@ -604,6 +596,7 @@ registerComponent('layer-message-list', {
       },
     },
 
+    // See List mixin docs
     _renderWithoutRemovedData: {
       mode: registerComponent.MODES.OVERWRITE,
       value(evt) {
@@ -618,6 +611,7 @@ registerComponent('layer-message-list', {
       },
     },
 
+    // See List mixin docs
     _renderInsertedData: {
       mode: registerComponent.MODES.OVERWRITE,
       value(evt) {
@@ -813,37 +807,75 @@ registerComponent('layer-message-list', {
 
       // more than just lastMessage
       if (this.query.data.length > 1) {
-        Util.defer(() => this.onPagedData(firstVisibleItem, evt, initialOffset));
+        Util.defer(() => this._pagedDataDone(firstVisibleItem, evt, initialOffset));
       }
     },
 
     /**
-     * MIXIN HOOK: Replace this with your own customization if needed
+     * This method is called whenever the list finishes generating all of the Layer.UI.components.MessageListPanel.Item
+     * for a new page of data.
+     *
+     * On finishing loading, it will:
+     *
+     * 1. Determine where it needs to scroll to (bottom or fistVisibleItem)
+     * 2. Scroll to that position
+     * 3. Wait for messages to finish asyc rendering such as fetching images from servers
+     * 4. Rescroll to that position after all message heights are updated
+     *
+     * @method _pagedDataDone
+     * @private
+     * @param {Layer.UI.components.MessageListPanel.Item} firstVisibleItem   The first message that at the top of the view and fully visible
+     * @param {LayerEvent} evt   The Query change event that delivered the data
+     * @param {Number} initialOffset    How far from the top of the Message List is that first fully visible item (so we can maintain that offset)
      */
-    onPagedData(firstVisibleItem, evt, initialOffset) {
+    _pagedDataDone(firstVisibleItem, evt, initialOffset) {
       let needsPagedDataDone = true;
 
       if (this.properties.stuckToBottom) {
-        const cards = this.querySelectorAllArray('layer-message-viewer').map(card => card.nodes.ui).filter(ui => ui);
-        let unfinishedCards = cards.filter(card => !card.isHeightAllocated);
-        if (unfinishedCards.length) {
+        // Get all Message Viewers that contain a ui node
+        const uis = this.querySelectorAllArray('layer-message-viewer').map(card => card.nodes.ui).filter(ui => ui);
+
+        // Gather all UIs that haven't yet finished allocating their height
+        let unfinishedUIs = uis.filter(card => !card.isHeightAllocated);
+
+        // If there are unfinished UIs, setup event handlers to detect when all messages are done
+        if (unfinishedUIs.length) {
           this.onPagedDataDone(false);
+
+          // Function determines if everything is resolved, and if so, calls onPagedDataDone(true)
           const onCardFinished = () => {
-            unfinishedCards = unfinishedCards.filter(card => !card.isHeightAllocated);
-            if (unfinishedCards.length === 0) {
+            unfinishedUIs = unfinishedUIs.filter(card => !card.isHeightAllocated);
+            if (unfinishedUIs.length === 0) {
               this.removeEventListener('message-height-change', onCardFinished);
               setTimeout(() => this.onPagedDataDone(true), 10);
             }
           };
+
+          // Listen for all Messages that have resolved their height
           this.addEventListener('message-height-change', onCardFinished);
           needsPagedDataDone = false;
         }
-      } else if (firstVisibleItem && evt.type === 'data' && evt.data.length !== 0) {
+      }
+
+      // If we are not stuck to the bottom, then just try and stay pinned to whatever the first visible item is
+      // TODO: this doesn't yet use the height change events to make adjustments!!!
+      else if (firstVisibleItem && evt.type === 'data' && evt.data.length !== 0) {
         this.scrollTo(firstVisibleItem.offsetTop - this.offsetTop - initialOffset);
       }
+
+      // Is everything good? Well then call onPagedDataDone(true)
       if (needsPagedDataDone) this.onPagedDataDone(true);
     },
 
+    /**
+     * Mixin Hook for when a page of messages has finished loading.
+     *
+     * Note that the `isDoneSizingContent` is significant if you need all of the Messages to finish allocating their height
+     * before doing processing.  Messages adjust their height when fetching graphics asynchronously and do not yet know
+     * the dimensions for those images.  Fixed height messages are typically cleaner to work with.
+     *
+     * @param {Boolean} isDoneSizingContent
+     */
     onPagedDataDone(isDoneSizingContent) {
       if (this.properties.stuckToBottom) {
         this.scrollTo(this.scrollHeight - this.clientHeight);

@@ -1,24 +1,52 @@
 /**
  * The Layer Message Status widget renders a Message's sent/delivered/read status.
  *
- * This is provided as a specialized component so that it can be easily redefined by your app to
- * provide your own date formatting.  Note that most customization of message status rendering can be accomplished instead
+ * This is provided as a specialized component so that it can be easily customized or redefined by your app to
+ * provide your own formatting or interactions.  Note that most customization of message status rendering can be accomplished using a
+ * set of template properties such as Layer.UI.components.MessageStatus.deliveredDMTemplate, or provide your own rendering function
  * using Layer.UI.components.ConversationView.messageStatusRenderer.
  *
+ * The simplest way to customize the Message Renderer is using the Template Properties:
+ *
  * ```
- * layer.UI.registerComponent('layer-message-status', {
+ * Layer.init({
+ *   mixins: {
+ *     'layer-message-status': {
+ *       properties: {
+ *         pendingTemplate: "Waiting for server...",
+ *         sentTemplate: "Waiting for delivery...",
+ *         deliveredDMTemplate: "Delivered but not yet read",
+ *         readDMTemplate: "Read at last",
+ *         deliveredGroupTemplate: "Delivered to ${count} users who couldn't be bothered to read it",
+ *         readGroupTemplate: "Read by ${count} users who actually care what I have to say",
+ *       }
+ *     }
+ *   }
+ * });
+ * ```
+ *
+ * Alternatively, if your customization goes beyond changing the wording of things, and involves introducting more interactive elements to Status:
+ *
+ * ```
+ * Layer.UI.registerComponent('layer-message-status', {
  *    properties: {
- *      message: {
- *        set: function(value) {
+ *      item: {
+ *        set: function(newMessage) {
  *          if (newMessage) newMessage.on('messages:change', this.onRerender, this);
  *          this.onRerender();
  *        }
  *      }
  *    },
  *    methods: {
- *      onRerender: function() {
+ *      onCreate() {
+ *        this.addEventListener('click', this.onClick.bind(this));
+ *      },
+ *      onRerender() {
  *          var message = this.properties.message;
  *          this.innerHTML = 'Nobody wants to read your message';
+ *      },
+ *      onClick() {
+ *         // Your custom interaction
  *      }
  *    }
  * });
@@ -29,8 +57,8 @@
  * });
  * ```
  *
- * @class layer.UI.components.MessageStatus
- * @extends Layer.UI.components.Component
+ * @class Layer.UI.components.MessageStatus
+ * @extends Layer.UI.Component
  */
 import Layer from '../../../core';
 import Constants from '../../../constants';
@@ -55,7 +83,13 @@ registerComponent('layer-message-status', {
     /**
      * Provide property to override the function used to render a message status for each Message Item.
      *
-     * Note that changing this will not trigger a rerender; this should be set during initialization.
+     * > *Note*
+     * >
+     * > Changing this will not trigger a rerender; this should be set during initialization.
+     *
+     * > *Note*
+     * >
+     * > This property is typically set via Layer.UI.components.ConversationView.messageStatusRenderer
      *
      * ```javascript
      * statusItem.messageStatusRenderer = function(message) {
@@ -66,6 +100,85 @@ registerComponent('layer-message-status', {
      * @property {Function} [messageStatusRenderer=null]
      */
     messageStatusRenderer: {},
+
+    /**
+     * New message template, for when the message is in preview mode and has not yet been queued for sending
+     *
+     * @property {String} [presendTemplate=]
+     */
+    presendTemplate: {
+      value: '',
+    },
+
+    /**
+     * Pending status message template, for when the message has not yet been sent to the server or acknowledged by the server.
+     *
+     * @property {String} [pendingTemplate=pending]
+     */
+    pendingTemplate: {
+      value: 'pending',
+    },
+
+    /**
+     * Sent status message template, for when the message has been acknowledged by the server but not yet successfully delivered to any users.
+     *
+     * @property {String} [sentTemplate=sent]
+     */
+    sentTemplate: {
+      value: 'sent',
+    },
+
+    /**
+     * Status message template for Channels which do not track read/delivery status for other users and only track whether the message has been acknowledged
+     * by the server.
+     *
+     * @property {String} [channelTemplate=sent]
+     */
+    channelTemplate: {
+      value: 'sent',
+    },
+
+    /**
+     * Delivered status message template for one-on-one Conversations, for when the message has not been read by any users, but has been delivered.
+     *
+     * @property {String} [deliveredDMTemplate=delivered]
+     */
+    deliveredDMTemplate: {
+      value: 'delivered',
+    },
+
+    /**
+     * Read status message template for one-on-one Conversations, for when the message has not been read by all users.
+     *
+     * @property {String} [readDMTemplate=read]
+     */
+    readDMTemplate: {
+      value: 'read',
+    },
+
+    /**
+     * Delivered status message template for group Conversations, for when the message has not been read by any users, but has been delivered to one or more users (not counting the sender).
+     *
+     * String template supports a ${count} symbol in the template string
+     *
+     * @property {String} [deliveredGroupTemplate=delivered to ${count} participants]
+     */
+    deliveredGroupTemplate: {
+      value: 'delivered to ${count} participants',
+    },
+
+    /**
+     * Read status message template for group Conversations, for when the message has been read by one or more users (not counting the sender)
+     *
+     * String template supports a ${count} symbol in the template string
+     *
+     * @property {String} [readGroupTemplate=read by ${count} participants]
+     */
+    readGroupTemplate: {
+      value: 'read by ${count} participants',
+    },
+
+
   },
   methods: {
 
@@ -94,35 +207,51 @@ registerComponent('layer-message-status', {
     onRerender(evt) {
       if (this.item && !this.item.isDestroyed && (!evt || evt.hasProperty('recipientStatus') || evt.hasProperty('syncState'))) {
         const message = this.item;
+        let html = '';
         if (this.messageStatusRenderer) {
-          this.innerHTML = this.messageStatusRenderer(message);
-        } else {
-          let text = '';
-          const isOneOnOne = message.getConversation().participants.length === 2;
-          if (message.isNew()) {
-            text = '';
-          } else if (message.isSaving()) {
-            text = 'pending';
-          } else if (message instanceof Layer.Message.ChannelMessage ||
-            message.deliveryStatus === Constants.RECIPIENT_STATE.NONE) {
-            text = 'sent';
-          } else if (message.readStatus === Constants.RECIPIENT_STATE.NONE) {
-            text = 'delivered';
-            if (!isOneOnOne) {
-              const count = Object.keys(message.recipientStatus)
-                .filter(id => message.recipientStatus[id] === Constants.RECEIPT_STATE.DELIVERED || message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length;
-              text += ` to ${count - 1} participants`;
-            }
-          } else {
-            text = 'read';
-            if (!isOneOnOne) {
-              const count = Object.keys(message.recipientStatus)
-                  .filter(id => message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length;
-              text += ` by ${count - 1} participants`;
-            }
-          }
-          this.innerHTML = text;
+          html = this.messageStatusRenderer(message);
         }
+
+        // App called presend on the message and its not yet queued to be sent but is rendered:
+        else if (message.isNew()) {
+          html = this.presendTemplate;
+        }
+
+        // Message is being sent, but not yet acknowledged by server
+        else if (message.isSaving()) {
+          html = this.pendingTemplate;
+        }
+
+        // Message has been acknowledged by the server, but has not been delivered to anyone
+        else if (message.deliveryStatus === Constants.RECIPIENT_STATE.NONE) {
+          html = this.sentTemplate;
+        }
+
+        // Message is a Channel Message where read/delivery is not tracked
+        else if (message instanceof Layer.Message.ChannelMessage) {
+          html = this.channelTemplate;
+        }
+
+        // One-on-One Conversations
+        else if (message.getConversation().participants.length === 2) {
+          if (message.readStatus === Constants.RECIPIENT_STATE.NONE) {
+            html = this.deliveredDMTemplate;
+          } else {
+            html = this.readDMTemplate;
+          }
+        }
+
+        // Group Conversations
+        else if (message.readStatus === Constants.RECIPIENT_STATE.NONE) {
+          const count = Object.keys(message.recipientStatus)
+            .filter(id => message.recipientStatus[id] === Constants.RECEIPT_STATE.DELIVERED || message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length - 1;
+          html = this.deliveredGroupTemplate.replace(/(\$\{.*?\})/g, match => count);
+        } else {
+          const count = Object.keys(message.recipientStatus)
+              .filter(id => message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length - 1;
+          html = this.readGroupTemplate.replace(/(\$\{.*?\})/g, match => count);
+        }
+        this.innerHTML = html;
       }
     },
   },

@@ -75,7 +75,7 @@ const client = Layer.init({
 ## Build Commands
 
 * `grunt develop`: Starts a webserver for running tests or sample apps, and watches for changes, rebuilding source and theme on any change
-* `grunt docs`: Generate API Reference docs into folder `~/docs`
+* `grunt docs`: Generate API Reference docs into folder `~/docs`; you may need to run `gem install jsduck` first.
 * `grunt theme`: Generate CSS files from the `.less` files
 * `grunt debug`: Generate all lib folders and basic build files.
 * `grunt build`: Run's `grunt debug` and `grunt theme` and then generates all minified files
@@ -135,3 +135,8 @@ JSDuck is used to document this system.  Properties and Methods are flagged as p
 * Public: Part of the public API; Public methods whose names follow the form `onXXX` are not for calling publicly, but rather for customizing with mixins.  They are public in the sense that they have been explicitly exposed for customization.
 * Protected: Any method that is not part of the Public API developers building apps would use, but which developers building custom Message Types would use are defined to be `@protected`.  These will not always strictly follow rules for what it means to be Protected in Object Oriented terminology
 * Private: Any method that is neither intended as a public API, nor for developers building Custom Messages are treated as Private. They may in fact be accessed by other components, and are only Private in the sense that they are for internal framework use only.
+
+Getting jsduck build to work:
+
+* It runs with ruby 2.0.0 than ruby 2.4
+* `gem install jsduck`

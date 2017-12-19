@@ -3,7 +3,7 @@ import Core from '../../core';
 /**
  * A Mixin for main components that can receive or generate a Query
  *
- * @class layer.UI.mixins.HasQuery
+ * @class Layer.UI.mixins.HasQuery
  */
 module.exports = {
   properties: {
@@ -86,7 +86,7 @@ module.exports = {
      *
      * @property {Function} queryFilter
      * @property {Layer.Core.Root} queryFilter.item
-     * @property {Boolean} queryFilter.returns
+     * @property {Boolean} queryFilter.return
      */
     queryFilter: {
       set() {

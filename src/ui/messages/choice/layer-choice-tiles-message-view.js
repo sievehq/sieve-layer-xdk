@@ -3,7 +3,7 @@
  *
  *
  * @class layer.UI.handlers.message.ChoiceModel
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 

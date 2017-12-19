@@ -6,7 +6,7 @@
  *
  * @class Layer.UI.messages.StatusMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @extends Layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
@@ -16,7 +16,7 @@ registerComponent('layer-status-message-view', {
   style: `layer-status-message-view {
     display: block;
   }
-  .layer-root-card.layer-status-message-view > * > .layer-card-top {
+  .layer-root-viewer.layer-status-message-view > * > .layer-card-top {
     display: block;
   }
   `,

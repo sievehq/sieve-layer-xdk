@@ -1,10 +1,55 @@
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 
+// Simple product, no image, description or options
+model = new ProductModel({
+  url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+  currency: 'USD',
+  price: 175,
+  quantity: 3,
+  brand: 'Apple',
+  name: 'Apple 2 plus desktop computer',
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+
+// Simple Product with image and customData
+model = new ProductModel({
+  customData: {
+    product_id: "Frodo-the-dodo",
+    sku: "frodo-is-askew"
+  },
+  url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+  currency: 'USD',
+  price: 175,
+  quantity: 3,
+  brand: 'Apple',
+  name: 'Apple 2 plus desktop computer',
+  imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+
+// Simple Product with description, image and customData
+model = new ProductModel({
+  customData: {
+    product_id: "Frodo-the-dodo",
+    sku: "frodo-is-askew"
+  },
+  url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+  currency: 'USD',
+  price: 175,
+  quantity: 3,
+  brand: 'Apple',
+  name: 'Apple 2 plus desktop computer',
+  description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+  imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+
+// Product with Options
 model = new ProductModel({
    customData: {
      product_id: "Frodo-the-dodo",
-     sku: "frodo-is-ascew"
+     sku: "frodo-is-askew"
    },
    url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
    currency: 'USD',
@@ -16,10 +61,10 @@ model = new ProductModel({
    imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
    options: [
      new ChoiceModel({
-       question: 'RAM',
-       type: 'Label',
+       label: 'RAM',
+       type: 'label',
        allowReselect: true,
-       selectedAnswer: 'large',
+       preselectedChoice: 'large',
        choices: [
          {text:  "2K", id: "small"},
          {text:  "4K", id: "medium"},
@@ -27,10 +72,10 @@ model = new ProductModel({
        ]
      }),
      new ChoiceModel({
-       question: 'Color',
-       type: 'Label',
+       label: 'Color',
+       type: 'label',
        allowReselect: true,
-       selectedAnswer: 'offwhite',
+       preselectedChoice: 'offwhite',
        choices: [
          {text:  "Off White", id: "offwhite"},
          {text:  "Awful White", id: "awfwhite"}
@@ -40,6 +85,7 @@ model = new ProductModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
+// Choices within Choices: A Button Message with Choice Buttons wrapping a Product Message with Options
   ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
@@ -63,9 +109,9 @@ contentModel: new ProductModel({
  imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
  options: [
    new ChoiceModel({
-     question: 'Size',
+     label: 'Size',
      type: 'label',
-     selectedAnswer: 'small',
+     preselectedChoice: 'small',
      choices: [
        {text:  "Small", id: "small"},
        {text:  "Medium", id: "medium"},
@@ -73,9 +119,9 @@ contentModel: new ProductModel({
      ]
    }),
    new ChoiceModel({
-     question: 'Color',
+     label: 'Color',
      type: 'label',
-     selectedAnswer: 'white',
+     preselectedChoice: 'white',
      choices: [
        {text:  "White", id: "white"},
        {text:  "Black", id: "black"},
@@ -86,3 +132,54 @@ contentModel: new ProductModel({
 }),
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+
+
+// Simple Product with no name
+model = new ProductModel({
+  customData: {
+    product_id: "Frodo-the-dodo",
+    sku: "frodo-is-askew"
+  },
+  url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+  currency: 'USD',
+  price: 175,
+  quantity: 3,
+  brand: 'Apple',
+  description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+  imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+
+// Simple Product with no price
+model = new ProductModel({
+  customData: {
+    product_id: "Frodo-the-dodo",
+    sku: "frodo-is-askew"
+  },
+  url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+  currency: 'USD',
+  quantity: 3,
+  brand: 'Apple',
+  name: 'Apple 2 plus desktop computer',
+  description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+  imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+
+
+// Simple Product with no brand
+model = new ProductModel({
+  customData: {
+    product_id: "Frodo-the-dodo",
+    sku: "frodo-is-askew"
+  },
+  url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+  currency: 'USD',
+  price: 175,
+  quantity: 3,
+  name: 'Apple 2 plus desktop computer',
+  description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+  imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+

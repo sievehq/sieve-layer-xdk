@@ -10,12 +10,12 @@
  * The simplest way to customize this widget is to replace it with your own implementation of the `<layer-presence />` tag.
  *
  * ```javascript
- * layer.UI.registerComponent('layer-presence', {
+ * Layer.UI.registerComponent('layer-presence', {
  *    properties: {
  *      item: {
- *        set: function(value) {
+ *        set: function(identityItem) {
  *           this.onRender();
- *           if (value) value.on('identity:changes', this.onRerender, this);
+ *           if (identityItem) identityItem.on('identity:changes', this.onRerender, this);
  *        }
  *      }
  *    },
@@ -30,14 +30,16 @@
  * });
  *
  * // Call init after custom components are defined
- * layer.init({
- *   appId:  'layer:///apps/staging/UUID'
+ * Layer.init({
+ *   appId: 'layer:///apps/staging/UUID'
  * });
  * ```
  *
- * @class layer.UI.components.Presence
- * @extends Layer.UI.components.Component
+ * @class Layer.UI.components.Presence
+ * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.MainComponent
+ * @mixin Layer.UI.mixins.Clickable
+ * @mixin Layer.UI.mixins.SizeProperty
  */
 import Core from '../../../core';
 import { registerComponent } from '../component';
@@ -68,32 +70,44 @@ registerComponent('layer-presence', {
   properties: {
 
     /**
-     * User whose status is represented here
+     * User whose status is to be rendered.
      *
-     * Typically this only has one user represented with a Layer.Core.Identity.
-     *
-     * @property {Layer.Core.Identity}
+     * @property {Layer.Core.Identity} item
      */
     item: {
-      set(value) {
+      set(value, oldValue) {
+        if (oldValue) oldValue.off(null, null, this);
+
         if (value) {
+          // Item will be a Message if the status widget is within a `<layer-message-item-sent />` widget:
           if (value instanceof Core.Message) {
             value = value.sender;
-          } else if (value instanceof Core.Conversation) {
+          }
+
+          // Item will be a Conversation if widget is within a `<layer-conversation-item />` widget
+          else if (value instanceof Core.Conversation) {
             value = value.participants.filter(identity => !identity.sessionOwner)[0];
-          } else if (typeof value === 'object' && !(value instanceof Core.Identity)) {
+          }
+
+          // If item is an object, but not an Identity instance, assume its an Identity POJO and get the instance
+          else if (typeof value === 'object' && !(value instanceof Core.Identity)) {
             const client = Core.Client.getClient(value.clientId);
             if (client) {
               value = client.getIdentity(value.id);
             }
           }
 
+          // If the object does not match any Identity, set it to null; it represents an unknown
           if (!(value instanceof Core.Identity)) {
             value = null;
           }
           this.properties.item = value;
         }
+
+        // Rerender on changes
         if (value) value.on('identities:change', this.onRerender, this);
+
+        // Rerender on initialization
         this.onRender();
       },
     },
@@ -116,7 +130,7 @@ registerComponent('layer-presence', {
     /**
      * Render new user.
      *
-     * @method
+     * @method onRender
      */
     onRender() {
       if (this.item) this.onRerender();
@@ -125,16 +139,16 @@ registerComponent('layer-presence', {
     /**
      * Render's changes in user status
      *
-     * @method
+     * @method onRerender
      */
-    onRerender(user) {
+    onRerender() {
       const status = this.item ? this.item.status : '';
-      this.classList[status === 'available' ? 'add' : 'remove']('layer-presence-available');
-      this.classList[status === 'busy' ? 'add' : 'remove']('layer-presence-busy');
-      this.classList[status === 'away' ? 'add' : 'remove']('layer-presence-away');
-      this.classList[status === 'offline' ? 'add' : 'remove']('layer-presence-offline');
-      this.classList[status === 'invisible' ? 'add' : 'remove']('layer-presence-invisible');
-      this.classList[!status ? 'add' : 'remove']('layer-presence-unknown');
+      this.toggleClass('layer-presence-available', status === 'available');
+      this.toggleClass('layer-presence-busy', status === 'busy');
+      this.toggleClass('layer-presence-away', status === 'away');
+      this.toggleClass('layer-presence-offline', status === 'offline');
+      this.toggleClass('layer-presence-invisible', status === 'invisible');
+      this.toggleClass('layer-presence-unknown', !status);
     },
 
     /**
@@ -143,7 +157,7 @@ registerComponent('layer-presence', {
      * Typically, you wouldn't respond to these, but if the user clicked on their OWN presence,
      * you may prompt them to change their status
      *
-     * @method
+     * @method onClick
      * @param {Event} evt
      */
     onClick(evt) {

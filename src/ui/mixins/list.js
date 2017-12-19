@@ -1,7 +1,7 @@
 /**
  * A List Mixin that provides common list patterns
  *
- * @class layer.UI.mixins.List
+ * @class Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.HasQuery
  */
 import Layer from '../../core';
@@ -400,11 +400,12 @@ module.exports = {
     },
 
     /**
-     * The query has been reset of all data, perhaps its now got a new predicate.
+     * The query has been reset of all data (perhaps its now got a new predicate) or destroyed.
      *
      * Clear all data and list state
      *
      * @method _renderResetData
+     * @param {Layer.Core.LayerEvent} evt
      * @private
      */
     _renderResetData(evt) {
