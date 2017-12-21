@@ -39,6 +39,8 @@
 * Layer.UI.Menu `options` property is now an `items` property
 * `<layer-status-message />` can now be configured with properties without having to completely rewrite the `onRender` method for each customization
 * CSS Class `layer-root-card` renamed to `layer-root-viewer`
+* Twemoji emojis can be disabled using `Layer.init({useEmojiImages: false})`
+* List Item no longer provide an `addClass` `removeClass` and `toggleClass` method (`toggleClass` is now a part of all UI Components)
 
 ## 1.0.0-pre1.15
 
@@ -53,7 +55,9 @@
 ## 1.0.0-pre1.14
 
 * Fixes bug in Message Grouping where Status Messages are treated as part of the grouping
-* Adds a `filter` callback to `Layer.Core.Query` and a `queryFilter` property to the `ConversationView`: ```
+* Adds a `filter` callback to `Layer.Core.Query` and a `queryFilter` property to the `ConversationView`:
+
+```
 render() {
   return <ConversationView
     queryFilter={(message) => return isAcceptableMessage(message)} />

@@ -22,7 +22,7 @@ describe("Empty List Mixin", function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-list');
@@ -81,19 +81,7 @@ describe("Empty List Mixin", function() {
       });
     });
 
-    describe("The emptyNode property", function() {
-      it("Should add/remove nodes", function() {
-        var div = document.createElement("div");
-        el.emptyNode = div;
-        expect(div.parentNode).toBe(el.nodes.emptyNode);
 
-        var div2 = document.createElement("div");
-        el.emptyNode = div2;
-
-        expect(div.parentNode).toBe(null);
-        expect(div2.parentNode).toBe(el.nodes.emptyNode);
-      });
-    });
 
     describe("The onRerender() method", function() {
       it("Should update isEmptyList", function() {

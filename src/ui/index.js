@@ -29,7 +29,6 @@ import './handlers/message/layer-message-viewer';
 import './messages/layer-message-viewer-expanded.js';
 
 import './handlers/text/autolinker';
-import './handlers/text/code-blocks';
 import './handlers/text/emoji';
 import './handlers/text/newline';
 import './utils/date-separator';
@@ -98,6 +97,8 @@ import './message-actions/open-url-action';
 import './message-actions/open-file-action';
 import './message-actions/open-map-action';
 
+import Clickable from './mixins/clickable';
+import FileDropTarget from './mixins/file-drop-target';
 import MessageHandler from './mixins/message-handler';
 import HasQuery from './mixins/has-query';
 import MainComponent from './mixins/main-component';
@@ -107,8 +108,13 @@ import ListSelection from './mixins/list-selection';
 import ListItemSelection from './mixins/list-item-selection';
 import FocusOnKeydown from './mixins/focus-on-keydown';
 import MessageViewMixin from './messages/message-view-mixin';
+import QueryEndIndicator from './mixins/query-end-indicator';
+import SizeProperty from './mixins/size-property';
+import Throttler from './mixins/throttler';
 
 LayerUI.mixins = {
+  Clickable,
+  FileDropTarget,
   MessageHandler,
   HasQuery,
   MainComponent,
@@ -118,6 +124,9 @@ LayerUI.mixins = {
   ListItemSelection,
   FocusOnKeydown,
   MessageViewMixin,
+  QueryEndIndicator,
+  SizeProperty,
+  Throttler,
 };
 
 // If we don't expose global.layerUI then custom templates can not load and call window.layer.UI.registerTemplate()

@@ -484,10 +484,6 @@ function setupMixin(classDef, mixin) {
           classDef.properties[name].propagateToChildren === undefined) {
         classDef.properties[name].propagateToChildren = mixin.properties[name].propagateToChildren;
       }
-      // if (mixin.properties[name].mixinWithChildren !== undefined &&
-      //     classDef.properties[name].mixinWithChildren === undefined) {
-      //   classDef.properties[name].mixinWithChildren = mixin.properties[name].mixinWithChildren;
-      // }
     }
   });
 
@@ -620,7 +616,6 @@ function getPropArray(classDef) {
       order: classDef.properties[propertyName].order,
       noGetterFromSetter: classDef.properties[propertyName].noGetterFromSetter,
       propagateToChildren: classDef.properties[propertyName].propagateToChildren,
-      //mixinWithChildren: classDef.properties[propertyName].mixinWithChildren,
       value: classDef.properties[propertyName].value,
     };
   }).sort((a, b) => {

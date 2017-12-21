@@ -11,15 +11,6 @@ describe("Newline Text Handler", function() {
       afterText: []
     };
     handler(textData);
-    expect(textData.text).toEqual("hello<br/><br/>you<br/>are the enemy of <br/> the newline<br/>revolution");
-  });
-
-  it("Should ignore codeblocks", function() {
-    var textData = {
-      text: "hello\n\nyou```\nare in\na code\nblock```and should not mess\nwith it\n",
-      afterText: []
-    };
-    handler(textData);
-    expect(textData.text).toEqual("hello<br/><br/>you```\nare in\na code\nblock```and should not mess<br/>with it<br/>");
+    expect(textData.text).toEqual('<p class="layer-line-wrapping-paragraphs">hello</p><p class="layer-line-wrapping-paragraphs">you</p><p class="layer-line-wrapping-paragraphs">are the enemy of</p><p class="layer-line-wrapping-paragraphs">the newline</p><p class="layer-line-wrapping-paragraphs">revolution</p>');
   });
 });

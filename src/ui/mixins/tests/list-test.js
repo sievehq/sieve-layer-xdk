@@ -5,8 +5,8 @@ describe("List Mixin", function() {
     beforeEach(function() {
       jasmine.clock().install();
 
-      restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-      spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+      restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
+      spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
         var timeoutId = setTimeout(function() {
           node.scrollTop = position;
           if (callback) callback();
@@ -28,7 +28,7 @@ describe("List Mixin", function() {
       });
       client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
       testRoot = document.createElement('div');
       document.body.appendChild(testRoot);
       el = document.createElement('layer-identity-list');
@@ -59,9 +59,9 @@ describe("List Mixin", function() {
 
     afterEach(function() {
       try {
-        layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+        Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
         jasmine.clock().uninstall();
-        layerUI.settings.appId = null;
+        Layer.UI.settings.appId = null;
         document.body.removeChild(testRoot);
         Layer.Core.Client.removeListenerForNewClient();
         if (el) el.onDestroy();
@@ -535,11 +535,11 @@ describe("List Mixin", function() {
         expect(el.scrollTop > 0).toBe(false);
       });
 
-      it("Should empty the list of items, but still contain a loadingIndicator node", function() {
+      it("Should empty the list of items, but still contain the listMeta node", function() {
         expect(el.childNodes.length > 1).toBe(true);
         query.reset();
-        expect(el.childNodes.length > 1).toBe(false);
-        expect(el.firstChild.classList.contains('layer-load-indicator')).toBe(true);
+        expect(el.childNodes.length).toEqual(1);
+        expect(el.firstChild).toBe(el.nodes.listMeta);
       });
     });
 
@@ -761,7 +761,7 @@ describe("List Mixin", function() {
         expect(el.properties.listData[el.properties.listData.length - 1].displayName).toEqual("User 10001");
       });
 
-      it("Should append all new items just before the loadIndicator", function() {
+      it("Should append all new items just before the listMeta", function() {
         var identities = [
           new Layer.Core.Identity({
             client: client,
@@ -790,7 +790,7 @@ describe("List Mixin", function() {
         });
 
         // Posttest
-        expect(el.childNodes[el.childNodes.length - 1]).toBe(el.nodes.loadIndicator);
+        expect(el.childNodes[el.childNodes.length - 1]).toBe(el.nodes.listMeta);
         expect(el.childNodes[el.childNodes.length - 2].item.displayName).toEqual("User 10001");
       });
 

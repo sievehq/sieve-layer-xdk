@@ -22,7 +22,7 @@ describe("List Load Mixin", function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-list');
@@ -78,20 +78,6 @@ describe("List Load Mixin", function() {
         query.data = [];
         el.onRerender({type: "add", messages: []});
         expect(el.classList.contains('layer-loading-data')).toBe(true);
-      });
-    });
-
-    describe("The dataLoadingNode property", function() {
-      it("Should add/remove nodes", function() {
-        var div = document.createElement("div");
-        el.dataLoadingNode = div;
-        expect(div.parentNode).toBe(el.nodes.loadIndicator);
-
-        var div2 = document.createElement("div");
-        el.dataLoadingNode = div2;
-
-        expect(div.parentNode).toBe(null);
-        expect(div2.parentNode).toBe(el.nodes.loadIndicator);
       });
     });
 });

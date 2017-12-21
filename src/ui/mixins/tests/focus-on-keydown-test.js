@@ -1,8 +1,8 @@
 describe("Focus On Keydown Mixin", function() {
   var called;
   beforeAll(function() {
-    layerUI.registerComponent('focus-on-keydown-test', {
-      mixins: [layerUI.mixins.FocusOnKeydown],
+    Layer.UI.registerComponent('focus-on-keydown-test', {
+      mixins: [Layer.UI.mixins.FocusOnKeydown],
       methods: {
         onKeyDown() {
 
@@ -28,7 +28,7 @@ describe("Focus On Keydown Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('focus-on-keydown-test');

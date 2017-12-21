@@ -1,3 +1,8 @@
+/**
+ * Detects urls and replaces them with anchor tags
+ *
+ * @class Layer.UI.handlers.text.Autolinker
+ */
 import Autolinker from 'autolinker';
 import layerUI from '../../base';
 

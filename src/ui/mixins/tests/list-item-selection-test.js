@@ -15,14 +15,14 @@ describe("List Item Selection Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-item');
     testRoot.appendChild(el);
     layer.Util.defer.flush();
     jasmine.clock().tick(1000);
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(10);
   });
 

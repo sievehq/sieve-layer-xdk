@@ -28,7 +28,7 @@
     "layer-patch": "^1.1.0",
     "notifyjs": "^2.0.3",
     "remarkable-emoji": "^0.1.3",
-    "twemoji": "^1.4.1",
+    "twemoji": "^2.5.0",
     "uuid": "^2.0.2",
     "webcomponents.js": "^0.7.22"
   },

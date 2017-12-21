@@ -2,7 +2,7 @@
  * The Unknown MessageHandler renders unhandled content with a placeholder politely
  * suggesting that a developer should probably handle it.
  *
- * @class layer.UI.handlers.message.Unknown
+ * @class Layer.UI.handlers.message.Unknown
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';

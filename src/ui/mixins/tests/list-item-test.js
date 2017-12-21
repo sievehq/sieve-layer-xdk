@@ -15,7 +15,7 @@ describe("List Item Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-identity-item');
@@ -140,11 +140,8 @@ describe("List Item Mixin", function() {
   });
 
   describe("The innerNode property", function() {
-    it("Should point to our user data", function() {
-      expect(el.innerNode.childNodes[0].tagName).toEqual('LAYER-AVATAR');
-      expect(el.innerNode.childNodes[1].tagName).toEqual('LAYER-PRESENCE');
-      expect(el.innerNode.childNodes[2].tagName).toEqual('LABEL');
-      expect(el.innerNode.childNodes[3].tagName).toEqual('INPUT');
+    it("Should point to our wrapper node", function() {
+      expect(el.innerNode.parentNode).toBe(el);
     });
   });
 
@@ -171,6 +168,29 @@ describe("List Item Mixin", function() {
 
       el.lastInSeries = false;
       expect(el.classList.contains('layer-list-item-last')).toBe(false);
+    });
+  });
+
+  describe("The onReplaceableContentAdded method", function() {
+    it("Should propagate any propagateToChildren items to replacement children", function() {
+      el.destroy();
+      layer.Util.defer.flush();
+      var rightSide = document.createElement("div");
+      var avatar = document.createElement('avatar');
+      rightSide.appendChild(avatar);
+
+      el = document.createElement('layer-identity-item');
+      el.replaceableContent = {
+        identityRowRightSide: rightSide
+      };
+      el.client = client;
+      testRoot.appendChild(el);
+      el.item = client.user;
+      layer.Util.defer.flush();
+
+      // Posttest
+      expect(avatar.client).toBe(client);
+      expect(avatar.item).toBe(client.user);
     });
   });
 });

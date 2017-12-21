@@ -2,7 +2,9 @@
  * A Message Handler Mixin that provides common properties and behaviors for implementing a Card.
  *
  * ```
- * import MessageHandler from 'layer-ui-web/lib/mixins/message-handler';
+ * import { UI } from '@layerhq/web-xdk';
+ * const MessageHandler = UI.mixins.MessageHandler;
+ *
  * layerUI.registerComponent('sample-message-handler', {
  *     mixins: [MessageHandler],
  *     methods: {
@@ -33,18 +35,18 @@
  * // If a template is needed, register a template for your component using a String;
  * // Note that layer-id will allow you to access these nodes directly as this.nodes.description
  * // or this.nodes.checkox
- * layerUI.buildAndRegisterTemplate('sample-message-handler', '<label layer-id="label">Approve Purchase</label>' +
+ * UI.buildAndRegisterTemplate('sample-message-handler', '<label layer-id="label">Approve Purchase</label>' +
  *    '<input type="checkbox" layer-id="checkbox" /><div layer-id="description"></div>');
  *
  * // OR Register a template for your component using a <template /> DOM node:
- * layerUI.registerTemplate('sample-message-handler', myTemplateNode);
+ * UI.registerTemplate('sample-message-handler', myTemplateNode);
  * ```
  *
  * If you need to add side effects to setting the `message` property, you can add a message setter; it will be
  * called before the MessageHandlerMixin's message setter:
  *
  * ```
- * layerUI.registerComponent('sample-message-handler', {
+ * UI.registerComponent('sample-message-handler', {
  *   mixins: [MessageHandler],
  *   properties: {
  *     message: {
@@ -61,7 +63,8 @@
  * });
  * ```
  *
- * @class layer.UI.mixins.MessageHandler
+ * @class Layer.UI.mixins.MessageHandler
+ * @deprecated
  */
 import { registerComponent } from '../components/component';
 

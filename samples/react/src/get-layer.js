@@ -6,6 +6,8 @@ import { appId } from '../common/identityServices';
 // initialize lauerUI with your appID and layer sdk
 const layerClient = Layer.init({
   appId,
+  useEmojiImages: false,
+  textHandlers: ['autolinker', 'emoji', 'newline'],
   mixins: {
 
   }

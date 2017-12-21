@@ -1,11 +1,7 @@
 /**
- * The Layer Newline TextHandler replaces all newline characters with <br/> tags.
+ * The Layer Newline TextHandler replaces all newline characters with <p/> tags.
  *
- * Any newline character that appears within a code block should
- * NOT be replaced with a <br/> tag as the code block will render that as a visible
- * <br/> rather than go to the next line.
- *
- * @class layer.UI.handlers.text.NewLine
+ * @class Layer.UI.handlers.text.NewLine
  */
 import layerUI from '../../base';
 
@@ -15,6 +11,8 @@ layerUI.registerTextHandler({
   requiresEnable: true,
   handler(textData) {
     let body = textData.text;
+    if (body.match(/^<p.*?>[\s\S]*<\/p>$/)) return;
+/*
     const codeBlockIndices = [];
     const codeBlocks = [];
     let lastIndex = 0;
@@ -41,6 +39,8 @@ layerUI.registerTextHandler({
         return '<br/>';
       }
     });
-    textData.text = '<p class="layer-line-wrapping-paragraphs">' + body.split('<br/>').join('</p><p class="layer-line-wrapping-paragraphs">') + '</p>';
+    */
+    var bodyParts = body.split('\n').filter(str => str.match(/\S/)).map(str => str.trim());
+    textData.text = '<p class="layer-line-wrapping-paragraphs">' + bodyParts.join('</p><p class="layer-line-wrapping-paragraphs">') + '</p>';
   },
 });

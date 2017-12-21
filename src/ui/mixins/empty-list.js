@@ -1,12 +1,12 @@
 /**
- * A helper mixin for Lists that render alternate text in the event that the list is Empty.
+ * A helper mixin for Lists that detect and indicate when the list is Empty.
  *
  * @class Layer.UI.mixins.EmptyList
  */
 module.exports = {
   properties: {
     /**
-     * If the query has no data and is not loading data, this should be true.
+     * If the query has no data and is not loading data (and has fired successfully!), this should be true.
      *
      * @property {Boolean} [isEmptyList=false]
      * @readonly
@@ -14,7 +14,7 @@ module.exports = {
     isEmptyList: {
       value: false,
       set(value) {
-        this.nodes.emptyNode.style.display = value ? '' : 'none';
+        if (this.nodes.emptyNode) this.nodes.emptyNode.style.display = value ? '' : 'none';
       },
     },
 
@@ -29,12 +29,11 @@ module.exports = {
   },
   methods: {
     onRender() {
-      this.nodes.emptyNode.style.display = this.isEmptyList ? '' : 'none';
-      if (this.emptyNode) this.nodes.emptyNode.appendChild(this.emptyNode);
+      if (this.nodes.emptyNode) this.nodes.emptyNode.style.display = this.isEmptyList ? '' : 'none';
     },
 
     /**
-     * Call this on any Query change events.
+     * Call this on any Query change events and update the {@link #isEmptyList} value
      *
      * @method onRerender
      * @private

@@ -81,6 +81,9 @@ const layerUI = {
  * @property {Number} [settings.destroyAfterDetachDelay=10000] How long to wait after a Component is removed from the document before destroying it.
  *   Note that a common use case is to remove it, and then insert it elsewhere. This causes a remove, and this delay helps insure that the insertion
  *   happens and we can test for this and prevent destroying.
+ * @property {Boolean} [useEmojiImages=true]    Currently images are used for Emojis so that all users see the same
+ *   graphics no matter what platoform they are on. Also insures that platforms lacking emoji support can still render
+ *   emojis.  If your customers are all on platforms that support rendering of emojis you may disable this.
  */
 layerUI.settings = {
   appId: '',
@@ -90,8 +93,9 @@ layerUI.settings = {
   defaultHandler: {
     tagName: 'layer-message-unknown',
   },
-  textHandlers: ['autolinker', 'emoji', 'newline'],
+  textHandlers: ['autolinker', 'newline', 'emoji'],
   destroyAfterDetachDelay: 10000,
+  useEmojiImages: true,
 };
 
 /**

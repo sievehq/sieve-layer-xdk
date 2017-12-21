@@ -3,6 +3,7 @@
  *
  * @class Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.HasQuery
+ * @mixin Layer.UI.mixins.Throttler
  */
 import Layer from '../../core';
 import Util from '../../util';
@@ -11,14 +12,6 @@ import { registerComponent } from '../components/component';
 import HasQuery from './has-query';
 import Throttler from './throttler';
 
-// Shallow array comparison test
-function isEqual(arr1, arr2) {
-  if (arr1.length !== arr2.length) return false;
-  for (let i = 0; i < arr1.length; i++) {
-    if (arr1[i] !== arr2[i]) return false;
-  }
-  return true;
-}
 
 module.exports = {
   mixins: [HasQuery, Throttler],
@@ -34,36 +27,25 @@ module.exports = {
       value: true,
     },
 
-    /**
-     * Set/get state related to whether the Query data is loading data from the server.
-     *
-     * This is managed by the app, and is updated any time the Layer.Core.Query changes state.
-     *
-     * You could set this as well if you need to indicate some activity outside of the Layer.Core.Query:
-     *
-     * ```
-     * widget.isDataLoading = true;
-     * ```
-     *
-     * @property {Boolean} [isDataLoading=false]
-     */
+    // Redefined from Layer.UI.mixins.ListLoadIndicator because that mixin is not gaurenteed to be present
     isDataLoading: {},
 
     /**
      * Any time we are about to render an object, call any provided onRenderListItem function to see if there
-     * are nodes to be inserted before/after the User Item.
+     * are nodes to be inserted before/after the Item.
      *
      * ```javascript
-     * userList.onRenderListItem = function(widget, dataArray, index, isTopItemNew) {
-     *     var conversation = widget.item;
-     *     var priorConversation = dataArray[index - 1];
-     *     if (index > 0 && conversation.metadata.category !== priorConversation.metadata.category) {
+     * listWidget.onRenderListItem = function(widget, dataArray, index, isTopItemNew) {
+     *     var item = widget.item;
+     *     var priorItem = dataArray[index - 1];
+     *     if (index > 0 && item.metadata.category !== priorItem.metadata.category) {
      *        widget.customNodeAbove = '<div class="my-separator">' + widget.user.metadata.category + '</div>';
      *     }
      * });
      * ```
      *
-     * Typical actions on receiving a widget is to set its customNodeAbove and/or customNodeBelow to either a DOM node or an HTML String.
+     * Typical actions for this handler is, on receiving a widget,
+     * to set its customNodeAbove and/or customNodeBelow to either a DOM node or an HTML String.
      *
      * @property {Function} [onRenderListItem=null]      Function to call on each rendered item.
      * @property {Layer.Core.Root} onRenderListItem.widget    Current user/message/conversation/list-item widget that has been created from the Query.
@@ -76,15 +58,8 @@ module.exports = {
       type: Function,
     },
 
-    /**
-     * How many items to page in each time we page the Query.
-     *
-     * @property {Number} [pageSize=50]
-     */
-    pageSize: {
-      value: 50,
-    },
-
+    // additional behaviors on top of Layer.UI.mixins.StateManager for propagating state changes
+    // to List Items
     state: {
       set(newState) {
         Array.prototype.slice.call(this.childNodes).forEach((node) => {
@@ -94,10 +69,16 @@ module.exports = {
     },
 
     /**
-     * String, Regular Expression or Function for filtering Conversations.
+     * String, Regular Expression or Function for filtering items that are in {@link Layer.Core.Query#data}.
      *
-     * Defaults to filtering by comparing input against things like Conversation.metadata.conversationName, or Identity.displayName, etc.
-     * Provide your own Function to change this behavior
+     * ```
+     * list.filter = function(item) {
+     *    return isGood(item); // return true to show, false to hide
+     * };
+     * ```
+     *
+     * Note that this is for quick local searches of items; to actually filter data that should not be shown
+     * to users, see {@link #queryFilter}
      *
      * @property {String|RegEx|Function} [filter='']
      */
@@ -130,10 +111,8 @@ module.exports = {
       }
     },
 
-
-
     /**
-     * Any time we get a new Query assigned, wire it up.
+     * Any time a new Query is assigned, wire it up.
      *
      * @method _updateQuery
      * @private

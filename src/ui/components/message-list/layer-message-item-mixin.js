@@ -165,8 +165,8 @@ module.exports = {
      */
     _contentTag: {
       set(newTag, oldTag) {
-        if (oldTag) this.removeClass(oldTag);
-        if (newTag) this.addClass(newTag);
+        if (oldTag) this.classList.remove(oldTag);
+        if (newTag) this.classList.add(newTag);
       },
     },
 

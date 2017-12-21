@@ -1,8 +1,7 @@
 /**
- * A helper mixin for Lists that want an indicator to render when paging through data, that data is currently loading.
+ * A helper mixin for Lists that want an indicator to render when an indicator when fetching another page of data from the server.
  *
  * This is not a necessary feature, but is nicer than just reaching the end of the list and waiting.
- *
  *
  * This mixin requires "layer-id=loadIndicator" to exist in the template for any component using this mixin.
  *

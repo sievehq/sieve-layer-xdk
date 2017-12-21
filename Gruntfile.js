@@ -254,7 +254,7 @@ module.exports = function (grunt) {
     watch: {
       js: {
         files: ['package.json', 'Gruntfile.js', 'samples/index.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
-        tasks: ['debug', 'browserify:samples', 'notify:watch'],
+        tasks: ['debug', 'notify:watch'],
         options: {
           interrupt: true
         }
