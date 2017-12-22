@@ -1,9 +1,6 @@
 /**
  * A Mixin for main components that can receive or generate a Query.
  *
- * If this component also uses Layer.UI.mixins.MainComponent then it
- * can support {@link #useGeneratedQuery} and can generate its own Query.
- *
  * @class Layer.UI.mixins.HasQuery
  */
 
@@ -13,30 +10,11 @@ module.exports = {
   properties: {
 
     /**
-     * The Client is needed in order for the component to get a Query from a queryId
-     *
-     * @property {Layer.Core.Client} [client=null]
-     */
-    client: {
-      set(value) {
-        if (value) {
-          if (this.queryId) {
-            this.query = value.getQuery(this.queryId);
-          }
-          if (this.properties._isMainComponent && this.useGeneratedQuery) {
-            this._setupGeneratedQuery();
-          }
-        }
-      },
-    },
-
-    /**
      * The ID for the Layer.Core.Query providing the items to render.
      *
      * Note that you can directly set the {@link #query} property as well.
      *
-     * Leaving this and the query properties empty will cause a Layer.Core.Query to be generated for you
-     * as long as this component also has a Layer.UI.mixins.MainComponent.
+     * Leaving this and the query properties empty will cause a Layer.Core.Query to be generated for you.
      *
      * @property {String} [queryId='']
      */
@@ -70,7 +48,7 @@ module.exports = {
 
         // If there is an oldQuery that we didn't generate, its up to the app to destroy it when it is done.
         // Otherwise, if we have a generated query, that was the `oldValue` and can now be destroyed
-        if (this.properties._isMainComponent && this.hasGeneratedQuery) {
+        if (this.hasGeneratedQuery) {
           this.hasGeneratedQuery = false;
           oldValue.destroy();
         }
@@ -101,8 +79,6 @@ module.exports = {
 
     /**
      * The Query was generated internally, not passed in as an attribute or property.
-     *
-     * This is only used if the Layer.UI.mixins.MainComponent mixin is part of this Component.
      *
      * @property {Boolean} [hasGeneratedQuery=false]
      * @readonly
@@ -142,6 +118,10 @@ module.exports = {
     },
   },
   methods: {
+    // Lifecycle method; this depends upon the `client` property so waits for `onAfterCreate`
+    onAfterCreate() {
+      if (this.useGeneratedQuery) this._setupGeneratedQuery();
+    },
 
     /**
      * A Component typically expects a Query as an input... or it needs to create its own.

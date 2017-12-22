@@ -3,8 +3,8 @@ describe("List Item Selection Mixin", function() {
     var el, testRoot, client;
   beforeEach(function() {
     jasmine.clock().install();
-    client = new Layer.Core.Client({
-      appId: 'Fred'
+    client = new Layer.init({
+      appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
       client: client,
@@ -15,7 +15,6 @@ describe("List Item Selection Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-item');
@@ -30,6 +29,7 @@ describe("List Item Selection Mixin", function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
     Layer.Core.Client.removeListenerForNewClient();
+    if (client) client.destroy();
   });
 
 

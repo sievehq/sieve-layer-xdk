@@ -11,6 +11,7 @@ import version from './version';
 
 function init(options) {
   const client = Core.Client.getClient(options.appId) || new Core.Client(options);
+  options.client = client;
   UI.init(options);
   return client;
 }

@@ -47,7 +47,6 @@
  *
  * @class Layer.UI.components.ConversationView
  * @extends Layer.UI.Component
- * @mixin Layer.UI.mixins.MainComponent
  * @mixin Layer.UI.mixins.HasQuery
  * @mixin Layer.UI.mixins.FileDropTarget
  */
@@ -55,7 +54,6 @@ import Core from '../../../core';
 import Constants from '../../../constants';
 import UIConstants from '../../constants';
 import { registerComponent } from '../component';
-import MainComponent from '../../mixins/main-component';
 import HasQuery from '../../mixins/has-query';
 import FocusOnKeydown from '../../mixins/focus-on-keydown';
 import FileDropTarget from '../../mixins/file-drop-target';
@@ -66,7 +64,7 @@ import '../layer-compose-bar/layer-compose-bar';
 import '../layer-typing-indicator/layer-typing-indicator';
 
 registerComponent('layer-conversation-view', {
-  mixins: [MainComponent, HasQuery, FocusOnKeydown, FileDropTarget, Throttler],
+  mixins: [HasQuery, FocusOnKeydown, FileDropTarget, Throttler],
 
   /**
    * This event is triggered before any Message is sent.
@@ -369,6 +367,13 @@ registerComponent('layer-conversation-view', {
       },
     },
 
+    // Docs in mixins/has-query.js; new behavior here is to call _setupQuery to setup an initial Query
+    useGeneratedQuery: {
+      set(value) {
+        this.nodes.list.useGeneratedQuery = value;
+      },
+    },
+
     /**
      * Refocus on the Conversation Panel any time the Conversation ID changes.
      *
@@ -389,18 +394,6 @@ registerComponent('layer-conversation-view', {
      */
     autoFocusConversation: {
       value: UIConstants.FOCUS.DESKTOP_ONLY,
-    },
-
-    // Docs in mixins/main-component.js
-    client: {
-      set(value) {
-        if (value) {
-          if (!this.conversation && this.conversationId) {
-            this.conversation = value.getObject(this.conversationId, true);
-          }
-          if (this.conversation) this._setupConversation();
-        }
-      },
     },
 
     /**
@@ -746,6 +739,10 @@ registerComponent('layer-conversation-view', {
       this.properties._handleResize = this._handleResize.bind(this);
       window.addEventListener('resize', this.properties._handleResize);
     },
+
+    // onAfterCreate() {
+    //   if (this.conversation) this._setupConversation();
+    // },
 
     // Lifecycle method for initializing the width
     onAttach() {

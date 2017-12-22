@@ -1,7 +1,7 @@
 describe("Has Query Mixin", function() {
   beforeAll(function() {
     Layer.UI.registerComponent('has-query-test', {
-      mixins: [Layer.UI.mixins.HasQuery, Layer.UI.mixins.MainComponent],
+      mixins: [Layer.UI.mixins.HasQuery],
       properties: {
         _queryModel: {
           value: Layer.Core.Query.Identity
@@ -18,7 +18,7 @@ describe("Has Query Mixin", function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -30,7 +30,7 @@ describe("Has Query Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
+    //if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('has-query-test');
@@ -65,50 +65,7 @@ describe("Has Query Mixin", function() {
   });
 
 
-  describe("The client property", function() {
-    it("Should setup the query if there is a queryId", function() {
-      testRoot.innerHTML = '<has-query-test use-generated-query="false" query-id="' + query.id + '"></has-query-test>';
-      CustomElements.takeRecords();
-      layer.Util.defer.flush();
 
-      el = testRoot.firstChild;
-      expect(el.query).toBe(null);
-      el.client = client;
-      expect(el.query).toBe(query);
-
-      // Inverse test
-      testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
-      CustomElements.takeRecords();
-      layer.Util.defer.flush();
-
-      el = testRoot.firstChild;
-      expect(el.query).toBe(null);
-      el.client = client;
-      expect(el.query).toBe(null);
-    });
-
-
-    it("Should call _setupGeneratedQuery once the client is set", function() {
-        testRoot.innerHTML = '<has-query-test></has-query-test>';
-        CustomElements.takeRecords();
-        var el = testRoot.firstChild;
-        layer.Util.defer.flush();
-        spyOn(el, "_setupGeneratedQuery");
-        el.client = client;
-        expect(el._setupGeneratedQuery).toHaveBeenCalledWith();
-      });
-
-      it("Should not call _setupGeneratedQuery once the client is set if useGeneratedQuery is false", function() {
-        testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
-        CustomElements.takeRecords();
-        var el = testRoot.firstChild;
-        layer.Util.defer.flush();
-        spyOn(el, "_setupGeneratedQuery");
-        el.client = client;
-        expect(el.useGeneratedQuery).toBe(false);
-        expect(el._setupGeneratedQuery).not.toHaveBeenCalledWith();
-      });
-  });
 
   describe("The query property", function() {
     it("Should disconnect from old query but not destroy it", function() {
@@ -181,14 +138,6 @@ describe("Has Query Mixin", function() {
       expect(el.query).toBe(query);
     });
 
-    it("Should not set the query if there is not a client", function() {
-      el.client = null;
-      el.query = null;
-      expect(el.query).toBe(null);
-      el.queryId = query.id;
-      expect(el.query).toBe(null);
-    });
-
     it("Should clear the query if there is not a Query ID", function() {
       expect(el.query).not.toBe(null);
       el.queryId = "fred";
@@ -207,8 +156,8 @@ describe("Has Query Mixin", function() {
         expect(el.query).toEqual(jasmine.any(Layer.Core.Query));
         expect(el.query.model).toEqual(Layer.Core.Query.Identity);
 
-        // Alt test 1
-        testRoot.innerHTML = '<has-query-test app-id="' + client.appId + '"></has-query-test>';
+        // Alt test 1: Given no _queryModel should generate nothing
+        testRoot.innerHTML = '<has-query-test></has-query-test>';
         var el = testRoot.firstChild;
         el._queryModel = '';
         CustomElements.takeRecords();
@@ -217,9 +166,9 @@ describe("Has Query Mixin", function() {
         el._setupGeneratedQuery();
         expect(el.query).toBe(null);
 
-        // Alt test 2
+        // Alt test 2: Given no client, should generate nothing
         var tmp = Layer.UI.appId;
-        Layer.UI.appId = '';
+        Layer.UI.settings.client = null;
         testRoot.innerHTML = '<has-query-test></has-query-test>';
         var el = testRoot.firstChild;
         CustomElements.takeRecords();
@@ -229,10 +178,10 @@ describe("Has Query Mixin", function() {
         expect(el.query).toBe(null);
 
         // Restore
-        Layer.UI.appId = tmp;
+        Layer.UI.settings.client = client;
 
-        // Alt test 3
-        testRoot.innerHTML = '<has-query-test app-id="' + client.appId + '"></has-query-test>';
+        // Alt test 3, it should not generate a query if one is present
+        testRoot.innerHTML = '<has-query-test></has-query-test>';
         var el = testRoot.firstChild;
         CustomElements.takeRecords();
         layer.Util.defer.flush();
@@ -252,7 +201,7 @@ describe("Has Query Mixin", function() {
         expect(el.hasGeneratedQuery).toBe(true);
 
         // Alt test 1; no _queryModel
-        testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';
+        testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
         el = testRoot.firstChild;
         el._queryModel = '';
         CustomElements.takeRecords();
@@ -260,8 +209,8 @@ describe("Has Query Mixin", function() {
         el._setupGeneratedQuery();
         expect(el.hasGeneratedQuery).toBe(false);
 
-        // Alt test 2, no appId
-        var tmp = Layer.UI.appId;
+        // Alt test 2, no client
+        Layer.UI.settings.client = null;
         Layer.UI.appId = '';
         testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
         CustomElements.takeRecords();
@@ -269,7 +218,7 @@ describe("Has Query Mixin", function() {
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
         expect(el.hasGeneratedQuery).toBe(false);
-        Layer.UI.appId = tmp;
+        Layer.UI.settings.client = client;
 
         // Alt test 3, set a query
         testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';

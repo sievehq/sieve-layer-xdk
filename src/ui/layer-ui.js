@@ -11,6 +11,7 @@ import 'webcomponents.js/webcomponents-lite';
 import layerUI from './base';
 import { registerComponent, registerAll, unregisterComponent, registerMessageComponent } from './components/component';
 import './handlers/message/layer-message-unknown';
+import { Client } from '../core';
 
 layerUI.registerComponent = registerComponent;
 layerUI.registerMessageComponent = registerMessageComponent;
@@ -36,6 +37,9 @@ layerUI.init = function init(settings = {}) {
       layerUI.settings[name] = settings[name];
     }
   });
+  if (!layerUI.settings.client && layerUI.settings.appId) {
+    layerUI.settings.client = Client.getClient(layerUI.settings.appId);
+  }
 
   layerUI.setupMixins(settings.mixins || {});
 
@@ -54,5 +58,8 @@ layerUI.setupMixins = function setupMixins(mixins) {
     layerUI.settings.mixins[componentName] = Object.assign({}, layerUI.settings[componentName] || {}, mixins[componentName]);
   });
 };
+
+const useSafariCss = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
+if (useSafariCss) this.classList.add('safari');
 
 module.exports = layerUI;

@@ -18,7 +18,6 @@ import Util from '../../util';
 import version from '../../version';
 import Root from '../root';
 import Message from '../models/message';
-import MessagePart from '../models/message-part';
 import { ErrorDictionary } from '../layer-error';
 
 class MessageTypeModel extends Root {
@@ -327,12 +326,25 @@ class MessageTypeModel extends Root {
         delete responseData.participant_data;
       }
       if (!Util.doesObjectMatch(this.responses, responseData)) {
+        this._triggerAsync('message-type-model:change', {
+          propertyName: 'responses',
+          oldValue: this.responses,
+          newValue: responseData,
+        });
         this.responses = responseData;
       }
     }
 
     Object.keys(payload).forEach((propertyName) => {
-      this[Util.camelCase(propertyName)] = payload[propertyName];
+      const modelName = Util.camelCase(propertyName);
+      if (this[modelName] !== payload[propertyName]) {
+        this._triggerAsync('message-type-model:change', {
+          propertyName: modelName,
+          oldValue: this[modelName],
+          newValue: payload[propertyName],
+        });
+        this[modelName] = payload[propertyName];
+      }
     });
   }
 

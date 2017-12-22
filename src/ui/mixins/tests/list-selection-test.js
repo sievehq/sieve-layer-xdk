@@ -4,7 +4,7 @@ describe("List Selection Mixin", function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -16,8 +16,6 @@ describe("List Selection Mixin", function() {
     });
     client._clientAuthenticated();
 
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-list');
@@ -51,6 +49,7 @@ describe("List Selection Mixin", function() {
       document.body.removeChild(testRoot);
       Layer.Core.Client.removeListenerForNewClient();
       if (el) el.onDestroy();
+      if (client) client.destroy();
     } catch(e) {}
   });
 

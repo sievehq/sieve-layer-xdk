@@ -39,7 +39,6 @@
  * @class Layer.UI.components.IdentityListPanel.List
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List
- * @mixin Layer.UI.mixins.MainComponent
  * @mixin Layer.UI.mixins.ListLoadIndicator
  * @mixin Layer.UI.mixins.HasQuery
  * @mixin Layer.UI.mixins.ListLoadIndicator
@@ -51,7 +50,6 @@ import Core from '../../../../core';
 import Util from '../../../../util';
 import { registerComponent } from '../../component';
 import List from '../../../mixins/list';
-import MainComponent from '../../../mixins/main-component';
 import HasQuery from '../../../mixins/has-query';
 import ListLoadIndicator from '../../../mixins/list-load-indicator';
 import EmptyList from '../../../mixins/empty-list';
@@ -60,7 +58,7 @@ import SizeProperty from '../../../mixins/size-property';
 import '../layer-identity-item/layer-identity-item';
 
 registerComponent('layer-identity-list', {
-  mixins: [List, MainComponent, HasQuery, ListLoadIndicator, SizeProperty, EmptyList, QueryEndIndicator],
+  mixins: [List, HasQuery, ListLoadIndicator, SizeProperty, EmptyList, QueryEndIndicator],
 
   /**
    * The user has clicked to select an Identity in the Identities List.
@@ -175,7 +173,7 @@ registerComponent('layer-identity-list', {
         if (!Array.isArray(value)) return;
         if (!value) value = [];
         this.properties.selectedIdentities = value.map((identity) => {
-          if (!(identity instanceof Core.Identity)) return this.properties.client.getIdentity(identity.id);
+          if (!(identity instanceof Core.Identity)) return this.client.getIdentity(identity.id);
           return identity;
         });
         this._renderSelection();

@@ -18,20 +18,18 @@
  * @experimental This feature is incomplete, and available as Preview only.
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List
- * @mixin Layer.UI.mixins.MainComponent
  * @mixin Layer.UI.mixins.ListSelection
  */
 import Core from '../../../../core';
 import { registerComponent } from '../../component';
 import List from '../../../mixins/list';
-import MainComponent from '../../../mixins/main-component';
 import ListSelection from '../../../mixins/list-selection';
 import '../layer-membership-item/layer-membership-item';
 
 const Channel = Core.Channel;
 
 registerComponent('layer-membership-list', {
-  mixins: [List, ListSelection, MainComponent],
+  mixins: [List, ListSelection],
 
 
   /**

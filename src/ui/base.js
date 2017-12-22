@@ -54,9 +54,9 @@ const layerUI = {
  *
  * @property {Object} settings
  *
- * @property {String} [settings.appId]      The app ID to use for all webcomponents.
- *    Setting this is a short-hand for using the `app-id` property on each widget;
- *    you can leave out `app-id` if using this setting.
+ * @property {String} appId                             Passed into the `Layer.init({ appId })` in order to initialize the Client
+ *
+ * @property {Layer.Core.Client} [settings.client]      Exposes the Client to all UI Components; set automatically by the `Layer.init({ appId })` call
  *
  * @property {Number} [settings.messageGroupTimeSpan=30,0000]   Messages are grouped based on sender,
  *    as well as time between when Messages are sent
@@ -86,7 +86,7 @@ const layerUI = {
  *   emojis.  If your customers are all on platforms that support rendering of emojis you may disable this.
  */
 layerUI.settings = {
-  appId: '',
+  client: null,
   messageGroupTimeSpan: 1000 * 60 * 30,
   disableTabAsWhiteSpace: false,
   markReadDelay: 2500,

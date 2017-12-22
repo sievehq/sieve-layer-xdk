@@ -16,7 +16,7 @@ describe("List Mixin", function() {
         };
       });
 
-      client = new Layer.Core.Client({
+      client = new Layer.init({
         appId: 'layer:///apps/staging/Fred'
       });
       client.user = new Layer.Core.Identity({
@@ -28,7 +28,6 @@ describe("List Mixin", function() {
       });
       client._clientAuthenticated();
 
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
       testRoot = document.createElement('div');
       document.body.appendChild(testRoot);
       el = document.createElement('layer-identity-list');
@@ -65,31 +64,17 @@ describe("List Mixin", function() {
         document.body.removeChild(testRoot);
         Layer.Core.Client.removeListenerForNewClient();
         if (el) el.onDestroy();
+        if (client) client.destroy();
       } catch(e) {}
     });
     describe("Properties", function() {
-      it("Should set the query given a queryId and then a client", function() {
+      it("Should set the query given a queryId", function() {
         var el = document.createElement('layer-identity-list');
         layer.Util.defer.flush();
         el.queryId = query.id;
-        expect(el.client).toBe(null);
-        expect(el.query).toBe(null);
-        el.appId = client.appId;
-        expect(el.client).toBe(client);
         expect(el.query).toBe(query);
       });
 
-      it("Should set the query given a client and then a queryId", function() {
-        var el = document.createElement('layer-identity-list');
-        el.useGeneratedQuery = false;
-        layer.Util.defer.flush();
-        el.appId = client.appId;
-        expect(el.client).toBe(client);
-        expect(el.query).toBe(null);
-        el.queryId = query.id;
-        expect(el.client).toBe(client);
-        expect(el.query).toBe(query);
-      });
 
       it("Should call render on setting the query", function() {
         var el = document.createElement('layer-identity-list');
@@ -113,7 +98,7 @@ describe("List Mixin", function() {
         expect(el._processQueryEvt).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
       });
 
-      it("Should create a query if there is no query AND its a MainComponent and useGeneratedQuery is unset", function() {
+      it("Should create a query if there is no query and useGeneratedQuery is unset", function() {
         var el = document.createElement('layer-identity-list');
         el.client = client;
         expect(el.properties.query).toBe(null);

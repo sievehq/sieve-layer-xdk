@@ -68,20 +68,6 @@ registerComponent('layer-typing-indicator', {
     },
 
     /**
-     * The Client we are connected with; we need it to receive typing indicator events.
-     *
-     * This property is typically set indirectly by setting the Layer.UI.components.TypingIndicator.conversation.
-     *
-     * @property {Layer.Core.Client} [client=null]
-     */
-    client: {
-      set(newClient, oldClient) {
-        if (oldClient) oldClient.off(null, null, this);
-        if (newClient) newClient.on('typing-indicator-change', this.onRerender, this);
-      },
-    },
-
-    /**
      * The value property is the text/html being rendered.
      *
      * @property {String} [value=""]
@@ -94,6 +80,12 @@ registerComponent('layer-typing-indicator', {
     },
   },
   methods: {
+
+    // Lifecycle method depends upon `client` property
+    onAfterCreate() {
+      this.client.on('typing-indicator-change', this.onRerender, this);
+    },
+
     // Lifecycle method
     onRender() {
       if (this.conversation && this.conversation.id) {

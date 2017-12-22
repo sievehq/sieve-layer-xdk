@@ -1,7 +1,15 @@
 /**
- * A helper mixin for Lists that render alternate text in the event that the list is Empty.
+ * A helper mixin for adding throttling to any component.
  *
- * @class layer.UI.mixins.Throttler
+ * This code only calls `fn` once:
+ *
+ * ```
+ * this._throttler(fn);
+ * this._throttler(fn);
+ * this._throttler(fn);
+ * ```
+ *
+ * @class Layer.UI.mixins.Throttler
  */
 module.exports = {
   properties: {
@@ -11,9 +19,10 @@ module.exports = {
      * This timeout indicates how frequently scroll events are allowed to fire in miliseconds.
      * This value should not need to be tinkered with.
      *
-     * @property {Number} [throttlerTimeout=66]
+     * @property {Number} [_throttlerTimeout=66]
+     * @protected
      */
-    throttlerTimeout: {
+    _throttlerTimeout: {
       value: 66,
     },
   },
@@ -24,14 +33,14 @@ module.exports = {
      * Not at this time safe for handling multiple types of events at the same time.
      *
      * @method _throttler
-     * @private
+     * @protected
      */
     _throttler(callback) {
       if (!this.properties.throttleTimeout) {
         this.properties.throttleTimeout = setTimeout(() => {
           this.properties.throttleTimeout = null;
           callback();
-        }, this.throttlerTimeout);
+        }, this._throttlerTimeout);
       }
     },
   },

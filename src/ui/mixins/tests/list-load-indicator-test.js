@@ -6,7 +6,7 @@ describe("List Load Mixin", function() {
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -22,7 +22,6 @@ describe("List Load Mixin", function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-list');
@@ -59,6 +58,7 @@ describe("List Load Mixin", function() {
     if (el) el.onDestroy();
     jasmine.clock().uninstall();
     Layer.Core.Client.removeListenerForNewClient();
+    if (client) client.destroy();
   });
 
   describe("The isDataLoading property", function() {

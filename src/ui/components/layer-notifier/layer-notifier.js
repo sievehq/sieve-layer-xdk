@@ -48,7 +48,6 @@
 import NotifyLib from 'notifyjs';
 import { isInBackground as IsInBackground, getHandler as GetHandler } from '../../base';
 import { registerComponent } from '../component';
-import MainComponent from '../../mixins/main-component';
 import Clickable from '../../mixins/clickable';
 import '../layer-avatar/layer-avatar';
 
@@ -56,7 +55,7 @@ let Notify = NotifyLib;
 if ('default' in Notify) Notify = Notify.default; // Annoying difference between webpack and browserify...
 
 registerComponent('layer-notifier', {
-  mixins: [MainComponent, Clickable],
+  mixins: [Clickable],
 
   /**
    * Before showing any notification, this event will be triggered.
@@ -143,13 +142,6 @@ registerComponent('layer-notifier', {
 
   events: ['layer-message-notification', 'layer-notification-click'],
   properties: {
-
-    // Docs in mixins/main-component.js
-    client: {
-      set(value) {
-        value.on('messages:notify', this._notify.bind(this));
-      },
-    },
 
     /**
      * When your app is in the background, how should it show notifications of new Messages.
@@ -325,6 +317,11 @@ registerComponent('layer-notifier', {
     onCreate() {
       this.addClickHandler('item-click', this, this.onClickToast.bind(this));
       this.addEventListener('transitionend', this._afterTransition.bind(this), true);
+    },
+
+    // Lifecycle method depends upon `client` property
+    onAfterCreate() {
+      this.client.on('messages:notify', this._notify.bind(this));
     },
 
     /**

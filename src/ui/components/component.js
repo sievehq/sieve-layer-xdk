@@ -763,10 +763,12 @@ function unregisterComponent(tagName) {
 
 // Docs in layer-ui.js
 function registerAll() {
-  registerAllCalled = true;
-  Object.keys(UI.components)
-    .filter(tagName => typeof UI.components[tagName] !== 'function')
-    .forEach(tagName => _registerComponent(tagName));
+  if (!registerAllCalled) {
+    registerAllCalled = true;
+    Object.keys(UI.components)
+      .filter(tagName => typeof UI.components[tagName] !== 'function')
+      .forEach(tagName => _registerComponent(tagName));
+  }
 }
 
 function _registerComponent(tagName) {
@@ -949,7 +951,9 @@ function _registerComponent(tagName) {
     value: function _onAfterCreate() {
       // Allow Adapters to call _onAfterCreate... and then insure its not run a second time
       // This scneario happens during unit tests; not clear if it happens elsewhere
-      if (this.properties._internalState.onAfterCreateCalled || this.properties._internalState.onDestroyCalled) return;
+      if (this.properties._internalState.onAfterCreateCalled ||
+        this.properties._internalState.onDestroyCalled ||
+        UI.settings.client && UI.settings.client.isDestroyed) return;
 
 
       // TODO: Test if this should be built into <layer-replaceable-content /> and moved out of the root class of all Components.
@@ -1073,9 +1077,9 @@ function _registerComponent(tagName) {
    * This Fixes a bug in webcomponents polyfil that clobbers property getter/setter.
    *
    * The webcomponent polyfil copies in properties before the property getter/setter is applied to the object.
-   * As a result, we might have a property of `this.appId` that is NOT accessed via `this.properties.appId`.
+   * As a result, we might have a property of `this.xxxx` that is NOT accessed via `this.properties.xxxx`.
    * Further, the getter and setter functions will not invoke as long as this value is perceived as the definition
-   * for this Object. So we delete the property `appId` from the object so that the getter/setter up the prototype chain can
+   * for this Object. So we delete the property `xxxx` from the object so that the getter/setter up the prototype chain can
    * once again function.
    *
    * @method _initializeProperties
@@ -1412,10 +1416,23 @@ const standardClassProperties = {
   /**
    * Get/set the Layer.Core.Client used by this widget.
    *
-   * @property {Layer.Core.Client} client
+   * App IDs are typically provided via:
+   *
+   * ```
+   * layer.UI.init(({ appId: myAppId })
+   * ```
+   *
+   * The only time one would set this property
+   * is if building an app that used multiple Clients, or where the appId is not known at init time.
+   *
+   * @property {Layer.Core.Client} [client=null]
    */
   client: {
-    propagateToChildren: true,
+    order: 1,
+    get() {
+      const client = UI.settings.client;
+      return client && !client.isDestroyed ? client : null;
+    },
   },
 
   /**

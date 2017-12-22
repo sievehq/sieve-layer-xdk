@@ -35,24 +35,9 @@ registerComponent('layer-compose-bar', {
     conversation: {
       set(value) {
         if (value) this.client = value.getClient();
-        if (this.properties.client) {
+        if (this.client) {
           this._setTypingListenerConversation();
           if (this.manageDisabledState) this.disabled = !Boolean(value);
-        }
-      },
-    },
-
-    /**
-     * The Client are we using to communicate.
-     *
-     * @property {Layer.Core.Client} [client=null]
-     */
-    client: {
-      set(value) {
-        if (!this.nodes.input) logger.error('NO INPUT FOR COMPOSER');
-        if (value) {
-          this.properties.typingListener = this.properties.client.createTypingListener(this.nodes.input);
-          this._setTypingListenerConversation();
         }
       },
     },
@@ -235,6 +220,9 @@ registerComponent('layer-compose-bar', {
      * @private
      */
     _setTypingListenerConversation() {
+      if (!this.properties.typingListener) {
+        this.properties.typingListener = this.client.createTypingListener(this.nodes.input);
+      }
       this.properties.typingListener.setConversation(this.conversation);
     },
 

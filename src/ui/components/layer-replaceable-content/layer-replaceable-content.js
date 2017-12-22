@@ -204,7 +204,7 @@ registerComponent('layer-replaceable-content', {
         if (!alreadyInWidget) {
           this.appendChild(newNode);
         }
-debugger;
+
         // Notify the parent that new content has been added; this will allow
         // the content to be added to the parent's `this.nodes` structure
         this.parentComponent.onReplaceableContentAdded(this.name, newNode);

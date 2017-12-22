@@ -43,7 +43,6 @@
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.ListSelection
- * @mixin Layer.UI.mixins.MainComponent
  * @mixin Layer.UI.mixins.ListLoadIndicator
  * @mixin Layer.UI.mixins.EmptyList
  * @mixin Layer.UI.mixins.SizeProperty
@@ -56,7 +55,6 @@ import { registerComponent } from '../../component';
 import List from '../../../mixins/list';
 import ListLoadIndicator from '../../../mixins/list-load-indicator';
 import ListSelection from '../../../mixins/list-selection';
-import MainComponent from '../../../mixins/main-component';
 import SizeProperty from '../../../mixins/size-property';
 import EmptyList from '../../../mixins/empty-list';
 import QueryEndIndicator from '../../../mixins/query-end-indicator';
@@ -65,7 +63,7 @@ import '../layer-channel-item/layer-channel-item';
 
 
 registerComponent('layer-conversation-list', {
-  mixins: [List, ListSelection, MainComponent, ListLoadIndicator, SizeProperty, EmptyList, QueryEndIndicator],
+  mixins: [List, ListSelection, ListLoadIndicator, SizeProperty, EmptyList, QueryEndIndicator],
 
   /**
    * Configure a custom action when a Conversation is selected;

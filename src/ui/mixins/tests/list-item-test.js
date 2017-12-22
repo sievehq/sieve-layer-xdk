@@ -3,8 +3,8 @@ describe("List Item Mixin", function() {
   var el, testRoot, client;
   beforeEach(function() {
     jasmine.clock().install();
-    client = new Layer.Core.Client({
-      appId: 'Fred'
+    client = new Layer.init({
+      appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
       client: client,
@@ -15,7 +15,6 @@ describe("List Item Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-identity-item');
@@ -183,13 +182,11 @@ describe("List Item Mixin", function() {
       el.replaceableContent = {
         identityRowRightSide: rightSide
       };
-      el.client = client;
       testRoot.appendChild(el);
       el.item = client.user;
       layer.Util.defer.flush();
 
       // Posttest
-      expect(avatar.client).toBe(client);
       expect(avatar.item).toBe(client.user);
     });
   });

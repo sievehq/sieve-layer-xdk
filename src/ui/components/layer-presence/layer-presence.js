@@ -37,7 +37,6 @@
  *
  * @class Layer.UI.components.Presence
  * @extends Layer.UI.Component
- * @mixin Layer.UI.mixins.MainComponent
  * @mixin Layer.UI.mixins.Clickable
  * @mixin Layer.UI.mixins.SizeProperty
  */

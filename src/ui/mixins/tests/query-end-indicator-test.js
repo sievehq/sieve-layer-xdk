@@ -6,7 +6,7 @@ describe("Query End Mixin", function() {
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -22,7 +22,6 @@ describe("Query End Mixin", function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-list');
@@ -59,14 +58,24 @@ describe("Query End Mixin", function() {
     if (el) el.onDestroy();
     jasmine.clock().uninstall();
     Layer.Core.Client.removeListenerForNewClient();
+    if (client) client.destroy();
   });
 
   describe("The isEndOfResults property", function() {
       it("Should initialize to hidden/false", function() {
+        var el = document.createElement('layer-message-list');
+        testRoot.appendChild(el);
+        Layer.Util.defer.flush();
+
         expect(el.isEndOfResults).toBe(false);
         expect(el.nodes.endOfResultsNode.classList.contains('layer-end-of-results')).toBe(false);
       });
       it("Should toggle the layer-end-of-results class", function() {
+        var el = document.createElement('layer-message-list');
+        testRoot.appendChild(el);
+        Layer.Util.defer.flush();
+
+
         el.isEndOfResults = true;
         expect(el.classList.contains('layer-end-of-results')).toBe(true);
 
@@ -78,20 +87,6 @@ describe("Query End Mixin", function() {
         query.data = [];
         el.onRerender({type: "add", messages: []});
         expect(el.classList.contains('layer-end-of-results')).toBe(true);
-      });
-    });
-
-    describe("The endOfResultsNode property", function() {
-      it("Should add/remove nodes", function() {
-        var div = document.createElement("div");
-        el.endOfResultsNode = div;
-        expect(div.parentNode).toBe(el.nodes.endOfResultsNode);
-
-        var div2 = document.createElement("div");
-        el.endOfResultsNode = div2;
-
-        expect(div.parentNode).toBe(null);
-        expect(div2.parentNode).toBe(el.nodes.endOfResultsNode);
       });
     });
 
@@ -112,6 +107,7 @@ describe("Query End Mixin", function() {
 
       el.query.pagedToEnd = false;
       el._renderPagedDataDone({}, fragment, {inRender: true});
+      Layer.Util.defer.flush();
       expect(el.isEndOfResults).toBe(false);
     });
    });

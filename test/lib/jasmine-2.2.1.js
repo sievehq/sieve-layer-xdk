@@ -1657,6 +1657,8 @@ getJasmineRequireObj().pp = function(j$) {
     this.append('({ ');
     var first = true;
 
+    if (obj && typeof obj.toObject === 'function') obj = obj.toObject();
+
     this.iterateObject(obj, function(property, isGetter) {
       if (first) {
         first = false;
@@ -2346,11 +2348,11 @@ getJasmineRequireObj().matchersUtil = function(j$) {
       if (expected) {
         if (Array.isArray(expected)) {
           expected = expected.map(function(expected) {
-            if (typeof expected.toObject === 'function') return expected.toObject();
+            if (expected && typeof expected.toObject === 'function') return expected.toObject();
             return expected;
           });
          } else {
-            if (typeof expected.toObject === 'function') expected = expected.toObject();
+            if (expected && typeof expected.toObject === 'function') expected = expected.toObject();
          }
       }
 

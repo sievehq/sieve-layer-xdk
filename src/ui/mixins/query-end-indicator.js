@@ -40,7 +40,7 @@ module.exports = {
   },
   methods: {
     onRender() {
-      if (!this.query || !this.query.data) this.isEndOfResults = true;
+      if (this.query && this.query.data && this.query.data.length === 0) this.isEndOfResults = true;
     },
 
 

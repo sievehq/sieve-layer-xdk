@@ -42,16 +42,16 @@
  *
  * @class layer.UI.components.Avatar
  * @extends Layer.UI.Component
+ * @mixins Layer.UI.mixins.SizeProperty
  */
 import Core from '../../../core';
 
 import { registerComponent } from '../component';
 import '../layer-presence/layer-presence';
 import SizeProperty from '../../mixins/size-property';
-import MainComponent from '../../mixins/main-component';
 
 registerComponent('layer-avatar', {
-  mixins: [SizeProperty, MainComponent],
+  mixins: [SizeProperty],
   properties: {
     item: {
       set(value) {

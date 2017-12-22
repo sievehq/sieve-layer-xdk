@@ -101,7 +101,6 @@ import Clickable from './mixins/clickable';
 import FileDropTarget from './mixins/file-drop-target';
 import MessageHandler from './mixins/message-handler';
 import HasQuery from './mixins/has-query';
-import MainComponent from './mixins/main-component';
 import List from './mixins/list';
 import ListItem from './mixins/list-item';
 import ListSelection from './mixins/list-selection';
@@ -117,7 +116,6 @@ LayerUI.mixins = {
   FileDropTarget,
   MessageHandler,
   HasQuery,
-  MainComponent,
   List,
   ListItem,
   ListSelection,
