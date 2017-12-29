@@ -1,6 +1,7 @@
 /**
+ * Container for Message Type Views that adds a titlebar.
  *
- * @class layer.UI.handlers.message.messageViewer
+ * @class Layer.UI.messages.TitledMessageViewContainer
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../components/component';
@@ -37,19 +38,42 @@ registerComponent('layer-titled-message-view-container', {
 
    // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
+    /**
+     * The Layer.Core.MessageTypeModel whose data is rendered here.
+     *
+     * @property {Layer.Core.MessageTypeModel} model
+     */
     model: {},
+
+    /**
+     * The Layer.UI.messages.MessageViewMixin that is wrapped by this UI Component.
+     *
+     * @property {Layer.UI.messages.MessageViewMixin} ui
+     */
     ui: {
       set() {
         while (this.nodes.UIContainer.firstChild) this.nodes.UIContainer.removeChild(this.nodes.UIContainer.firstChild);
         if (this.properties.ui) this.nodes.UIContainer.appendChild(this.properties.ui);
       },
     },
+
+    /**
+     * Title for the titlebar; comes from `this.properties.ui._getTitle()`
+     *
+     * @property {String} title
+     */
     title: {
       set(title) {
         this.nodes.title.innerHTML = title;
         this.toggleClass('layer-no-title', !title);
       },
     },
+
+    /**
+     * Icon for the titlebar; comes from `this.properties.ui._getIconClass()`
+     *
+     * @property {String} icon
+     */
     icon: {
       value: '',
       set(icon, oldIcon) {
@@ -63,11 +87,6 @@ registerComponent('layer-titled-message-view-container', {
     onAfterCreate() {
       this.model.on('message-type-model:change', this.onRerender, this);
     },
-
-    /**
-     *
-     * @method
-     */
     onRender() {
       this.onRerender();
     },

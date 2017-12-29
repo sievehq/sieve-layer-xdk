@@ -2,11 +2,12 @@ describe('Status Message Components', function() {
   var StatusModel;
   var conversation;
   var testRoot;
+  var client;
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
+    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -16,7 +17,7 @@ describe('Status Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -32,8 +33,6 @@ describe('Status Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
-
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     testRoot.style.display = 'flex';
@@ -42,13 +41,13 @@ describe('Status Message Components', function() {
 
     StatusModel = Layer.Core.Client.getMessageTypeModelClass("StatusModel");
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -108,9 +107,12 @@ describe('Status Message Components', function() {
         text: "hello"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p>");
+      expect(el.firstChild.tagName).toEqual("P");
+      expect(el.firstChild.className).toEqual("layer-line-wrapping-paragraphs");
+      expect(el.firstChild.childNodes[0].textContent).toEqual("hello");
+
     });
 
     it("Should render newline characters", function() {
@@ -118,9 +120,15 @@ describe('Status Message Components', function() {
         text: "hello\nthere"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p><p class=\"layer-line-wrapping-paragraphs\">there</p>");
+      expect(el.childNodes[0].tagName).toEqual("P");
+      expect(el.childNodes[0].className).toEqual("layer-line-wrapping-paragraphs");
+      expect(el.childNodes[0].childNodes[0].textContent).toEqual("hello");
+
+      expect(el.childNodes[1].tagName).toEqual("P");
+      expect(el.childNodes[1].className).toEqual("layer-line-wrapping-paragraphs");
+      expect(el.childNodes[1].childNodes[0].textContent).toEqual("there");
     });
 
     it("Should render links", function() {
@@ -128,9 +136,15 @@ describe('Status Message Components', function() {
         text: "hello from https://layer.com"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello from <a href=\"https://layer.com\" class=\"layer-parsed-url layer-parsed-url-url\" target=\"_blank\" rel=\"noopener noreferrer\">layer.com</a></p>");
+      expect(el.firstChild.tagName).toEqual("P");
+      expect(el.firstChild.className).toEqual("layer-line-wrapping-paragraphs");
+
+      expect(el.firstChild.childNodes[0].textContent).toEqual("hello from ");
+      expect(el.firstChild.childNodes[1].href).toEqual("https://layer.com/");
+      expect(el.firstChild.childNodes[1].innerHTML).toEqual("layer.com");
+      expect(el.firstChild.childNodes[1].className).toEqual("layer-parsed-url layer-parsed-url-url");
     });
   });
 });

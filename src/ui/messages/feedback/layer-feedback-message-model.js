@@ -27,7 +27,8 @@ import { registerMessageActionHandler } from '../../base';
 class FeedbackModel extends MessageTypeModel {
   _generateParts(callback) {
     const body = this._initBodyWithMetadata([
-      'title', 'prompt', 'placeholder', 'customResponseData',
+      'title', 'prompt', 'promptWait', 'responseMessage',
+      'summary', 'placeholder', 'customResponseData',
     ]);
     if (this.enabledFor && this.enabledFor.length) body.enabled_for = this.enabledFor;
 
@@ -78,7 +79,7 @@ class FeedbackModel extends MessageTypeModel {
     const participantData = {
       rating: this.rating,
       comment: this.comment,
-      sentAt: this.sentAt.toISOString(),
+      sent_at: this.sentAt.toISOString(),
     };
 
     if (this.customResponseData) {
@@ -99,14 +100,9 @@ class FeedbackModel extends MessageTypeModel {
     }
 
     this._triggerAsync('message-type-model:change', {
-      property: 'comment',
-      newValue: this.comment,
-      oldValue: comment,
-    });
-    this._triggerAsync('message-type-model:change', {
-      property: 'rating',
-      newValue: this.rating,
-      oldValue: rating,
+      property: 'sentAt',
+      oldValue: null,
+      newValue: this.sentAt,
     });
   }
 
@@ -115,8 +111,24 @@ class FeedbackModel extends MessageTypeModel {
     if (data.rating) {
       this.rating = data.rating;
       this.comment = data.comment;
-      this.sentAt = new Date(data.sentAt);
+      this.sentAt = new Date(data.sent_at);
     }
+  }
+
+  __setRating(newValue, oldValue) {
+    this._triggerAsync('message-type-model:change', {
+      property: 'rating',
+      oldValue,
+      newValue,
+    });
+  }
+
+  __setComment(newValue, oldValue) {
+    this._triggerAsync('message-type-model:change', {
+      property: 'comment',
+      oldValue,
+      newValue,
+    });
   }
 
   getOneLineSummary() {

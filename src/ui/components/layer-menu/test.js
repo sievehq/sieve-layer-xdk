@@ -1,7 +1,7 @@
 describe('layer-menu', function() {
   var el, testRoot, client;
   beforeEach(function() {
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -12,7 +12,6 @@ describe('layer-menu', function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-menu');
@@ -22,6 +21,7 @@ describe('layer-menu', function() {
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     document.body.removeChild(testRoot);
     Layer.Core.Client.removeListenerForNewClient();
   });

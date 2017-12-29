@@ -1,7 +1,9 @@
 /**
+ * Similar to the Layer.UI.messages.TitledMessageViewContainer, this adds a title and a close button
+ * to a container that wraps a Message Type View.
  *
- * @class layer.UI.handlers.message.messageViewer
- * @extends layer.UI.components.Component
+ * @class Layer.UI.messages.DialogMessageViewContainer
+ * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
  */
 import { registerComponent } from '../components/component';
@@ -48,18 +50,41 @@ registerComponent('layer-dialog-message-view-container', {
 
    // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
+    /**
+     * The Layer.Core.MessageTypeModel whose data is rendered here.
+     *
+     * @property {Layer.Core.MessageTypeModel} model
+     */
     model: {},
+
+    /**
+     * The Layer.UI.messages.MessageViewMixin that is wrapped by this UI Component.
+     *
+     * @property {Layer.UI.messages.MessageViewMixin} ui
+     */
     ui: {
       set() {
         while (this.nodes.UIContainer.firstChild) this.nodes.UIContainer.removeChild(this.nodes.UIContainer.firstChild);
         if (this.properties.ui) this.nodes.UIContainer.appendChild(this.properties.ui);
       },
     },
+
+    /**
+     * Title for the titlebar; comes from `this.properties.ui._getTitle()`
+     *
+     * @property {String} title
+     */
     title: {
       set(title) {
         this.nodes.title.innerHTML = title;
       },
     },
+
+    /**
+     * Icon for the titlebar; comes from `this.properties.ui._getIconClass()`
+     *
+     * @property {String} icon
+     */
     icon: {
       value: '',
       set(icon, oldIcon) {
@@ -68,6 +93,12 @@ registerComponent('layer-dialog-message-view-container', {
         this.toggleClass('layer-title-icon-empty', !Boolean(icon));
       },
     },
+
+    /**
+     * Show a close button in the titlebar to close the dialog?:
+     *
+     * @property {Boolean} [isCloseButtonShowing=false]
+     */
     isCloseButtonShowing: {
       value: false,
       set(value) {
@@ -97,6 +128,11 @@ registerComponent('layer-dialog-message-view-container', {
       this.title = this.properties.ui._getTitle();
     },
 
+    /**
+     * Mixin Hook: On clicking the close button, destroy the parent component (the dialog)
+     *
+     * @method onCloseClick
+     */
     onCloseClick() {
       this.parentComponent.destroy();
     },

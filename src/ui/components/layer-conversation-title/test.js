@@ -2,19 +2,14 @@ describe('layer-conversation-title', function() {
   var el, testRoot, client, conversation, user2, user3;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
-  afterEach(function() {
-    jasmine.clock().uninstall();
-    Layer.Core.Client.removeListenerForNewClient();
-  });
 
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -42,7 +37,6 @@ describe('layer-conversation-title', function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-title');
@@ -54,7 +48,17 @@ describe('layer-conversation-title', function() {
   });
 
   afterEach(function() {
+    jasmine.clock().uninstall();
+    Layer.Core.Client.removeListenerForNewClient();
     document.body.removeChild(testRoot);
+    if (el) {
+      el.destroy();
+      el = null;
+    }
+    if (client) {
+      client.destroy();
+      client = null;
+    }
   });
 
   describe('The item property', function() {
@@ -107,6 +111,7 @@ describe('layer-conversation-title', function() {
         id: 'layer:///identities/AAA',
         sessionOwner: false
       })];
+      conversation.metadata = {};
       el.item = conversation;
       el.onRender();
       expect(el.innerHTML).toEqual('display');
@@ -126,6 +131,7 @@ describe('layer-conversation-title', function() {
 
     it("Should use _sortNames to list participants names favoring first or last names", function() {
       spyOn(el, "_sortNames").and.callThrough();
+      conversation.metdata = {};
       el.item = conversation;
       conversation.addParticipants([user3]);
       jasmine.clock().tick(1);
@@ -142,6 +148,7 @@ describe('layer-conversation-title', function() {
     });
 
     it("Should just show No Title", function() {
+      conversation.metdata = {};
       el.item = conversation;
       conversation.removeParticipants([user2]);
       jasmine.clock().tick(1);
@@ -169,7 +176,8 @@ describe('layer-conversation-title', function() {
           client: client,
           userId: 'bot',
           id: 'layer:///identities/bot',
-          firstName: "bot"
+          firstName: "bot",
+          type: "bot"
         }),
         new Layer.Core.Identity({
           client: client,
@@ -179,7 +187,6 @@ describe('layer-conversation-title', function() {
         }),
       ];
       el.item = conversation;
-      client.getIdentity("bot").type = 'BOT';
       results = el._sortNames();
     });
 
@@ -187,7 +194,7 @@ describe('layer-conversation-title', function() {
       expect(results.indexOf(client.user)).toEqual(-1);
     });
 
-    it("Should put the bots last", function() {
+    it("Should put the bot last", function() {
       expect(results[results.length - 1].userId).toEqual('bot');
     });
 

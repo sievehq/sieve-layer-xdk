@@ -480,6 +480,11 @@ function setupMixin(classDef, mixin) {
       if ('value' in mixin.properties[name]) {
         classDef.properties[name].value = mixin.properties[name].value;
       }
+
+      if ('type' in mixin.properties[name]) {
+        classDef.properties[name].type = mixin.properties[name].type;
+      }
+
       if (mixin.properties[name].propagateToChildren !== undefined &&
           classDef.properties[name].propagateToChildren === undefined) {
         classDef.properties[name].propagateToChildren = mixin.properties[name].propagateToChildren;
@@ -1067,7 +1072,7 @@ function _registerComponent(tagName) {
    */
   classDef.attachedCallback = {
     value: function onAttach() {
-      this.onAttach();
+      if (this.parentNode) this.onAttach();
     },
   };
 
@@ -2037,6 +2042,7 @@ const standardClassMethods = {
    * @method destroy
    */
   destroy: function destroy() {
+    if (this.properties._internalState.onDestroyCalled) return;
     if (this.parentNode) {
       this.parentNode.removeChild(this);
     }

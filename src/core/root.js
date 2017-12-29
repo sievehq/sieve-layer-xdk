@@ -647,7 +647,9 @@ function defineProperty(newClass, propertyName) {
 
 function initClass(newClass, className) {
   // Make sure our new class has a name property
-  if (!newClass.name) newClass.name = className;
+  try {
+    if (newClass.name !== className) newClass.name = className;
+  } catch (e) { }
 
   // Make sure our new class has a _supportedEvents, _ignoredEvents, _inObjectIgnore and EVENTS properties
   if (!newClass._supportedEvents) newClass._supportedEvents = Root._supportedEvents;

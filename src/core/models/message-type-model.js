@@ -142,6 +142,9 @@ class MessageTypeModel extends Root {
         id: Message.prefixUUID + this.id.replace(/\/parts\/.*$/, '').replace(/^.*MessageTypeModels\//, ''),
         parts: this.childParts,
       });
+      this.message.getClient()._removeMessageTypeModel(this);
+      this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
+      this.message.getClient()._addMessageTypeModel(this);
       this._setupMessage(true);
       if (callback) callback(this.message);
     });
@@ -717,6 +720,10 @@ class MessageTypeModel extends Root {
       }
     });
     super._processDelayedTriggers();
+  }
+
+  toString() {
+    return `[${this.constructor.name} ${this.id}]`;
   }
 }
 

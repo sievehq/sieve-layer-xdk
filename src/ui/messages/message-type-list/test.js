@@ -1,4 +1,4 @@
-describe('Carousel Message Components', function() {
+xdescribe('Message Type List Message Components', function() {
   var CarouselModel, TextModel;
   var conversation;
   var testRoot;
@@ -27,7 +27,7 @@ describe('Carousel Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -42,8 +42,6 @@ describe('Carousel Message Components', function() {
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -61,6 +59,7 @@ describe('Carousel Message Components', function() {
 
 
   afterEach(function() {
+    if (client) client.destroy();
     layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });

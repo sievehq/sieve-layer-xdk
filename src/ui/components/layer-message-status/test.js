@@ -2,12 +2,11 @@ describe('layer-message-status', function() {
   var el, testRoot, client, conversation, message;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -18,7 +17,6 @@ describe('layer-message-status', function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-status');
@@ -29,9 +27,10 @@ describe('layer-message-status', function() {
       participants: ['layer:///identities/a']
     });
     message = conversation.createMessage('Hey ho');
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
   });
   afterEach(function() {
+    if (client) client.destroy();
     document.body.removeChild(testRoot);
     Layer.Core.Client.removeListenerForNewClient();
   });

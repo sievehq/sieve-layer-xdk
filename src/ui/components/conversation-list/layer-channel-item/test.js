@@ -1,14 +1,11 @@
 describe('layer-channel-item', function() {
   var el, testRoot, client, channel, user;
 
-  beforeAll(function() {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
-  });
 
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -30,7 +27,6 @@ describe('layer-channel-item', function() {
 
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-channel-item');
@@ -44,9 +40,9 @@ describe('layer-channel-item', function() {
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
-    client.destroy();
     Layer.Core.Client.removeListenerForNewClient();
   });
 

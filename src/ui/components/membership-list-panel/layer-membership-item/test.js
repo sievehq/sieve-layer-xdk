@@ -2,13 +2,12 @@ describe('layer-membership-item', function() {
   var el, testRoot, client;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -20,7 +19,6 @@ describe('layer-membership-item', function() {
     });
     client._clientAuthenticated();
 
-    if (!layer.UI.components['layer-conversation-view']) layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-membership-item');
@@ -51,6 +49,7 @@ describe('layer-membership-item', function() {
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
     Layer.Core.Client.removeListenerForNewClient();

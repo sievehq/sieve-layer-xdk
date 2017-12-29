@@ -6,7 +6,7 @@ describe('layer-start-of-conversation', function() {
   });
 
   beforeEach(function() {
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -20,7 +20,6 @@ describe('layer-start-of-conversation', function() {
 
     client._clientAuthenticated();
 
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-start-of-conversation');
@@ -30,6 +29,7 @@ describe('layer-start-of-conversation', function() {
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     Layer.Core.Client.removeListenerForNewClient();
     document.body.removeChild(testRoot);
   });

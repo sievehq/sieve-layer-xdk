@@ -1,7 +1,7 @@
 /*
  * isURL returns a Regular Expression that can be used to test if a string is a URL ending in any of the specified extensions.
  *
- * @class layer.UI.utils.isURL
+ * @class Layer.UI.utils.isURL
  * @singleton
  */
 

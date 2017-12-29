@@ -2,12 +2,11 @@ describe('layer-avatar', function() {
   var el, testRoot, client;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -19,7 +18,6 @@ describe('layer-avatar', function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-avatar');
@@ -28,8 +26,16 @@ describe('layer-avatar', function() {
     layer.Util.defer.flush();
   });
   afterEach(function() {
+    if (el) {
+      el.destroy();
+      el = null;
+    }
+    if (client) {
+      client.destroy();
+      client = null;
+    }
     Layer.Core.Client.removeListenerForNewClient();
-    //document.body.removeChild(testRoot);
+    if (testRoot && testRoot.parentNode == document.body) document.body.removeChild(testRoot);
   });
 
   it('Should start without a layer-has-user class', function() {

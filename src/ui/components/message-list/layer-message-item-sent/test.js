@@ -2,7 +2,6 @@ describe('layer-message-item', function() {
   var el, testRoot, client, conversation, message, user1, currentTagName, currentTagCounter = 0;
 
   beforeAll(function(done) {
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -14,7 +13,7 @@ describe('layer-message-item', function() {
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -36,7 +35,6 @@ describe('layer-message-item', function() {
 
     client._clientAuthenticated();
 
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-item-sent');
@@ -62,6 +60,7 @@ describe('layer-message-item', function() {
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     document.body.removeChild(testRoot);
   });
 

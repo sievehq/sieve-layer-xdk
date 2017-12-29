@@ -20,6 +20,7 @@ registerComponent('layer-feedback-message-view', {
   layer-feedback-message-view {
     display: flex;
     flex-direction: row;
+    justify-content: center;
   }
   `,
   properties: {
@@ -48,7 +49,7 @@ registerComponent('layer-feedback-message-view', {
     },
 
     onRerender() {
-      const rating = this.model.isEditable() ? 0 : this.model.rating;
+      const rating = this.model.rating || 0;
       this.messageViewer.toggleClass('layer-feedback-enabled', this.model.isEditable());
       let text = '';
       for (let i = 1; i <= 5; i++) {

@@ -2,7 +2,6 @@ describe('layer-message-list', function() {
   var el, testRoot, client, conversation, query, user1, restoreAnimatedScrollTo, animatedScrollIndex = 1;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -19,7 +18,7 @@ describe('layer-message-list', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -35,7 +34,6 @@ describe('layer-message-list', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-list');
@@ -68,6 +66,7 @@ describe('layer-message-list', function() {
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     document.body.removeChild(testRoot);
     if (el) el.onDestroy();

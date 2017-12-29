@@ -1,15 +1,10 @@
 describe('layer-typing-indicator', function() {
   var el, testRoot, client, conversation, user1;
 
-  afterEach(function() {
-    jasmine.clock().uninstall();
-    Layer.Core.Client.removeListenerForNewClient();
-  });
-
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -31,27 +26,25 @@ describe('layer-typing-indicator', function() {
 
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-typing-indicator');
+    spyOn(el, "onRerender").and.callThrough();
     testRoot.appendChild(el);
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     document.body.removeChild(testRoot);
+    jasmine.clock().uninstall();
+    Layer.Core.Client.removeListenerForNewClient();
   });
 
   describe('The conversation property', function() {
-    it("Should setup the client property from the conversation", function() {
-      expect(el.client).toBe(null);
-      el.conversation = conversation;
-      expect(el.client).toBe(client);
-    });
 
     it("Non-conversation values should set value to empty string", function() {
       el.value = "hey";
@@ -61,10 +54,8 @@ describe('layer-typing-indicator', function() {
     });
   });
 
-  describe("The client property", function() {
+  describe("Initialization", function() {
     it("Should wire up typing-indicator-change event to rerender", function() {
-      spyOn(el, "onRerender");
-      el.client = client;
       expect(el.onRerender).not.toHaveBeenCalled();
       client.trigger('typing-indicator-change');
       expect(el.onRerender).toHaveBeenCalled();
@@ -109,7 +100,6 @@ describe('layer-typing-indicator', function() {
       };
       el.properties.conversation = conversation;
       el.properties.client = client;
-      spyOn(el, "onRerender");
       el.onRender();
       expect(el.onRerender).toHaveBeenCalledWith({
         conversationId: conversation.id,
@@ -124,7 +114,6 @@ describe('layer-typing-indicator', function() {
         paused: ["c"]
       };
       el.properties.conversation = null;
-      spyOn(el, "onRerender");
       el.onRender();
       expect(el.onRerender).not.toHaveBeenCalled();
     });
@@ -132,10 +121,7 @@ describe('layer-typing-indicator', function() {
 
   describe("The onRerender() method", function() {
     it("Should call onRerender if there is a conversation", function() {
-      el = document.createElement('layer-typing-indicator');
-      spyOn(el, "onRerender");
       el.conversation = conversation;
-      layer.Util.defer.flush();
 
       expect(el.onRerender).toHaveBeenCalledWith({
         conversationId: conversation.id,

@@ -59,7 +59,12 @@ layerUI.setupMixins = function setupMixins(mixins) {
   });
 };
 
-const useSafariCss = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
-if (useSafariCss) this.classList.add('safari');
+if (global && global.document) {
+  global.document.addEventListener('DOMContentLoaded', function() {
+    const useSafariCss = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
+    if (useSafariCss) document.body.classList.add('safari');
+  });
+}
+
 
 module.exports = layerUI;

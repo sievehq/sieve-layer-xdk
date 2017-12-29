@@ -2,6 +2,7 @@ describe('Text Message Components', function() {
   var TextModel;
   var conversation;
   var testRoot;
+  var client;
 
   beforeEach(function() {
     jasmine.clock().install();
@@ -16,7 +17,7 @@ describe('Text Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -32,8 +33,6 @@ describe('Text Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
-
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     testRoot.style.display = 'flex';
@@ -42,7 +41,7 @@ describe('Text Message Components', function() {
 
     TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(800);
   });
 
@@ -87,8 +86,8 @@ describe('Text Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message with metadata", function() {
-      var uuid1 = layer.Util.generateUUID();
-      var uuid2 = layer.Util.generateUUID();
+      var uuid1 = Layer.Util.generateUUID();
+      var uuid2 = Layer.Util.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
@@ -113,8 +112,8 @@ describe('Text Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message without metadata", function() {
-      var uuid1 = layer.Util.generateUUID();
-      var uuid2 = layer.Util.generateUUID();
+      var uuid1 = Layer.Util.generateUUID();
+      var uuid2 = Layer.Util.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
@@ -189,7 +188,7 @@ describe('Text Message Components', function() {
         text: "hello"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p>");
     });
@@ -199,7 +198,7 @@ describe('Text Message Components', function() {
         text: "hello\nthere"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p><p class=\"layer-line-wrapping-paragraphs\">there</p>");
     });
@@ -209,9 +208,13 @@ describe('Text Message Components', function() {
         text: "hello from https://layer.com"
       });
       el.model = model;
-      layer.Util.defer.flush();
-
-      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello from <a href=\"https://layer.com\" class=\"layer-parsed-url layer-parsed-url-url\" target=\"_blank\" rel=\"noopener noreferrer\">layer.com</a></p>");
+      Layer.Util.defer.flush();
+      expect(el.firstChild.tagName).toEqual("P");
+      expect(el.firstChild.className).toEqual("layer-line-wrapping-paragraphs");
+      expect(el.firstChild.childNodes[0].textContent).toEqual("hello from ");
+      expect(el.firstChild.childNodes[1].tagName).toEqual("A");
+      expect(el.firstChild.childNodes[1].href).toEqual("https://layer.com/");
+      expect(el.firstChild.childNodes[1].innerHTML).toEqual("layer.com");
     });
 
     it("Should render emoji characters", function() {
@@ -219,7 +222,7 @@ describe('Text Message Components', function() {
         text: "hello :)"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(el.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hello <img");
     });
@@ -228,7 +231,7 @@ describe('Text Message Components', function() {
         text: "hi :smile:"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(el.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hi <img");
 

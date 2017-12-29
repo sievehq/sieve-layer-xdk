@@ -1,19 +1,44 @@
 describe('layer-conversation-item-date', function() {
-  var el;
+  var el, testRoot, client;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    client = new Layer.init({
+      appId: 'layer:///apps/staging/Fred'
+    });
+    client.user = new Layer.Core.Identity({
+      client: client,
+      userId: 'FrodoTheDodo',
+      displayName: 'Frodo the Dodo',
+      id: 'layer:///identities/FrodoTheDodo',
+      isFullIdentity: true,
+      sessionOwner: true
+    });
+
+    testRoot = document.createElement('div');
+    document.body.appendChild(testRoot);
+
     el = document.createElement('layer-conversation-item-date');
-    layer.Util.defer.flush();
+    testRoot.appendChild(el);
+
+    CustomElements.takeRecords();
+    Layer.Util.defer.flush();
   });
 
   afterEach(function() {
     Layer.Core.Client.removeListenerForNewClient();
+    document.body.removeChild(testRoot);
+    if (el) {
+      el.destroy();
+      el = null;
+    }
+    if (client) {
+      client.destroy();
+      client = null;
+    }
   });
 
   it('Should accept a date parameter', function() {

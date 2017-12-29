@@ -8,7 +8,7 @@ describe('layer-conversation-list', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({

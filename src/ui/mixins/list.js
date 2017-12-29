@@ -473,7 +473,7 @@ module.exports = {
      */
     _runFilter() {
       if (!this.filter) {
-        this.querySelectorAllArray('.layer-item-filtered').forEach(item => item.removeClass('layer-item-filtered'));
+        this.querySelectorAllArray('.layer-item-filtered').forEach(item => item.classList.remove('layer-item-filtered'));
       } else {
         for (let i = 0; i < this.childNodes.length; i++) {
           const listItem = this.childNodes[i];

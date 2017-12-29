@@ -42,6 +42,8 @@ registerMessageComponent('layer-message-viewer', {
       set(model) {
         if (model.message !== this.properties.message) {
           this.message = model.message;
+        } else if (!model.message) {
+          this.setupMessage();
         }
       }
     },
@@ -166,7 +168,7 @@ registerMessageComponent('layer-message-viewer', {
 
       // The rootPart is typically the Root Part of the message, but the Card View may be asked to render subcards
       // Clearly differentiate a top level Root Part from subparts using the layer-root-viewer css class
-      if (this.model.part === this.message.getRootPart()) this.classList.add('layer-root-viewer');
+      if (!this.message || this.model.part === this.message.getRootPart()) this.classList.add('layer-root-viewer');
 
       const cardUIType = this.model.currentMessageRenderer;
       this.classList.add(cardUIType);
@@ -234,7 +236,7 @@ registerMessageComponent('layer-message-viewer', {
 
       const event = action && action.event ? action.event : this.model.actionEvent;
       const actionData = action && action.data ? action.data : this.model.actionData; // TODO: perhaps merge action.data with actionData?
-      const rootModel = this.message.getRootPart().createModel();
+      const rootModel = this.message ? this.message.getRootPart().createModel() : null;
 
       const args = {
         model: this.model,

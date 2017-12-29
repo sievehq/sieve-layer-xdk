@@ -2,6 +2,7 @@ describe('Choice Message Components', function() {
   var ChoiceModel;
   var conversation;
   var testRoot;
+  var client;
 
   var styleNode;
   beforeAll(function() {
@@ -16,7 +17,7 @@ describe('Choice Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
+    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
     spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
@@ -27,7 +28,7 @@ describe('Choice Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -43,8 +44,6 @@ describe('Choice Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
-
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     testRoot.style.display = 'flex';
@@ -53,14 +52,14 @@ describe('Choice Message Components', function() {
 
     ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(800);
-    jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    if (client) client.destroy();
+    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -137,12 +136,12 @@ describe('Choice Message Components', function() {
 
 
     it("Should instantiate a Basic Model from a Message with metadata", function() {
-      var uuid1 = layer.Util.generateUUID();
+      var uuid1 = Layer.Util.generateUUID();
 
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
           mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
             label: "hello",
@@ -250,12 +249,12 @@ describe('Choice Message Components', function() {
       });
 
       it("Should correctly initialize Model with allowReselect", function() {
-        var uuid1 = layer.Util.generateUUID();
+        var uuid1 = Layer.Util.generateUUID();
 
         var m = conversation.createMessage({
           id: 'layer:///messages/' + uuid1,
           parts: [{
-            id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
             mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
             body: JSON.stringify({
               allow_reselect: true,
@@ -320,12 +319,12 @@ describe('Choice Message Components', function() {
       });
 
       it("Should correctly initialize Model with allowDeselect", function() {
-        var uuid1 = layer.Util.generateUUID();
+        var uuid1 = Layer.Util.generateUUID();
 
         var m = conversation.createMessage({
           id: 'layer:///messages/' + uuid1,
           parts: [{
-            id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
             mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
             body: JSON.stringify({
               allow_deselect: true,
@@ -392,12 +391,12 @@ describe('Choice Message Components', function() {
       });
 
       it("Should correctly initialize Model with allowMultiselect", function() {
-        var uuid1 = layer.Util.generateUUID();
+        var uuid1 = Layer.Util.generateUUID();
 
         var m = conversation.createMessage({
           id: 'layer:///messages/' + uuid1,
           parts: [{
-            id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
             mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
             body: JSON.stringify({
               allow_multiselect: true,
@@ -517,7 +516,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe('');
         model.selectAnswer({id: "bb"});
@@ -561,7 +560,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe("bb");
         model.selectAnswer({id: "bb"});
@@ -604,7 +603,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe('');
         model.selectAnswer({id: "bb"});
@@ -634,7 +633,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
         model.selectAnswer({id: "bb"});
 
         expect(model._sendResponse).not.toHaveBeenCalled();
@@ -666,7 +665,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe('cc');
         model.selectAnswer({id: "bb"});
@@ -710,7 +709,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe("bb,cc");
         model.selectAnswer({id: "bb"});
@@ -756,7 +755,7 @@ describe('Choice Message Components', function() {
         message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
       });
       spyOn(model, "_sendResponse");
-      spyOn(model, "trigger");
+      spyOn(model, "trigger").and.callThrough();
 
       expect(model.selectedAnswer).toBe('cc');
       model.selectAnswer({id: "bb"});
@@ -787,7 +786,7 @@ describe('Choice Message Components', function() {
         message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
       });
       spyOn(model, "_sendResponse");
-      spyOn(model, "trigger");
+      spyOn(model, "trigger").and.callThrough();
       model.selectAnswer({id: "bb"});
 
       expect(model._sendResponse).not.toHaveBeenCalled();
@@ -883,7 +882,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
@@ -919,7 +918,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
@@ -955,7 +954,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
@@ -994,7 +993,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         // Deselect
         model.selectAnswer({ id: "bb" });
@@ -1032,7 +1031,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
@@ -1071,7 +1070,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         spyOn(model, "_sendResponse");
-        spyOn(model, "trigger");
+        spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
@@ -1118,8 +1117,8 @@ describe('Choice Message Components', function() {
             // Posttest
             expect(evt).toEqual(jasmine.objectContaining({
               choice: jasmine.objectContaining({ id: 'bb' }),
-              model: this,
-              text: "Frodo the Dodo selected b for hello",
+              model: model,
+              text: 'Frodo the Dodo selected "b" for "hello"',
               nameOfChoice: "hello",
               action: 'selected'
             }));
@@ -1138,7 +1137,7 @@ describe('Choice Message Components', function() {
             expect(evt).toEqual(jasmine.objectContaining({
               choice: jasmine.objectContaining({ id: 'bb' }),
               model: this,
-              text: "Frodo the Dodo selected b for hello",
+              text: 'Frodo the Dodo deselected "b" for "hello"',
               nameOfChoice: "hello",
               action: 'deselected'
             }));
@@ -1298,7 +1297,7 @@ describe('Choice Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -1341,7 +1340,7 @@ describe('Choice Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       el.nodes.ui.nodes.choices.childNodes[1]._onClick({
         preventDefault: function() {},
@@ -1350,6 +1349,8 @@ describe('Choice Message Components', function() {
           blur: function() {}
         }
       });
+
+      jasmine.clock().tick(1);
 
       expect(model.selectedAnswer).toEqual("bb");
       expect(el.nodes.ui.nodes.choices.childNodes[1].selected).toBe(true);
@@ -1375,10 +1376,11 @@ describe('Choice Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(el.nodes.ui.nodes.choices.childNodes[1].text).toEqual("b");
       model.selectAnswer({id: "bb" });
+      jasmine.clock().tick(1);
       expect(el.nodes.ui.nodes.choices.childNodes[1].text).toEqual("B");
     });
 
@@ -1401,7 +1403,7 @@ describe('Choice Message Components', function() {
       var spy = jasmine.createSpy('clickme');
       el.addEventListener('clickme', spy);
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       el.nodes.ui.nodes.choices.childNodes[1]._onClick({
         preventDefault: function() {},

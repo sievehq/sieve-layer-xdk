@@ -3,14 +3,13 @@ describe("Date Separator Utility", function() {
   var el, testRoot, client, conversation, query, user1;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -26,11 +25,11 @@ describe("Date Separator Utility", function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-list');
-    el.onRenderListItem = layerUI.utils.dateSeparator;
+    el.onRenderListItem = Layer.UI.utils.dateSeparator;
 
     testRoot.appendChild(el);
     testRoot.style.display = 'flex';
@@ -55,7 +54,7 @@ describe("Date Separator Utility", function() {
 
     el.style.height = '300px';
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(500);
   });
 
@@ -63,6 +62,7 @@ describe("Date Separator Utility", function() {
     document.body.removeChild(testRoot);
     if (el) el.onDestroy();
     jasmine.clock().uninstall();
+    client.destroy();
   });
 
   it("Should put a separator on top", function() {

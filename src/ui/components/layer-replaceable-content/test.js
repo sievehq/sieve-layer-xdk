@@ -2,12 +2,11 @@ describe('layer-replaceable-content', function() {
   var el, testRoot, client;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -19,7 +18,6 @@ describe('layer-replaceable-content', function() {
     client.user._presence.status = 'available';
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-view');
@@ -36,7 +34,9 @@ describe('layer-replaceable-content', function() {
     el.nodes.composer.nodes.composerButtonPanelRight.replaceableContent = {
       composerButtonPanelRight: button
     };
+    CustomElements.takeRecords();
     Layer.Util.defer.flush();
+
 
     // Test
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild).toBe(button);
@@ -52,7 +52,9 @@ describe('layer-replaceable-content', function() {
         return button;
       }
     };
+    CustomElements.takeRecords();
     Layer.Util.defer.flush();
+
 
     // Test
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild).toBe(button);
@@ -66,7 +68,9 @@ describe('layer-replaceable-content', function() {
     el.nodes.composer.nodes.composerButtonPanelRight.replaceableContent = {
       composerButtonPanelRight2: button
     };
+    CustomElements.takeRecords();
     Layer.Util.defer.flush();
+
 
     // Test
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild).not.toBe(button);
@@ -78,7 +82,9 @@ describe('layer-replaceable-content', function() {
     el.replaceableContent = {
       composerButtonPanelRight: button
     };
+    CustomElements.takeRecords();
     Layer.Util.defer.flush();
+
 
     // Test
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild).toBe(button);
@@ -94,7 +100,9 @@ describe('layer-replaceable-content', function() {
         return button;
       }
     };
+    CustomElements.takeRecords();
     Layer.Util.defer.flush();
+
 
     // Test
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild).toBe(button);
@@ -110,7 +118,9 @@ describe('layer-replaceable-content', function() {
         return button;
       }
     };
+    CustomElements.takeRecords();
     Layer.Util.defer.flush();
+
 
     // Test
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild).not.toBe(button);
@@ -122,7 +132,9 @@ describe('layer-replaceable-content', function() {
     el.nodes.list.replaceableContent = {
       emptyNode: button
     };
+    CustomElements.takeRecords();
     Layer.Util.defer.flush();
+
 
     // Test
     expect(el.nodes.list.nodes.emptyNode.firstChild.firstChild).toBe(button);
@@ -133,6 +145,7 @@ describe('layer-replaceable-content', function() {
   it('Should accept a layer-replaceable-name provided to the root parent DOM nodes child nodes', function() {
     // Setup
     testRoot.innerHTML = '<layer-conversation-view><layer-send-button layer-replaceable-name="emptyNode"></layer-send-button></layer-conversation-view>';
+    CustomElements.takeRecords();
     Layer.Util.defer.flush();
 
     // Test
@@ -144,7 +157,9 @@ describe('layer-replaceable-content', function() {
     testRoot.innerHTML = "<layer-replaceable-content name='frodo'><layer-send-button></layer-send-button></layer-replaceable-content>";
     content = testRoot.firstChild;
     content.parentComponent = el;
+    CustomElements.takeRecords();
     Layer.Util.defer.flush();
+
 
     // Test
     expect(content.firstChild.firstChild.tagName).toEqual("LAYER-SEND-BUTTON");

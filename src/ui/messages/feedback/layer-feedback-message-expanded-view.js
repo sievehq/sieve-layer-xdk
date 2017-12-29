@@ -119,7 +119,6 @@ registerComponent('layer-feedback-message-expanded-view', {
       //this.nodes.comment.innerHTML = processText(this.model.comment);
       this.nodes.comment.innerHTML = this.model.comment.replace(/\n/g, '<br/>');
       this.nodes.button.disabled = !this.model.isEditable() || !this.model.rating;
-
     },
 
     _onClick(evt) {

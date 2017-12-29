@@ -4,14 +4,15 @@ describe('Response Message Components', function() {
   var testRoot;
   var uuidPart, uuidMessage;
   var responseToMessage;
+  var client;
 
   beforeEach(function() {
-    uuidMessage = layer.Util.generateUUID();
-    uuidPart = layer.Util.generateUUID();
+    uuidMessage = Layer.Util.generateUUID();
+    uuidPart = Layer.Util.generateUUID();
 
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
+    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -21,7 +22,7 @@ describe('Response Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -37,8 +38,6 @@ describe('Response Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
-
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     testRoot.style.display = 'flex';
@@ -51,14 +50,14 @@ describe('Response Message Components', function() {
     responseToMessage = conversation.createMessage("hello");
     responseToMessage.presend();
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
     Layer.Core.Client.removeListenerForNewClient();
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
   });
 
   describe("Model Tests", function() {
@@ -199,7 +198,7 @@ describe('Response Message Components', function() {
         }),
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(el.firstChild.tagName).toEqual("LAYER-MESSAGE-VIEWER");
       expect(el.firstChild.model).toBe(model.displayModel);
@@ -213,7 +212,7 @@ describe('Response Message Components', function() {
         }
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(el.firstChild).toBe(null);
     });

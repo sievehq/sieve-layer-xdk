@@ -65,6 +65,7 @@ registerComponent('layer-choice-button', {
 
         const def = { widget, choice };
         this.properties.buttons.push(def);
+        widget.removeClickHandler('button-click', widget);
         this.addClickHandler('button-click', widget, this._onClick.bind(this, def));
 
       });

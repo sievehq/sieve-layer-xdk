@@ -2,13 +2,12 @@ describe('layer-membership-list', function() {
   var el, testRoot, client, query, channel;
 
   beforeAll(function(done) {
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -62,6 +61,7 @@ describe('layer-membership-list', function() {
   afterEach(function() {
     try {
       jasmine.clock().uninstall();
+      if (client) client.destroy();
       Layer.UI.settings.appId = null;
       document.body.removeChild(testRoot);
       Layer.Core.Client.removeListenerForNewClient();
@@ -97,12 +97,6 @@ describe('layer-membership-list', function() {
       expect(el.channelId).toEqual(null);;
       el.channelId = channel.id;
       expect(el.channelId).toEqual(channel.id);
-    });
-
-    it("Should call not set the channel if there is not a client", function() {
-      expect(el.channel).toBe (null);
-      el.channelId = channel.id;
-      expect(el.channel).toBe (null);
     });
   });
 

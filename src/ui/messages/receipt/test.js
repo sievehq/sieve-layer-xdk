@@ -2,11 +2,12 @@ describe('Receipt Message Components', function() {
   var ReceiptModel, ProductModel, ChoiceModel, LocationModel;
   var conversation;
   var testRoot;
+  var client;
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
+    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -16,7 +17,7 @@ describe('Receipt Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -32,8 +33,6 @@ describe('Receipt Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
-
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     testRoot.style.display = 'flex';
@@ -45,14 +44,14 @@ describe('Receipt Message Components', function() {
     ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
     LocationModel = Layer.Core.Client.getMessageTypeModelClass("LocationModel");
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -153,14 +152,14 @@ describe('Receipt Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message ", function() {
-      var uuid1 = layer.Util.generateUUID();
-      var uuid2 = layer.Util.generateUUID();
-      var uuid3 = layer.Util.generateUUID();
-      var uuid4 = layer.Util.generateUUID();
-      var uuid5 = layer.Util.generateUUID();
-      var uuid6 = layer.Util.generateUUID();
-      var uuid7 = layer.Util.generateUUID();
-      var m = conversation.createMessage({
+      var uuid1 = Layer.Util.generateUUID();
+      var uuid2 = Layer.Util.generateUUID();
+      var uuid3 = Layer.Util.generateUUID();
+      var uuid4 = Layer.Util.generateUUID();
+      var uuid5 = Layer.Util.generateUUID();
+      var uuid6 = Layer.Util.generateUUID();
+      var uuid7 = Layer.Util.generateUUID();
+      var message = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [
           {
@@ -237,8 +236,8 @@ describe('Receipt Message Components', function() {
         }]
       });
       var m = new ReceiptModel({
-        message: m,
-        part: m.parts[0]
+        message: message,
+        part: message.parts[0]
       });
 
       expect(m.createdAt).toEqual(new Date("10/10/2010"));
@@ -329,7 +328,7 @@ describe('Receipt Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
     });
     afterEach(function() {
       document.body.removeChild(testRoot);

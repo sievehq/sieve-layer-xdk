@@ -5,7 +5,7 @@ describe("Unknown Handler", function() {
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -22,19 +22,17 @@ describe("Unknown Handler", function() {
     });
     message = conversation.createMessage({parts: [{mimeType: "text/hat", body: "howdy ho"}]});
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
-
     el = document.createElement('layer-message-unknown');
     el._contentTag = 'layer-message-unknown';
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(500);
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     jasmine.clock().uninstall();
     el.onDestroy();
-    client.destroy();
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -46,7 +44,7 @@ describe("Unknown Handler", function() {
   it("Should render something relevant", function() {
     el.message = message;
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     expect(el.innerHTML).toMatch(/has no renderer/);
   });
 });

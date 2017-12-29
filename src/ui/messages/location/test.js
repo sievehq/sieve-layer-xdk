@@ -3,6 +3,7 @@ describe('Location Message Components', function() {
   var conversation;
   var testRoot;
   var styleNode;
+  var client;
   beforeAll(function() {
     styleNode = document.createElement('style');
     styleNode.innerHTML = 'layer-message-viewer > * {width: 300px;}';
@@ -26,7 +27,7 @@ describe('Location Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -41,8 +42,6 @@ describe('Location Message Components', function() {
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -59,6 +58,7 @@ describe('Location Message Components', function() {
 
 
   afterEach(function() {
+    if (client) client.destroy();
     layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
@@ -218,7 +218,7 @@ describe('Location Message Components', function() {
       expect(model3.getTitle()).toEqual("z");
 
       expect(model1.getDescription()).toEqual("a");
-      expect(model2.getDescription()).toEqual("a<br/>b<br/>c d, e");
+      expect(model2.getDescription()).toEqual("a\nb\nc d, e");
       expect(model3.getDescription()).toEqual("g");
 
       expect(model1.getFooter()).toEqual("");
@@ -313,7 +313,8 @@ describe('Location Message Components', function() {
     });
 
     it("Should open the map using lat/lon", function() {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.showFullScreen;
+      spyOn(Layer.UI, "showFullScreen");
 
       var model = new LocationModel({
         latitude: 37.7734858,
@@ -329,12 +330,16 @@ describe('Location Message Components', function() {
       expect(model.actionEvent).toEqual('open-map');
 
       el._runAction({});
-      expect(el.showFullScreen).toHaveBeenCalledWith('https://www.google.com/maps/search/?api=1&query=37.7734858,-122.3916087&zoom=16');
+      expect(Layer.UI.showFullScreen).toHaveBeenCalledWith('https://www.google.com/maps/search/?api=1&query=37.7734858,-122.3916087&zoom=16');
+
+      // Restore
+      Layer.UI.showFullScreen = tmp;
 
     });
 
     it("Should open the map using address", function() {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.showFullScreen;
+      spyOn(Layer.UI, "showFullScreen");
 
       var model = new LocationModel({
         street1: "a",
@@ -353,12 +358,15 @@ describe('Location Message Components', function() {
 
       expect(model.actionEvent).toEqual('open-map');
 
-      var url = Layer.UI.messageActionHandlers['open-map'].call(el, {});
+      el._runAction({});
       var expectedUrl = 'http://www.google.com/maps/?q=';
       expectedUrl += escape(model.street1 + (model.street2 ? ' ' + model.street2 : '') + ' ' + `${model.city} ${model.administrativeArea}, ${model.postalCode} ${model.country}`);
 
       el._runAction({});
-      expect(el.showFullScreen).toHaveBeenCalledWith(expectedUrl);
+      expect(Layer.UI.showFullScreen).toHaveBeenCalledWith(expectedUrl);
+
+      // Restore
+      Layer.UI.showFullScreen = tmp;
     });
   });
 });

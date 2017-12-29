@@ -101,8 +101,8 @@ registerComponent('layer-conversation-title', {
           .filter(user => !user.sessionOwner)
           .filter(user => user.firstName || user.lastName || user.displayName)
           .sort((userA, userB) => {
-            if (userA.type === 'BOT' && userB.type !== 'BOT') return 1;
-            if (userB.type === 'BOT' && userA.type !== 'BOT') return -1;
+            if (userA.type === 'bot' && userB.type !== 'bot') return 1;
+            if (userB.type === 'bot' && userA.type !== 'bot') return -1;
             if ((!userA.firstName && !userA.lastName) && (userB.firstName || userB.lastName)) return 1;
             if ((userA.firstName || userA.lastName) && (!userB.firstName && !userB.lastName)) return -1;
             if (!userA.firstName && !userA.lastName) {

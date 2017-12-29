@@ -2,6 +2,7 @@ describe('File Message Components', function() {
   var FileModel;
   var conversation;
   var testRoot;
+  var client;
 
   var imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURREa0SAWBASKST8xCdDQMAq+OyAzw4ISfmLDBASISERi2ADEICEWrKlkYWny6+77fuqalJfz0zVOXNfv/ER8mXdwJF1+oRHBDCXIAJEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8waWjX8OwHcAv5f9Me3fPRugvbuxd14C8B7AVwA3q0oQAcYwtr2+hn969faPVSWIAG2AT3rXJvz17CcAN6ptgggwrwDb4JeVIALMJ8AY/JISRIB5BGDhr3/aZwDXKxwHEWC6AJcBvAOwfuBjvuNfABcBfGGGl5yJANPabYV/B8DLaT96nndHgPYeu4c/RI8AbQJIwO9FgDMAfrVxWuRdMvB7EOA+gHsALgD4uQjO3b6pFPzqAjwA8HTF5weA8weWQA5+ZQGOw1//jR5SAkn4VQV4CODJls18CAmuAHjbcM8vc9U76ZSrdgt4BODxyLG8Twla4P8BcLfKPX/sEaeSAAz8fR4H8vArHQHXAHwYs3Xj9SU3gQX8SgKcAvBitTp38WAJCWzgVxJg+F0qSGAFv5oAh5bADn5FAQ4lwVUAb3a86nX1tL/tXK10Czj+O+7zOLCFX3UDrEXYhwTW8KsLsPRx0Ap/+A/fq12uKpVnqx4BSx8Hgb9quAcB5t4EgX/sz6sXAeaSIPA3zqOeBJgqwTMAzxuuelJn/ubzSG8CTJFg12ex4Z4vDb+HW8A2aK1XRFYCC/g9C7DkJrCB37sAS0hgBV9BgDklGODfBvCaPScU5np8CPxf71OfCSzhq2yAqZ8d2MJXE6DlOLCGryjALhLYw1cVgJEg8Dv7MKjlgXvbg2Hgd/ph0BwSBH7nHwZNkeCW4z1/rDCV/wOM5RyOg7MAvo0Nur3uIoAbVzpvBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hz8BzIXtYE3VcPnAAAAAElFTkSuQmCC";
 
@@ -39,7 +40,7 @@ describe('File Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -55,8 +56,6 @@ describe('File Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
-
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     testRoot.style.display = 'flex';
@@ -65,13 +64,14 @@ describe('File Message Components', function() {
 
     FileModel = Layer.Core.Client.getMessageTypeModelClass("FileModel");
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
+    if (client) client.destroy();
     layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
@@ -139,9 +139,9 @@ describe('File Message Components', function() {
 
     it("Should instantiate a Model from a Message with metadata", function() {
       var blob = generateBlob(imgBase64);
-      var uuid1 = layer.Util.generateUUID();
-      var uuid2 = layer.Util.generateUUID();
-      var uuid3 = layer.Util.generateUUID();
+      var uuid1 = Layer.Util.generateUUID();
+      var uuid2 = Layer.Util.generateUUID();
+      var uuid3 = Layer.Util.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
@@ -254,7 +254,7 @@ describe('File Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -280,7 +280,7 @@ describe('File Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -301,7 +301,7 @@ describe('File Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       // Message Viewer: gets the layer-card-width-flex-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -316,7 +316,8 @@ describe('File Message Components', function() {
     });
 
     it("Should open the image using the sourceUrl", function() {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.showFullScreen;
+      spyOn(Layer.UI, "showFullScreen");
       var model = new FileModel({
         sourceUrl: "https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png",
       });
@@ -325,15 +326,19 @@ describe('File Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(model.actionEvent).toEqual('open-file');
       el._runAction({});
-      expect(el.showFullScreen).toHaveBeenCalledWith("https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png");
+      expect(Layer.UI.showFullScreen).toHaveBeenCalledWith("https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png");
+
+      // Restore
+      Layer.UI.showFullScreen = tmp;
     });
 
     it("Should open the link using Blob url", function(done) {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.showFullScreen;
+      spyOn(Layer.UI, "showFullScreen");
       var blob = generateBlob(imgBase64);
 
       var model = new FileModel({
@@ -345,15 +350,18 @@ describe('File Message Components', function() {
 
           el.client = client;
           el.message = message;
-          layer.Util.defer.flush();
+          Layer.Util.defer.flush();
 
           expect(model.actionEvent).toEqual('open-file');
-          el.runAction({});
-          expect(el.showFullScreen.calls.argsFor(0)[0]).toMatch(/^blob\:/);
+          el._runAction({});
+          expect(Layer.UI.showFullScreen.calls.argsFor(0)[0]).toMatch(/^blob\:/);
           done();
         } catch(e) {
           done(e);
         }
+
+        // Restore
+      Layer.UI.showFullScreen = tmp;
       });
     });
   });

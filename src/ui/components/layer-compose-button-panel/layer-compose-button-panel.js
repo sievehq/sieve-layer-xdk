@@ -26,38 +26,3 @@
  * @extends Layer.UI.Component
  * @removed
  */
-import { registerComponent } from '../../../components/component';
-
-registerComponent('layer-compose-button-panel', {
-  properties: {
-    /**
-     * Custom buttons to put in the panel.
-     *
-     * @property {HTMLElement[]} [buttons=[]]
-     */
-    buttons: {
-      value: [],
-      set(value) {
-        this.classList[value && value.length ? 'remove' : 'add']('is-empty');
-        this.onRender();
-      },
-    },
-  },
-  methods: {
-    /**
-     * Render any custom buttons provided via the `buttons` property.
-     *
-     * @method
-     * @private
-     */
-    onRender() {
-      this.innerHTML = '';
-      if (this.buttons.length) {
-        const fragment = document.createDocumentFragment();
-        this.buttons.forEach(button => fragment.appendChild(button));
-        this.appendChild(fragment);
-      }
-    },
-  },
-});
-

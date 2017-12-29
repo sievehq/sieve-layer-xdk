@@ -866,5 +866,5 @@ SyncManager._supportedEvents = [
   'sync:abort',
 ].concat(Root._supportedEvents);
 
-Root.initClass(SyncManager);
+Root.initClass.apply(SyncManager, [SyncManager, 'SyncManager']);
 module.exports = SyncManager;

@@ -24,5 +24,9 @@
       "browser": true,
       "node": true,
       "jasmine": true
+  },
+  "globals": {
+    "Layer": true,
+    "CustomElements": true
   }
 }

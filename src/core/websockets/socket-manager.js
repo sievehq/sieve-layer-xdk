@@ -152,7 +152,16 @@ class SocketManager extends Root {
     //const WS = typeof WebSocket === 'undefined' ? require('websocket').w3cwebsocket : WebSocket;
     const WS = WebSocket;
 
-    this._socket = new WS(url, WEBSOCKET_PROTOCOL);
+    try {
+      this._socket = new WS(url, WEBSOCKET_PROTOCOL);
+    } catch (err) {
+      // Errors at this point tend to show up in IE11 during unit tests;
+      // slow things down a bit if this is throwing errors as the assumption is that
+      // unit tests are opening too many connections.
+      logger.error('Failed to establish websocket ', err);
+      setTimeout(() => this._onError(), 1000);
+      return;
+    }
 
      // If its the shim, set the event hanlers
     /* istanbul ignore if */

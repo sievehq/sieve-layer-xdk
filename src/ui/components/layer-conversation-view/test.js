@@ -2,7 +2,6 @@ describe('layer-conversation-view', function() {
   var el, testRoot, client, conversation, user1, query;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -10,7 +9,7 @@ describe('layer-conversation-view', function() {
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -32,7 +31,6 @@ describe('layer-conversation-view', function() {
 
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-view');
@@ -57,7 +55,14 @@ describe('layer-conversation-view', function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
     Layer.Core.Client.removeListenerForNewClient();
-    if (el) el.destroy();
+    if (el) {
+      el.destroy();
+      el = null;
+    }
+    if (client) {
+      client.destroy();
+      client = null;
+    }
   });
 
   describe('Event Handling', function() {
@@ -76,6 +81,8 @@ describe('layer-conversation-view', function() {
     });
 
     it("Should call onComposBarChangeValue when child triggers layer-compose-bar-change-value", function() {
+      CustomElements.takeRecords();
+      layer.Util.defer.flush();
       var spy = jasmine.createSpy('callback');
       el.onComposeBarChangeValue = spy;
       el.firstChild.trigger('layer-compose-bar-change-value', {});
@@ -97,20 +104,14 @@ describe('layer-conversation-view', function() {
       expect(el.query).toBe(null);
     });
 
-    it("Should accept a value that is in query id format", function() {
-      el.queryId = query.id;
-      expect(el.queryId).toEqual(query.id);
-      expect(el.query).toBe(null);
-    });
-
-    it("Should set the query from queryId if there is a client", function() {
-      el.client = client;
+    it("Should set the query from queryId", function() {
       el.queryId = query.id;
       expect(el.queryId).toEqual(query.id);
       expect(el.query).toBe(query);
     });
 
     it("Should set the list query when query is set", function() {
+      el.query = null;
       expect(el.nodes.list.query).toBe(null);
       el.query = query;
       expect(el.nodes.list.query).toBe(query);
@@ -136,25 +137,22 @@ describe('layer-conversation-view', function() {
       expect(el.properties.hasGeneratedQuery).toBe(false);
     });
 
-    it("Should call _setupGeneratedQuery once the client is set", function() {
+    it("Should call _setupGeneratedQuery", function() {
         testRoot.innerHTML = '<layer-conversation-view></layer-conversation-view>';
-        CustomElements.takeRecords();
-        layer.Util.defer.flush();
-
         var el = testRoot.firstChild;
+        CustomElements.takeRecords();
         spyOn(el, "_setupGeneratedQuery");
-        el.client = client;
+        layer.Util.defer.flush();
         expect(el._setupGeneratedQuery).toHaveBeenCalledWith();
       });
 
-      it("Should not call _setupGeneratedQuery once the client is set if useGeneratedQuery is false", function() {
+      it("Should not call _setupGeneratedQuery if useGeneratedQuery is false", function() {
         testRoot.innerHTML = '<layer-conversation-view use-generated-query="false"></layer-conversation-view>';
+        var el = testRoot.firstChild;
         CustomElements.takeRecords();
+        spyOn(el, "_setupGeneratedQuery");
         layer.Util.defer.flush();
 
-        var el = testRoot.firstChild;
-        spyOn(el, "_setupGeneratedQuery");
-        el.client = client;
         expect(el.useGeneratedQuery).toBe(false);
         expect(el._setupGeneratedQuery).not.toHaveBeenCalledWith();
       });
@@ -163,7 +161,6 @@ describe('layer-conversation-view', function() {
   describe("The hasGeneratedQuery property", function() {
     it("Should call _setupConversation if set to true", function() {
       el.conversationId = conversation.id;
-      el.client = client;
       spyOn(el, "_setupQuery");
       el.hasGeneratedQuery = true;
       expect(el._setupQuery).toHaveBeenCalled();
@@ -180,14 +177,6 @@ describe('layer-conversation-view', function() {
     it("Should not call _setupQuery if set to true but no conversationId", function() {
       el.conversationId = '';
       el.client = client;
-      spyOn(el, "_setupQuery");
-      el.hasGeneratedQuery = true;
-      expect(el._setupQuery).not.toHaveBeenCalled();
-    });
-
-    it("Should not call _setupQuery if no client", function() {
-      el.conversationId = conversation.id;
-      el.client = null;
       spyOn(el, "_setupQuery");
       el.hasGeneratedQuery = true;
       expect(el._setupQuery).not.toHaveBeenCalled();
@@ -212,12 +201,6 @@ describe('layer-conversation-view', function() {
       el.client = client;
       el.conversationId = conversation.id;
       expect(el._setupConversation).toHaveBeenCalledWith();
-    });
-
-    it("Should call not call _setupConversation if there is not a client", function() {
-      spyOn(el, "_setupConversation");
-      el.conversationId = conversation.id;
-      expect(el._setupConversation).not.toHaveBeenCalled();
     });
 
     it("Should wait until client.isReady", function() {
@@ -316,32 +299,29 @@ describe('layer-conversation-view', function() {
     it("Should setup the conversation if there is a conversationId", function() {
       testRoot.innerHTML = '<layer-conversation-view conversation-id="' + conversation.id + '"></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
-
       el = testRoot.firstChild;
       spyOn(el, "_setupConversation");
-      el.client = client;
+      layer.Util.defer.flush();
+
       expect(el._setupConversation).toHaveBeenCalledWith();
 
       // Inverse Test
       testRoot.innerHTML = '<layer-conversation-view></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
-
       el = testRoot.firstChild;
       spyOn(el, "_setupConversation");
-      el.client = client;
+      layer.Util.defer.flush();
+
       expect(el._setupConversation).not.toHaveBeenCalled();
     });
 
     it("Should setup the query if there is a queryId", function() {
       testRoot.innerHTML = '<layer-conversation-view use-generated-query="false" query-id="' + query.id + '"></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
-
       el = testRoot.firstChild;
       expect(el.query).toBe(null);
-      el.client = client;
+      layer.Util.defer.flush();
+
       expect(el.query).toBe(query);
 
       // Inverse test

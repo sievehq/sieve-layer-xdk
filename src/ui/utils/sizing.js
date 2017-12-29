@@ -1,5 +1,14 @@
+/**
+ * Calculates a scaled size given a set of dimensions and the maximum allowed width/height.
+ *
+ * @class Layer.UI.utils.Sizing
+ */
 
-// NOTE: dimensions must contains width and height properties.
+/**
+ * @param {Object} dimensions    `width` and `height` of the actual image/video/object
+ * @param {Object} maxSizes      `width` and `height` of the maximum allowed dimensions
+ * @returns {Object}             `width` and `height` that is proportional to dimensions and within maxSizes
+ */
 module.exports = (dimensions, maxSizes) => {
 
   if (!dimensions) return maxSizes;

@@ -2,20 +2,28 @@ describe('layer-conversation-last-message', function() {
   var el, testRoot, client, conversation, message;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   afterEach(function() {
-    layer.Util.defer.reset();
+    document.body.removeChild(testRoot);
+    Layer.Util.defer.reset();
     jasmine.clock().uninstall();
     Layer.Core.Client.removeListenerForNewClient();
+    if (el) {
+      el.destroy();
+      el = null;
+    }
+    if (client) {
+      client.destroy();
+      client = null;
+    }
   });
 
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -29,7 +37,6 @@ describe('layer-conversation-last-message', function() {
 
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-last-message');
@@ -38,12 +45,9 @@ describe('layer-conversation-last-message', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
     message = conversation.createMessage("Hello Earthlings").send();
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
   });
 
-  afterEach(function() {
-    document.body.removeChild(testRoot);
-  });
 
   describe('The item property', function() {
     it("Should call onRender", function() {

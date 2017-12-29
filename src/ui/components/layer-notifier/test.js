@@ -3,12 +3,11 @@ if (window.Notification) {
     var el, testRoot, client, conversation, message;
 
     beforeAll(function(done) {
-      if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
       setTimeout(done, 1000);
     });
 
     beforeEach(function() {
-      client = new Layer.Core.Client({
+      client = new Layer.init({
         appId: 'Fred'
       });
       client.user = new Layer.Core.Identity({
@@ -19,7 +18,6 @@ if (window.Notification) {
       });
       client._clientAuthenticated();
 
-      if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
       testRoot = document.createElement('div');
       document.body.appendChild(testRoot);
       el = document.createElement('layer-notifier');
@@ -29,10 +27,11 @@ if (window.Notification) {
         participants: ['layer:///identities/FrodoTheDodo']
       });
       message = conversation.createMessage("Hello");
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
     });
     afterEach(function() {
-      layer.Util.defer.reset();
+      if (client) client.destroy();
+      Layer.Util.defer.reset();
       document.body.removeChild(testRoot);
       Layer.Core.Client.removeListenerForNewClient();
     });

@@ -1,5 +1,5 @@
 describe('Button Message Components', function() {
-  var ButtonsModel, TextModel, ChoiceModel;
+  var ButtonsModel, TextModel, ChoiceModel, client;
   var conversation;
   var testRoot;
 
@@ -16,8 +16,8 @@ describe('Button Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
+    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -27,7 +27,7 @@ describe('Button Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -43,8 +43,6 @@ describe('Button Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
-
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     testRoot.style.display = 'flex';
@@ -55,14 +53,15 @@ describe('Button Message Components', function() {
     TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
     ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(800);
-    jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    if (client) client.destroy();
+    jasmine.clock().uninstall();
+    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -107,12 +106,12 @@ describe('Button Message Components', function() {
 
 
     it("Should instantiate a Basic Action Buttons Model from a Message", function() {
-      var uuid1 = layer.Util.generateUUID();
+      var uuid1 = Layer.Util.generateUUID();
 
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
           mime_type: ButtonsModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
             buttons: [
@@ -167,12 +166,12 @@ describe('Button Message Components', function() {
 
 
     it("Should instantiate a Basic Action Buttons Model with Content from a Message", function() {
-      var uuid1 = layer.Util.generateUUID();
+      var uuid1 = Layer.Util.generateUUID();
 
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
           mime_type: ButtonsModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
             buttons: [
@@ -181,7 +180,7 @@ describe('Button Message Components', function() {
             ]
           })
         }, {
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
           mime_type: 'application/vnd.layer.text+json; role=content;parent-node-id=a',
           body: JSON.stringify({text: "howdy"})
         }]
@@ -336,12 +335,12 @@ describe('Button Message Components', function() {
 
 
     it("Should instantiate a Basic Action Buttons Model with Content from a Message", function() {
-      var uuid1 = layer.Util.generateUUID();
+      var uuid1 = Layer.Util.generateUUID();
 
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
           mime_type: ButtonsModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
             buttons: [
@@ -359,7 +358,7 @@ describe('Button Message Components', function() {
             ]
           })
         }, {
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
           mime_type: 'application/vnd.layer.text+json; role=content;parent-node-id=a',
           body: JSON.stringify({text: "howdy"})
         }]
@@ -433,10 +432,9 @@ describe('Button Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -473,10 +471,9 @@ describe('Button Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       expect(el.nodes.ui.nodes.content.firstChild.tagName).toEqual('LAYER-MESSAGE-VIEWER');
       expect(el.nodes.ui.nodes.content.firstChild.model.text).toEqual('hello');
@@ -494,12 +491,12 @@ describe('Button Message Components', function() {
         })
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       var ui = el.nodes.ui;
       var buttons = ui.nodes.buttons;
@@ -512,6 +509,7 @@ describe('Button Message Components', function() {
       expect(textUI.trigger).toHaveBeenCalledWith('kill-arthur',  {
         model: model.contentModel,
         rootModel: model,
+        messageViewer: el.nodes.ui.nodes.subviewer,
         data: {who: "Arthur"},
       });
     });
@@ -532,19 +530,21 @@ describe('Button Message Components', function() {
         ]
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
       message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       var buttons = el.nodes.ui.nodes.buttons;
 
       expect(model.choices.isstarred.selectedAnswer).toEqual("");
 
       buttons.childNodes[0].childNodes[0].click();
+      Layer.Util.defer.flush();
+      jasmine.clock().tick(1);
 
       expect(model.choices.isstarred.selectedAnswer).toEqual("fav");
       expect(buttons.childNodes[0].childNodes[0].selected).toBe(true);
@@ -574,19 +574,21 @@ describe('Button Message Components', function() {
         ]
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       var buttons = el.nodes.ui.nodes.buttons;
       expect(buttons.childNodes[0].childNodes[0].text).toEqual("Favorite");
       model.choices.isstarred.selectAnswer({id: "fav" });
+      jasmine.clock().tick(1);
       expect(buttons.childNodes[0].childNodes[0].text).toEqual("B");
 
       model.choices.isstarred.selectAnswer({id: "fav" });
+      jasmine.clock().tick(1);
       expect(buttons.childNodes[0].childNodes[0].text).toEqual("Favorite");
     });
 
@@ -615,15 +617,15 @@ describe('Button Message Components', function() {
         contentModel: new TextModel({text: "hey"})
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
 
       var spy = jasmine.createSpy('clickme');
       el.addEventListener('isstarred', spy);
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       var buttons = el.nodes.ui.nodes.buttons;
 
@@ -665,15 +667,14 @@ describe('Button Message Components', function() {
         contentModel: new TextModel({text: "hey"})
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
 
       message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
 
-      layer.Util.defer.flush();
-
+      Layer.Util.defer.flush();
 
       spyOn(model.choices.isstarred, '_sendResponse');
 

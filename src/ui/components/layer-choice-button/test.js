@@ -6,7 +6,7 @@ describe('layer-choice-button', function() {
   });
 
   beforeEach(function() {
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -19,9 +19,6 @@ describe('layer-choice-button', function() {
     });
 
     client._clientAuthenticated();
-
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -43,6 +40,14 @@ describe('layer-choice-button', function() {
   });
 
   afterEach(function() {
+    if (el) {
+      el.destroy();
+      el = null;
+    }
+    if (client) {
+      client.destroy();
+      client = null;
+    }
     Layer.Core.Client.removeListenerForNewClient();
     document.body.removeChild(testRoot);
   });

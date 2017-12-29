@@ -2,18 +2,21 @@ describe('Components', function() {
   var el, testRoot, client, query;
 
   beforeAll(function(done) {
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
     jasmine.clock().install();
+    client = new Layer.init({
+      appId: 'layer:///apps/staging/Fred'
+    });
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
   });
 
   afterEach(function() {
     try {
+      if (client) client.destroy();
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
       Layer.Core.Client.removeListenerForNewClient();
@@ -752,32 +755,30 @@ describe('Components', function() {
       layer.Util.defer.flush();
 
       // Run
-      var client = new Layer.Core.Client({appId: "fred53"});
-      el1.client = client
+      el1.state = {hey: "ho"};
 
       // Posttest
       expect(Layer.UI.components['layer-conversation-view'].properties.filter(function(prop) {
-        return prop.propertyName === 'client'
+        return prop.propertyName === 'state'
       })[0].propagateToChildren).toBe(true);
-      expect(el1.nodes.composer.client).toBe(client);
-      expect(el1.nodes.typingIndicators.client).toBe(client);
-      expect(el1.nodes.list.client).toBe(client);
-      expect(el1.nodes.list.nodes.emptyNode.client).toBe(client);
-      expect(el1.nodes.list.nodes.loadIndicator.client).toBe(client);
+      expect(el1.nodes.composer.state).toEqual({hey: "ho"});
+      expect(el1.nodes.typingIndicators.state).toEqual({hey: "ho"});
+      expect(el1.nodes.list.state).toEqual({hey: "ho"});
+      expect(el1.nodes.list.nodes.emptyNode.state).toEqual({hey: "ho"});
+      expect(el1.nodes.list.nodes.loadIndicator.state).toEqual({hey: "ho"});
 
       // Run Test 2
-      var client2 = new Layer.Core.Client({appId: "fred55"});
-      el1.client = client2;
+      el1.state = {hey: "there"};
 
       // Posttest 2
       expect(Layer.UI.components['layer-conversation-view'].properties.filter(function(prop) {
-        return prop.propertyName === 'client'
-      })[0].propagateToChildren).toBe(true);
-      expect(el1.nodes.composer.client).toBe(client2);
-      expect(el1.nodes.typingIndicators.client).toBe(client2);
-      expect(el1.nodes.list.client).toBe(client2);
-      expect(el1.nodes.list.nodes.emptyNode.client).toBe(client2);
-      expect(el1.nodes.list.nodes.loadIndicator.client).toBe(client2);
+        return prop.propertyName === 'state'
+      })[0].propagateToChildren).toEqual(true);
+      expect(el1.nodes.composer.state).toEqual({hey: "there"});
+      expect(el1.nodes.typingIndicators.state).toEqual({hey: "there"});
+      expect(el1.nodes.list.state).toEqual({hey: "there"});
+      expect(el1.nodes.list.nodes.emptyNode.state).toEqual({hey: "there"});
+      expect(el1.nodes.list.nodes.loadIndicator.state).toEqual({hey: "there"});
     });
 
     it("Should propagate propagateToChildren properties to list items", function() {

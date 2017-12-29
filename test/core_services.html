@@ -50,7 +50,7 @@
         jasmineDone.call(reporter);
         if (jasmine.jsReport.passed) {
           if (!location.search.match(/stop=true/)) {
-            window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'ui_components.html');
+            window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'ui_components_nested.html');
           }
         }
       };

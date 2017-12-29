@@ -3,7 +3,6 @@ describe('layer-compose-bar', function() {
   var TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -15,7 +14,7 @@ describe('layer-compose-bar', function() {
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -29,7 +28,6 @@ describe('layer-compose-bar', function() {
 
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-compose-bar');
@@ -43,14 +41,17 @@ describe('layer-compose-bar', function() {
 
   afterEach(function() {
     document.body.removeChild(testRoot);
+    if (el) {
+      el.destroy();
+      el = null;
+    }
+    if (client) {
+      client.destroy();
+      client = null;
+    }
   });
 
   describe('The conversation property', function() {
-    it("Should setup the client property from the conversation", function() {
-      expect(el.client).toBe(null);
-      el.conversation = conversation;
-      expect(el.client).toBe(client);
-    });
 
     it("Should call _setTypingListenerConversation", function() {
       spyOn(el, "_setTypingListenerConversation");
@@ -59,7 +60,6 @@ describe('layer-compose-bar', function() {
     });
 
     it("Should manage the disabled state if manageDisabledState is true", function() {
-      el.client = client;
       expect(el.manageDisabledState).toBe(true);
       expect(el.disabled).toBe(false);
       el.conversation = '';
@@ -74,23 +74,9 @@ describe('layer-compose-bar', function() {
       el.conversation = conversation;
       expect(el.disabled).toBe(false);
     });
+
   });
 
-  describe("The client property", function() {
-    it("Should setup a typingListener, but not setup the Conversation", function() {
-      spyOn(client, "createTypingListener").and.callThrough();
-      el.client = client;
-      expect(client.createTypingListener).toHaveBeenCalledWith(el.nodes.input);
-      expect(el.properties.typingListener.conversation).toBe(null);
-    });
-
-    it("Should setup a typingListener and the Conversation", function() {
-      spyOn(client, "createTypingListener").and.callThrough();
-      el.conversation = conversation;
-      expect(client.createTypingListener).toHaveBeenCalledWith(el.nodes.input);
-      expect(el.properties.typingListener.conversation).toBe(conversation);
-    });
-  });
 
   describe("The value property", function() {
     it("Should set the text in the composer", function() {
@@ -194,7 +180,7 @@ describe('layer-compose-bar', function() {
 
   describe("The _setTypingListenerConversation() method", function() {
     it("Should update the conversation being reported upon", function() {
-      el.client = client;
+      el._setTypingListenerConversation();
       el.properties.conversation = conversation;
       expect(el.properties.typingListener.conversation).toBe(null);
       el._setTypingListenerConversation();

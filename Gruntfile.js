@@ -593,6 +593,12 @@ module.exports = function (grunt) {
       fileGroup.src.forEach(function(file, index) {
         var scriptTag = '<script src="../' + file + '" type="text/javascript"></script>';
         var folderName = file.replace(/src\/ui\/?(.*?)\/.*$/, "$1");
+        var componentFolderName = file.replace(/src\/ui\/components\/?(.*?)\/.*$/, "$1");
+
+        // Arbitrary subdivision of the components folder which has too many tests for IE11
+        if (folderName === 'components') {
+          folderName += "_" + (componentFolderName.indexOf('layer-') === 0 ? 'basic' : 'nested');
+        }
         if (!scripts[folderName]) scripts[folderName] = [];
         scripts[folderName].push(scriptTag);
         scripts.all.push(scriptTag);
@@ -616,6 +622,7 @@ module.exports = function (grunt) {
             } else {
               testFile = testFile.replace(/next_file_name_here\.html/, 'tests_done.html');
             }
+            console.log("WRITE " + specFiles[i].destName + testName + '.html');
             grunt.file.write(filePath.replace(/[^/]*$/, specFiles[i].destName + testName + '.html'), testFile);
           });
         }

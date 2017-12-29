@@ -696,7 +696,7 @@ describe("The Root Class", function() {
         expect(args[1].changes).toBe(null);
         expect(args[1].isChange).toBe(false);
         for (var key in args[1]) {
-          expect(["target", "changes", "isChange", "eventName"].indexOf(key)).not.toEqual(-1);
+          expect(["target", "changes", "isChange", "eventName", "canceled", "cancelable", "returnedValue"].indexOf(key)).not.toEqual(-1);
         }
       });
 

@@ -2,12 +2,12 @@ describe('Product Message Components', function() {
   var ProductModel, ChoiceModel;
   var conversation;
   var testRoot;
-
+  var client;
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
+    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -17,7 +17,7 @@ describe('Product Message Components', function() {
       };
     });
 
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -33,8 +33,6 @@ describe('Product Message Components', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
-
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     testRoot.style.display = 'flex';
@@ -44,14 +42,14 @@ describe('Product Message Components', function() {
     ProductModel = Layer.Core.Client.getMessageTypeModelClass("ProductModel");
     ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
 
-    layer.Util.defer.flush();
+    Layer.Util.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -105,10 +103,10 @@ describe('Product Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message ", function() {
-      var uuid1 = layer.Util.generateUUID();
-      var uuid2 = layer.Util.generateUUID();
-      var uuid3 = layer.Util.generateUUID();
-      var uuid4 = layer.Util.generateUUID();
+      var uuid1 = Layer.Util.generateUUID();
+      var uuid2 = Layer.Util.generateUUID();
+      var uuid3 = Layer.Util.generateUUID();
+      var uuid4 = Layer.Util.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
@@ -203,7 +201,7 @@ describe('Product Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
 
       // Message Viewer: gets the layer-card-width-full-width class
       expect(el.classList.contains('layer-card-width-full-width')).toBe(true);
@@ -243,7 +241,7 @@ describe('Product Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Util.defer.flush();
       expect(el.nodes.ui.nodes.choices.childNodes.length).toEqual(2);
       expect(el.nodes.ui.nodes.choices.childNodes[0].model).toBe(model.options[0]);
       expect(el.nodes.ui.nodes.choices.childNodes[1].model).toBe(model.options[1]);
