@@ -14,7 +14,7 @@
  * The simplest way to customize this widget is to replace it with your own implementation of the `<layer-avatar />` tag.
  *
  * ```javascript
- * layer.UI.registerComponent('layer-avatar', {
+ * Layer.UI.registerComponent('layer-avatar', {
  *    properties: {
  *      users: {
  *        set: function(value) {
@@ -30,7 +30,7 @@
  * });
  *
  * // Call init after custom components are defined
- * layer.UI.init({
+ * Layer.UI.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
@@ -40,7 +40,7 @@
  * * When used in a Messages List or Identities List, there will be only one user in the list
  * * When used in a Conversations List, there may be multiple users who are participants of the Conversation.
  *
- * @class layer.UI.components.Avatar
+ * @class Layer.UI.components.Avatar
  * @extends Layer.UI.Component
  * @mixins Layer.UI.mixins.SizeProperty
  */
@@ -190,7 +190,7 @@ registerComponent('layer-avatar', {
      * You can replace Layer's method for coming up with initials with your own:
      *
      * ```
-     * layer.UI.init({
+     * Layer.UI.init({
      *   mixins: {
      *     'layer-avatar': {
      *        methods: {

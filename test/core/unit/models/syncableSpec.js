@@ -30,7 +30,7 @@ describe("The Syncable Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -66,23 +66,23 @@ describe("The Syncable Class", function() {
     describe("The load() method", function() {
       describe("Message subclass", function() {
         it("Should return a Message", function() {
-          expect(layer.Core.Message.load(responses.message1.id, client) instanceof layer.Core.Message).toEqual(true);
-          expect(layer.Core.Message.load(responses.message1.id, client) instanceof Layer.Core.Announcement).toEqual(false);
-          expect(Layer.Core.Syncable.load(responses.message1.id, client) instanceof layer.Core.Message).toEqual(true);
+          expect(Layer.Core.Message.load(responses.message1.id, client) instanceof Layer.Core.Message).toEqual(true);
+          expect(Layer.Core.Message.load(responses.message1.id, client) instanceof Layer.Core.Announcement).toEqual(false);
+          expect(Layer.Core.Syncable.load(responses.message1.id, client) instanceof Layer.Core.Message).toEqual(true);
         });
 
         it("Should throw error if no client", function() {
           expect(function() {
-            layer.Core.Message.load(responses.message1.id);
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
-          expect(layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
+            Layer.Core.Message.load(responses.message1.id);
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
+          expect(Layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
         });
 
         it("Should call dbManager.getObject", function() {
           client.dbManager.getObject.calls.reset();
 
           // Run
-          layer.Core.Message.load(responses.message1.id, client);
+          Layer.Core.Message.load(responses.message1.id, client);
 
           // Posttest
           expect(client.dbManager.getObject).toHaveBeenCalledWith('messages', responses.message1.id, jasmine.any(Function));
@@ -92,7 +92,7 @@ describe("The Syncable Class", function() {
             getObjectResult = {parts: []};
 
             // Run
-            var ident = layer.Core.Message.load(responses.message1.id, client);
+            var ident = Layer.Core.Message.load(responses.message1.id, client);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "trigger");
             jasmine.clock().tick(11);
@@ -104,7 +104,7 @@ describe("The Syncable Class", function() {
 
         it("Should call _load", function() {
             // Run
-            var ident = layer.Core.Message.load(responses.message1.id, client);
+            var ident = Layer.Core.Message.load(responses.message1.id, client);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "_load");
             jasmine.clock().tick(11);
@@ -116,7 +116,7 @@ describe("The Syncable Class", function() {
 
         it("Should call _load once client is ready", function() {
             client.isReady = false;
-            var ident = layer.Core.Message.load(responses.message1.id, client);
+            var ident = Layer.Core.Message.load(responses.message1.id, client);
             spyOn(ident, "_load");
             jasmine.clock().tick(11);
 
@@ -129,17 +129,17 @@ describe("The Syncable Class", function() {
         });
 
         it("Should call _load once client is ready for new client", function() {
-            var _load = layer.Core.Message.prototype._load;
-            layer.Core.Message.prototype._load = jasmine.createSpy('load');
+            var _load = Layer.Core.Message.prototype._load;
+            Layer.Core.Message.prototype._load = jasmine.createSpy('load');
             client = new Layer.Core.Client({
                 appId: appId,
                 url: "https://huh.com"
             });
 
-            var ident = layer.Core.Message.load(responses.message1.id, client);
+            var ident = Layer.Core.Message.load(responses.message1.id, client);
 
             // Midtest
-            expect(layer.Core.Message.prototype._load).not.toHaveBeenCalled();
+            expect(Layer.Core.Message.prototype._load).not.toHaveBeenCalled();
 
             // Posttest
             client.user = new Layer.Core.Identity({
@@ -154,16 +154,16 @@ describe("The Syncable Class", function() {
                 publicKey: "public",
                 avatarUrl: "avatar",
                 displayName: "display",
-                syncState: layer.Constants.SYNC_STATE.SYNCED,
+                syncState: Layer.Constants.SYNC_STATE.SYNCED,
                 isFullIdentity: true,
                 sessionOwner: true
             });
             client._clientAuthenticated();
             client._clientReady();
-            expect(layer.Core.Message.prototype._load).toHaveBeenCalledWith();
+            expect(Layer.Core.Message.prototype._load).toHaveBeenCalledWith();
 
             // Restore
-            layer.Core.Message.prototype._load = _load;
+            Layer.Core.Message.prototype._load = _load;
         });
       });
 
@@ -176,8 +176,8 @@ describe("The Syncable Class", function() {
         it("Should throw error if no client", function() {
           expect(function() {
             Layer.Core.Announcement.load(responses.announcement.id);
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
-          expect(layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
+          expect(Layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
         });
 
         it("Should populateFromServer and trigger loaded if db has data", function() {
@@ -210,22 +210,22 @@ describe("The Syncable Class", function() {
 
       describe("Conversation subclass", function() {
         it("Should return a Conversation", function() {
-          expect(layer.Core.Conversation.load(responses.conversation1.id, client) instanceof layer.Core.Conversation).toEqual(true);
-          expect(Layer.Core.Syncable.load(responses.conversation1.id, client) instanceof layer.Core.Conversation).toEqual(true);
+          expect(Layer.Core.Conversation.load(responses.conversation1.id, client) instanceof Layer.Core.Conversation).toEqual(true);
+          expect(Layer.Core.Syncable.load(responses.conversation1.id, client) instanceof Layer.Core.Conversation).toEqual(true);
         });
 
         it("Should throw error if no client", function() {
           expect(function() {
-            layer.Core.Conversation.load(responses.conversation1.id);
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
-          expect(layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
+            Layer.Core.Conversation.load(responses.conversation1.id);
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
+          expect(Layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
         });
 
         it("Should populateFromServer and trigger loaded if db has data", function() {
             getObjectResult = {participants: []};
 
             // Run
-            var ident = layer.Core.Conversation.load(responses.conversation1.id, client);
+            var ident = Layer.Core.Conversation.load(responses.conversation1.id, client);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "trigger");
             jasmine.clock().tick(11);
@@ -238,7 +238,7 @@ describe("The Syncable Class", function() {
         it("Should call _load", function() {
 
             // Run
-            var ident = layer.Core.Conversation.load(responses.conversation1.id, client);
+            var ident = Layer.Core.Conversation.load(responses.conversation1.id, client);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "_load");
             jasmine.clock().tick(11);
@@ -258,8 +258,8 @@ describe("The Syncable Class", function() {
         it("Should throw error if no client", function() {
           expect(function() {
             Layer.Core.Identity.load(responses.useridentity.id);
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
-          expect(layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
+          expect(Layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
         });
 
         it("Should populateFromServer and trigger loaded if db has data", function() {
@@ -295,8 +295,8 @@ describe("The Syncable Class", function() {
     describe("The _load() method", function() {
         it("Should set the syncState to LOADING", function() {
             conversation._load();
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.LOADING);
-            expect(layer.Constants.SYNC_STATE.LOADING).toEqual(jasmine.any(String));
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.LOADING);
+            expect(Layer.Constants.SYNC_STATE.LOADING).toEqual(jasmine.any(String));
         });
 
         it("Should call _xhr", function() {
@@ -527,7 +527,7 @@ describe("The Syncable Class", function() {
         });
 
         it("Initial sync state is NEW / 0", function() {
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.NEW);
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.NEW);
             expect(conversation._syncCounter).toEqual(0);
         });
 
@@ -537,7 +537,7 @@ describe("The Syncable Class", function() {
             conversation._setSyncing();
 
             // Posttest
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.SAVING);
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.SAVING);
             expect(conversation._syncCounter).toEqual(1);
         });
 
@@ -549,45 +549,45 @@ describe("The Syncable Class", function() {
             conversation._setSyncing();
 
             // Posttest
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.SAVING);
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.SAVING);
             expect(conversation._syncCounter).toEqual(501);
         });
 
         it("Sets syncState to SAVING if syncState is SAVING and inc _syncCounter", function() {
             // Setup
             conversation._syncCounter = 500;
-            conversation.syncState = layer.Constants.SYNC_STATE.SAVING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SAVING;
 
             // Run
             conversation._setSyncing();
 
             // Posttest
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.SAVING);
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.SAVING);
             expect(conversation._syncCounter).toEqual(501);
         });
 
         it("Sets syncState to SYNCING if syncState is SYNCED and inc _syncCounter", function() {
             // Setup
-            conversation.syncState = layer.Constants.SYNC_STATE.SYNCED;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SYNCED;
 
             // Run
             conversation._setSyncing();
 
             // Posttest
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCING);
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCING);
             expect(conversation._syncCounter).toEqual(1);
         });
 
         it("Sets syncState to SYNCING if syncState is SYNCING and inc _syncCounter", function() {
             // Setup
-            conversation.syncState = layer.Constants.SYNC_STATE.SYNCING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SYNCING;
             conversation._syncCounter = 500;
 
             // Run
             conversation._setSyncing();
 
             // Posttest
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCING);
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCING);
             expect(conversation._syncCounter).toEqual(501);
         });
     });
@@ -597,66 +597,66 @@ describe("The Syncable Class", function() {
         it("Sets syncState to SYNCED if SAVING and _syncCounter=1", function() {
             // Setup
             conversation._syncCounter = 1;
-            conversation.syncState = layer.Constants.SYNC_STATE.SAVING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SAVING;
 
             // Run
             conversation._setSynced();
 
             // Posttest
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCED);
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCED);
             expect(conversation._syncCounter).toEqual(0);
         });
 
         it("Sets syncState to SYNCING if SAVING and _syncCounter=2", function() {
             // Setup
             conversation._syncCounter = 2;
-            conversation.syncState = layer.Constants.SYNC_STATE.SAVING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SAVING;
 
             // Run
             conversation._setSynced();
 
             // Posttest
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCING);
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCING);
             expect(conversation._syncCounter).toEqual(1);
         });
 
         it("Sets syncState to SYNCED if SYNCING and _syncCounter=1", function() {
             // Setup
             conversation._syncCounter = 1;
-            conversation.syncState = layer.Constants.SYNC_STATE.SYNCING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SYNCING;
 
             // Run
             conversation._setSynced();
 
             // Posttest
-            expect(conversation.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCED);
+            expect(conversation.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCED);
             expect(conversation._syncCounter).toEqual(0);
         });
     });
 
     describe("The isSaved() method", function() {
       it("Should return false if NEW", function() {
-        message.syncState = layer.Constants.SYNC_STATE.NEW;
+        message.syncState = Layer.Constants.SYNC_STATE.NEW;
         expect(message.isSaved()).toEqual(false);
       });
 
       it("Should return false if SAVING", function() {
-        message.syncState = layer.Constants.SYNC_STATE.SAVING;
+        message.syncState = Layer.Constants.SYNC_STATE.SAVING;
         expect(message.isSaved()).toEqual(false);
       });
 
       it("Should return true if LOADING", function() {
-        message.syncState = layer.Constants.SYNC_STATE.LOADING;
+        message.syncState = Layer.Constants.SYNC_STATE.LOADING;
         expect(message.isSaved()).toEqual(true);
       });
 
       it("Should return true if SYNCED", function() {
-        message.syncState = layer.Constants.SYNC_STATE.SYNCED;
+        message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         expect(message.isSaved()).toEqual(true);
       });
 
       it("Should return true if SYNCING", function() {
-        message.syncState = layer.Constants.SYNC_STATE.SYNCING;
+        message.syncState = Layer.Constants.SYNC_STATE.SYNCING;
         expect(message.isSaved()).toEqual(true);
       });
     });
@@ -665,7 +665,7 @@ describe("The Syncable Class", function() {
     describe("The toObject() method", function() {
         var obj;
         beforeEach(function() {
-            obj = new layer.Core.Syncable({
+            obj = new Layer.Core.Syncable({
             });
         });
 

@@ -161,7 +161,7 @@ registerComponent('layer-conversation-view', {
    * conversationPanel.onMessageDeleted = function(evt) {
    *   evt.preventDefault();
    *   var message = evt.detail.item;
-   *   message.delete(layer.Constants.DELETION_MODES.MY_DEVICES);
+   *   message.delete(Layer.Constants.DELETION_MODES.MY_DEVICES);
    * };
    * ```
    *
@@ -181,7 +181,7 @@ registerComponent('layer-conversation-view', {
    * document.body.addEventListener('layer-message-deleted', function(evt) {
    *   evt.preventDefault();
    *   var message = evt.detail.item;
-   *   message.delete(layer.Constants.DELETION_MODES.MY_DEVICES);
+   *   message.delete(Layer.Constants.DELETION_MODES.MY_DEVICES);
    * });
    * ```
    *
@@ -467,7 +467,7 @@ registerComponent('layer-conversation-view', {
      *
      * ```javascript
      * conversationPanel.messageStatusRenderer = function(message) {
-     *    return message.readStatus === layer.Constants.RECIPIENT_STATE.ALL ? 'read' : 'processing...';
+     *    return message.readStatus === Layer.Constants.RECIPIENT_STATE.ALL ? 'read' : 'processing...';
      * };
      * ```
      *
@@ -886,7 +886,7 @@ registerComponent('layer-conversation-view', {
      * ```
      *
      * @method shouldAutoFocusConversation
-     * @param {options} options
+     * @param {Object} options
      * @param {String} options.userAgent
      * @param {Number} options.maxTouchPoints
      * @returns {Boolean}

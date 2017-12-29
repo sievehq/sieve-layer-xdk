@@ -25,7 +25,7 @@ describe("The OnlineStateManager Class", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
             sessionOwner: true
         });
@@ -63,7 +63,7 @@ describe("The OnlineStateManager Class", function() {
 
     describe("The constructor() method", function() {
         it("Should copy in object parameters", function() {
-            var manager = this.onlineManager = new layer.Core.OnlineStateManager({
+            var manager = this.onlineManager = new Layer.Core.OnlineStateManager({
               socketManager: socket
             });
 
@@ -71,7 +71,7 @@ describe("The OnlineStateManager Class", function() {
         });
 
         it("Should listen for websocket messages", function() {
-            var manager = this.onlineManager = new layer.Core.OnlineStateManager({
+            var manager = this.onlineManager = new Layer.Core.OnlineStateManager({
               socketManager: socket
             });
             spyOn(manager, "_connectionListener");
@@ -84,7 +84,7 @@ describe("The OnlineStateManager Class", function() {
         });
 
         it("Should listen for xhr success responses", function() {
-            var manager = this.onlineManager = new layer.Core.OnlineStateManager({
+            var manager = this.onlineManager = new Layer.Core.OnlineStateManager({
               socketManager: socket
             });
             spyOn(manager, "_connectionListener");
@@ -105,7 +105,7 @@ describe("The OnlineStateManager Class", function() {
         });
 
         it("Should listen for xhr failure responses", function() {
-            var manager = this.onlineManager = new layer.Core.OnlineStateManager({
+            var manager = this.onlineManager = new Layer.Core.OnlineStateManager({
               socketManager: socket
             });
             spyOn(manager, "_connectionListener");
@@ -129,7 +129,7 @@ describe("The OnlineStateManager Class", function() {
     describe("The start() method", function() {
         var manager;
         beforeEach(function() {
-            manager = this.onlineManager = new layer.Core.OnlineStateManager({
+            manager = this.onlineManager = new Layer.Core.OnlineStateManager({
               socketManager: socket
             });
         });
@@ -161,7 +161,7 @@ describe("The OnlineStateManager Class", function() {
     describe("The stop() method", function() {
       var manager;
       beforeEach(function() {
-          manager = this.onlineManager = new layer.Core.OnlineStateManager({
+          manager = this.onlineManager = new Layer.Core.OnlineStateManager({
             socketManager: socket
           });
       });
@@ -205,7 +205,7 @@ describe("The OnlineStateManager Class", function() {
     describe("The _scheduleNextOnlineCheck() method", function() {
         var manager;
         beforeEach(function() {
-            manager = this.onlineManager = new layer.Core.OnlineStateManager({
+            manager = this.onlineManager = new Layer.Core.OnlineStateManager({
               socketManager: socket,
               isOnline: true,
               isClientReady: true
@@ -290,7 +290,7 @@ describe("The OnlineStateManager Class", function() {
     describe("The _handleOnlineEvent() method", function() {
         var manager;
         beforeEach(function() {
-            manager = this.onlineManager = new layer.Core.OnlineStateManager({
+            manager = this.onlineManager = new Layer.Core.OnlineStateManager({
               socketManager: socket
             });
         });
@@ -315,7 +315,7 @@ describe("The OnlineStateManager Class", function() {
     describe("The _onlineExpired() method", function() {
       var manager;
       beforeEach(function() {
-          manager = this.onlineManager = new layer.Core.OnlineStateManager({
+          manager = this.onlineManager = new Layer.Core.OnlineStateManager({
             socketManager: socket
           });
       });
@@ -346,7 +346,7 @@ describe("The OnlineStateManager Class", function() {
     describe("The checkOnlineStatus() method", function() {
         var manager;
         beforeEach(function() {
-            manager = this.onlineManager = new layer.Core.OnlineStateManager({
+            manager = this.onlineManager = new Layer.Core.OnlineStateManager({
               socketManager: socket
             });
         });
@@ -390,7 +390,7 @@ describe("The OnlineStateManager Class", function() {
     describe("The _changeToOffline() method", function() {
       var manager;
       beforeEach(function() {
-          manager = this.onlineManager = new layer.Core.OnlineStateManager({
+          manager = this.onlineManager = new Layer.Core.OnlineStateManager({
             socketManager: socket
           });
           manager.isOnline = true;
@@ -422,7 +422,7 @@ describe("The OnlineStateManager Class", function() {
     describe("The _connectionListener() method", function() {
         var manager;
         beforeEach(function() {
-            manager = this.onlineManager = new layer.Core.OnlineStateManager({
+            manager = this.onlineManager = new Layer.Core.OnlineStateManager({
               socketManager: socket
             });
         });

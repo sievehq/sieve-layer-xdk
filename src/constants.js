@@ -1,13 +1,13 @@
 /**
  * Layer Constants are stored in two places:
  *
- * 1. As part of the layer.Constants singleton
+ * 1. As part of the Layer.Constants singleton
  * 2. As static properties on classes.
  *
  * Typically the static property constants are designed to be changed by developers to customize behaviors,
  * and tend to only be used by that single class.
  *
- * @class layer.Constants
+ * @class Layer.Constants
  * @singleton
  */
 module.exports = {

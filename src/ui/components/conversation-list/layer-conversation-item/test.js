@@ -179,7 +179,7 @@ describe('layer-conversation-item', function() {
       el.onRerender();
       expect(el.nodes.date.value).toEqual('Pending');
 
-      message.syncState = layer.Constants.SYNC_STATE.SYNCED;
+      message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
       el.onRerender();
       expect(el.nodes.date.date).toEqual(message.sentAt);
 

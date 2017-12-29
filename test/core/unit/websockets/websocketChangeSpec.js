@@ -25,7 +25,7 @@ describe("The Websocket Change Manager Class", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
             sessionOwner: true
         });
@@ -58,7 +58,7 @@ describe("The Websocket Change Manager Class", function() {
 
     describe("The constructor() method", function() {
         it("Should return a Websockets.ChangeManager", function() {
-            expect(new layer.Core.Websockets.ChangeManager({
+            expect(new Layer.Core.Websockets.ChangeManager({
                 client: client,
                 socketManager: client.socketManager
             })).toEqual(jasmine.any(Layer.Core.Websockets.ChangeManager));
@@ -68,7 +68,7 @@ describe("The Websocket Change Manager Class", function() {
         it("Should subscribe to call _handleChange on message", function() {
             var tmp = Layer.Core.Websockets.ChangeManager.prototype._handleChange;
             Layer.Core.Websockets.ChangeManager.prototype._handleChange = jasmine.createSpy('handleChange');
-            var changeManager = new layer.Core.Websockets.ChangeManager({
+            var changeManager = new Layer.Core.Websockets.ChangeManager({
                 client: client,
                 socketManager: client.socketManager
             })
@@ -306,8 +306,8 @@ describe("The Websocket Change Manager Class", function() {
             var tmp = layer.Util.layerParse;
             spyOn(layer.Util, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Conversation._loadResourceForPatch;
-            spyOn(layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(true);
+            var _loadResourceForPatch = Layer.Core.Conversation._loadResourceForPatch;
+            spyOn(Layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(true);
 
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -328,15 +328,15 @@ describe("The Websocket Change Manager Class", function() {
 
             // Cleanup
             layer.Util.LayerParse = tmp;
-            layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should not load a Conversation if not found and not allowed", function() {
             var tmp = layer.Util.layerParse;
             spyOn(layer.Util, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Conversation._loadResourceForPatch;
-            spyOn(layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(false);
+            var _loadResourceForPatch = Layer.Core.Conversation._loadResourceForPatch;
+            spyOn(Layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(false);
 
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -356,7 +356,7 @@ describe("The Websocket Change Manager Class", function() {
 
             // Cleanup
             layer.Util.LayerParse = tmp;
-            layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
         });
 
 
@@ -364,8 +364,8 @@ describe("The Websocket Change Manager Class", function() {
             var tmp = layer.Util.layerParse;
             spyOn(layer.Util, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Channel._loadResourceForPatch;
-            spyOn(layer.Core.Channel, "_loadResourceForPatch").and.returnValue(true);
+            var _loadResourceForPatch = Layer.Core.Channel._loadResourceForPatch;
+            spyOn(Layer.Core.Channel, "_loadResourceForPatch").and.returnValue(true);
 
             var m = channel.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -386,15 +386,15 @@ describe("The Websocket Change Manager Class", function() {
 
             // Cleanup
             layer.Util.LayerParse = tmp;
-            layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should not load a Channel if not found and not allowed", function() {
             var tmp = layer.Util.layerParse;
             spyOn(layer.Util, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Channel._loadResourceForPatch;
-            spyOn(layer.Core.Channel, "_loadResourceForPatch").and.returnValue(false);
+            var _loadResourceForPatch = Layer.Core.Channel._loadResourceForPatch;
+            spyOn(Layer.Core.Channel, "_loadResourceForPatch").and.returnValue(false);
 
             var m = channel.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -414,15 +414,15 @@ describe("The Websocket Change Manager Class", function() {
 
             // Cleanup
             layer.Util.LayerParse = tmp;
-            layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should load a Message if not found and allowed", function() {
             var tmp = layer.Util.layerParse;
             spyOn(layer.Util, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Message._loadResourceForPatch;
-            spyOn(layer.Core.Message, "_loadResourceForPatch").and.returnValue(true);
+            var _loadResourceForPatch = Layer.Core.Message._loadResourceForPatch;
+            spyOn(Layer.Core.Message, "_loadResourceForPatch").and.returnValue(true);
 
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -443,15 +443,15 @@ describe("The Websocket Change Manager Class", function() {
 
             // Cleanup
             layer.Util.LayerParse = tmp;
-            layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should not load a Message if not found and not allowed", function() {
             var tmp = layer.Util.layerParse;
             spyOn(layer.Util, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Message._loadResourceForPatch;
-            spyOn(layer.Core.Message, "_loadResourceForPatch").and.returnValue(false);
+            var _loadResourceForPatch = Layer.Core.Message._loadResourceForPatch;
+            spyOn(Layer.Core.Message, "_loadResourceForPatch").and.returnValue(false);
 
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -471,7 +471,7 @@ describe("The Websocket Change Manager Class", function() {
 
             // Cleanup
             layer.Util.LayerParse = tmp;
-            layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Shouldn't do much of anything for Announcements", function() {
@@ -502,8 +502,8 @@ describe("The Websocket Change Manager Class", function() {
     });
     describe("Message Editing Tests", function() {
         it("Should add a message part", function() {
-            var onMessagePartChange = layer.Core.Message.prototype._onMessagePartChange;
-            spyOn(layer.Core.Message.prototype, '_onMessagePartChange');
+            var onMessagePartChange = Layer.Core.Message.prototype._onMessagePartChange;
+            spyOn(Layer.Core.Message.prototype, '_onMessagePartChange');
 
             m = conversation.createMessage({
                 parts: [{
@@ -546,12 +546,12 @@ describe("The Websocket Change Manager Class", function() {
             expect(m.updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
 
             // Should listen to events from the new part
-            layer.Core.Message.prototype._onMessagePartChange.calls.reset();
+            Layer.Core.Message.prototype._onMessagePartChange.calls.reset();
             m.parts[1].trigger('messageparts:change', {});
-            expect(layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
+            expect(Layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
 
             // Cleanup
-            layer.Core.Message.prototype._onMessagePartChange = onMessagePartChange;
+            Layer.Core.Message.prototype._onMessagePartChange = onMessagePartChange;
         });
 
         it("Should remove a message part", function() {
@@ -628,8 +628,8 @@ describe("The Websocket Change Manager Class", function() {
         });
 
         it("Should overwrite all message parts", function() {
-            var onMessagePartChange = layer.Core.Message.prototype._onMessagePartChange;
-            spyOn(layer.Core.Message.prototype, '_onMessagePartChange');
+            var onMessagePartChange = Layer.Core.Message.prototype._onMessagePartChange;
+            spyOn(Layer.Core.Message.prototype, '_onMessagePartChange');
 
             m = conversation.createMessage({
                 parts: [{
@@ -681,10 +681,10 @@ describe("The Websocket Change Manager Class", function() {
             expect(m.updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
 
             m.parts[1].trigger('messageparts:change', {});
-            expect(layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
+            expect(Layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
 
             // Cleanup
-            layer.Core.Message.prototype._onMessagePartChange = onMessagePartChange;
+            Layer.Core.Message.prototype._onMessagePartChange = onMessagePartChange;
         });
 
         it("Should update one message part", function() {

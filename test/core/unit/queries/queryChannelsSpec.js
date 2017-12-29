@@ -32,7 +32,7 @@ describe("The ChannelsQuery Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -81,8 +81,8 @@ describe("The ChannelsQuery Class", function() {
                     model: Layer.Core.Query.Channel,
                     predicate: 'channel.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
                 });
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.predicateNotSupported);
-            expect(layer.Core.LayerError.ErrorDictionary.predicateNotSupported.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.predicateNotSupported);
+            expect(Layer.Core.LayerError.ErrorDictionary.predicateNotSupported.length > 0).toBe(true);
         });
     });
 
@@ -178,28 +178,28 @@ describe("The ChannelsQuery Class", function() {
 
         it("Should insert as first element", function() {
             var c = client.createChannel({name: "a"});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 15;
             expect(query._getInsertIndex(c, [channel2, channel])).toEqual(0);
         });
 
         it("Should insert as second element", function() {
             var c = client.createChannel({name: "a"});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 8;
             expect(query._getInsertIndex(c, [channel2, channel])).toEqual(1);
         });
 
         it("Should insert as last element", function() {
             var c = client.createChannel({name: "a"});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 3;
             expect(query._getInsertIndex(c, [channel2, channel])).toEqual(2);
         });
 
         it("Should insert NEW items at top", function() {
             var c = client.createChannel({name: "a"});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             data = [channel, channel2];
             expect(query._getInsertIndex(c, data)).toEqual(0);
         });

@@ -1,7 +1,7 @@
 /**
  * A helper mixin for any widget that wants to refocus when keyboard input is received.
  *
- * Any class using this mixin must provide an `onKeyDown` method that takes no parameters.
+ * Any class using this mixin must provide an {@link #onKeyDown} method that takes no parameters.
  *
  * @class Layer.UI.mixins.FocusOnKeydown
  */
@@ -45,6 +45,14 @@ module.exports = {
           this.onKeyDown();
         }
       }
-    }
+    },
+
+    /**
+     * Mixin Hook: When the user hits a relevant key that isn't delivered to an input,
+     * this method is called to handle it.
+     *
+     * @method onKeyDown
+     */
+    onKeyDown() {},
   },
 };

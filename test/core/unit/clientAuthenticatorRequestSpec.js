@@ -46,7 +46,7 @@ describe("The Client Authenticator Requests", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -690,7 +690,7 @@ describe("The Client Authenticator Requests", function() {
         it("Should clear localStorage sessionToken on getting a 401", function() {
           client.isAuthenticated = true;
           client._wantsToBeAuthenticated = true;
-          localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = "Frodo and Gollum Kissing in a Tree";
+          localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = "Frodo and Gollum Kissing in a Tree";
           client._xhrResult({
               success: false,
               status: 401,
@@ -705,7 +705,7 @@ describe("The Client Authenticator Requests", function() {
               }
           });
 
-          expect(localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
+          expect(localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
         });
 
         it("Should call _authenticate on getting a 401 if wants to be authenticated", function() {

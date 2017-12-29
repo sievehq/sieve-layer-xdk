@@ -31,7 +31,7 @@ describe("The TelemetryMonitor class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });

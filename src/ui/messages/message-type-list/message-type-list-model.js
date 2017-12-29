@@ -11,7 +11,7 @@ MessageTypeListModel = Layer.Core.Client.getMessageTypeModelClass('MessageTypeLi
   model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
-* @class layer.UI.cards.MessageTypeListModel
+* @class Layer.UI.cards.MessageTypeListModel
 * @extends layer.model
 */
 import { Client, MessagePart, MessageTypeModel } from '../../../core';

@@ -32,7 +32,7 @@ describe("The ConversationsQuery Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -82,8 +82,8 @@ describe("The ConversationsQuery Class", function() {
                     model: Layer.Core.Query.Conversation,
                     predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
                 });
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.predicateNotSupported);
-            expect(layer.Core.LayerError.ErrorDictionary.predicateNotSupported.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.predicateNotSupported);
+            expect(Layer.Core.LayerError.ErrorDictionary.predicateNotSupported.length > 0).toBe(true);
         });
     });
 
@@ -188,21 +188,21 @@ describe("The ConversationsQuery Class", function() {
 
         it("Should insert as first element if sort by createdAt", function() {
             var c = client.createConversation({participants: ["a"]});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 15;
             expect(query._getInsertIndex(c, [conversation2, conversation])).toEqual(0);
         });
 
         it("Should insert as second element if sort by createdAt", function() {
             var c = client.createConversation({participants: ["a"]});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 8;
             expect(query._getInsertIndex(c, [conversation2, conversation])).toEqual(1);
         });
 
         it("Should insert as last element if sort by createdAt", function() {
             var c = client.createConversation({participants: ["a"]});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 3;
             expect(query._getInsertIndex(c, [conversation2, conversation])).toEqual(2);
         });
@@ -210,7 +210,7 @@ describe("The ConversationsQuery Class", function() {
         it("Should insert as first element if sort by lastMessage", function() {
             query.sortBy = [{"lastMessage.sentAt": "desc"}];
             var c = client.createConversation({participants: ["a"]});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 15;
             expect(query._getInsertIndex(c, [conversation, conversation2])).toEqual(0);
         });
@@ -218,7 +218,7 @@ describe("The ConversationsQuery Class", function() {
         it("Should insert as second element if sort by lastMessage", function() {
             query.sortBy = [{"lastMessage.sentAt": "desc"}];
             var c = client.createConversation({participants: ["a"]});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 11;
             expect(query._getInsertIndex(c, [conversation, conversation2])).toEqual(1);
         });
@@ -226,7 +226,7 @@ describe("The ConversationsQuery Class", function() {
         it("Should insert as last element if sort by lastMessage", function() {
             query.sortBy = [{"lastMessage.sentAt": "desc"}];
             var c = client.createConversation({participants: ["a"]});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 3;
             expect(query._getInsertIndex(c, [conversation, conversation2])).toEqual(2);
         });
@@ -234,7 +234,7 @@ describe("The ConversationsQuery Class", function() {
         it("Should use createdAt field in sort by lastMessage test 1", function() {
             query.sortBy = [{"lastMessage.sentAt": "desc"}];
             var c = client.createConversation({participants: ["a"]});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 11;
             expect(query._getInsertIndex(c, [conversation, conversation2])).toEqual(1);
         });
@@ -242,7 +242,7 @@ describe("The ConversationsQuery Class", function() {
         it("Should use createdAt field in sort by lastMessage test 2", function() {
             query.sortBy = [{"lastMessage.sentAt": "desc"}];
             var c = client.createConversation({participants: ["a"]});
-            c.syncState = layer.Constants.SYNCED;
+            c.syncState = Layer.Constants.SYNCED;
             c.createdAt = 11;
             data = [conversation, conversation2];
             data[0].createdAt = data[0].lastMessage.sentAt;

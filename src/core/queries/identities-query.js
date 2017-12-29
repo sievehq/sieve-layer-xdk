@@ -16,7 +16,7 @@
  *
  *      query.destroy();
  *
- * @class  layer.IdentitiesQuery
+ * @class  Layer.Core.IdentitiesQuery
  * @extends Layer.Core.Query
  */
 import Root from '../root';

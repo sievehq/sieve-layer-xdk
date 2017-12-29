@@ -99,7 +99,7 @@ registerComponent('layer-message-viewer-expanded', {
     },
 
     /**
-     * If the user clicks on the dialog... and specifically on the dialog's background, trigger its {@link #onClick} mixin.
+     * If the user clicks on the dialog... and specifically on the dialog's background, trigger its {@link #onDialogBackgroundClick} mixin.
      *
      * @method _onClick
      * @private

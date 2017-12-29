@@ -21,7 +21,7 @@
  * });
  * ```
  *
- * @class layer.UI.components.ConversationTitle
+ * @class Layer.UI.components.ConversationTitle
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';

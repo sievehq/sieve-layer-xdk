@@ -1,5 +1,5 @@
 /**
-  FeedbackModel = layer.Core.Client.getMessageTypeModelClass('FeedbackModel')
+  FeedbackModel = Layer.Core.Client.getMessageTypeModelClass('FeedbackModel')
   model = new FeedbackModel({
     title: "Experience Rooting", // Optional, defaults to Experience Rating
     prompt: "Rate your experiment 1-5 beakers", // Optional, defaults to Rate your experience 1-5 stars

@@ -10,7 +10,7 @@
  * to the `message` event if they want richer event information than is available
  * through the Layer.Core.Client class.
  *
- * @class  layer.Websockets.SocketManager
+ * @class  Layer.Core.Websockets.SocketManager
  * @extends Layer.Core.Root
  * @private
  */
@@ -31,7 +31,7 @@ class SocketManager extends Root {
    * @method
    * @param  {Object} options
    * @param {Layer.Core.Client} client
-   * @return {layer.Websockets.SocketManager}
+   * @return {Layer.Core.Websockets.SocketManager}
    */
   constructor(options) {
     super(options);
@@ -492,7 +492,7 @@ class SocketManager extends Root {
   /**
    * Synchronize all presence data or catch up on missed presence data.
    *
-   * Typically this is called by layer.Websockets.SocketManager._enablePresence automatically,
+   * Typically this is called by {@link Layer.Core.Websockets.SocketManager#_enablePresence} automatically,
    * but there may be occasions where an app wants to directly trigger this action.
    *
    * @method syncPresence

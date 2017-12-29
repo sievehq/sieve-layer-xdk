@@ -29,10 +29,10 @@ class SyncManager extends Root {
    *
    * An Application is expected to only have one SyncManager.
    *
-   *      var socketManager = new layer.Websockets.SocketManager({client: client});
-   *      var requestManager = new Layer.Core.Websockets.RequestManager({client: client, socketManager: socketManager});
+   *      var socketManager = new Layer.Core.SocketManager({client: client});
+   *      var requestManager = new Layer.Core.RequestManager({client: client, socketManager: socketManager});
    *
-   *      var onlineManager = new layer.OnlineManager({
+   *      var onlineManager = new Layer.Core.OnlineManager({
    *          socketManager: socketManager
    *      });
    *
@@ -721,7 +721,7 @@ SyncManager.prototype.requestManager = null;
  *
  * Sync Manager uses online status to determine if it can fire sync-requests.
  * @private
- * @property {layer.OnlineStateManager}
+ * @property {Layer.Core.OnlineStateManager}
  */
 SyncManager.prototype.onlineManager = null;
 

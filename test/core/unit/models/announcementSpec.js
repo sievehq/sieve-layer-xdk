@@ -29,7 +29,7 @@ describe("The Announcement class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -79,12 +79,12 @@ describe("The Announcement class", function() {
     describe("The delete() method", function() {
         it("Should fail if already deleting", function() {
             // Setup
-            announcement.delete(layer.Constants.DELETION_MODE.ALL);
+            announcement.delete(Layer.Constants.DELETION_MODE.ALL);
 
             // Run
             expect(function() {
                 announcement.delete();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.isDestroyed);
         });
 
         it("Should call _xhr", function() {
@@ -110,7 +110,7 @@ describe("The Announcement class", function() {
 
 
           // Run
-          announcement.delete(layer.Constants.DELETION_MODE.ALL);
+          announcement.delete(Layer.Constants.DELETION_MODE.ALL);
 
           // Posttest
           expect(announcement.isDestroyed).toBe(true);
@@ -129,7 +129,7 @@ describe("The Announcement class", function() {
 
 
           // Run
-          announcement.delete(layer.Constants.DELETION_MODE.ALL);
+          announcement.delete(Layer.Constants.DELETION_MODE.ALL);
 
           // Posttest
           expect(announcement.isDestroyed).toBe(true);

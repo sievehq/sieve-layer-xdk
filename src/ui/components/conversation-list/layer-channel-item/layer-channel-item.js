@@ -73,7 +73,7 @@ registerComponent('layer-channel-item', {
      * Run a filter on this item; not match => hidden; match => shown.
      *
      * @method _runFilter
-     * @param {String|Regex|Function} filter
+     * @param {String/RegExp/Function} filter
      */
     _runFilter(filter) {
       const channel = this.properties.item;

@@ -185,7 +185,7 @@ ProductModel.prototype.description = '';
  *
  * A details view might allow users to change the selected options; but the Basic View does not.
  *
- * @property {layer.UI.messages.ChoiceMessageModel[]} options
+ * @property {Layer.UI.messages.ChoiceMessageModel[]} options
  */
 ProductModel.prototype.options = null;
 

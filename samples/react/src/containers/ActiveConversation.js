@@ -492,6 +492,7 @@ export default class ActiveConversation extends Component {
           onCancelEditConversationTitle={actions.cancelEditConversationTitle}/>
         <ConversationView
           ref='conversationPanel'
+          composeText={window.tmptext}
           queryFilter= {this.filterMessages}
           replaceableContent={replaceableContent}
           onRenderListItem={LayerUIUtil.dateSeparator}

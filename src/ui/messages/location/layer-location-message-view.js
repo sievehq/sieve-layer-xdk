@@ -99,7 +99,7 @@ registerComponent('layer-location-message-view', {
     },
 
     /**
-     * As part of the Message UI lifecycle, this is called to update the <layer-standard-message-view-container /> CSS classes.
+     * As part of the Message UI lifecycle, this is called to update the `<layer-standard-message-view-container />` CSS classes.
      *
      * Adds an optional "Next Arrow" to the metadata, and optionally hides itself.
      *

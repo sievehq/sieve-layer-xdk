@@ -23,7 +23,7 @@
  *
  * TODO: Needs to reuse not rewrite code from `<layer-date />`
  *
- * @class layer.UI.components.ConversationItemDate
+ * @class Layer.UI.components.ConversationItemDate
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';

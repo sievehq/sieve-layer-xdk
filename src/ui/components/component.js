@@ -119,7 +119,7 @@
  *
  * ### Events
  *
- * As part of your {@link Layer.UI.Component#registerComponents} call you can pass in an `events` array;
+ * As part of your {@link #registerComponent} call you can pass in an `events` array;
  * this is an array of strings representing events to listen for,
  * and provide as property-based event listeners.
  *
@@ -1106,6 +1106,7 @@ function _registerComponent(tagName) {
        *
        * @property {Object} properties
        * @protected
+       * @readonly
        */
       if (this.properties && this.properties._internalState) return;
       if (!this.properties) this.properties = {};
@@ -1262,6 +1263,29 @@ function _registerComponent(tagName) {
   * @static
   */
 
+  /**
+   * Event definitions.
+   *
+   * ```
+   * UI.registerComponent(tagName, {
+   *    events: ['layer-something-happening', 'layer-nothing-happening', 'your-custom-event']
+   * });
+   * ```
+   *
+   * The above component definition will result in:
+   *
+   * 1. The component will listen for the 3 events listed, regardless of whether this component triggered the event,
+   *    or its child components triggered the event.  `this.addEventListener('your-custom-event')` to intercept this event (the event will still propagate up).
+   * 2. The component will define the following properties: `onSomethingHappening`, `onNothingHappening` and `onYourCustomEvent`. These properties
+   *    are defined for you as a result of setting the `events` property.
+   * 3. Your app can now use either event listeners or property callbacks as illustrated below:
+   *
+   *
+   * @property {String[]} events
+   * @private
+   * @static
+   */
+
 /**
  * Mixin modes determines how a new method being added to a class will be executed with respect to any other methods.
  *
@@ -1318,7 +1342,7 @@ const standardClassProperties = {
    *
    * This array makes it easy to unsubscribe to all event subscriptions when {@link Layer.UI.Component#destroy} is called.
    *
-   * @property [Object[]] _layerEventSubscriptions
+   * @property {Object[]} _layerEventSubscriptions
    */
   _layerEventSubscriptions: {
     value: [],
@@ -1424,7 +1448,7 @@ const standardClassProperties = {
    * App IDs are typically provided via:
    *
    * ```
-   * layer.UI.init(({ appId: myAppId })
+   * Layer.UI.init(({ appId: myAppId })
    * ```
    *
    * The only time one would set this property
@@ -2037,7 +2061,7 @@ const standardClassMethods = {
    * > *Note*
    * >
    * > destroy is called to remove a component, but it is not a lifecycle method; a component that has been removed
-   * > from the DOM some otherway will cause {@link @onDestroy} to be called but `destroy()` will _not_ be called.
+   * > from the DOM some otherway will cause {@link #onDestroy} to be called but `destroy()` will _not_ be called.
    *
    * @method destroy
    */

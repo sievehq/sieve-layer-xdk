@@ -17,12 +17,12 @@
  * });
  *
  * // Call init after custom components are defined
- * layer.UI.init({
+ * Layer.UI.init({
  *   appId:  'layer:///apps/staging/UUID'
  * });
  * ```
  *
- * @class layer.UI.components.ComposeButtonPanel
+ * @class Layer.UI.components.ComposeButtonPanel
  * @extends Layer.UI.Component
  * @removed
  */

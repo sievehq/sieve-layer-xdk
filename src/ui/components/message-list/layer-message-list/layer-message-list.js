@@ -825,7 +825,7 @@ registerComponent('layer-message-list', {
      * @method _pagedDataDone
      * @private
      * @param {Layer.UI.components.MessageListPanel.Item} firstVisibleItem   The first message that at the top of the view and fully visible
-     * @param {LayerEvent} evt   The Query change event that delivered the data
+     * @param {Layer.Core.LayerEvent} evt   The Query change event that delivered the data
      * @param {Number} initialOffset    How far from the top of the Message List is that first fully visible item (so we can maintain that offset)
      */
     _pagedDataDone(firstVisibleItem, evt, initialOffset) {

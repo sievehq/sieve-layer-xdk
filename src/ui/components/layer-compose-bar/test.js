@@ -208,7 +208,7 @@ describe('layer-compose-bar', function() {
 
       expect(calledForModel.text).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
       expect(calledForModel.part.body).toEqual('{"text":"Frodo shall hang until he is dead or until we get tired of watching him laugh at us"}');
-      expect(calledForModel.message.syncState).toEqual(layer.Constants.SYNC_STATE.SAVING);
+      expect(calledForModel.message.syncState).toEqual(Layer.Constants.SYNC_STATE.SAVING);
     });
 
     it("Should trigger layer-send-message and cancel the message on evt.preventDefault()", function() {
@@ -221,7 +221,7 @@ describe('layer-compose-bar', function() {
 
       expect(calledForModel.text).toEqual("Frodo shall hang until he is dead or until we get tired of watching him laugh at us");
       expect(calledForModel.part.body).toEqual('{"text":"Frodo shall hang until he is dead or until we get tired of watching him laugh at us"}');
-      expect(calledForModel.message.syncState).toEqual(layer.Constants.SYNC_STATE.NEW);
+      expect(calledForModel.message.syncState).toEqual(Layer.Constants.SYNC_STATE.NEW);
     });
 
     it("Should trigger events even if no conversation", function() {

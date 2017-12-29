@@ -43,7 +43,7 @@ describe("The Client Identities Mixin", function() {
           client.user = new Layer.Core.Identity({
               userId: client.userId,
               displayName: "Frodo2",
-              syncState: layer.Constants.SYNC_STATE.LOADING,
+              syncState: Layer.Constants.SYNC_STATE.LOADING,
               clientId: client.appId,
 
           });
@@ -131,13 +131,13 @@ describe("The Client Identities Mixin", function() {
       it("Should load the identity if canLoad was used", function() {
           var identity = client.getIdentity('222', true);
           expect(requests.mostRecent().url).toEqual(client.url + '/identities/222');
-          expect(identity.syncState).toEqual(layer.Constants.SYNC_STATE.LOADING);
+          expect(identity.syncState).toEqual(Layer.Constants.SYNC_STATE.LOADING);
       });
 
       it("Should require an ID", function() {
           expect(function() {
               client.getIdentity(55);
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.idParamRequired);
       });
   });
 

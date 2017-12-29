@@ -30,7 +30,7 @@ describe("The Content class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -46,7 +46,7 @@ describe("The Content class", function() {
         client._clientReady();
         client.onlineManager.isOnline = true;
 
-        conversation = layer.Core.Conversation._createFromServer(responses.conversation2, client).conversation;
+        conversation = Layer.Core.Conversation._createFromServer(responses.conversation2, client).conversation;
         requests.reset();
         client.syncManager.queue = [];
     });
@@ -58,20 +58,20 @@ describe("The Content class", function() {
 
     describe("The constructor() method", function() {
         it("Should initialize with an object", function() {
-            expect(new layer.Core.Content({downloadUrl: "hey"}).downloadUrl).toEqual("hey");
-            expect(new layer.Core.Content({expiration: 100000}).expiration).toEqual(100000);
-            expect(new layer.Core.Content({refreshUrl: "hey"}).refreshUrl).toEqual("hey");
-            expect(new layer.Core.Content({id: "content"}).id).toEqual("content");
+            expect(new Layer.Core.Content({downloadUrl: "hey"}).downloadUrl).toEqual("hey");
+            expect(new Layer.Core.Content({expiration: 100000}).expiration).toEqual(100000);
+            expect(new Layer.Core.Content({refreshUrl: "hey"}).refreshUrl).toEqual("hey");
+            expect(new Layer.Core.Content({id: "content"}).id).toEqual("content");
         });
 
         it("Should initialize by id", function() {
-            expect(new layer.Core.Content("content").id).toEqual("content");
+            expect(new Layer.Core.Content("content").id).toEqual("content");
         });
     });
 
     describe("The loadContent() method", function() {
         it("Should send a request to the server", function() {
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 downloadUrl: "http://hey.com"
             });
 
@@ -86,7 +86,7 @@ describe("The Content class", function() {
 
         it("Should call the callback", function() {
 
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 downloadUrl: "http://hey.com"
             });
             var spy = jasmine.createSpy('spy');
@@ -107,7 +107,7 @@ describe("The Content class", function() {
             var tmp = window.Blob;
             window.Blob = undefined;
 
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 downloadUrl: "http://hey.com"
             });
             var spy = jasmine.createSpy('spy');
@@ -131,7 +131,7 @@ describe("The Content class", function() {
             var tmp = window.Blob;
             window.Blob = undefined;
 
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 downloadUrl: "http://hey.com"
             });
             var spy = jasmine.createSpy('spy');
@@ -155,7 +155,7 @@ describe("The Content class", function() {
     describe("The refreshContent() method", function() {
       var content;
       beforeEach(function() {
-        content = new layer.Core.Content({
+        content = new Layer.Core.Content({
             downloadUrl: "http://hey.com",
             refreshUrl: "https://ho.com",
             expiration: 100000,

@@ -16,7 +16,7 @@ class WebsocketRequestManager {
   /**
    * Create a new websocket change manager
    *
-   *      var websocketRequestManager = new Layer.Core.Websockets.RequestManager({
+   *      var websocketRequestManager = new Layer.Core.RequestManager({
    *          client: client,
    *          socketManager: client.Websockets.SocketManager
    *      });
@@ -24,7 +24,7 @@ class WebsocketRequestManager {
    * @method
    * @param  {Object} options
    * @param {Layer.Core.Client} client
-   * @param {layer.Websockets.SocketManager} socketManager
+   * @param {Layer.Core.Websockets.SocketManager} socketManager
    * @returns {Layer.Core.Websockets.RequestManager}
    */
   constructor(options) {
@@ -38,6 +38,12 @@ class WebsocketRequestManager {
     this._requestCallbacks = {};
   }
 
+  /**
+   * Reset all requests we are waiting for responses to.
+   *
+   * @method _reset
+   * @private
+   */
   _reset() {
     this._requestCallbacks = {};
   }

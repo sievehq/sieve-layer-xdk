@@ -105,7 +105,7 @@ describe("The Client Message Mixin", function() {
             var m1 = client.getMessage(newId, true);
 
             // Posttest
-            expect(m1 instanceof layer.Core.Message).toBe(true);
+            expect(m1 instanceof Layer.Core.Message).toBe(true);
             expect(m1.id).toEqual(newId);
             expect(requests.mostRecent().url).toEqual(client.url + newId.replace(/layer\:\/\//, ""));
         });
@@ -123,8 +123,8 @@ describe("The Client Message Mixin", function() {
         it("Should fail without id", function() {
             expect(function() {
                 client.getMessage(5);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
-            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(Layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
         });
 
         it("Should not load if not ready", function() {

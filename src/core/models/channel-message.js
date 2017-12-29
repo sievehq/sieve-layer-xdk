@@ -44,7 +44,7 @@ class ChannelMessage extends Message {
    * Send a Read or Delivery Receipt to the server; not supported yet.
    *
    * @method sendReceipt
-   * @param {string} [type=layer.Constants.RECEIPT_STATE.READ] - One of layer.Constants.RECEIPT_STATE.READ or layer.Constants.RECEIPT_STATE.DELIVERY
+   * @param {string} [type=Layer.Constants.RECEIPT_STATE.READ] - One of Layer.Constants.RECEIPT_STATE.READ or Layer.Constants.RECEIPT_STATE.DELIVERY
    * @return {Layer.Core.Message.ChannelMessage} this
    */
   sendReceipt(type = Constants.RECEIPT_STATE.READ) {

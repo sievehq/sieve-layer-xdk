@@ -21,7 +21,7 @@
           "Layer.Core.LayerEvent",
           "Layer.Core.ClientUtils",
           "Layer.Core.Root",
-          "layer.Constants"
+          "Layer.Constants"
         ]
       },
       {
@@ -44,26 +44,26 @@
           "Layer.UI.components.ConversationView",
           "Layer.UI.components.ConversationsListPanel.List",
           "Layer.UI.components.IdentityListPanel.List",
-          "layer.UI.components.Notifier"
+          "Layer.UI.components.Notifier"
         ]
       },
       {
         "name": "Utilities",
         "classes": [
-          "layer.UI",
+          "Layer.UI",
           "Layer.UI.Component",
-          "layer.UI.adapters.react",
-          "layer.UI.adapters.angular",
-          "layer.UI.adapters.backbone"
+          "Layer.UI.adapters.react",
+          "Layer.UI.adapters.angular",
+          "Layer.UI.adapters.backbone"
         ]
       },
       {
         "name": "Message Handlers",
         "classes": [
-          "layer.UI.handlers.message.TextPlain",
-          "layer.UI.handlers.message.Image",
-          "layer.UI.handlers.message.Video",
-          "layer.UI.handlers.message.Unknown"
+          "Layer.UI.handlers.message.TextPlain",
+          "Layer.UI.handlers.message.Image",
+          "Layer.UI.handlers.message.Video",
+          "Layer.UI.handlers.message.Unknown"
         ]
       }
     ]

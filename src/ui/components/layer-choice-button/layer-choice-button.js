@@ -40,6 +40,12 @@ registerComponent('layer-choice-button', {
         for (let i = 0; i < this.childNodes.length; i++) this.childNodes[i].disabled = value;
       },
     },
+
+    /**
+     * The Choice Model whose options are to be rendered.
+     *
+     * @property {Layer.UI.messages.ChoiceMessageModel} model
+     */
     model: {},
   },
 

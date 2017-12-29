@@ -24,7 +24,7 @@ describe("The SyncManager Class", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
             sessionOwner: true
         });
@@ -44,7 +44,7 @@ describe("The SyncManager Class", function() {
         requests.reset();
         client.syncManager.queue = [];
         jasmine.clock().tick(1);
-        syncManager = new layer.Core.SyncManager({
+        syncManager = new Layer.Core.SyncManager({
             client: client,
             onlineManager: client.onlineManager,
             socketManager: client.socketManager,
@@ -74,7 +74,7 @@ describe("The SyncManager Class", function() {
 
     describe("The constructor() method", function() {
         it("Should return a SyncManager instance", function() {
-            var syncManager = new layer.Core.SyncManager({
+            var syncManager = new Layer.Core.SyncManager({
                 client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
@@ -89,7 +89,7 @@ describe("The SyncManager Class", function() {
             spyOn(Layer.Core.SyncManager.prototype , "_processNextRequest");
             spyOn(Layer.Core.SyncManager.prototype , "_loadPersistedQueue");
 
-            var syncManager = new layer.Core.SyncManager({
+            var syncManager = new Layer.Core.SyncManager({
                 client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
@@ -112,7 +112,7 @@ describe("The SyncManager Class", function() {
         it("Should listen for onlineManager.connected", function() {
             var tmp = Layer.Core.SyncManager.prototype._onlineStateChange;
             spyOn(Layer.Core.SyncManager.prototype, "_onlineStateChange");
-            var syncManager = new layer.Core.SyncManager({
+            var syncManager = new Layer.Core.SyncManager({
                 client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
@@ -132,7 +132,7 @@ describe("The SyncManager Class", function() {
         it("Should listen for socketManager.connected", function() {
             var tmp = Layer.Core.SyncManager.prototype._onlineStateChange;
             spyOn(Layer.Core.SyncManager.prototype, "_onlineStateChange");
-            var syncManager = new layer.Core.SyncManager({
+            var syncManager = new Layer.Core.SyncManager({
                 client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
@@ -152,7 +152,7 @@ describe("The SyncManager Class", function() {
         it("Should listen for socketManager.disconnected", function() {
             var tmp = Layer.Core.SyncManager.prototype._onlineStateChange;
             spyOn(Layer.Core.SyncManager.prototype, "_onlineStateChange");
-            var syncManager = new layer.Core.SyncManager({
+            var syncManager = new Layer.Core.SyncManager({
                 client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
@@ -189,7 +189,7 @@ describe("The SyncManager Class", function() {
 
         it("Should increment returnToOnlineCount if connected", function() {
             spyOn(syncManager, "_processNextRequest");
-            syncManager.queue = [new layer.Core.XHRSyncEvent({})];
+            syncManager.queue = [new Layer.Core.XHRSyncEvent({})];
             expect(syncManager.queue[0].returnToOnlineCount).toEqual(0);
 
             // Run
@@ -205,7 +205,7 @@ describe("The SyncManager Class", function() {
 
         it("Should reset syncQueue firing property if disconnected", function() {
             spyOn(syncManager, "_processNextRequest");
-            syncManager.queue = [new layer.Core.XHRSyncEvent({isFiring: true})];
+            syncManager.queue = [new Layer.Core.XHRSyncEvent({isFiring: true})];
             expect(syncManager.queue[0].isFiring).toBe(true);
 
             // Run
@@ -217,7 +217,7 @@ describe("The SyncManager Class", function() {
 
         it("Should reset receiptQueue firing property if disconnected", function() {
             spyOn(syncManager, "_processNextRequest");
-            syncManager.receiptQueue = [new layer.Core.XHRSyncEvent({isFiring: true}), new layer.Core.XHRSyncEvent({isFiring: true}), new layer.Core.XHRSyncEvent({isFiring: true})];
+            syncManager.receiptQueue = [new Layer.Core.XHRSyncEvent({isFiring: true}), new Layer.Core.XHRSyncEvent({isFiring: true}), new Layer.Core.XHRSyncEvent({isFiring: true})];
             expect(syncManager.receiptQueue[1].isFiring).toBe(true);
 
             // Run
@@ -234,7 +234,7 @@ describe("The SyncManager Class", function() {
         var evt;
         beforeEach(function() {
             client._clientReady();
-            evt = new layer.Core.XHRSyncEvent({
+            evt = new Layer.Core.XHRSyncEvent({
                 operation: "PATCH",
                 target: "fred"
             });
@@ -247,7 +247,7 @@ describe("The SyncManager Class", function() {
 
 
         it("Should NOT add a PATCH request if there is a CREATE request for the same target", function() {
-            var createEvt = new layer.Core.XHRSyncEvent({
+            var createEvt = new Layer.Core.XHRSyncEvent({
                 operation: "POST",
                 target: "fred"
             });
@@ -261,7 +261,7 @@ describe("The SyncManager Class", function() {
         });
 
         it("Should add a PATCH request if there is a CREATE request for a different target", function() {
-            var createEvt = new layer.Core.XHRSyncEvent({
+            var createEvt = new Layer.Core.XHRSyncEvent({
                 operation: "POST",
                 target: "fred2"
             });
@@ -304,7 +304,7 @@ describe("The SyncManager Class", function() {
         });
 
         it("Should add a receipt request to the receipts queue", function() {
-            var receiptEvt = new layer.Core.XHRSyncEvent({
+            var receiptEvt = new Layer.Core.XHRSyncEvent({
                 operation: "RECEIPT"
             });
 
@@ -320,7 +320,7 @@ describe("The SyncManager Class", function() {
         var evt;
         beforeEach(function() {
             client._clientReady();
-            evt = new layer.Core.XHRSyncEvent({
+            evt = new Layer.Core.XHRSyncEvent({
                 operation: "PATCH",
                 target: "fred"
             });
@@ -353,7 +353,7 @@ describe("The SyncManager Class", function() {
         });
 
         it("Should fire requests if there are multiple nonfiring requests in the queue", function() {
-            syncManager.queue = [evt, new layer.Core.XHRSyncEvent({})];
+            syncManager.queue = [evt, new Layer.Core.XHRSyncEvent({})];
             evt.isFiring = false;
             spyOn(syncManager, "_processNextStandardRequest");
             syncManager._processNextRequest();
@@ -363,10 +363,10 @@ describe("The SyncManager Class", function() {
         it("Should call _processNextReceiptRequest if there are ANY requests in the receipts queue", function() {
             syncManager.queue = [];
             syncManager.receiptQueue = [
-                new layer.Core.XHRSyncEvent({
+                new Layer.Core.XHRSyncEvent({
                     operation: "RECEIPT"
                 }),
-                new layer.Core.XHRSyncEvent({
+                new Layer.Core.XHRSyncEvent({
                     operation: "RECEIPT"
                 })
             ];
@@ -388,7 +388,7 @@ describe("The SyncManager Class", function() {
         });
         it("Should call socketManager.sendRequest", function() {
             var data = {name: "fred"}
-            syncManager.queue = [new layer.Core.WebsocketSyncEvent({
+            syncManager.queue = [new Layer.Core.WebsocketSyncEvent({
                 data: data
             })];
             spyOn(syncManager.requestManager, "sendRequest");
@@ -406,7 +406,7 @@ describe("The SyncManager Class", function() {
 
         it("Should call socketManager.sendRequest with returnChangesArray", function() {
             var data = {name: "fred"}
-            syncManager.queue = [new layer.Core.WebsocketSyncEvent({
+            syncManager.queue = [new Layer.Core.WebsocketSyncEvent({
                 data: data,
                 returnChangesArray: true
             })];
@@ -424,7 +424,7 @@ describe("The SyncManager Class", function() {
         });
 
         it("Should call xhr", function() {
-            syncManager.queue = [new layer.Core.XHRSyncEvent({
+            syncManager.queue = [new Layer.Core.XHRSyncEvent({
                 data: "fred",
                 url: "fred2",
                 method: "PATCH"
@@ -440,7 +440,7 @@ describe("The SyncManager Class", function() {
         });
 
         it("Should set firing to true", function() {
-            syncManager.queue = [new layer.Core.WebsocketSyncEvent({
+            syncManager.queue = [new Layer.Core.WebsocketSyncEvent({
                 data: {name: "fred"}
             })];
             expect(syncManager.queue[0].isFiring).toBe(false);
@@ -454,7 +454,7 @@ describe("The SyncManager Class", function() {
 
         it("Should only allow one call to be within _validateRequest", function() {
             spyOn(syncManager, "_validateRequest");
-            syncManager.queue = [new layer.Core.WebsocketSyncEvent({
+            syncManager.queue = [new Layer.Core.WebsocketSyncEvent({
                 data: {name: "fred"}
             })];
 
@@ -471,7 +471,7 @@ describe("The SyncManager Class", function() {
 
         it("Should call abort if isDestroyed", function() {
             var data = {name: "fred"}
-            syncManager.queue = [new layer.Core.WebsocketSyncEvent({
+            syncManager.queue = [new Layer.Core.WebsocketSyncEvent({
                 data: data
             })];
             spyOn(syncManager.requestManager, "sendRequest");
@@ -487,7 +487,7 @@ describe("The SyncManager Class", function() {
 
         it("Should call abort if not authenticated", function() {
             var data = {name: "fred"}
-            syncManager.queue = [new layer.Core.WebsocketSyncEvent({
+            syncManager.queue = [new Layer.Core.WebsocketSyncEvent({
                 data: data
             })];
             spyOn(syncManager.requestManager, "sendRequest");
@@ -507,7 +507,7 @@ describe("The SyncManager Class", function() {
                 method: "POST",
                 sync: {}
             });
-            syncManager.queue = [new layer.Core.XHRSyncEvent({
+            syncManager.queue = [new Layer.Core.XHRSyncEvent({
                 data: "fred",
                 url: "fred2",
                 method: "PATCH"
@@ -532,14 +532,14 @@ describe("The SyncManager Class", function() {
         });
         it("Should fire up to 5 receiptRequests", function() {
             syncManager.receiptQueue = [
-                new layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
-                new layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
-                new layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
-                new layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
-                new layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
-                new layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
-                new layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
-                new layer.Core.XHRSyncEvent({operation: "RECEIPT"})
+                new Layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
+                new Layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
+                new Layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
+                new Layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
+                new Layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
+                new Layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
+                new Layer.Core.XHRSyncEvent({operation: "RECEIPT"}),
+                new Layer.Core.XHRSyncEvent({operation: "RECEIPT"})
             ];
 
             // Run
@@ -560,7 +560,7 @@ describe("The SyncManager Class", function() {
 
     describe("The _xhrResult() method", function() {
         beforeEach(function() {
-            syncManager.queue = [new layer.Core.XHRSyncEvent({
+            syncManager.queue = [new Layer.Core.XHRSyncEvent({
                 data: "fred",
                 url: "fred2",
                 method: "PATCH"
@@ -609,7 +609,7 @@ describe("The SyncManager Class", function() {
 
     describe("The _handleDeduplicationErrors() method", function() {
       beforeEach(function() {
-          syncManager.queue = [new layer.Core.WebsocketSyncEvent({
+          syncManager.queue = [new Layer.Core.WebsocketSyncEvent({
               data: {
                 method: 'Message.create',
                 data: {
@@ -699,7 +699,7 @@ describe("The SyncManager Class", function() {
     describe("The _xhrSuccess() method", function() {
         var evt;
         beforeEach(function() {
-            evt = new layer.Core.XHRSyncEvent({
+            evt = new Layer.Core.XHRSyncEvent({
                 target: "fred"
             });
             syncManager.queue = [evt];
@@ -795,7 +795,7 @@ describe("The SyncManager Class", function() {
         beforeEach(function() {
             syncManager.onlineManager.isOnline = true;
             client._clientReady();
-            request = new layer.Core.XHRSyncEvent({
+            request = new Layer.Core.XHRSyncEvent({
                 operation: "PATCH",
                 target: "fred"
             });
@@ -965,7 +965,7 @@ describe("The SyncManager Class", function() {
         var request, result;
         beforeEach(function() {
             syncManager.onlineManager.isOnline = true;
-            request = new layer.Core.SyncEvent({
+            request = new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 target: "fred"
             });
@@ -1040,7 +1040,7 @@ describe("The SyncManager Class", function() {
         beforeEach(function() {
             syncManager.onlineManager.isOnline = true;
             client._clientReady();
-            request = new layer.Core.XHRSyncEvent({
+            request = new Layer.Core.XHRSyncEvent({
                 operation: "PATCH",
                 target: "fred",
                 callback: jasmine.createSpy("callback")
@@ -1131,7 +1131,7 @@ describe("The SyncManager Class", function() {
                 func(true);
             });
             spyOn(syncManager, "_xhrValidateIsOnlineCallback");
-            var request = new layer.Core.SyncEvent({});
+            var request = new Layer.Core.SyncEvent({});
             syncManager._xhrValidateIsOnline(request);
             expect(syncManager._xhrValidateIsOnlineCallback).toHaveBeenCalledWith(true, request);
         });
@@ -1142,7 +1142,7 @@ describe("The SyncManager Class", function() {
         beforeEach(function() {
             syncManager.onlineManager.isOnline = true;
             client._clientReady();
-            request = new layer.Core.XHRSyncEvent({
+            request = new Layer.Core.XHRSyncEvent({
                 operation: "PATCH",
                 target: "fred"
             });
@@ -1174,7 +1174,7 @@ describe("The SyncManager Class", function() {
         var request;
         beforeEach(function() {
             syncManager.onlineManager.isOnline = true;
-            request = new layer.Core.SyncEvent({
+            request = new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 target: "fred"
             });
@@ -1196,7 +1196,7 @@ describe("The SyncManager Class", function() {
         });
 
         it("Should do nothing if request not in the queue", function() {
-            var request2 = new layer.Core.SyncEvent({
+            var request2 = new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 target: "fred"
             });
@@ -1221,15 +1221,15 @@ describe("The SyncManager Class", function() {
         var request1, request2, request3;
         beforeEach(function() {
             syncManager.onlineManager.isOnline = true;
-            request1 = new layer.Core.SyncEvent({
+            request1 = new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 depends: ["fred"]
             });
-            request2 = new layer.Core.SyncEvent({
+            request2 = new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 depends: ["freud"]
             });
-            request3 = new layer.Core.SyncEvent({
+            request3 = new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 depends: ["freud", "fred"]
             });
@@ -1237,12 +1237,12 @@ describe("The SyncManager Class", function() {
         });
 
         it("Should remove all requests that share the target", function() {
-            syncManager._purgeDependentRequests(new layer.Core.SyncEvent({target: "fred"}));
+            syncManager._purgeDependentRequests(new Layer.Core.SyncEvent({target: "fred"}));
             expect(syncManager.queue).toEqual([request2]);
         });
 
         it("Should leave unrelated requests untouched", function() {
-            syncManager._purgeDependentRequests(new layer.Core.SyncEvent({
+            syncManager._purgeDependentRequests(new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 target: "jill"
             }));
@@ -1254,22 +1254,22 @@ describe("The SyncManager Class", function() {
         var request1, request2, request3;
         beforeEach(function() {
             syncManager.onlineManager.isOnline = true;
-            request1 = new layer.Core.SyncEvent({
+            request1 = new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 depends: ["fred"]
             });
-            request2 = new layer.Core.SyncEvent({
+            request2 = new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 depends: ["freud", "frozone"]
             });
-            request3 = new layer.Core.SyncEvent({
+            request3 = new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 depends: ["fred", "freud"]
             });
             syncManager.queue = [request1, request2, request3];
         });
         it("Should remove all requests that depend upon the target of the input request", function() {
-            syncManager._purgeOnDelete(new layer.Core.SyncEvent({
+            syncManager._purgeOnDelete(new Layer.Core.SyncEvent({
                 operation: "PATCH",
                 target: "fred"
             }));
@@ -1283,12 +1283,12 @@ describe("The SyncManager Class", function() {
 
       it("Should append to the queue", function() {
         // Setup
-        var request = new layer.Core.XHRSyncEvent({
+        var request = new Layer.Core.XHRSyncEvent({
             operation: "PATCH",
             depends: ["fred"],
             url: ''
         });
-        var request2 = new layer.Core.XHRSyncEvent({
+        var request2 = new Layer.Core.XHRSyncEvent({
             operation: "PATCH",
             depends: ["fred2"],
             url: ''
@@ -1307,12 +1307,12 @@ describe("The SyncManager Class", function() {
 
       it("Should call processNextRequest", function() {
         // Setup
-        var request = new layer.Core.XHRSyncEvent({
+        var request = new Layer.Core.XHRSyncEvent({
             operation: "PATCH",
             depends: ["fred"],
             url: ''
         });
-        var request2 = new layer.Core.XHRSyncEvent({
+        var request2 = new Layer.Core.XHRSyncEvent({
             operation: "PATCH",
             depends: ["fred2"],
             url: ''

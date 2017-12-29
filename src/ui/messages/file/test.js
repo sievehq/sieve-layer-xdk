@@ -29,8 +29,8 @@ describe('File Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
+    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -72,7 +72,7 @@ describe('File Message Components', function() {
 
   afterEach(function() {
     if (client) client.destroy();
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 

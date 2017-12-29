@@ -42,7 +42,7 @@ describe("The Websocket Socket Manager Class", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
             sessionOwner: true
         });
@@ -83,14 +83,14 @@ describe("The Websocket Socket Manager Class", function() {
 
     describe("The constructor() method", function() {
         it("Should return a WebsocketManager", function() {
-            expect(new layer.Core.Websockets.SocketManager({
+            expect(new Layer.Core.Websockets.SocketManager({
                 client: client
             })).toEqual(jasmine.any(Layer.Core.Websockets.SocketManager));
         });
 
         it("Should throw an error if no client", function() {
             expect(function() {
-                new layer.Core.Websockets.SocketManager({});
+                new Layer.Core.Websockets.SocketManager({});
             }).toThrow();
         });
 
@@ -100,7 +100,7 @@ describe("The Websocket Socket Manager Class", function() {
             client.isAuthenticated = true;
 
             // Run
-            new layer.Core.Websockets.SocketManager({
+            new Layer.Core.Websockets.SocketManager({
                 client: client
             });
 
@@ -117,7 +117,7 @@ describe("The Websocket Socket Manager Class", function() {
             client.isAuthenticated = false;
 
             // Run
-            new layer.Core.Websockets.SocketManager({
+            new Layer.Core.Websockets.SocketManager({
                 client: client
             });
 
@@ -562,11 +562,11 @@ describe("The Websocket Socket Manager Class", function() {
         it("Should require a timestamp", function() {
             expect(function() {
                 websocketManager.resync(false);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
             expect(function() {
                 websocketManager.resync();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
             expect(function() {
                 websocketManager.resync(new Date().toISOString());
@@ -1092,7 +1092,7 @@ describe("The Websocket Socket Manager Class", function() {
 
     describe("The destroy() method", function() {
         afterEach(function() {
-          websocketManager = client.socketManager = new layer.Core.Websockets.SocketManager({client: client});
+          websocketManager = client.socketManager = new Layer.Core.Websockets.SocketManager({client: client});
         });
         it("Should call close", function() {
             spyOn(websocketManager, "close");

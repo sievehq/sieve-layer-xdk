@@ -3,7 +3,7 @@ import layerUI from '../base';
 /**
  * Call this function to initialize all of the react components needed to handle the Layer UI for Web widgets.
  *
- * Before using this, please note that layer.UI.init() must be called prior to calling layerUI.adapters.react().
+ * Before using this, please note that Layer.UI.init() must be called prior to calling layerUI.adapters.react().
  *
  * Initialize with:
  *
@@ -16,11 +16,11 @@ import layerUI from '../base';
  * Calling this will expose the following React Components:
  *
  * * ConversationPanel: A wrapper around a Layer.UI.components.ConversationView
- * * ConversationsList: A wrapper around a layer.UI.components.ConversationsListPanel
- * * IdentitiesList: A wrapper around a layer.UI.components.IdentityListPanel
- * * Notifier: A wrapper around a layer.UI.components.misc.Notifier
- * * SendButton: A wrapper around a layer.UI.components.SendButton
- * * FileUploadButton: A wrapper around a layer.UI.components.FileUploadButton
+ * * ConversationsList: A wrapper around a Layer.UI.components.ConversationsListPanel
+ * * IdentitiesList: A wrapper around a Layer.UI.components.IdentityListPanel
+ * * Notifier: A wrapper around a Layer.UI.components.misc.Notifier
+ * * SendButton: A wrapper around a Layer.UI.components.SendButton
+ * * FileUploadButton: A wrapper around a Layer.UI.components.FileUploadButton
  *
  * You can then use:
  *
@@ -52,7 +52,7 @@ import layerUI from '../base';
  * Now anywhere you need access to the LayerUIWidgets library can import this module and expect everything to
  * evaluate at the correct time, correct order, and only evaluate once.
  *
- * @class layer.UI.adapters.react
+ * @class Layer.UI.adapters.react
  * @singleton
  * @param {Object} React - Pass in the reactJS library
  * @param {Object} ReactDom - Pass in the ReactDom library

@@ -4,11 +4,11 @@
  * This class manages all indexedDB access.  It is not responsible for any localStorage access, though it may
  * receive configurations related to data stored in localStorage.  It will simply ignore those configurations.
  *
- * Rich Content will be written to IndexedDB as long as its small; see layer.Core.DbManager.MaxPartSize for more info.
+ * Rich Content will be written to IndexedDB as long as its small; see Layer.Core.DbManager.MaxPartSize for more info.
  *
  * TODO:
  * 0. Redesign this so that knowledge of the data is not hard-coded in
- * @class layer.Core.DbManager
+ * @class Layer.Core.DbManager
  * @protected
  */
 
@@ -61,13 +61,13 @@ class DbManager extends Root {
   /**
    * Create the DB Manager
    *
-   * Key configuration is the layer.Core.DbManager.persistenceFeatures property.
+   * Key configuration is the Layer.Core.DbManager.persistenceFeatures property.
    *
    * @method constructor
    * @param {Object} options
    * @param {Layer.Core.Client} options.client
    * @param {Object} options.persistenceFeatures
-   * @return {layer.Core.DbManager} this
+   * @return {Layer.Core.DbManager} this
    */
   constructor(options) {
     super(options);
@@ -1342,7 +1342,7 @@ DbManager.prototype.db = null;
  *
  * This value can be customized; this example only writes Rich Content that is less than 5000 bytes
  *
- *    layer.Core.DbManager.MaxPartSize = 5000;
+ *    Layer.Core.DbManager.MaxPartSize = 5000;
  *
  * @static
  * @property {Number}

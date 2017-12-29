@@ -1,5 +1,5 @@
 /**
- * @class layer.UI
+ * @class Layer.UI
  * @static
  *
  * The layerUI contains utilities for working with the layerUI components.
@@ -7,24 +7,24 @@
  * The key method to know here is the `init()` method.  Any use of the library will need a call:
  *
  * ```
- * layer.UI.init({
+ * Layer.UI.init({
  *   appId: 'layer:///apps/staging/my-app-id'
  * });
  * ```
  *
  * Or
  *
- * layer.UI.init({
+ * Layer.UI.init({
  *   appId: 'layer:///apps/staging/my-app-id'
  * });
  * ```
  *
- * See layerUI.settings for more options to layer.UI.init.
+ * See layerUI.settings for more options to Layer.UI.init.
  *
  * One other property deserving special mention: layerUI.adapters.  Adapters help you to use these widgets within other UI frameworks.
  * It is not required to use an adapter, but it solves many inconsistencies in how these frameworks handle webcomponents built using this framework.
  *
- * While there are many other methods defined here, for new projects ignore everything except layerUI.settings, layer.UI.init and layerUI.adapters.
+ * While there are many other methods defined here, for new projects ignore everything except layerUI.settings, Layer.UI.init and layerUI.adapters.
  */
 import Layer from '../core';
 import Util from '../util';
@@ -48,7 +48,7 @@ const layerUI = {
 /**
  * The settings object stores a hash of configurable properties to change widget Behaviors.
  *
- * The settings object is typically set using layer.UI.init().
+ * The settings object is typically set using Layer.UI.init().
  *
  * Below are the available settings and their defintions.
  *
@@ -134,7 +134,7 @@ layerUI._setupOrderedHandlers = function() {
 /**
  * Removes tags from strings before rendering.
  *
- * This prevents <script /> tags from being added via a Message.
+ * This prevents `<script />` tags from being added via a Message.
  *
  * @method sanitizeText
  * @param {String} text
@@ -337,7 +337,7 @@ layerUI.addListItemSeparator = function addListItemSeparator(listItemNode, conte
  *
  * @property {Object} adapters
  */
-const adapterError = 'You must call layer.UI.init() before you can use an adapter';
+const adapterError = 'You must call Layer.UI.init() before you can use an adapter';
 layerUI.adapters = {
   angular: () => {
     throw new Error(adapterError);
@@ -500,7 +500,7 @@ layerUI.registerMessageActionHandler = function registerMessageActionHandler(act
  * </template>
  * < script >
  *    // Register the template in this *.html file to be the layer-avatar template.
- *    window.layer.UI.registerTemplate('layer-avatar')
+ *    window.Layer.UI.registerTemplate('layer-avatar')
  * </script>
  *
  * ```
@@ -641,12 +641,12 @@ layerUI.showFullScreen = url => window.open(url);
  * prior to putting any webcomponents into your document.
  *
  * ```javascript
- * layer.UI.init({
+ * Layer.UI.init({
  *   appId: 'layer:///apps/staging/my-app-id'
  * });
  * ```
  *
- * See layerUI.settings for more options to layer.UI.init.
+ * See layerUI.settings for more options to Layer.UI.init.
  *
  * @method init
  * @static

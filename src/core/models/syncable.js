@@ -3,11 +3,11 @@
  * This is currently used for Messages and Conversations.
  * It represents the state of the object's sync, as one of:
  *
- *  * layer.Constants.SYNC_STATE.NEW: Newly created; local only.
- *  * layer.Constants.SYNC_STATE.SAVING: Newly created; being sent to the server
- *  * layer.Constants.SYNC_STATE.SYNCING: Exists on both client and server, but changes are being sent to server.
- *  * layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
- *  * layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
+ *  * Layer.Constants.SYNC_STATE.NEW: Newly created; local only.
+ *  * Layer.Constants.SYNC_STATE.SAVING: Newly created; being sent to the server
+ *  * Layer.Constants.SYNC_STATE.SYNCING: Exists on both client and server, but changes are being sent to server.
+ *  * Layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
+ *  * Layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
  *
  * @class Layer.Core.Syncable
  * @extends Layer.Core.Root
@@ -411,11 +411,11 @@ Syncable.prototype._fromDB = false;
  *
  * Possible values are:
  *
- *  * layer.Constants.SYNC_STATE.NEW: Newly created; local only.
- *  * layer.Constants.SYNC_STATE.SAVING: Newly created; being sent to the server
- *  * layer.Constants.SYNC_STATE.SYNCING: Exists on both client and server, but changes are being sent to server.
- *  * layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
- *  * layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
+ *  * Layer.Constants.SYNC_STATE.NEW: Newly created; local only.
+ *  * Layer.Constants.SYNC_STATE.SAVING: Newly created; being sent to the server
+ *  * Layer.Constants.SYNC_STATE.SYNCING: Exists on both client and server, but changes are being sent to server.
+ *  * Layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
+ *  * Layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
  *
  * @property {string}
  */

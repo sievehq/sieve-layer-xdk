@@ -24,7 +24,7 @@ import layerUI from '../base';
  *   Now you can put `<layer-conversation-view>` and other widgets into angular templates and expect them to work.
  *   Prefix ALL property names with `ng-` to insure that scope is evaluated prior to passing the value on to the webcomponent.
  *
- * @class layer.UI.adapters.angular
+ * @class Layer.UI.adapters.angular
  * @singleton
  * @param {Object} angular     Pass in the AngularJS library
  */

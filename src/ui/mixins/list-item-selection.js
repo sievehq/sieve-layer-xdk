@@ -1,11 +1,17 @@
 /**
  * A List Item Mixin that adds an {@link #isSelected} property to a List.
  *
- * @class layer.UI.mixins.ListItemSelection
+ * @class Layer.UI.mixins.ListItemSelection
  */
 
 module.exports = {
   properties: {
+
+    /**
+     * Is this list item selected?
+     *
+     * @property {Boolean} [isSelected=false]
+     */
     isSelected: {
       type: Boolean,
       set(value) {

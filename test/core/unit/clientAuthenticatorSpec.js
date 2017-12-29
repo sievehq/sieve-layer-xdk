@@ -26,7 +26,7 @@ describe("The Client Authenticator Class", function() {
             reset: true,
             url: "https://duh.com"
         });
-        spyOn(layer.Core.Syncable.prototype, "getClient").and.returnValue(client);
+        spyOn(Layer.Core.Syncable.prototype, "getClient").and.returnValue(client);
 
         userIdentity = new Layer.Core.Identity({
           clientId: client.appId,
@@ -40,7 +40,7 @@ describe("The Client Authenticator Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -71,8 +71,8 @@ describe("The Client Authenticator Class", function() {
                     appId: "",
                     url: "https://duh.com"
                 });
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.appIdMissing);
-            expect(layer.Core.LayerError.ErrorDictionary.appIdMissing.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.appIdMissing);
+            expect(Layer.Core.LayerError.ErrorDictionary.appIdMissing.length > 0).toBe(true);
         });
 
          it("Should allow customization of the websocketUrl", function() {
@@ -141,17 +141,17 @@ describe("The Client Authenticator Class", function() {
                 client._clientAuthenticated();
             });
            it("Should return null if the localStorage data is removed", function() {
-               localStorage.removeItem(layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId);
+               localStorage.removeItem(Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId);
                expect(client._restoreLastUser()).toBe(null);
            });
 
            it("Should return null if the localStorage data is corrupted", function() {
-               localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = {};
+               localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = {};
                expect(client._restoreLastUser()).toBe(null);
            });
 
            it("Should return an Identity", function() {
-               localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+               localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                    user: {
                         id: 'layer:///identities/FrodoTheDodo',
                         user_id: 'FrodoTheDodo',
@@ -173,7 +173,7 @@ describe("The Client Authenticator Class", function() {
         describe("The _restoreLastSession() method", function () {
             it("Should do nothing if persistence is disabled", function () {
                 // Setup
-                localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+                localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                     userId: 'FrodoTheDodo',
                     sessionToken: 'fred',
                     expires: Date.now() + 10000000
@@ -189,7 +189,7 @@ describe("The Client Authenticator Class", function() {
 
             it("Should do nothing if no data", function () {
                 // Setup
-                localStorage.removeItem([layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
+                localStorage.removeItem([Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
                 spyOn(client, "_isPersistedSessionsDisabled").and.returnValue(false);
 
                 // Run
@@ -201,7 +201,7 @@ describe("The Client Authenticator Class", function() {
 
             it("Should set the sessionToken if present and not expired", function () {
                 // Setup
-                localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+                localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                     userId: 'FrodoTheDodo',
                     sessionToken: 'fred',
                     expires: Date.now() + 10000000
@@ -218,7 +218,7 @@ describe("The Client Authenticator Class", function() {
 
             it("Should not set the sessionToken if present and expired but should delete it", function () {
                 // Setup
-                localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+                localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                     userId: 'FrodoTheDodo',
                     sessionToken: 'fred',
                     expires: Date.now() - 100
@@ -231,12 +231,12 @@ describe("The Client Authenticator Class", function() {
 
                 // Posttest
                 expect(client.sessionToken).toEqual('');
-                expect(localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
+                expect(localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
             });
 
             it("Should not set the sessionToken if present and persitence disabled", function () {
                 // Setup
-                localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+                localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                     userId: 'FrodoTheDodo',
                     sessionToken: 'fred'
                 });
@@ -254,7 +254,7 @@ describe("The Client Authenticator Class", function() {
         describe("The _hasUserIdChanged() method", function () {
             it("Should find the useId for this appId and return false if it matches the input userId", function () {
                 // Setup
-                localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+                localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                     user: {
                         user_id: 'FrodoTheDodo',
                         id: 'layer:///identities/FrodoTheDodo'
@@ -269,7 +269,7 @@ describe("The Client Authenticator Class", function() {
 
             it("Should return true if there is no session data", function () {
                 // Setup
-                localStorage.removeItem([layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
+                localStorage.removeItem([Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
 
                 // Run
                 expect(client._hasUserIdChanged('FrodoTheDodo')).toBe(true);
@@ -277,7 +277,7 @@ describe("The Client Authenticator Class", function() {
 
             it("Should return true if the user object is missing from the session data", function () {
                 // Setup
-                localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+                localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                     userId: 'FrodoTheDodo',
                     sessionToken: '',
                     expires: Date.now() + 10000000
@@ -289,7 +289,7 @@ describe("The Client Authenticator Class", function() {
 
             it("Should return true if there is a change in userId from the session data", function () {
                 // Setup
-                localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+                localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                     user: {
                         user_id: 'Samwise',
                         id: 'layer:///identities/FrodoTheDodo'
@@ -549,11 +549,11 @@ describe("The Client Authenticator Class", function() {
             it("Should throw errors if no userId or sessionToken", function () {
                 expect(function () {
                     client.connectWithSession('', 'sessionToken');
-                }).toThrowError(layer.Core.LayerError.ErrorDictionary.sessionAndUserRequired);
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.sessionAndUserRequired);
 
                 expect(function () {
                     client.connectWithSession('userId', '');
-                }).toThrowError(layer.Core.LayerError.ErrorDictionary.sessionAndUserRequired);
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.sessionAndUserRequired);
             });
 
             it("Should call _restoreLastUser and set the user with the result", function() {
@@ -749,7 +749,7 @@ describe("The Client Authenticator Class", function() {
         describe("The _connectionError() method", function () {
             it("Should trigger connected-error", function () {
                 // Setup
-                var response = new layer.Core.LayerError(responses.error1);
+                var response = new Layer.Core.LayerError(responses.error1);
                 spyOn(client, "trigger");
 
                 // Run
@@ -838,8 +838,8 @@ describe("The Client Authenticator Class", function() {
             it("Should fail without an identityToken", function () {
                 expect(function () {
                     client.answerAuthenticationChallenge();
-                }).toThrowError(layer.Core.LayerError.ErrorDictionary.identityTokenMissing);
-                expect(layer.Core.LayerError.ErrorDictionary.identityTokenMissing.length > 0).toBe(true);
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.identityTokenMissing);
+                expect(Layer.Core.LayerError.ErrorDictionary.identityTokenMissing.length > 0).toBe(true);
             });
 
             it("Should accept a userId if it matches the current userId", function () {
@@ -871,8 +871,8 @@ describe("The Client Authenticator Class", function() {
                 // Run
                 expect(function() {
                     client.answerAuthenticationChallenge(identityToken);
-                }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidUserIdChange)
-                expect(layer.Core.LayerError.ErrorDictionary.invalidUserIdChange).toEqual(jasmine.any(String));
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidUserIdChange)
+                expect(Layer.Core.LayerError.ErrorDictionary.invalidUserIdChange).toEqual(jasmine.any(String));
             });
 
             it("Should call _setUserId", function () {
@@ -996,7 +996,7 @@ describe("The Client Authenticator Class", function() {
 
             it("Should write localStorage if _isPersistedSessionsDisabled is false and fromPersistence is false", function () {
                 // Setup
-                localStorage.removeItem([layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
+                localStorage.removeItem([Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
                 spyOn(client, "_isPersistedSessionsDisabled").and.returnValue(false);
                 client.user._setUserId("FrodoTheDodo");
                 client.user.displayName = 'Frodo the Dodo';
@@ -1008,7 +1008,7 @@ describe("The Client Authenticator Class", function() {
                 }, false);
 
                 // Posttest
-                expect(JSON.parse(localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId])).toEqual({
+                expect(JSON.parse(localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId])).toEqual({
                     sessionToken: "sessionToken",
                     user: jasmine.objectContaining({
                         user_id: "FrodoTheDodo",
@@ -1022,7 +1022,7 @@ describe("The Client Authenticator Class", function() {
 
             it("Should ignore localStorage if _isPersistedSessionsDisabled is true", function () {
                 // Setup
-                localStorage.removeItem([layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
+                localStorage.removeItem([Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
                 spyOn(client, "_isPersistedSessionsDisabled").and.returnValue(true);
                 client.__userId = "FrodoTheDodo";
 
@@ -1032,12 +1032,12 @@ describe("The Client Authenticator Class", function() {
                 }, false);
 
                 // Posttest
-                expect(localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
+                expect(localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
             });
 
             it("Should ignore localStorage if fromPersistence is true", function () {
                 // Setup
-                localStorage.removeItem([layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
+                localStorage.removeItem([Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]);
                 spyOn(client, "_isPersistedSessionsDisabled").and.returnValue(false);
                 client.__userId = "FrodoTheDodo";
 
@@ -1047,7 +1047,7 @@ describe("The Client Authenticator Class", function() {
                 }, true);
 
                 // Posttest
-                expect(localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
+                expect(localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
             });
 
         });
@@ -1090,8 +1090,8 @@ describe("The Client Authenticator Class", function() {
 
             it("Should call _clientReady after DB open if isTrustedDevice and isPersitenceEnabled", function () {
                 // Setup
-                var onOpen = layer.Core.DbManager.prototype.onOpen;
-                spyOn(layer.Core.DbManager.prototype, "onOpen").and.callFake(function (callback) {
+                var onOpen = Layer.Core.DbManager.prototype.onOpen;
+                spyOn(Layer.Core.DbManager.prototype, "onOpen").and.callFake(function (callback) {
                     setTimeout(function () {
                         callback();
                     }, 10);
@@ -1109,7 +1109,7 @@ describe("The Client Authenticator Class", function() {
                 expect(client._clientReady).toHaveBeenCalled();
 
                 // Cleanup
-                layer.Core.DbManager.prototype.onOpen = onOpen;
+                Layer.Core.DbManager.prototype.onOpen = onOpen;
             });
 
             it("Should initialize the dbManager to all disabled if not isTrustedDevice and isPersitenceEnabled", function () {
@@ -1122,7 +1122,7 @@ describe("The Client Authenticator Class", function() {
                 client._clientAuthenticated();
 
                 // Posttest
-                expect(client.dbManager).toEqual(jasmine.any(layer.Core.DbManager));
+                expect(client.dbManager).toEqual(jasmine.any(Layer.Core.DbManager));
                 expect(client.dbManager._permission_conversations).toBe(false);
                 expect(client.dbManager._permission_messages).toBe(false);
                 expect(client.dbManager._permission_syncQueue).toBe(false);
@@ -1146,7 +1146,7 @@ describe("The Client Authenticator Class", function() {
                 client._clientAuthenticated();
 
                 // Posttest
-                expect(client.dbManager).toEqual(jasmine.any(layer.Core.DbManager));
+                expect(client.dbManager).toEqual(jasmine.any(Layer.Core.DbManager));
                 expect(client.dbManager._permission_conversations).toBe(false);
                 expect(client.dbManager._permission_messages).toBe(false);
                 expect(client.dbManager._permission_identities).toBe(false);
@@ -1164,7 +1164,7 @@ describe("The Client Authenticator Class", function() {
                 client._clientAuthenticated();
 
                 // Posttest
-                expect(client.dbManager).toEqual(jasmine.any(layer.Core.DbManager));
+                expect(client.dbManager).toEqual(jasmine.any(Layer.Core.DbManager));
                 expect(client.dbManager._permission_conversations).toBe(false);
                 expect(client.dbManager._permission_messages).toBe(false);
                 expect(client.dbManager._permission_syncQueue).toBe(false);
@@ -1189,7 +1189,7 @@ describe("The Client Authenticator Class", function() {
                 client._clientAuthenticated();
 
                 // Posttest
-                expect(client.dbManager).toEqual(jasmine.any(layer.Core.DbManager));
+                expect(client.dbManager).toEqual(jasmine.any(Layer.Core.DbManager));
                 expect(client.dbManager._permission_conversations).toBe(true);
                 expect(client.dbManager._permission_messages).toBe(false);
                 expect(client.dbManager._permission_identities).toBe(true);
@@ -1213,7 +1213,7 @@ describe("The Client Authenticator Class", function() {
                 client._clientAuthenticated();
 
                 // Posttest
-                expect(client.dbManager).toEqual(jasmine.any(layer.Core.DbManager));
+                expect(client.dbManager).toEqual(jasmine.any(Layer.Core.DbManager));
                 expect(client.dbManager._permission_conversations).toBe(false);
                 expect(client.dbManager._permission_messages).toBe(false);
                 expect(client.dbManager._permission_syncQueue).toBe(false);
@@ -1228,7 +1228,7 @@ describe("The Client Authenticator Class", function() {
                 client._clientAuthenticated();
 
                 // Posttest
-                expect(client.dbManager).toEqual(jasmine.any(layer.Core.DbManager));
+                expect(client.dbManager).toEqual(jasmine.any(Layer.Core.DbManager));
                 expect(client.dbManager._permission_conversations).toBe(false);
                 expect(client.dbManager._permission_messages).toBe(false);
                 expect(client.dbManager._permission_syncQueue).toBe(false);
@@ -1273,7 +1273,7 @@ describe("The Client Authenticator Class", function() {
             it("Should trigger an error event", function () {
                 // Setup
                 spyOn(client, "trigger");
-                var error = new layer.Core.LayerError(responses.error1);
+                var error = new Layer.Core.LayerError(responses.error1);
 
                 // Run
                 client._authError(error, identityToken);
@@ -1288,7 +1288,7 @@ describe("The Client Authenticator Class", function() {
 
         describe("The _loadUser() method", function() {
             beforeEach(function() {
-                localStorage.removeItem(layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId);
+                localStorage.removeItem(Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId);
                 spyOn(client, "_clientReady");
             });
 
@@ -1322,7 +1322,7 @@ describe("The Client Authenticator Class", function() {
                 // Setup
                 client.user.isFullIdentity = false;
                 spyOn(client, "_isPersistedSessionsDisabled").and.returnValue(false);
-                localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+                localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                    user: {
                         id: 'layer:///identities/FrodoTheDodo',
                         user_id: 'FrodoTheDodo',
@@ -1335,11 +1335,11 @@ describe("The Client Authenticator Class", function() {
                 client._loadUser();
                 client.user.__userId = 'FrodoAlaModo';
                 client.user.isFullIdentity = true;
-                client.user.syncState = layer.Constants.SYNC_STATE.SYNCED;
+                client.user.syncState = Layer.Constants.SYNC_STATE.SYNCED;
                 client.user.trigger('identities:loaded');
 
                 // Posttest
-                expect(JSON.parse(localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).user.user_id).toEqual('FrodoAlaModo');
+                expect(JSON.parse(localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).user.user_id).toEqual('FrodoAlaModo');
             });
 
             it("Should not write to persistence on identities:loaded if persisted sessions is disabled", function() {
@@ -1354,7 +1354,7 @@ describe("The Client Authenticator Class", function() {
                 client.user.trigger('identities:loaded');
 
                 // Posttest
-                expect(localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toEqual(undefined);;
+                expect(localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toEqual(undefined);;
             });
 
             it("Should call _clientReady on identities:loaded", function() {
@@ -1556,7 +1556,7 @@ describe("The Client Authenticator Class", function() {
 
             it("Should clear localStorage", function () {
                 // Setup
-                localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
+                localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = JSON.stringify({
                     userId: 'FrodoTheDodo',
                     sessionToken: 'fred',
                     expires: Date.now() + 10000000
@@ -1566,7 +1566,7 @@ describe("The Client Authenticator Class", function() {
                 client._clearStoredData();
 
                 // Posttest
-                expect(localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
+                expect(localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
             });
         });
 
@@ -1616,8 +1616,8 @@ describe("The Client Authenticator Class", function() {
                 client.isConnected = true;
                 expect(function () {
                     client.appId = "appId2";
-                }).toThrowError(layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);
-                expect(layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected.length > 0).toBe(true);
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);
+                expect(Layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected.length > 0).toBe(true);
             });
 
             it("Should not be possible to change user instances once connected", function () {
@@ -1626,14 +1626,14 @@ describe("The Client Authenticator Class", function() {
                     client.user = new Layer.Core.Identity({
                         clientId: client.appId
                     });
-                }).toThrowError(layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);
             });
 
             it("Should not be possible to change userIds", function () {
                 expect(client.user.userId.length > 0).toBe(true);
                 expect(function () {
                     client.user.userId = "userId2";
-                }).toThrowError(layer.Core.LayerError.ErrorDictionary.cantChangeUserId);
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.cantChangeUserId);
             });
         });
 

@@ -21,7 +21,7 @@
  * Note that the `predicate` property is only supported for Messages and Membership, and only supports
  * querying by Channel.
  *
- * @class  layer.MembersQuery
+ * @class  Layer.Core.MembersQuery
  * @extends Layer.Core.Query
  */
 import Root from '../root';

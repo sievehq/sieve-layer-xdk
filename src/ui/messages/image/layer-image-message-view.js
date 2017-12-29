@@ -51,7 +51,7 @@ registerComponent('layer-image-message-view', {
      *
      * This can be changed, but needs to be changed at intiialization time, not runtime.
      *
-     * @property {Nuber} [maxHeight=300]
+     * @property {Number} [maxHeight=300]
      */
     maxHeight: {
       value: 300,

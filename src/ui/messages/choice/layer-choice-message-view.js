@@ -73,7 +73,7 @@ registerComponent('layer-choice-message-view', {
   },
   methods: {
     /**
-     * Provide a CSS class to the <layer-titled-message-view-container /> to help it select an image to render.
+     * Provide a CSS class to the `<layer-titled-message-view-container />` to help it select an image to render.
      *
      * @method _getIconClass
      * @protected
@@ -83,7 +83,7 @@ registerComponent('layer-choice-message-view', {
     },
 
     /**
-     * Provide a title to the <layer-titled-message-view-container />.
+     * Provide a title to the `<layer-titled-message-view-container />`.
      *
      * @method _getTitle
      * @protected

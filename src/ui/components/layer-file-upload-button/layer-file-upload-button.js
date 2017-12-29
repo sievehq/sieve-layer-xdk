@@ -108,7 +108,7 @@ registerComponent('layer-file-upload-button', {
        *
        *    // Generate and send a message from the files
        *    var files = evt.detail.files;
-       *    var parts = files.map(file => new layer.Core.MessagePart({ body: file }));
+       *    var parts = files.map(file => new Layer.Core.MessagePart({ body: file }));
        *    conversation.createMessage({ parts }).send();
        * });
        * ```

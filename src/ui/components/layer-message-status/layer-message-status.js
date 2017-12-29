@@ -93,7 +93,7 @@ registerComponent('layer-message-status', {
      *
      * ```javascript
      * statusItem.messageStatusRenderer = function(message) {
-     *    return message.readStatus === layer.Constants.RECIPIENT_STATE.ALL ? 'read' : 'processing...';
+     *    return message.readStatus === Layer.Constants.RECIPIENT_STATE.ALL ? 'read' : 'processing...';
      * };
      * ```
      *

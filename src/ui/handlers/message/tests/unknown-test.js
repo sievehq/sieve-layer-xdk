@@ -37,7 +37,7 @@ describe("Unknown Handler", function() {
   });
 
   it("Should select unknown", function() {
-    var handler = layer.UI.getHandler(message);
+    var handler = Layer.UI.getHandler(message);
     expect(handler.tagName).toEqual('layer-message-unknown');
   });
 

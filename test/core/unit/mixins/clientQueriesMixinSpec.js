@@ -43,7 +43,7 @@ describe("The Client Queries Mixin", function() {
           client.user = new Layer.Core.Identity({
               userId: client.userId,
               displayName: "Frodo2",
-              syncState: layer.Constants.SYNC_STATE.LOADING,
+              syncState: Layer.Constants.SYNC_STATE.LOADING,
               clientId: client.appId,
 
           });
@@ -138,8 +138,8 @@ describe("The Client Queries Mixin", function() {
         it("Should throw an error if an invalid id is passed in", function() {
             expect(function() {
                 client.getQuery(5);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
-            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toEqual(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(Layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toEqual(true);
         });
 
         it("Should return a Query if it exists", function() {

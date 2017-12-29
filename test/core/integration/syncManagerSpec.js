@@ -25,7 +25,7 @@ describe("SyncManager Integration Tests", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
             sessionOwner: true
         });
@@ -35,7 +35,7 @@ describe("SyncManager Integration Tests", function() {
         requests.reset();
         client.syncManager.queue = [];
         jasmine.clock().tick(1);
-        syncManager = new layer.Core.SyncManager({
+        syncManager = new Layer.Core.SyncManager({
             client: client,
             onlineManager: client.onlineManager,
             socketManager: client.socketManager,
@@ -49,7 +49,7 @@ describe("SyncManager Integration Tests", function() {
             close: function() {},
             readyState: WebSocket.OPEN
         };
-        request = new layer.Core.XHRSyncEvent({
+        request = new Layer.Core.XHRSyncEvent({
             method: "POST",
             data: {hey: "ho"},
             target: "fred",

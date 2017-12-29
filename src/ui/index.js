@@ -127,5 +127,5 @@ LayerUI.mixins = {
   Throttler,
 };
 
-// If we don't expose global.layerUI then custom templates can not load and call window.layer.UI.registerTemplate()
+// If we don't expose global.layerUI then custom templates can not load and call window.Layer.UI.registerTemplate()
 module.exports = LayerUI;

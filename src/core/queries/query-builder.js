@@ -474,7 +474,7 @@ class IdentitiesQuery {
 const QueryBuilder = {
 
   /**
-   * Create a new Layer.Core.MessagesQuery instance.
+   * Create a new Layer.Core.Core.MessagesQuery instance.
    *
    * @method messages
    * @static
@@ -485,7 +485,7 @@ const QueryBuilder = {
   },
 
   /**
-   * Create a new Layer.Core.AnnouncementsQuery instance.
+   * Create a new Layer.Core.Core.AnnouncementsQuery instance.
    *
    * @method announcements
    * @static
@@ -496,7 +496,7 @@ const QueryBuilder = {
   },
 
   /**
-   * Create a new Layer.Core.ConversationsQuery instance.
+   * Create a new Layer.Core.Core.ConversationsQuery instance.
    *
    * @method conversations
    * @static
@@ -507,7 +507,7 @@ const QueryBuilder = {
   },
 
   /**
-   * Create a new Layer.Core.ChannelsQuery instance.
+   * Create a new Layer.Core.Core.ChannelsQuery instance.
    *
    * @method channels
    * @static
@@ -518,7 +518,7 @@ const QueryBuilder = {
   },
 
   /**
-   * Create a new layer.MembersQuery instance.
+   * Create a new Layer.Core.MembersQuery instance.
    *
    * @method members
    * @static
@@ -529,7 +529,7 @@ const QueryBuilder = {
   },
 
   /**
-   * Create a new layer.IdentitiesQuery instance.
+   * Create a new Layer.Core.IdentitiesQuery instance.
    *
    * @method identities
    * @static

@@ -50,7 +50,7 @@ function deleteTables(done) {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
             sessionOwner: true
         });
@@ -82,7 +82,7 @@ function deleteTables(done) {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true
         });
         basicIdentity = new Layer.Core.Identity({
@@ -133,7 +133,7 @@ function deleteTables(done) {
         it("Should fail if no client or clientId", function() {
           expect(function() {
             new Layer.Core.Identity({});
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
         });
 
         it("Should work if client", function() {
@@ -450,15 +450,15 @@ function deleteTables(done) {
         it("Should reject invalid status values", function() {
           expect(function() {
             client.user.setStatus("afraid");
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
           expect(function() {
             client.user.setStatus("");
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
           expect(function() {
             client.user.setStatus(null);
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.valueNotSupported);
         });
 
         it("Should send the specified presence update", function() {
@@ -568,7 +568,7 @@ function deleteTables(done) {
 
         it("Should leave syncState as LOADING", function() {
           basicIdentity.follow();
-          expect(basicIdentity.syncState).toEqual(layer.Constants.SYNC_STATE.LOADING);
+          expect(basicIdentity.syncState).toEqual(Layer.Constants.SYNC_STATE.LOADING);
         });
       });
 
@@ -697,13 +697,13 @@ function deleteTables(done) {
       });
 
       it("Should call parent destroy", function() {
-        var tmp = layer.Core.Syncable.prototype.destroy;
-        spyOn(layer.Core.Syncable.prototype, "destroy");
+        var tmp = Layer.Core.Syncable.prototype.destroy;
+        spyOn(Layer.Core.Syncable.prototype, "destroy");
         identity.destroy();
-        expect(layer.Core.Syncable.prototype.destroy).toHaveBeenCalledWith();
+        expect(Layer.Core.Syncable.prototype.destroy).toHaveBeenCalledWith();
 
         // Restore
-        layer.Core.Syncable.prototype.destroy = tmp;
+        Layer.Core.Syncable.prototype.destroy = tmp;
       });
     });
 });

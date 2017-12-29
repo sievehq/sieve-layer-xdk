@@ -54,7 +54,7 @@ registerComponent('layer-conversation-item', {
      *
      * By default, only text/plain last-messages are fully rendered in the Conversation List.
      *
-     * All other messages are rendered using the `label` passed in with their layer.UI.registerMessageHandler call.
+     * All other messages are rendered using the `label` passed in with their Layer.UI.registerMessageHandler call.
      *
      * ```javascript
      * listItem.canFullyRenderLastMessage = function(message) {
@@ -198,7 +198,7 @@ registerComponent('layer-conversation-item', {
      * that only requerying the server will restore the data.
      *
      * @method _runFilter
-     * @param {String|Regex|Function} filter
+     * @param {String/RegExp/Function} filter
      */
     _runFilter(filter) {
       const conversation = this.properties.item;

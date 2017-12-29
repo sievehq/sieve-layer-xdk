@@ -55,38 +55,38 @@ describe('layer-message-status', function() {
   });
 
   it('Should show presend', function() {
-    message.syncState = layer.Constants.SYNC_STATE.NEW;
+    message.syncState = Layer.Constants.SYNC_STATE.NEW;
     el.presendTemplate = "PRESEND";
     el.item = message;
     expect(el.innerHTML).toEqual('PRESEND');
   });
 
   it('Should show pending', function() {
-    message.syncState = layer.Constants.SYNC_STATE.SAVING;
+    message.syncState = Layer.Constants.SYNC_STATE.SAVING;
     el.pendingTemplate = 'PENDING';
     el.item = message;
     expect(el.innerHTML).toEqual('PENDING');
   });
 
   it('Should show sent', function() {
-    message.syncState = layer.Constants.SYNC_STATE.SYNCED;
-    message.deliveryStatus = layer.Constants.RECIPIENT_STATE.NONE;
+    message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
+    message.deliveryStatus = Layer.Constants.RECIPIENT_STATE.NONE;
     el.sentTemplate = 'SENT';
     el.item = message;
     expect(el.innerHTML).toEqual('SENT');
   });
 
   it('Should show delivered', function() {
-    message.syncState = layer.Constants.SYNC_STATE.SYNCED;
-    message.deliveryStatus = layer.Constants.RECIPIENT_STATE.SOME;
-    message.readStatus = layer.Constants.RECIPIENT_STATE.NONE;
+    message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
+    message.deliveryStatus = Layer.Constants.RECIPIENT_STATE.SOME;
+    message.readStatus = Layer.Constants.RECIPIENT_STATE.NONE;
     el.deliveredDMTemplate = 'DELIVERED DM';
     el.item = message;
     expect(el.innerHTML).toEqual('DELIVERED DM');
   });
 
   it('Should show delivered to some', function() {
-    message.syncState = layer.Constants.SYNC_STATE.SYNCED;
+    message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
     conversation.participants.push(new Layer.Core.Identity({
       client: client,
       userId: 'b',
@@ -94,15 +94,15 @@ describe('layer-message-status', function() {
     }));
     message.recipientStatus['a'] = 'delivered';
     message.recipientStatus['b'] = 'delivered';
-    message.deliveryStatus = layer.Constants.RECIPIENT_STATE.SOME;
-    message.readStatus = layer.Constants.RECIPIENT_STATE.NONE;
+    message.deliveryStatus = Layer.Constants.RECIPIENT_STATE.SOME;
+    message.readStatus = Layer.Constants.RECIPIENT_STATE.NONE;
     el.deliveredGroupTemplate = "${count} delivery personel";
     el.item = message;
     expect(el.innerHTML).toEqual('2 delivery personel');
   });
 
   it('Should show read by some', function() {
-    message.syncState = layer.Constants.SYNC_STATE.SYNCED;
+    message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
     conversation.participants.push(new Layer.Core.Identity({
       client: client,
       userId: 'b',
@@ -110,17 +110,17 @@ describe('layer-message-status', function() {
     }));
     message.recipientStatus['a'] = 'read';
     message.recipientStatus['b'] = 'read';
-    message.deliveryStatus = layer.Constants.RECIPIENT_STATE.SOME;
-    message.readStatus = layer.Constants.RECIPIENT_STATE.SOME;
+    message.deliveryStatus = Layer.Constants.RECIPIENT_STATE.SOME;
+    message.readStatus = Layer.Constants.RECIPIENT_STATE.SOME;
     el.readGroupTemplate = "${count} readers";
     el.item = message;
     expect(el.innerHTML).toEqual('2 readers');
   });
 
   it('Should show read', function() {
-    message.syncState = layer.Constants.SYNC_STATE.SYNCED;
-    message.deliveryStatus = layer.Constants.RECIPIENT_STATE.SOME;
-    message.readStatus = layer.Constants.RECIPIENT_STATE.ALL;
+    message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
+    message.deliveryStatus = Layer.Constants.RECIPIENT_STATE.SOME;
+    message.readStatus = Layer.Constants.RECIPIENT_STATE.ALL;
     el.readDMTemplate = "READER";
     el.item = message;
     expect(el.innerHTML).toEqual('READER');

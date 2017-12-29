@@ -32,7 +32,7 @@ describe("The Query Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -103,7 +103,7 @@ describe("The Query Class", function() {
         it("Should require a client", function() {
             expect(function() {
                 new Layer.Core.Query({});
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
         });
 
         it("Should call _run if isReady", function() {
@@ -281,8 +281,8 @@ describe("The Query Class", function() {
         it("Should not update the model", function() {
             expect(function() {
                 query.update({model: 'Conversation'});
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.modelImmutable);
-            expect(layer.Core.LayerError.ErrorDictionary.modelImmutable.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.modelImmutable);
+            expect(Layer.Core.LayerError.ErrorDictionary.modelImmutable.length > 0).toBe(true);
         });
 
         it("Should update sortBy", function() {
@@ -495,7 +495,7 @@ describe("The Query Class", function() {
         it("Should set isFiring to false if failure", function() {
             query._processRunResults({
                 success: false,
-                data: new layer.Core.LayerError({}),
+                data: new Layer.Core.LayerError({}),
                 xhr: {
                     getResponseHeader: function() {return 6;},
                 }
@@ -620,7 +620,7 @@ describe("The Query Class", function() {
             query._processRunResults({
                 success: false,
                 status: 401,
-                data: new layer.Core.LayerError({data: {nonce: "fred"}}),
+                data: new Layer.Core.LayerError({data: {nonce: "fred"}}),
                 xhr: {
                     getResponseHeader: function() {return 6;},
                 }
@@ -736,7 +736,7 @@ describe("The Query Class", function() {
 
             // Posttest
             expect(query.data).toBe(oldData);
-            expect(query.data).toEqual([jasmine.any(layer.Core.Conversation), jasmine.any(layer.Core.Conversation)]);
+            expect(query.data).toEqual([jasmine.any(Layer.Core.Conversation), jasmine.any(Layer.Core.Conversation)]);
         });
 
         it("Should put objects rather than instances if dataType is object", function() {
@@ -749,7 +749,7 @@ describe("The Query Class", function() {
                     }
                 }
             });
-            expect(query.data[0] instanceof layer.Core.Conversation).toBe(false);
+            expect(query.data[0] instanceof Layer.Core.Conversation).toBe(false);
         });
 
         it("Should use _getInsertIndex to position result", function() {
@@ -868,7 +868,7 @@ describe("The Query Class", function() {
             query.dataType = "object";
             expect(query._getData(conversation)).not.toBe(conversation);
             expect(query._getData(conversation).id).toEqual(conversation.id);
-            expect(query._getData(conversation) instanceof layer.Core.Conversation).toBe(false);
+            expect(query._getData(conversation) instanceof Layer.Core.Conversation).toBe(false);
         });
     });
 

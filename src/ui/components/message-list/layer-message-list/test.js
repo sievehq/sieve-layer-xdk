@@ -7,8 +7,8 @@ describe('layer-message-list', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
+    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -67,7 +67,7 @@ describe('layer-message-list', function() {
 
   afterEach(function() {
     if (client) client.destroy();
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
     document.body.removeChild(testRoot);
     if (el) el.onDestroy();
     jasmine.clock().uninstall();
@@ -453,8 +453,8 @@ describe('layer-message-list', function() {
     });
 
     it("Should set a suitable _contentTag", function() {
-      var handlers = window.layer.UI.handlers;
-      window.layer.UI.handlers = [
+      var handlers = window.Layer.UI.handlers;
+      window.Layer.UI.handlers = [
         {
           handlesMessage: jasmine.createSpy('handlesNo').and.returnValue(false),
           tagName: "frodo-dom"
@@ -466,7 +466,7 @@ describe('layer-message-list', function() {
       ];
       var m = conversation.createMessage("m?");
       expect(el._generateItem(m)._contentTag).toEqual('sauron-dom');
-      window.layer.UI.handlers = handlers;
+      window.Layer.UI.handlers = handlers;
     });
 
     it("Should setup dateRenderer and messageStatusRenderer", function() {

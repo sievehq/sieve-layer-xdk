@@ -37,7 +37,7 @@ describe("The MessageParts class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -53,7 +53,7 @@ describe("The MessageParts class", function() {
         client._clientReady();
         client.onlineManager.isOnline = true;
 
-        conversation = layer.Core.Conversation._createFromServer(responses.conversation2, client);
+        conversation = Layer.Core.Conversation._createFromServer(responses.conversation2, client);
         conversation.lastMessage.destroy();
 
         requests.reset();
@@ -86,55 +86,55 @@ describe("The MessageParts class", function() {
 
     describe("The constructor() method", function() {
         it("Should initialize with an object", function() {
-            expect(new layer.Core.MessagePart({body: "hey"}).body).toEqual("hey");
-            expect(new layer.Core.MessagePart({mimeType: "text/hey"}).mimeType).toEqual("text/hey");
-            expect(new layer.Core.MessagePart({id: "Impart"}).id).toEqual("Impart");
+            expect(new Layer.Core.MessagePart({body: "hey"}).body).toEqual("hey");
+            expect(new Layer.Core.MessagePart({mimeType: "text/hey"}).mimeType).toEqual("text/hey");
+            expect(new Layer.Core.MessagePart({id: "Impart"}).id).toEqual("Impart");
         });
 
         it("Should initialize with a string", function() {
-           expect(new layer.Core.MessagePart("hey").body).toEqual("hey");
-           expect(new layer.Core.MessagePart("ho").mimeType).toEqual("text/plain");
+           expect(new Layer.Core.MessagePart("hey").body).toEqual("hey");
+           expect(new Layer.Core.MessagePart("ho").mimeType).toEqual("text/plain");
         });
 
         it("Should initialize with two strings", function() {
-           expect(new layer.Core.MessagePart("hey", "text/mountain").mimeType).toEqual("text/mountain");
+           expect(new Layer.Core.MessagePart("hey", "text/mountain").mimeType).toEqual("text/mountain");
         });
 
         it("Should initialize with a blob", function() {
             var b = generateBlob();
-            expect(new layer.Core.MessagePart(b).body instanceof Blob).toBe(true);
+            expect(new Layer.Core.MessagePart(b).body instanceof Blob).toBe(true);
             if (!window.isPhantomJS) {
-                expect(new layer.Core.MessagePart(b).size).toEqual(b.size);
+                expect(new Layer.Core.MessagePart(b).size).toEqual(b.size);
             }
-            expect(new layer.Core.MessagePart(b).mimeType).toEqual("image/png");
+            expect(new Layer.Core.MessagePart(b).mimeType).toEqual("image/png");
         });
 
         it("Should set url if initialize with blob", function() {
             var b = generateBlob();
-            expect(new layer.Core.MessagePart(b).url.length > 0).toBe(true);
+            expect(new Layer.Core.MessagePart(b).url.length > 0).toBe(true);
         });
 
         it("Should NOT set url if initialize with blob and a text mimeType", function() {
-            var text = new Array(layer.Core.DbManager.MaxPartSize + 10).join('a');
+            var text = new Array(Layer.Core.DbManager.MaxPartSize + 10).join('a');
             var blob = new Blob([text], {type : 'text/plain'});
-            expect(new layer.Core.MessagePart(blob).url).toEqual('');
+            expect(new Layer.Core.MessagePart(blob).url).toEqual('');
         });
 
 
         it("Should convert the body to Blob if non-textual mimeType and non-blob body", function() {
-            expect(new layer.Core.MessagePart({
+            expect(new Layer.Core.MessagePart({
                 body: "hey",
                 mimeType: "ho/hum"
             }).body).toEqual(jasmine.any(Blob));
         });
 
         it("Should initialize with Content", function() {
-            var c = new layer.Core.Content({});
-            expect(new layer.Core.MessagePart({_content: c})._content).toBe(c);
+            var c = new Layer.Core.Content({});
+            expect(new Layer.Core.MessagePart({_content: c})._content).toBe(c);
         });
 
         it("Should initialize with blob and url if base64 encoded", function() {
-            var part = layer.Core.MessagePart._createFromServer({
+            var part = Layer.Core.MessagePart._createFromServer({
                 body: imgBase64,
                 mime_type: 'not/blob',
                 encoding: 'base64'
@@ -150,8 +150,8 @@ describe("The MessageParts class", function() {
         beforeEach(function() {
           tmp = URL.revokeObjectURL;
           spyOn(URL, "revokeObjectURL");
-          content = new layer.Core.Content({});
-          part = new layer.Core.MessagePart({mimeType: "text/dog", _content: content});
+          content = new Layer.Core.Content({});
+          part = new Layer.Core.MessagePart({mimeType: "text/dog", _content: content});
         });
         afterEach(function() {
           URL.revokeObjectURL = tmp;
@@ -172,8 +172,8 @@ describe("The MessageParts class", function() {
     describe("The fetchContent() method", function() {
         var part, message, content;
         beforeEach(function() {
-            content = new layer.Core.Content({});
-            part = new layer.Core.MessagePart({mimeType: "text/dog", _content: content});
+            content = new Layer.Core.Content({});
+            part = new Layer.Core.MessagePart({mimeType: "text/dog", _content: content});
             message = conversation.createMessage({parts: [part]}).send();
             part.id = message.id + "/parts/0";
         });
@@ -226,8 +226,8 @@ describe("The MessageParts class", function() {
     describe("The _fetchContentCallback() method", function() {
         var part, message, content;
         beforeEach(function() {
-            content = new layer.Core.Content({expiration: new Date()});
-            part = new layer.Core.MessagePart({mimeType: "food/dog", _content: content});
+            content = new Layer.Core.Content({expiration: new Date()});
+            part = new Layer.Core.MessagePart({mimeType: "food/dog", _content: content});
             message = conversation.createMessage({parts: [part]}).send();
             part.id = message.id + "/parts/0";
         });
@@ -253,9 +253,9 @@ describe("The MessageParts class", function() {
         });
 
         it("Should call _fetchTextFromBlob for text/plain", function() {
-          var text = new Array(layer.Core.DbManager.MaxPartSize + 10).join('a');
+          var text = new Array(Layer.Core.DbManager.MaxPartSize + 10).join('a');
           var blob = new Blob([text], {type : 'text/plain'});
-          part = new layer.Core.MessagePart(blob);
+          part = new Layer.Core.MessagePart(blob);
           var fetchTextFromFile = layer.Util.fetchTextFromFile;
           spyOn(layer.Util, "fetchTextFromFile").and.callFake(function(file, callback) {callback(text);});
           spyOn(part, "_fetchContentComplete");
@@ -294,8 +294,8 @@ describe("The MessageParts class", function() {
     describe("The _fetchContentComplete() method", function() {
         var part, message, content;
         beforeEach(function() {
-            content = new layer.Core.Content({});
-            part = new layer.Core.MessagePart({mimeType: "text/dog", _content: content});
+            content = new Layer.Core.Content({});
+            part = new Layer.Core.MessagePart({mimeType: "text/dog", _content: content});
             message = conversation.createMessage({parts: [part]}).send();
             part.id = message.id + "/parts/0";
         });
@@ -347,7 +347,7 @@ describe("The MessageParts class", function() {
       var part, message;
       beforeEach(function() {
           message = client._createObject(responses.message1);
-          part = layer.Core.MessagePart._createFromServer({
+          part = Layer.Core.MessagePart._createFromServer({
               id: message.id + "/parts/3",
               body: "jane",
               mime_type: 'dog/food',
@@ -364,8 +364,8 @@ describe("The MessageParts class", function() {
         delete part._content;
         expect(function() {
           part.fetchStream();
-        }).toThrowError(layer.Core.LayerError.ErrorDictionary.contentRequired);
-        expect(layer.Core.LayerError.ErrorDictionary.contentRequired.length > 0).toBe(true);
+        }).toThrowError(Layer.Core.LayerError.ErrorDictionary.contentRequired);
+        expect(Layer.Core.LayerError.ErrorDictionary.contentRequired.length > 0).toBe(true);
       });
 
       it("Should call refreshContent if expired", function() {
@@ -392,7 +392,7 @@ describe("The MessageParts class", function() {
       beforeEach(function() {
           message = client._createObject(responses.message1);
           client._addMessage(message);
-          part = layer.Core.MessagePart._createFromServer({
+          part = Layer.Core.MessagePart._createFromServer({
               id: "joe",
               body: "jane",
               mime_type: 'dog/food',
@@ -449,8 +449,8 @@ describe("The MessageParts class", function() {
 
     describe("The _send() method", function() {
         it("Should call _sendWithContent", function() {
-            var content = new layer.Core.Content({});
-            var part = new layer.Core.MessagePart({
+            var content = new Layer.Core.Content({});
+            var part = new Layer.Core.MessagePart({
                 _content: content
             });
             spyOn(part, "_sendWithContent");
@@ -465,7 +465,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should call _generateContentAndSend", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello")
             });
             spyOn(part, "_generateContentAndSend");
@@ -478,7 +478,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should call _sendBlob", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: generateBlob(),
                 mimeType: 'not/here'
             });
@@ -492,7 +492,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should call _sendBody", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: "hey"
             });
             spyOn(part, "_sendBody");
@@ -507,7 +507,7 @@ describe("The MessageParts class", function() {
 
     describe("The _sendBody() method", function() {
         it("Should trigger with body and mime_type", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: "hey",
                 mimeType: "text/ho"
             });
@@ -526,7 +526,7 @@ describe("The MessageParts class", function() {
 
 
         it("Should throw error on non-string", function() {
-           var part = new layer.Core.MessagePart({
+           var part = new Layer.Core.MessagePart({
                 body: {hey: "ho"},
                 mimeType: "text/ho"
             });
@@ -540,11 +540,11 @@ describe("The MessageParts class", function() {
 
     describe("The _sendWithContent() method", function() {
         it("Should trigger parts:send", function() {
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 id: "fred",
                 size: 500
             });
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 _content: content,
                 mimeType: "ho"
             });
@@ -567,7 +567,7 @@ describe("The MessageParts class", function() {
 
     describe("The _sendBlob() method", function() {
         it("Should send small blobs", function(done) {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Blob([atob("abc")], {type: "fred"}),
                 mimeType: "fred"
             });
@@ -590,7 +590,7 @@ describe("The MessageParts class", function() {
 
         it("Should generate content for large blobs", function(done) {
             var b = generateBlob(true);
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: b,
                 mimeType: "fred"
             });
@@ -607,7 +607,7 @@ describe("The MessageParts class", function() {
     describe("The _generateContentAndSend() method", function() {
         it("Should call client.xhr with generated blob size", function() {
             spyOn(client, "xhr");
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain"
             });
@@ -632,7 +632,7 @@ describe("The MessageParts class", function() {
         it("Should call client.xhr with provided blob size", function() {
             spyOn(client, "xhr");
             var expectedBody = layer.Util.base64ToBlob(btoa(new Array(5000).join("hello")), "text/plain");
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: expectedBody,
                 mimeType: "text/plain"
             });
@@ -654,7 +654,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should call _processContentResponse", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain"
             });
@@ -677,7 +677,7 @@ describe("The MessageParts class", function() {
 
     describe("The _processContentResponse() method", function() {
         it("Should create Content", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain"
             });
@@ -695,7 +695,7 @@ describe("The MessageParts class", function() {
 
         it("Should call xhr and post to cloud storage", function() {
             spyOn(client, "xhr");
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain"
             });
@@ -718,7 +718,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should call _processContentUploadResponse", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain"
             });
@@ -753,11 +753,11 @@ describe("The MessageParts class", function() {
     describe("The _processContentUploadResponse() method", function() {
 
         it("Should trigger parts:send", function() {
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 id: "layer:///content/fred",
                 size: new Array(5000).join("hello").length
             });
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 _content: content,
                 mimeType: "text/plain"
@@ -783,10 +783,10 @@ describe("The MessageParts class", function() {
 
         it("Should setup to retry if isOnline is false", function() {
             client.onlineManager.isOnline = false;
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 id: "layer:///content/fred"
             });
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 _content: content,
                 mimeType: "text/plain"
@@ -804,7 +804,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should call _processContentResponse on error", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain",
                 id: "layer:///content/fred"
@@ -823,7 +823,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should trigger messages:sent-error after max-retries", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain",
                 clientId: client.appId
@@ -838,7 +838,7 @@ describe("The MessageParts class", function() {
             // Run
             part._processContentUploadResponse({
                 success: false
-            }, {id: "doh"}, client, part.body, layer.Core.MessagePart.MaxRichContentRetryCount);
+            }, {id: "doh"}, client, part.body, Layer.Core.MessagePart.MaxRichContentRetryCount);
 
             // Posttest
             expect(message.trigger).toHaveBeenCalledWith('messages:sent-error', {
@@ -851,16 +851,16 @@ describe("The MessageParts class", function() {
 
     describe("The _populateFromServer() method", function() {
       it("Should ignore this part if it has no Content", function() {
-        var m = new layer.Core.MessagePart({});
+        var m = new Layer.Core.MessagePart({});
         m._populateFromServer(JSON.parse(JSON.stringify(responses.message1.parts[1])));
         expect(m._content).toBe(null);
       });
 
       it("Should update the expiration", function() {
-          var c = new layer.Core.Content({});
+          var c = new Layer.Core.Content({});
           c.downloadUrl = "hey";
           c.expiration = new Date('2010-10-10');
-          var part = new layer.Core.MessagePart({mimeType: "image/png", _content: c});
+          var part = new Layer.Core.MessagePart({mimeType: "image/png", _content: c});
 
           // Run Test: Replace the downloadUrl and expiration we just set with values provided by server
           part._populateFromServer(JSON.parse(JSON.stringify(responses.message1.parts[1])));
@@ -871,7 +871,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should update the body and trigger change events", function(done) {
-            m = new layer.Core.MessagePart({body: "hey", mimeType: "text/plain"});
+            m = new Layer.Core.MessagePart({body: "hey", mimeType: "text/plain"});
             spyOn(m, '_triggerAsync');
             m._populateFromServer({mime_type: "text/plain", body: "hey hey hey"});
             expect(m.body).toEqual("hey hey hey");
@@ -886,7 +886,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should not trigger a change event if a blob is unchanged", function(done) {
-            m = new layer.Core.MessagePart({body: "hey", mimeType: "ho", encoding: "base64"});
+            m = new Layer.Core.MessagePart({body: "hey", mimeType: "ho", encoding: "base64"});
             spyOn(m, '_triggerAsync');
             m._populateFromServer({mime_type: "ho", body: "hey", encoding: "base64"});
             setTimeout(function() {
@@ -896,7 +896,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should trigger a change event if a blob is changed", function(done) {
-            m = new layer.Core.MessagePart({body: "hey", mimeType: "ho"});
+            m = new Layer.Core.MessagePart({body: "hey", mimeType: "ho"});
             spyOn(m, '_triggerAsync');
             m._populateFromServer({mime_type: "ho", body: "hey2"});
             setTimeout(function() {
@@ -911,7 +911,7 @@ describe("The MessageParts class", function() {
             describe("The createModel() method", function() {
                 it("Should call rootPart.createModel()", function() {
                     // Setup
-                    var part = new layer.Core.MessagePart({
+                    var part = new Layer.Core.MessagePart({
                         client: client,
                         mimeType: "application/vnd.layer.text+json",
                         body: '{"text": "a"}'
@@ -928,7 +928,7 @@ describe("The MessageParts class", function() {
 
         it("Should return a cached model", function() {
             // Setup
-            var message = new layer.Core.Message({
+            var message = new Layer.Core.Message({
                 client: client,
                 parts: [{
                     mimeType: "application/vnd.layer.text+json",
@@ -946,7 +946,7 @@ describe("The MessageParts class", function() {
     describe("The static _createFromServer() method", function() {
         var part;
         beforeEach(function() {
-            part = layer.Core.MessagePart._createFromServer({
+            part = Layer.Core.MessagePart._createFromServer({
                 id: "joe",
                 body: "jane",
                 mime_type: 'text/plain',
@@ -957,7 +957,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should create a MessagePart instance", function() {
-            expect(part instanceof layer.Core.MessagePart).toBe(true);
+            expect(part instanceof Layer.Core.MessagePart).toBe(true);
         });
 
         it("Should have a correct id", function() {
@@ -978,7 +978,7 @@ describe("The MessageParts class", function() {
         });
 
         it("Should have a hasContent false", function() {
-          part = layer.Core.MessagePart._createFromServer({
+          part = Layer.Core.MessagePart._createFromServer({
                 id: "joe",
                 body: "jane",
                 mime_type: "text/plain",
@@ -991,7 +991,7 @@ describe("The MessageParts class", function() {
     describe("The get url() method", function() {
       var part;
       beforeEach(function() {
-          part = layer.Core.MessagePart._createFromServer({
+          part = Layer.Core.MessagePart._createFromServer({
               id: "joe",
               body: "jane",
               encoding: "john",

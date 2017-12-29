@@ -91,8 +91,8 @@ describe("The Client Message Type Model Mixin", function() {
         it("Should fail without id", function() {
             expect(function() {
                 client.getMessageTypeModel(5);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
-            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(Layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
         });
     });
 

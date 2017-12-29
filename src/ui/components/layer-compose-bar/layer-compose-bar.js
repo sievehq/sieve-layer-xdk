@@ -8,7 +8,7 @@
  * * CSS Class `layer-compose-bar-one-line-of-text`: If there is only a single line's worth of text, then this CSS class is applied to
  *   help center the text
  * * Event `layer-file-selected`: This widget listens for this event, and if it receives it, uses that event to retrieve a file to send in
- *   the Conversation.  Event comes from layer.UI.components.FileUploadButton or from your custom widgets.
+ *   the Conversation.  Event comes from Layer.UI.components.FileUploadButton or from your custom widgets.
  * * Keyboard Handling: ENTER: Sends message unless its accompanied by a modifier key.  TAB: Enters a \t character unless you
  *   set `layerUI.settings.disableTabAsWhiteSpace` to true
  *
@@ -401,7 +401,7 @@ registerComponent('layer-compose-bar', {
     onSend(model, notification) {
       model.send({
         conversation: this.conversation,
-        notification
+        notification,
       });
     },
 

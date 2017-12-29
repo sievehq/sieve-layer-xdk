@@ -7,8 +7,8 @@
 * JSDuck on Message Type UIs
 * Layer.Core.Query.ConversationQuery and other queries can not be explicitly accessed to modify the `MaxPageSize` static property
 * Message Type Model now has a `getParticipantResponse()` method for extracting participant responses to a Model.
-* Adds `message.createModel()` to get the Message Type Model representing the `layer.Core.Message` instance
-* Adds `part.createModel()` to get the Message Type Model representing the `layer.Core.MessagePart` instance
+* Adds `message.createModel()` to get the Message Type Model representing the `Layer.Core.Message` instance
+* Adds `part.createModel()` to get the Message Type Model representing the `Layer.Core.MessagePart` instance
 * Adds `message.getRootPart()` to get the root MessagePart for the Message
 * Adds `model.getParentModel()` to get the Parent Model of the current Model (or `null` if its already the root model)
 * API Reference for Message Type Models

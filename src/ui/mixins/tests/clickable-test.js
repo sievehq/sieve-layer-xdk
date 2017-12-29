@@ -12,7 +12,7 @@ describe("The Clickable Mixin", function() {
       }
     });
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init();
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init();
   });
 
   var el, testRoot, client, called;

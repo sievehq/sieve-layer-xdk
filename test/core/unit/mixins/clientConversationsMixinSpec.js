@@ -92,7 +92,7 @@ describe("The Client Conversation Mixin", function() {
     describe("The getConversation() method", function() {
         var conversation;
         beforeEach(function() {
-            conversation = new layer.Core.Conversation({
+            conversation = new Layer.Core.Conversation({
                 client: client,
                 fromServer: {
                     id: "layer:///conversations/" + layer.Util.generateUUID(),
@@ -108,7 +108,7 @@ describe("The Client Conversation Mixin", function() {
             var c1 = client.getConversation(cid1, true);
 
             // Posttest
-            expect(c1 instanceof layer.Core.Conversation).toBe(true);
+            expect(c1 instanceof Layer.Core.Conversation).toBe(true);
 
             expect(c1.participants).toEqual([client.user]);
             expect(c1.id).toEqual(cid1);
@@ -118,8 +118,8 @@ describe("The Client Conversation Mixin", function() {
         it("Should fail without id", function() {
             expect(function() {
                 client.getConversation(5);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
-            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(Layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
         });
 
         it("Should not load if not ready", function() {
@@ -137,7 +137,7 @@ describe("The Client Conversation Mixin", function() {
 
         it("Should register a conversation in _models.conversations", function() {
             client._models.conversations = {};
-            var c = new layer.Core.Conversation({
+            var c = new Layer.Core.Conversation({
                 client: client
             });
 
@@ -150,7 +150,7 @@ describe("The Client Conversation Mixin", function() {
 
         it("Should set the clientId property", function() {
             // Setup
-            var c = new layer.Core.Conversation({
+            var c = new Layer.Core.Conversation({
                 client: client
             });
 
@@ -169,7 +169,7 @@ describe("The Client Conversation Mixin", function() {
             spyOn(client, "_triggerAsync");
 
             // Run
-            var c = new layer.Core.Conversation({
+            var c = new Layer.Core.Conversation({
                 client: client,
             });
             client._addConversation(c);
@@ -181,7 +181,7 @@ describe("The Client Conversation Mixin", function() {
 
         it("Should not do anything if the conversation is already added", function() {
             // Setup
-            var c = new layer.Core.Conversation({
+            var c = new Layer.Core.Conversation({
                 client: client
             });
             client._addConversation(c);
@@ -189,7 +189,7 @@ describe("The Client Conversation Mixin", function() {
 
 
             // Run
-            var c2 = new layer.Core.Conversation({
+            var c2 = new Layer.Core.Conversation({
                 id: c.id,
                 client: client
             });
@@ -204,7 +204,7 @@ describe("The Client Conversation Mixin", function() {
             spyOn(client, "_scheduleCheckAndPurgeCache");
 
             // Run
-            var c = new layer.Core.Conversation({
+            var c = new Layer.Core.Conversation({
                 client: client
             });
             client._addConversation(c);
@@ -235,7 +235,7 @@ describe("The Client Conversation Mixin", function() {
 
         it("Should trigger event on removing conversation", function() {
             // Setup
-            var c1 = new layer.Core.Conversation({
+            var c1 = new Layer.Core.Conversation({
                 client: client
             });
             client._addConversation(c1);
@@ -255,7 +255,7 @@ describe("The Client Conversation Mixin", function() {
 
         it("Should do nothing if conversation not registered", function() {
             // Setup
-            var c1 = new layer.Core.Conversation({
+            var c1 = new Layer.Core.Conversation({
                 client: client
             });
             client._models.conversations = {};
@@ -295,7 +295,7 @@ describe("The Client Conversation Mixin", function() {
     describe("The _updateConversationId() method", function() {
         it("Should register the conversation under the new id", function() {
             // Setup
-            var c1 = new layer.Core.Conversation({
+            var c1 = new Layer.Core.Conversation({
                 client: client
             });
             client._addConversation(c1);
@@ -311,7 +311,7 @@ describe("The Client Conversation Mixin", function() {
 
         it("Should delete the old id", function() {
             // Setup
-            var c1 = new layer.Core.Conversation({
+            var c1 = new Layer.Core.Conversation({
                 client: client
             });
             client._addConversation(c1);
@@ -330,7 +330,7 @@ describe("The Client Conversation Mixin", function() {
 
         it("Should update all Message conversationIds", function() {
             // Setup
-            var c1 = new layer.Core.Conversation({
+            var c1 = new Layer.Core.Conversation({
                 participants: ["a"],
                 client: client
             });
@@ -424,12 +424,12 @@ describe("The Client Conversation Mixin", function() {
     describe("The createConversation() method", function() {
         var createMethod;
         beforeEach(function() {
-            createMethod = layer.Core.Conversation.create;
-            spyOn(layer.Core.Conversation, "create").and.returnValue(5);
+            createMethod = Layer.Core.Conversation.create;
+            spyOn(Layer.Core.Conversation, "create").and.returnValue(5);
         });
 
         afterEach(function() {
-            layer.Core.Conversation.create = createMethod;
+            Layer.Core.Conversation.create = createMethod;
         });
 
         it("Should create a conversation with a full object and strings", function() {
@@ -437,7 +437,7 @@ describe("The Client Conversation Mixin", function() {
             var c = client.createConversation({participants: ["a","z"]});
 
             // Posttest
-            expect(layer.Core.Conversation.create).toHaveBeenCalledWith({
+            expect(Layer.Core.Conversation.create).toHaveBeenCalledWith({
                 participants: ["a", "z"],
                 distinct: true,
                 client: client,
@@ -450,7 +450,7 @@ describe("The Client Conversation Mixin", function() {
             var c = client.createConversation({participants: [userIdentity, userIdentity2]});
 
             // Posttest
-            expect(layer.Core.Conversation.create).toHaveBeenCalledWith({
+            expect(Layer.Core.Conversation.create).toHaveBeenCalledWith({
                 participants: [userIdentity, userIdentity2],
                 distinct: true,
                 client: client,
@@ -466,7 +466,7 @@ describe("The Client Conversation Mixin", function() {
             });
 
             // Posttest
-            expect(layer.Core.Conversation.create).toHaveBeenCalledWith({
+            expect(Layer.Core.Conversation.create).toHaveBeenCalledWith({
                 participants: ["a", "z"],
                 distinct: false,
                 client: client,
@@ -486,8 +486,8 @@ describe("The Client Conversation Mixin", function() {
             client.isAuthenticated = false;
             expect(function() {
                 client.createConversation({participants: [userIdentity, userIdentity2]});
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMustBeReady);
-            expect(layer.Core.LayerError.ErrorDictionary.clientMustBeReady.length > 0).toEqual(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMustBeReady);
+            expect(Layer.Core.LayerError.ErrorDictionary.clientMustBeReady.length > 0).toEqual(true);
         });
     });
 });

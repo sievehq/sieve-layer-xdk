@@ -17,7 +17,7 @@ describe('Carousel Message Components', function() {
   beforeEach(function() {
     jasmine.clock().install();
     restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();

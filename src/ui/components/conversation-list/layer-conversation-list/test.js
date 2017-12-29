@@ -2,7 +2,7 @@ describe('layer-conversation-list', function() {
   var el, testRoot, client, query;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     setTimeout(done, 1000);
   });
 
@@ -21,7 +21,7 @@ describe('layer-conversation-list', function() {
     client._clientAuthenticated();
 
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-list');

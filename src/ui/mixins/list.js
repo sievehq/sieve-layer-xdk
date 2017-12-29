@@ -80,7 +80,7 @@ module.exports = {
      * Note that this is for quick local searches of items; to actually filter data that should not be shown
      * to users, see {@link #queryFilter}
      *
-     * @property {String|RegEx|Function} [filter='']
+     * @property {String/RegExp/Function} [filter='']
      */
     filter: {
       set(value) {

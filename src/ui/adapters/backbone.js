@@ -19,9 +19,9 @@ import layerUI from '../base';
 * Calling this will expose the following React Components:
  *
  * * ConversationPanelView: A wrapper around a Layer.UI.components.ConversationView
- * * ConversationsListView: A wrapper around a layer.UI.components.ConversationsListPanel
- * * IdentitiesListView: A wrapper around a layer.UI.components.IdentityListPanel
- * * NotifierView: A wrapper around a layer.UI.components.misc.Notifier
+ * * ConversationsListView: A wrapper around a Layer.UI.components.ConversationsListPanel
+ * * IdentitiesListView: A wrapper around a Layer.UI.components.IdentityListPanel
+ * * NotifierView: A wrapper around a Layer.UI.components.misc.Notifier
  * * SendButton: An optional button that can be provided to ConversationPanelView's `composeButtons` property
  *   to add a simple Send button to the Composer
  * * FileUploadButton: An optional button that can be provided to ConversationPanelView's `composeButtons` property
@@ -38,7 +38,7 @@ import layerUI from '../base';
  * < layer-conversation-view conversation-id="layer:///conversations/UUID"></layer-conversation-view>
  * ```
  *
- * @class layer.UI.adapters.backbone
+ * @class Layer.UI.adapters.backbone
  * @singleton
  * @param {Object} backbone     Pass in the backbone library
  */

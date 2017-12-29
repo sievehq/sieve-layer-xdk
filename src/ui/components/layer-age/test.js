@@ -2,12 +2,12 @@ describe('layer-age', function() {
   var el;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
+    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     el = document.createElement('layer-age');
     layer.Util.defer.flush();
   });

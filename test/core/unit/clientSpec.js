@@ -139,8 +139,8 @@ describe("The Client class", function() {
         it("Should not allow appId to be reset", function() {
             expect(function() {
                 client.appId = "Ray!";
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.appIdImmutable);
-            expect(layer.Core.LayerError.ErrorDictionary.appIdImmutable.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.appIdImmutable);
+            expect(Layer.Core.LayerError.ErrorDictionary.appIdImmutable.length > 0).toBe(true);
         });
     });
 
@@ -151,7 +151,7 @@ describe("The Client class", function() {
             client.user = new Layer.Core.Identity({
                userId: client.userId,
                displayName: "Frodo2",
-               syncState: layer.Constants.SYNC_STATE.LOADING,
+               syncState: Layer.Constants.SYNC_STATE.LOADING,
                clientId: client.appId,
 
            });
@@ -267,7 +267,7 @@ describe("The Client class", function() {
                 client._clientReady();
                 conversation = client.createConversation({ participants: ["a"] });
                 message = conversation.createMessage("hey").send();
-                announcement = new layer.Core.Announcement({
+                announcement = new Layer.Core.Announcement({
                     client: client,
                     parts: "Hey Ho"
                 });
@@ -380,9 +380,9 @@ describe("The Client class", function() {
 
             it("Should call Message._createFromServer", function() {
                 // Setup
-                var tmp = layer.Core.Message.ConversationMessage._createFromServer;
+                var tmp = Layer.Core.Message.ConversationMessage._createFromServer;
                 var m = client.createConversation({ participants: ["a"]}).createMessage("a").send();
-                spyOn(layer.Core.Message.ConversationMessage, "_createFromServer").and.returnValue(m);
+                spyOn(Layer.Core.Message.ConversationMessage, "_createFromServer").and.returnValue(m);
                 var messageObj = JSON.parse(JSON.stringify(responses.message1));
 
                 // Run
@@ -390,16 +390,16 @@ describe("The Client class", function() {
 
                 // Posttest
                 expect(message).toBe(m);
-                expect(layer.Core.Message.ConversationMessage._createFromServer).toHaveBeenCalledWith(messageObj, client);
+                expect(Layer.Core.Message.ConversationMessage._createFromServer).toHaveBeenCalledWith(messageObj, client);
 
                 // Restore
-                layer.Core.Message.ConversationMessage._createFromServer = tmp;
+                Layer.Core.Message.ConversationMessage._createFromServer = tmp;
             });
 
             it("Should call Announcement._createFromServer", function() {
                 // Setup
                 var tmp = Layer.Core.Announcement._createFromServer;
-                var announcement = new layer.Core.Announcement({
+                var announcement = new Layer.Core.Announcement({
                 client: client,
                 fromServer: JSON.parse(JSON.stringify(responses.announcement))
                 });
@@ -420,11 +420,11 @@ describe("The Client class", function() {
 
             it("Should call Conversation._createFromServer", function() {
                 // Setup
-                var tmp = layer.Core.Conversation._createFromServer;
-                var c = new layer.Core.Conversation({
+                var tmp = Layer.Core.Conversation._createFromServer;
+                var c = new Layer.Core.Conversation({
                     client: client
                 });
-                spyOn(layer.Core.Conversation, "_createFromServer").and.returnValue(c);
+                spyOn(Layer.Core.Conversation, "_createFromServer").and.returnValue(c);
                 var conversationObj = JSON.parse(JSON.stringify(responses.conversation1));
 
                 // Run
@@ -432,10 +432,10 @@ describe("The Client class", function() {
 
                 // Posttest
                 expect(conversation).toBe(c);
-                expect(layer.Core.Conversation._createFromServer).toHaveBeenCalledWith(conversationObj, client);
+                expect(Layer.Core.Conversation._createFromServer).toHaveBeenCalledWith(conversationObj, client);
 
                 // Restore
-                layer.Core.Conversation._createFromServer = tmp;
+                Layer.Core.Conversation._createFromServer = tmp;
             });
 
             it("Should call Identity._createFromServer", function() {
@@ -489,7 +489,7 @@ describe("The Client class", function() {
                 var tmp = Layer.Core.Membership._createFromServer;
                 var membershipObj = JSON.parse(JSON.stringify(responses.membership1));
 
-                var membership = new layer.Core.Membership({
+                var membership = new Layer.Core.Membership({
                     id: responses.membership1.id,
                     role: responses.membership1.role,
                     identity: userIdentity,
@@ -519,10 +519,10 @@ describe("The Client class", function() {
 
             it("Should call _foldEvents on all conversations:add events", function() {
                 // Setup
-                var c1 = new layer.Core.Conversation({
+                var c1 = new Layer.Core.Conversation({
                     client: client
                 });
-                var c2 = new layer.Core.Conversation({
+                var c2 = new Layer.Core.Conversation({
                     client: client
                 });
                 client._delayedTriggers = [];
@@ -550,10 +550,10 @@ describe("The Client class", function() {
 
             it("Should call _foldEvents on all conversations:remove events", function() {
                 // Setup
-                var c1 = new layer.Core.Conversation({
+                var c1 = new Layer.Core.Conversation({
                     client: client
                 });
-                var c2 = new layer.Core.Conversation({
+                var c2 = new Layer.Core.Conversation({
                     client: client
                 });
                 client._triggerAsync("conversations:a", {value: "a"});
@@ -873,7 +873,7 @@ describe("The Client class", function() {
                     participants: ["a","z"],
                     distinct: false
                 });
-                conversation.syncState = layer.Constants.SYNC_STATE.SYNCED;
+                conversation.syncState = Layer.Constants.SYNC_STATE.SYNCED;
             });
 
             afterEach(function() {
@@ -936,7 +936,7 @@ describe("The Client class", function() {
 
             it("Should ignore unsaved objects", function() {
                 client._scheduleCheckAndPurgeCacheItems = [];
-                conversation.syncState = layer.Constants.SYNC_STATE.SAVING;
+                conversation.syncState = Layer.Constants.SYNC_STATE.SAVING;
                 client._scheduleCheckAndPurgeCacheAt = Date.now() + 10;
                 client._scheduleCheckAndPurgeCache(conversation);
                 expect(client._scheduleCheckAndPurgeCacheItems).toEqual([]);

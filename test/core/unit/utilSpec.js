@@ -310,7 +310,7 @@ describe("The Util Library", function() {
     describe("The fetchTextFromFile() method", function() {
         var  blob, text;
         beforeEach(function() {
-            text = new Array(layer.Core.DbManager.MaxPartSize + 10).join('a');
+            text = new Array(Layer.Core.DbManager.MaxPartSize + 10).join('a');
             blob = new Blob([text], {type : 'text/plain'});
         });
 
@@ -347,7 +347,7 @@ describe("The Util Library", function() {
                 publicKey: "public",
                 avatarUrl: "avatar",
                 displayName: "display",
-                syncState: layer.Constants.SYNC_STATE.SYNCED,
+                syncState: Layer.Constants.SYNC_STATE.SYNCED,
                 isFullIdentity: true,
                 sessionOwner: true
             });

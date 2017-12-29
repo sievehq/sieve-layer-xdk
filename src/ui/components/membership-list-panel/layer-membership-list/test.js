@@ -22,7 +22,7 @@ describe('layer-membership-list', function() {
     channel = client.createChannel({
       name: "Frodo"
     });
-    channel.syncState = layer.Constants.SYNC_STATE.SYCNED;
+    channel.syncState = Layer.Constants.SYNC_STATE.SYCNED;
 
     if (!Layer.UI.components['layer-conversation-view']) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');

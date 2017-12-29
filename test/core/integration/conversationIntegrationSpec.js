@@ -26,14 +26,14 @@ describe("Conversation Integration Tests", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true
         });
 
         client._clientAuthenticated();
         conversation = client._createObject(JSON.parse(JSON.stringify(responses.conversation1)));
 
-        syncManager = new layer.Core.SyncManager({
+        syncManager = new Layer.Core.SyncManager({
             client: client,
             onlineManager: client.onlineManager,
             socketManager: client.socketManager,
@@ -54,7 +54,7 @@ describe("Conversation Integration Tests", function() {
             displayName: "6",
             userId: "6"
         });
-        request = new layer.Core.XHRSyncEvent({
+        request = new Layer.Core.XHRSyncEvent({
             method: "POST",
             data: {hey: "ho"},
             target: "fred",

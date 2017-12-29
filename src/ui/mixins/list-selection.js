@@ -6,7 +6,7 @@
  *
  * The selection event is controled by the {@link #_selectedItemEventName} provided by each user of this Mixin.
  *
- * @class layer.UI.mixins.ListSelection
+ * @class Layer.UI.mixins.ListSelection
  */
 
 import Clickable from './clickable';
@@ -51,6 +51,15 @@ module.exports = {
         }
       },
     },
+
+    /**
+     * The event name to trigger on selecting an item.
+     *
+     * @readonly
+     * @private
+     * @property {String} _selectedItemEventName
+     */
+    _selectedItemEventName: {},
   },
   methods: {
 

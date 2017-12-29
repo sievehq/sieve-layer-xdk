@@ -33,7 +33,7 @@ describe("The MessagesQuery Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
           sessionOwner: true
         });
@@ -120,8 +120,8 @@ describe("The MessagesQuery Class", function() {
                 model: Layer.Core.Query.Message,
                 predicate: "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf-hey"
             });
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
-          expect(layer.Core.LayerError.ErrorDictionary.invalidPredicate.length > 0).toBe(true);
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+          expect(Layer.Core.LayerError.ErrorDictionary.invalidPredicate.length > 0).toBe(true);
         });
     });
 
@@ -134,15 +134,15 @@ describe("The MessagesQuery Class", function() {
         it("Should throw error on ill formed predicate for conversations", function() {
             expect(function() {
                 query._fixPredicate('conversation.id  =    "la:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('conversation.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77b"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('conversation.id  =    "layer:///channels/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
         });
 
         it("Should generate a well formed predicate for conversations from just a UUID", function() {
@@ -160,15 +160,15 @@ describe("The MessagesQuery Class", function() {
         it("Should throw error on ill formed predicate for channels", function() {
             expect(function() {
                 query._fixPredicate('channel.id  =    "la:///channels/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('channel.id  =    "layer:///channels/fb068f9a-3d2b-4fb2-8b04-7efd185e77b"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('channel.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
         });
 
@@ -181,7 +181,7 @@ describe("The MessagesQuery Class", function() {
         it("Should throw an error if neither a conversation nor channel is clearly being queried", function() {
             expect(function() {
                 query._fixPredicate('identity.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
         });
     });
 
@@ -369,7 +369,7 @@ describe("The MessagesQuery Class", function() {
             requests.reset();
 
             conversation.lastMessage = conversation.createMessage("hi");
-            conversation.syncState = layer.Constants.SYNC_STATE.SAVING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SAVING;
             query.data = [m1, m2];
             query._fetchData(45);
             expect(requests.count()).toEqual(0);
@@ -381,7 +381,7 @@ describe("The MessagesQuery Class", function() {
             requests.reset();
 
             conversation.lastMessage = conversation.createMessage("hi");
-            conversation.syncState = layer.Constants.SYNC_STATE.SAVING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SAVING;
             query.data = [m1, m2];
             expect(query.pagedToEnd).toBe(false);
 
@@ -504,7 +504,7 @@ describe("The MessagesQuery Class", function() {
             var m2 = client._createObject(responses.message2);
             requests.reset();
 
-            channel.syncState = layer.Constants.SYNC_STATE.SAVING;
+            channel.syncState = Layer.Constants.SYNC_STATE.SAVING;
             query.data = [m1, m2];
             query._fetchData(45);
             expect(requests.count()).toEqual(0);
