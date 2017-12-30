@@ -153,7 +153,7 @@ function initReact(React, ReactDom) {
       shouldComponentUpdate(nextProps) {
         // Get the properties/attributes that match those used in this.props
         const props = component.properties.filter(property =>
-          this.props[property.propertyName] || this.props[property.attributeName]);
+          nextProps[property.propertyName] !== undefined || nextProps[property.attributeName] !== undefined);
 
         // Set the webcomponent properties if they have changed
         props.forEach((propDef) => {
