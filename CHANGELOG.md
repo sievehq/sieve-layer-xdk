@@ -1,5 +1,9 @@
 # Web XDK Change Log
 
+## 1.0.0-pre1.16
+
+* Fixes handling of react adaptor on receiving empty values
+
 ## 1.0.0-pre1.15
 
 1. Adds a Feedback Message Type
