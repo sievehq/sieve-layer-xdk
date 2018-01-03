@@ -7,7 +7,8 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import LayerUI, { Constants } from '../../base';
+import { Constants } from '../../base';
+import { processText } from '../../handlers/text/text-handlers';
 
 registerComponent('layer-text-message-view', {
   style: `layer-text-message-view {
@@ -32,7 +33,7 @@ registerComponent('layer-text-message-view', {
   },
   methods: {
     onRerender() {
-      this.innerHTML = LayerUI.processText(this.model.text);
+      this.innerHTML = processText(this.model.text);
     },
   },
 });

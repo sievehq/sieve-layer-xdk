@@ -5,7 +5,7 @@
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../components/component';
-import Base from '../base';
+import { processText } from '../handlers/text/text-handlers';
 
 registerComponent('layer-standard-message-view-container', {
   style: `
@@ -79,7 +79,7 @@ registerComponent('layer-standard-message-view-container', {
      */
     title: {
       set(title) {
-        this.nodes.title.innerHTML = Base.processText(title);
+        this.nodes.title.innerHTML = processText(title);
         this.toggleClass('layer-has-title', title);
       },
     },
@@ -91,7 +91,7 @@ registerComponent('layer-standard-message-view-container', {
      */
     description: {
       set(description) {
-        this.nodes.description.innerHTML = Base.processText(description);
+        this.nodes.description.innerHTML = processText(description);
         this.toggleClass('layer-has-description', description);
       },
     },
@@ -103,7 +103,7 @@ registerComponent('layer-standard-message-view-container', {
      */
     footer: {
       set(footer) {
-        this.nodes.footer.innerHTML = Base.processText(footer);
+        this.nodes.footer.innerHTML = processText(footer);
         this.toggleClass('layer-has-footer', footer);
       },
     },

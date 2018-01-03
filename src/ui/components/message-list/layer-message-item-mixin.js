@@ -160,7 +160,7 @@ module.exports = {
      * HTML Tag to generate for the current content.
      *
      * @private
-     * @deprecated  Here for backwards compatability only; all messages should be rendered using Layer.UI.handlers.message.MessageViewer
+     * @deprecated  Here for backwards compatability only; all messages should be rendered using Layer.UI.messageHandlers.message.MessageViewer
      * @property {String} _contentTag
      */
     _contentTag: {

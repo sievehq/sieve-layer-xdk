@@ -1,4 +1,6 @@
-import layerUI from '../base';
+import { ComponentsHash } from '../component-services';
+import { register } from './index';
+
 
 /**
  * Call this function to initialize all of the Backbone Views needed to handle the Layer UI for Web widgets.
@@ -7,7 +9,7 @@ import layerUI from '../base';
  *
  * ```javascript
  * var Backbone = require('backbone');
- * var LayerUIViews = layerUI.adapters.backbone(Backbone);
+ * var LayerUIViews = Layer.UI.adapters.backbone(Backbone);
  * var conversationPanelView = new LayerUIViews.ConversationPanel(client, {conversationId: 'layer:///conversations/UUID'});
  * var conversationsListView = new LayerUIViews.ConversationsList(client);
  * var identitiesListView = new LayerUIViews.UserList(client);
@@ -48,9 +50,9 @@ function initBackbone(backbone) {
   libraryResult = {};
 
   // Gather all UI Components
-  Object.keys(layerUI.components)
+  Object.keys(ComponentsHash)
   .forEach((componentName) => {
-    const component = layerUI.components[componentName];
+    const component = ComponentsHash[componentName];
 
     // Get the camel case Component name
     const className = (componentName.substring(0, 1).toUpperCase() +
@@ -84,5 +86,5 @@ function initBackbone(backbone) {
 }
 
 module.exports = initBackbone;
-layerUI.addAdapter('backbone', initBackbone);
+register('backbone', initBackbone);
 

@@ -11,8 +11,6 @@ describe("The Clickable Mixin", function() {
         }
       }
     });
-
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init();
   });
 
   var el, testRoot, client, called;

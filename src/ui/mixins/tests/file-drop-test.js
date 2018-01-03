@@ -6,8 +6,6 @@ describe("The File Drop Mixin", function() {
         conversation: {}
       }
     });
-
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init();
   });
 
   var el, testRoot, client, conversation;
@@ -17,7 +15,7 @@ describe("The File Drop Mixin", function() {
   beforeEach(function() {
     jasmine.clock().install();
     called = false;
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({

@@ -175,6 +175,7 @@ LayerError.ErrorDictionary = {
   modelImmutable: 'The model property cannot be changed',
   valueNotSupported: 'The value provided is not a supported value',
   permissionDenied: 'Operation not allowed on that object',
+  adapterError: 'You must call Layer.init() before you can use an adapter',
 };
 
 module.exports = LayerError;

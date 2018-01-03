@@ -24,7 +24,7 @@ class SocketManager extends Root {
   /**
    * Create a new websocket manager
    *
-   *      var socketManager = new layer.Websockets.SocketManager({
+   *      var socketManager = new Layer.Core.Websockets.SocketManager({
    *          client: client,
    *      });
    *

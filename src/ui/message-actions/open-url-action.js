@@ -5,10 +5,11 @@
  * @class Layer.UI.MessageActions.OpenURLAction
  */
 
-import { registerMessageActionHandler, showFullScreen } from '../base';
+import { register } from './index';
+import { showFullScreen } from '../utils';
 
 const openUrlHandler = ({ data, model }) => {
   const url = data.url || model.url;
   showFullScreen(url);
 };
-registerMessageActionHandler('open-url', openUrlHandler);
+register('open-url', openUrlHandler);

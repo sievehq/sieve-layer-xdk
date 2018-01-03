@@ -41,6 +41,14 @@
 * CSS Class `layer-root-card` renamed to `layer-root-viewer`
 * Twemoji emojis can be disabled using `Layer.init({useEmojiImages: false})`
 * List Item no longer provide an `addClass` `removeClass` and `toggleClass` method (`toggleClass` is now a part of all UI Components)
+* `Layer.UI.registerMessageComponent` is removed, use `Layer.UI.registerComponent` followed by `Layer.UI.MessageHandlers.registerMessageHandler` instead. Note that use of this technique is deprecated.
+* `Layer.UI.registerMessageHandlers` moved to `Layer.UI.MessageHandlers.registerMessageHandler`
+* `Layer.UI.registerTextHandler` moved to `Layer.UI.TextHandlers.registerTextHandler`
+* `Layer.UI.isInBackground` moved to `Layer.UI.Utils.isInBackground`
+* `Layer.UI.showFullScreen` moved to `Layer.UI.Utils.showFullScreen`
+* `Layer.UI.createItemSeparator` moved to `Layer.UI.ListSeparatorManager.createItemSeparator`
+* `Layer.UI.addAdapter` moved to `Layer.UI.adapters.register`
+* `Layer.UI.registerMessageActionHandler` moved to `Layer.UI.MessageActions.register`
 
 ## 1.0.0-pre1.15
 

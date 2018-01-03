@@ -10,7 +10,8 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import LayerUI, { Constants } from '../../base';
+import { Constants } from '../../base';
+import { processText } from '../../handlers/text/text-handlers';
 
 registerComponent('layer-product-message-view', {
   style: `
@@ -75,10 +76,10 @@ registerComponent('layer-product-message-view', {
     onRerender() {
 
       // Render the basic info fields
-      this.nodes.name.innerHTML = LayerUI.processText(this.model.name);
-      this.nodes.brand.innerHTML = LayerUI.processText(this.model.brand);
-      this.nodes.price.innerHTML = LayerUI.processText(this.model.getFormattedPrice());
-      this.nodes.description.innerHTML = LayerUI.processText(this.model.description);
+      this.nodes.name.innerHTML = processText(this.model.name);
+      this.nodes.brand.innerHTML = processText(this.model.brand);
+      this.nodes.price.innerHTML = processText(this.model.getFormattedPrice());
+      this.nodes.description.innerHTML = processText(this.model.description);
 
       // Render the image (at some point we may want a way to see multiple images)
       // If no images, hide the image area

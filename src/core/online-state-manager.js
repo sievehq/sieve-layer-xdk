@@ -20,7 +20,7 @@
  * correctly report navigator.onLine=true.  As a result, we can't rely on this value and this class must continue to poll the server while
  * offline and to ignore values from navigator.onLine.  Future Work: Allow non-chrome browsers to use navigator.onLine.
  *
- * @class  layer.OnlineStateManager
+ * @class  Layer.Core.OnlineStateManager
  * @private
  * @extends Layer.Core.Root
  *
@@ -36,13 +36,13 @@ class OnlineStateManager extends Root {
    *
    * An Application is expected to only have one of these.
    *
-   *      var onlineStateManager = new layer.OnlineStateManager({
+   *      var onlineStateManager = new Layer.Core.OnlineStateManager({
    *          socketManager: socketManager,
    *      });
    *
    * @method constructor
    * @param  {Object} options
-   * @param  {layer.Websockets.SocketManager} options.socketManager - A websocket manager to monitor for messages
+   * @param  {Layer.Core.Websockets.SocketManager} options.socketManager - A websocket manager to monitor for messages
    */
   constructor(options) {
     super(options);
@@ -265,7 +265,7 @@ OnlineStateManager.prototype.isClientReady = false;
 /**
  * A Websocket manager whose 'message' event we will listen to
  * in order to know that we are still online.
- * @property {layer.Websockets.SocketManager}
+ * @property {Layer.Core.Websockets.SocketManager}
  */
 OnlineStateManager.prototype.socketManager = null;
 

@@ -23,7 +23,7 @@ class WebsocketChangeManager {
    * @method
    * @param  {Object} options
    * @param {Layer.Core.Client} client
-   * @param {layer.Websockets.SocketManager} socketManager
+   * @param {Layer.Core.Websockets.SocketManager} socketManager
    * @returns {Layer.Core.Websockets.ChangeManager}
    */
   constructor(options) {

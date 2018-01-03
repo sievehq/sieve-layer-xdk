@@ -17,7 +17,7 @@
  * ```
  *
  *
- * @class Layer.UI.messages.FeedbackModel
+ * @class Layer.UI.messages.FeedbackMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';

@@ -19,8 +19,8 @@
           "Layer.Core.QueryBuilder.MessagesQuery",
           "Layer.Core.LayerEvent",
           "Layer.Core.LayerEvent",
-          "Layer.Core.ClientUtils",
           "Layer.Core.Root",
+          "Layer.Util",
           "Layer.Constants"
         ]
       },
@@ -58,12 +58,18 @@
         ]
       },
       {
-        "name": "Message Handlers",
+        "name": "Messages",
         "classes": [
-          "Layer.UI.handlers.message.TextPlain",
-          "Layer.UI.handlers.message.Image",
-          "Layer.UI.handlers.message.Video",
-          "Layer.UI.handlers.message.Unknown"
+          "Layer.UI.messages.TextMessageModel",
+          "Layer.UI.messages.ImageMessageModel",
+          "Layer.UI.messages.FileMessageModel",
+          "Layer.UI.messages.LocationMessageModel",
+          "Layer.UI.messages.ProductMessageModel",
+          "Layer.UI.messages.ButtonsMessageModel",
+          "Layer.UI.messages.ChoiceMessageModel",
+          "Layer.UI.messages.FeedbackMessageModel",
+          "Layer.UI.messages.ReceiptMessageModel",
+          "Layer.UI.messages.StatusMessageModel"
         ]
       }
     ]

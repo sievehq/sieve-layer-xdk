@@ -137,7 +137,7 @@ class ButtonsModel extends MessageTypeModel {
   /**
    * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
    *
-   * @method
+   * @method _parseMessage
    * @protected
    * @param {Object} payload
    */

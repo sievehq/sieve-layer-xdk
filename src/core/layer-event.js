@@ -87,7 +87,7 @@ class LayerEvent {
    * Call Layer.Core.LayerEvent.returnValue on any event intended to allow handlers to return a value.
    *
    * @method
-   * @param {Any} value
+   * @param {Mixed} value
    */
   returnValue(value) {
     this.returnedValue = value;
@@ -216,7 +216,7 @@ LayerEvent.prototype.cancelable = false;
 /**
  * Value provided to this event by an event listener
  *
- * @property {Any} returnedValue
+ * @property {Mixed} returnedValue
  */
 LayerEvent.prototype.returnedValue = null;
 

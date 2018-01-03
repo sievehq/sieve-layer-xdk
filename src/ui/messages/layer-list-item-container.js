@@ -62,10 +62,6 @@ registerComponent('layer-list-item-container', {
       this.model.on('message-type-model:change', this.onRerender, this);
     },
 
-    /**
-     *
-     * @method
-     */
     onRender() {
       this.onRerender();
     },

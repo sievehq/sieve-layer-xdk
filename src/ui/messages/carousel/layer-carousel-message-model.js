@@ -38,8 +38,7 @@
  * @class Layer.UI.messages.CarouselMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel, Root }  from '../../../core';
-import Util from '../../../util';
+import { Client, MessagePart, MessageTypeModel, Root } from '../../../core';
 
 class CarouselModel extends MessageTypeModel {
   /**
@@ -61,7 +60,7 @@ class CarouselModel extends MessageTypeModel {
     });
 
     let asyncCount = 0;
-    let parts = [this.part];
+    const parts = [this.part];
 
     // Generate the parts for each carousel-item, attach the carousel-item role and call the callback when done
     this.items.forEach((item) => {
@@ -85,7 +84,7 @@ class CarouselModel extends MessageTypeModel {
    *
    * This primarily consists of importing all of the `carousel-item` Message Parts.
    *
-   * @method
+   * @method _parseMessage
    * @protected
    * @param {Object} payload
    */
@@ -105,6 +104,8 @@ class CarouselModel extends MessageTypeModel {
    * >
    * > One must set the action, not a property of the action for this to work.
    *
+   * @method __updateAction
+   * @private
    * @param {Object} newValue
    */
   __updateAction(newValue) {

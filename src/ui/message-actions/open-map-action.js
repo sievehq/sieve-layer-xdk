@@ -5,7 +5,8 @@
  * @class Layer.UI.MessageActions.OpenMapAction
  */
 
-import { registerMessageActionHandler, showFullScreen } from '../base';
+import { register } from './index';
+import { showFullScreen } from '../utils';
 import { logger } from '../../util';
 
 const openMapHandler = ({ data, model }) => {
@@ -34,4 +35,4 @@ const openMapHandler = ({ data, model }) => {
   if (url) showFullScreen(url);
 };
 
-registerMessageActionHandler('open-map', openMapHandler);
+register('open-map', openMapHandler);

@@ -11,11 +11,7 @@
     "build": "grunt build",
     "samplebuild": "grunt samples",
     "watch": "grunt develop",
-    "prepublish": "grunt prepublish",
-    "aws:html": "aws s3 cp samples s3://static.layer.com/carddemo/samples --recursive",
-    "aws:build": "aws s3 cp build s3://static.layer.com/carddemo/build --recursive",
-    "aws:layer-ui-web-theme": "aws s3 cp themes/build s3://static.layer.com/carddemo/themes/build --recursive",
-    "release": "npm run samplebuild; npm run aws:html; npm run aws:build; npm run aws:layer-ui-web-theme"
+    "prepublish": "grunt prepublish"
   },
   "author": "Layer developers <helpdesk@layer.com> (https://layer.com)",
   "license": "Apache-2.0",

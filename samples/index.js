@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // });
 
 /* Demo Async Message Handler called Ipsum Lorem Handler; creates an <ipsum-lorum-handler /> node for any message containing "ipsum lorum" */
-Layer.UI.registerTextHandler({
+Layer.UI.TextHandlers.registerTextHandler({
   name: 'ipsum',
   handler: function(textData, message, isMessageListItemComponent) {
     if (isMessageListItemComponent) {

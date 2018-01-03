@@ -46,7 +46,7 @@ class SyncManager extends Root {
    *
    * @method constructor
    * @param  {Object} options
-   * @param {layer.OnlineStateManager} options.onlineManager
+   * @param {Layer.Core.OnlineStateManager} options.onlineManager
    * @param {Layer.Core.Websockets.RequestManager} options.requestManager
    * @param {Layer.Core.Client} options.client
    */
@@ -706,7 +706,7 @@ class SyncManager extends Root {
 
 /**
  * Websocket Manager for getting socket state.
- * @property {layer.Websockets.SocketManager}
+ * @property {Layer.Core.Websockets.SocketManager}
  */
 SyncManager.prototype.socketManager = null;
 

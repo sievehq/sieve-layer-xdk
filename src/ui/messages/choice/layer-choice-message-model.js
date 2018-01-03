@@ -325,11 +325,48 @@ class ChoiceModel extends MessageTypeModel {
     }, 6000);
   }
 
+  /**
+   * Send the response message unless the app calls `evt.preventDefault()` on the `message-type-model:customization` event.
+   *
+   * @method _generateResponseMessage
+   * @param {Object} options
+   *
+   */
   _generateResponseMessage({ action, selectedText, choiceItem, participantData }) {
     // Generate the Response Message
     const nameOfChoice = this._getNameOfChoice();
     const namePhrase = (nameOfChoice ? ` for "${nameOfChoice}"` : '');
     let text = `${this.getClient().user.displayName} ${action} "${selectedText}"${namePhrase}`;
+
+    /**
+     * Whenever the Choice Model is about to send a Response Message, this event is triggered.
+     *
+     * Use this event to customize or prevent the Response Message
+     *
+     * ```
+     * client.on('message-type-model:customization', function(evt) {
+     *     if (evt.detail.type === 'generate-response-message') {
+     *         evt.returnValue("I have " + (evt.detail.choice === 'selected' ? "clicked " : "unclicked ") + evt.detail.choice.text);
+     *     }
+     * });
+     * ```
+     *
+     * The value provided to the event via Layer.Core.LayerEvent.returnValue will become the Text Message
+     * used within the Response Message.
+     *
+     * Alternatively, one could call `evt.preventDefault()`; this will prevent the Response Message from being sent.
+     *
+     * @event message-type-model:customization
+     * @param {CustomEvent} evt
+     * @param {Object} detail
+     * @param {Boolean} evt.detail.cancelable   This event is cancelable and will respond to `evt.preventDefault()`
+     * @param {String} evt.detail.type          "layer-choice-model-generate-response-message" will accompany events for this model
+     * @param {String} evt.detail.text          This is the text that the Choice Model will use for its Response Message
+     * @param {Object} evt.detail.choice        This is the Choice Object that the user selected
+     * @param {String} evt.detail.action        Either "selected" or "deselected"
+     * @param {Layer.UI.messages.ChoiceMessageModel} evt.detail.model  This Choice Model
+     * @param {String} evt.detail.nameOfChoice  Suggested name to describe the choice message the use is responding to; can be used to help your `evt.returnValue()` call.
+     */
 
     // UI will trigger evt.type (choice-model-generate-response-message)
     const evt = this.trigger('message-type-model:customization', {
@@ -367,7 +404,7 @@ class ChoiceModel extends MessageTypeModel {
    * Get a displayable name to label responses to this Choice Model with.
    *
    * Example: "User XXX did YYY for ZZZ" where the name of the Choice Model is ZZZ.
-   * @method
+   * @method _getNameOfChoice
    * @private
    * @returns {String}
    */
@@ -446,61 +483,6 @@ class ChoiceModel extends MessageTypeModel {
     }, 6000);
   }
 
-  /**
-   * Generate a textual message describing the state change.
-   *
-   * Triggers `message-type-model:customization` event to allow for customizing the text message.
-   *
-   * @param {String} action
-   * @param {String} selectedText
-   * @param {Layer.UI.messages.ChoiceMessageItemModel} choiceItem   The item selected/deselected
-   * @return {Layer.Core.LayerEvent}
-   */
-  /*_getSelectionMessageText(action, selectedText, choiceItem) {
-    const nameOfChoice = this._getNameOfChoice();
-    const namePhrase = (nameOfChoice ? ` for "${nameOfChoice}"` : '');
-    const defaultText = `${this.getClient().user.displayName} ${action} "${selectedText}"${namePhrase}`;
-
-    / **
-     * Whenever the Choice Model is about to send a Response Message, this event is triggered.
-     *
-     * Use this event to customize the Response Message
-     *
-     * ```
-     * client.on('message-type-model:customization', function(evt) {
-     *     if (evt.detail.type === 'generate-response-message') {
-     *         evt.returnValue("I have " + (evt.detail.choice === 'selected' ? "clicked " : "unclicked ") + evt.detail.choice.text);
-     *     }
-     * });
-     * ```
-     *
-     * The value provided to the event via Layer.Core.LayerEvent.returnValue will become the Text Message
-     * used within the Response Message.
-     *
-     * Alternatively, one could call `evt.preventDefault()`; this will prevent the Response Message from being sent.
-     *
-     * @event 'message-type-model:customization'
-     * @param {CustomEvent} evt
-     * @param {Object} detail
-     * @param {Boolean} evt.detail.cancelable   This event is cancelable and will respond to `evt.preventDefault()`
-     * @param {String} evt.detail.type          "generate-response-message" will accompany events for this model
-     * @param {String} evt.detail.text          This is the text that the Choice Model will use for its Response Message
-     * @param {Object} evt.detail.choice        This is the Choice Object that the user selected
-     * @param {String} evt.detail.action        Either "selected" or "deselected"
-     * @param {Layer.UI.messages.ChoiceMessageModel} evt.detail.model  This Choice Model
-     * /
-    const evt = this.trigger('message-type-model:customization', {
-      cancelable: true,
-      type: 'generate-response-message',
-      text: defaultText,
-      choice: choiceItem,
-      model: this,
-      action,
-    });
-    if (evt.canceled) return false;
-    if (evt.returnedValue) return evt.returnedValue;
-    return defaultText;
-  }*/
 
   /**
    * Send the actual Response Message.

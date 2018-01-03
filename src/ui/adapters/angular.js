@@ -1,4 +1,5 @@
-import layerUI from '../base';
+import { ComponentsHash } from '../component-services';
+import { register } from './index';
 
 /**
  * Call this function to initialize all of the angular 1.x directives needed to handle the Layer UI for Web widgets.
@@ -17,7 +18,7 @@ import layerUI from '../base';
  * Call this function to initialize angular 1.x Directives which will be part of the "layerUIControllers" controller:
  *
  * ```
- * layerUI.adapters.angular(angular); // Creates the layerUIControllers controller
+ * Layer.UI.adapters.angular(angular); // Creates the layerUIControllers controller
  * angular.module('MyApp', ['layerUIControllers']);
  * ```
  *
@@ -89,9 +90,9 @@ function initAngular(angular) {
   }
 
   // Gather all UI Components
-  Object.keys(layerUI.components)
+  Object.keys(ComponentsHash)
   .forEach((componentName) => {
-    const component = layerUI.components[componentName];
+    const component = ComponentsHash[componentName];
 
     // Get the camel case controller name
     const controllerName = componentName.replace(/-(.)/g, (str, value) => value.toUpperCase());
@@ -110,4 +111,4 @@ function initAngular(angular) {
 }
 
 module.exports = initAngular;
-layerUI.addAdapter('angular', initAngular);
+register('angular', initAngular);

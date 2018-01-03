@@ -127,8 +127,8 @@ describe('layer-message-list', function() {
       el.properties.stuckToBottom = false;
       el.scrollTop = 0;
       spyOn(el, "_markAsRead");
-      var tmp = window.Layer.UI.isInBackground;
-      window.Layer.UI.isInBackground = function() {return false;}
+      var tmp = window.Layer.UI.Utils.isInBackground;
+      window.Layer.UI.Utils.isInBackground = function() {return false;}
       el.query = query;
       jasmine.clock().tick(150);
 
@@ -141,7 +141,7 @@ describe('layer-message-list', function() {
       expect(el._markAsRead).toHaveBeenCalled();
 
       // Cleanup
-      window.Layer.UI.isInBackground = tmp;
+      window.Layer.UI.Utils.isInBackground = tmp;
     });
   });
 
@@ -149,7 +149,7 @@ describe('layer-message-list', function() {
     it("Should unwire _checkVisibility from the focus event", function() {
       query.data[0].isRead = false;
       spyOn(el, "_markAsRead");
-      var tmp = window.Layer.UI.isInBackground;
+      var tmp = window.Layer.UI.Utils.isInBackground;
       window.Layer.UI.isInBackground = function() {return false;}
       el.query = query;
       jasmine.clock().tick(150);
@@ -164,7 +164,7 @@ describe('layer-message-list', function() {
       expect(el._markAsRead).not.toHaveBeenCalled();
 
       // Cleanup
-      window.Layer.UI.isInBackground = tmp;
+      window.Layer.UI.Utils.isInBackground = tmp;
     });
 
   });
@@ -316,16 +316,16 @@ describe('layer-message-list', function() {
   });
 
   describe("The _checkVisibility() method", function() {
-    var restoreFunc = window.Layer.UI.isInBackground;
+    var restoreFunc = window.Layer.UI.Utils.isInBackground;
     beforeEach(function() {
       query.data.forEach(function(message) {
         message.isRead = false;
       });
-      window.Layer.UI.isInBackground = function() {return false;};
+      window.Layer.UI.Utils.isInBackground = function() {return false;};
     });
 
     afterEach(function() {
-      window.Layer.UI.isInBackground = restoreFunc;
+      window.Layer.UI.Utils.isInBackground = restoreFunc;
     });
 
     it("Should mark visible messages as read", function() {
@@ -392,13 +392,13 @@ describe('layer-message-list', function() {
   });
 
   describe("The _markAsRead() method", function() {
-    var isInBackground = window.Layer.UI.isInBackground;;
+    var isInBackground = window.Layer.UI.Utils.isInBackground;;
     beforeAll(function() {
       window.Layer.UI.isInBackground = function() {return false;}
     });
 
     afterAll(function() {
-      window.Layer.UI.isInBackground = isInBackground;
+      window.Layer.UI.Utils.isInBackground = isInBackground;
     });
 
 
@@ -453,8 +453,8 @@ describe('layer-message-list', function() {
     });
 
     it("Should set a suitable _contentTag", function() {
-      var handlers = window.Layer.UI.handlers;
-      window.Layer.UI.handlers = [
+      var messageHandlers = window.Layer.UI.messageHandlers;
+      window.Layer.UI.messageHandlers = [
         {
           handlesMessage: jasmine.createSpy('handlesNo').and.returnValue(false),
           tagName: "frodo-dom"
@@ -466,7 +466,7 @@ describe('layer-message-list', function() {
       ];
       var m = conversation.createMessage("m?");
       expect(el._generateItem(m)._contentTag).toEqual('sauron-dom');
-      window.Layer.UI.handlers = handlers;
+      window.Layer.UI.messageHandlers = messageHandlers;
     });
 
     it("Should setup dateRenderer and messageStatusRenderer", function() {

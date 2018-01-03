@@ -104,8 +104,6 @@ registerComponent('layer-feedback-message-expanded-view', {
       } else {
         this.nodes.label.innerText = this.model.getSummary(this.model.prompt, true);
       }
-      //this.nodes.label.innerHTML = processText(this.model.label);
-
 
       let text = '';
       for (let i = 1; i <= 5; i++) {
@@ -116,7 +114,6 @@ registerComponent('layer-feedback-message-expanded-view', {
       this.nodes.input.placeholder = this.model.placeholder;
       this.nodes.input.value = this.model.comment;
 
-      //this.nodes.comment.innerHTML = processText(this.model.comment);
       this.nodes.comment.innerHTML = this.model.comment.replace(/\n/g, '<br/>');
       this.nodes.button.disabled = !this.model.isEditable() || !this.model.rating;
     },

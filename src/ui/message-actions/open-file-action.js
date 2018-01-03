@@ -8,7 +8,8 @@
  * @class Layer.UI.MessageActions.OpenFileAction
  */
 
-import { registerMessageActionHandler, showFullScreen } from '../base';
+import { register } from './index';
+import { showFullScreen } from '../utils';
 import { logger } from '../../util';
 
 const openFileHandler = ({ data, model }) => {
@@ -21,4 +22,4 @@ const openFileHandler = ({ data, model }) => {
   }
 };
 
-registerMessageActionHandler('open-file', openFileHandler);
+register('open-file', openFileHandler);

@@ -16,7 +16,7 @@ describe("Focus On Keydown Mixin", function() {
   beforeEach(function() {
     jasmine.clock().install();
     called = false;
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -28,7 +28,6 @@ describe("Focus On Keydown Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('focus-on-keydown-test');

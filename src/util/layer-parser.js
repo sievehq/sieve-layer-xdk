@@ -23,13 +23,6 @@ import LayerParser from 'layer-patch';
 
 let parser;
 
-/**
- * Creates a LayerParser
- *
- * @method
- * @private
- * @param {Object} request - see Layer.Core.ClientUtils.layerParse
- */
 function createParser(request) {
   request.client.once('destroy', () => (parser = null));
 

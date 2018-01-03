@@ -30,7 +30,6 @@ describe("Has Query Mixin", function() {
     });
     client._clientAuthenticated();
 
-    //if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('has-query-test');

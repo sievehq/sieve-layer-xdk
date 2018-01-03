@@ -46,7 +46,7 @@
  * @mixin Layer.UI.mixins.Clickable
  */
 import NotifyLib from 'notifyjs';
-import { isInBackground as IsInBackground, getHandler as GetHandler } from '../../base';
+import { isInBackground as IsInBackground } from '../../utils';
 import { registerComponent } from '../component';
 import Clickable from '../../mixins/clickable';
 import '../layer-avatar/layer-avatar';

@@ -3,9 +3,9 @@
  *
  * @class Layer.UI.handlers.text.NewLine
  */
-import layerUI from '../../base';
+import { registerTextHandler } from './text-handlers';
 
-layerUI.registerTextHandler({
+registerTextHandler({
   name: 'newline',
   order: 600,
   requiresEnable: true,
@@ -44,3 +44,4 @@ layerUI.registerTextHandler({
     textData.text = '<p class="layer-line-wrapping-paragraphs">' + bodyParts.join('</p><p class="layer-line-wrapping-paragraphs">') + '</p>';
   },
 });
+

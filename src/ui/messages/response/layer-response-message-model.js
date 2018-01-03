@@ -82,7 +82,7 @@ class ResponseModel extends MessageTypeModel {
   /**
    * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
    *
-   * @method
+   * @method _parseMessage
    * @private
    * @param {Object} payload
    */

@@ -37,9 +37,9 @@ new ReceiptModel({
           imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
           options: [
             new ChoiceModel({
-              question: 'Size',
+              label: 'Size',
               type: 'Label',
-              selectedAnswer: 'small',
+              preselectedChoice: 'small',
               choices: [
                 {text:  "Small", id: "small"},
                 {text:  "Medium", id: "medium"},
@@ -47,9 +47,9 @@ new ReceiptModel({
               ]
             }),
             new ChoiceModel({
-              question: 'Color',
+              label: 'Color',
               type: 'Label',
-              selectedAnswer: 'white',
+              preselectedChoice: 'white',
               choices: [
                 {text:  "White", id: "white"},
                 {text:  "Black", id: "black"},
@@ -69,9 +69,8 @@ new ReceiptModel({
           imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
           options: [
             new ChoiceModel({
-              question: 'Size',
+              label: 'Size',
               type: 'Label',
-              selectedAnswer: 'small',
               choices: [
                 {text:  "Small", id: "small"},
                 {text:  "Medium", id: "medium"},
@@ -79,9 +78,9 @@ new ReceiptModel({
               ]
             }),
             new ChoiceModel({
-              question: 'Color',
+              label: 'Color',
               type: 'Label',
-              selectedAnswer: 'white',
+              preselectedChoice: 'white',
               choices: [
                 {text:  "White", id: "white"},
                 {text:  "Black", id: "black"},
@@ -101,9 +100,8 @@ new ReceiptModel({
         imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
         options: [
           new ChoiceModel({
-            question: 'Size',
+            label: 'Size',
             type: 'Label',
-            selectedAnswer: 'small',
             choices: [
               {text:  "Small", id: "small"},
               {text:  "Medium", id: "medium"},
@@ -111,9 +109,8 @@ new ReceiptModel({
             ]
           }),
           new ChoiceModel({
-            question: 'Color',
+            label: 'Color',
             type: 'Label',
-            selectedAnswer: 'white',
             choices: [
               {text:  "White", id: "white"},
               {text:  "Black", id: "black"},
@@ -153,29 +150,29 @@ new ReceiptModel({
     description: 'Description should not show'
   }),
   items: [
-    {
+    new ProductModel({
       currency: 'USD',
       image_url: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
       price: 50,
       quantity: 3,
       title: "A pretty picture",
       subtitle: "Hang it on your wall"
-    },
-    {
+    }),
+    new ProductModel({
       currency: 'USD',
       image_url: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
       price: 50,
       quantity: 1,
       title: "A boring picture",
       subtitle: "You hanging around near your wall"
-    },
-    {
+    }),
+    new ProductModel({
       currency: 'USD',
       image_url: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
       price: 150,
       quantity: 1,
       title: "A terrifying picture",
       subtitle: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.'
-    },
+    }),
   ]
 }).generateMessage($("layer-conversation-view").conversation, message => message.send());

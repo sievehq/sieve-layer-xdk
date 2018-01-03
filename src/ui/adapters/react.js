@@ -1,16 +1,17 @@
-import layerUI from '../base';
+import { ComponentsHash } from '../component-services';
+import { register } from './index';
 
 /**
  * Call this function to initialize all of the react components needed to handle the Layer UI for Web widgets.
  *
- * Before using this, please note that Layer.UI.init() must be called prior to calling layerUI.adapters.react().
+ * Before using this, please note that Layer.UI.init() must be called prior to calling Layer.UI.adapters.react().
  *
  * Initialize with:
  *
  * ```
  * import React from 'react';
  * import ReactDom from 'react-dom';
- * const { ConversationPanel, ConversationList, UserList, Notifier } = layerUI.adapters.react(React, ReactDom);
+ * const { ConversationPanel, ConversationList, UserList, Notifier } = Layer.UI.adapters.react(React, ReactDom);
  * ```
  *
  * Calling this will expose the following React Components:
@@ -32,20 +33,18 @@ import layerUI from '../base';
  * }
  * ```
  *
- * To insure that LayerUI.init() is called before layerUI.adapters.react(), and each is only called once, we
+ * To insure that Layer.UI.init() is called before Layer.UI.adapters.react(), and each is only called once, we
  * recommend puttings this code in its own module:
  *
  * ```
  * import React, { Component, PropTypes } from 'react';
  * import ReactDom from 'react-dom';
- * import Layer from 'layer-websdk';
- * import * as LayerUI from 'layer-ui-web';
+ * import Layer from '@layerhq/web-xdk';
  *
- * LayerUI.init({
- *   appId: 'layer:///apps/staging/my-app-id',
- *   layer: Layer
+ * Layer.init({
+ *   appId: 'layer:///apps/staging/my-app-id'
  * });
- * const LayerUIWidgets = LayerUI.adapters.react(React, ReactDom);
+ * const LayerUIWidgets = Layer.UI.adapters.react(React, ReactDom);
  * module.exports = LayerUIWidgets;
  * ```
  *
@@ -63,9 +62,9 @@ function initReact(React, ReactDom) {
   libraryResult = {};
 
   // Gather all UI Components flagged as Main Components; other components don't require special React Components for direct use.
-  Object.keys(layerUI.components)
+  Object.keys(ComponentsHash)
   .forEach((componentName) => {
-    const component = layerUI.components[componentName];
+    const component = ComponentsHash[componentName];
 
     // Get the camel case Component name
     const className = (componentName.substring(0, 1).toUpperCase() +
@@ -212,4 +211,4 @@ function initReact(React, ReactDom) {
 }
 
 module.exports = initReact;
-layerUI.addAdapter('react', initReact);
+register('react', initReact);

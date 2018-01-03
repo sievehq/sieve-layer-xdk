@@ -92,7 +92,7 @@ class ReceiptModel extends MessageTypeModel {
   /**
    * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
    *
-   * @method
+   * @method _parseMessage
    * @private
    * @param {Object} payload
    */
@@ -124,7 +124,7 @@ class ReceiptModel extends MessageTypeModel {
 
   // Used to render Last Message in the Conversation List
   getOneLineSummary() {
-    return (this.message.sender.sessionOwner ? 'A ' : 'Your ') + this.constructor.Label;
+    return (!this.message || this.message.sender.sessionOwner ? 'A ' : 'Your ') + this.constructor.Label;
   }
 }
 

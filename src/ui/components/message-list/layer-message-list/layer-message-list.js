@@ -109,6 +109,8 @@
  */
 import Util from '../../../../util';
 import UI from '../../../base';
+import MessageHandlers from '../../../handlers/message/message-handlers';
+import { isInBackground as IsInBackground } from '../../../utils';
 import { registerComponent } from '../../component';
 import List from '../../../mixins/list';
 import HasQuery from '../../../mixins/has-query';
@@ -365,7 +367,7 @@ registerComponent('layer-message-list', {
 
         // If we have scrolled to the bottom/away from bottom, update stuckToBottom.
         const stuckToBottom = this.scrollHeight - 10 <= this.clientHeight + this.scrollTop;
-        if (stuckToBottom !== this.properties.stuckToBottom) {
+        if (stuckToBottom !== this.properties.stuckToBottom && !this.properties.inPagedData) {
           this.properties.stuckToBottom = stuckToBottom;
         }
 
@@ -454,7 +456,7 @@ registerComponent('layer-message-list', {
      * @private
      */
     _checkVisibility() {
-      if (UI.isInBackground() || this.disable) return;
+      if (IsInBackground() || this.disable) return;
 
       // The top that we can see is marked by how far we have scrolled.
       const visibleTop = this.scrollTop;
@@ -484,7 +486,7 @@ registerComponent('layer-message-list', {
      * @param {Layer.UI.components.MessageListPanel.Item} child
      */
     _markAsRead(child) {
-      if (Layer.UI.isInBackground() || this.disable) return;
+      if (IsInBackground() || this.disable) return;
 
       const visibleTop = this.scrollTop;
       const visibleBottom = this.scrollTop + this.clientHeight;
@@ -503,9 +505,9 @@ registerComponent('layer-message-list', {
      * @private
      */
     _generateItem(message) {
-      const handler = UI.getHandler(message, this);
+      const handler = MessageHandlers.getHandler(message, this);
       if (handler) {
-        const rootPart = message.getPartsMatchingAttribute({role: 'root'})[0];
+        const rootPart = message.getPartsMatchingAttribute({ role: 'root' })[0];
         let type;
         if (this._isStatusMessage(rootPart, message)) {
           type = 'layer-message-item-status';
@@ -719,6 +721,8 @@ registerComponent('layer-message-list', {
           return;
         }
 
+        this.properties.inPagedData = true;
+
         // Set this so that if the user is clinging to the scrollbar forcing it to stay at the top,
         // we know we just paged and won't page again.
         this.properties.lastPagedAt = Date.now();
@@ -809,6 +813,14 @@ registerComponent('layer-message-list', {
       if (this.query.data.length > 1) {
         Util.defer(() => this._pagedDataDone(firstVisibleItem, evt, initialOffset));
       }
+
+      // Fixes special case where first message is taller than the viewport,
+      // also happens when listItem.beforeNode adds height.
+      else if (this.properties.stuckToBottom) {
+        this.onPagedDataDone(false);
+        this.properties.inPagedData = false;
+        // TODO: Add onPagedData(true) call
+      }
     },
 
     /**
@@ -864,7 +876,10 @@ registerComponent('layer-message-list', {
       }
 
       // Is everything good? Well then call onPagedDataDone(true)
-      if (needsPagedDataDone) this.onPagedDataDone(true);
+      if (needsPagedDataDone) {
+        this.onPagedDataDone(true);
+        this.properties.inPagedData = false;
+      }
     },
 
     /**

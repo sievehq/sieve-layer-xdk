@@ -417,7 +417,7 @@ registerComponent('layer-carousel-message-view', {
      *
      * @method _touchStart
      * @private
-     * @param {Event}
+     * @param {Event} evt
      */
     _touchStart(evt) {
       this.properties.touching = true;
@@ -436,7 +436,7 @@ registerComponent('layer-carousel-message-view', {
      *
      * @method _touchMove
      * @private
-     * @param {Event}
+     * @param {Event} evt
      */
     _touchMove(evt) {
       if (!this.properties.touching) return;
@@ -464,7 +464,7 @@ registerComponent('layer-carousel-message-view', {
      *
      * @method _touchMove
      * @private
-     * @param {Event}
+     * @param {Event} evt
      */
     _touchEnd(evt) {
       if (!this.properties.touching) return;

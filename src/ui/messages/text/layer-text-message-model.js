@@ -28,7 +28,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
-import { registerMessageHandler } from '../../base';
+import { registerMessageHandler } from '../../handlers/message/message-handlers';
 import { STANDARD_MIME_TYPES } from '../../../constants';
 
 class TextModel extends MessageTypeModel {

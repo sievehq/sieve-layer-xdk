@@ -13,14 +13,14 @@
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
  */
-import { registerMessageComponent } from '../../components/component';
+import { registerComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
 import Clickable from '../../mixins/clickable';
 
-import { messageActionHandlers } from '../../base';
+import messageActionHandlers from '../../message-actions/index';
+import { registerMessageHandler } from './message-handlers';
 
-
-registerMessageComponent('layer-message-viewer', {
+registerComponent('layer-message-viewer', {
   mixins: [MessageHandler, Clickable],
   style: `layer-message-viewer {
     display: inline-flex;
@@ -138,16 +138,6 @@ registerMessageComponent('layer-message-viewer', {
     },
   },
   methods: {
-    /**
-     * This component can render any message that starts with text/plain message part
-     *
-     * @method
-     * @static
-     */
-    handlesMessage(message, container) {
-      return Boolean(message.getRootPart());
-    },
-
     // Standard lifecycle event insures that _handleSelection will be called when clicked
     onCreate() {
       this.addClickHandler('card-click', this, this._handleSelection.bind(this));
@@ -254,4 +244,12 @@ registerMessageComponent('layer-message-viewer', {
       }
     },
   },
+});
+
+registerMessageHandler({
+  handlesMessage(message, container) {
+    return Boolean(message.getRootPart());
+  },
+  tagName: 'layer-message-viewer',
+  order: undefined,
 });

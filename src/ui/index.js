@@ -31,7 +31,7 @@ import './messages/layer-message-viewer-expanded.js';
 import './handlers/text/autolinker';
 import './handlers/text/emoji';
 import './handlers/text/newline';
-import './utils/date-separator';
+import dateSeparator from './utils/date-separator';
 
 // Load standard cards
 
@@ -126,6 +126,7 @@ LayerUI.mixins = {
   SizeProperty,
   Throttler,
 };
+LayerUI.utils.dateSeparator = dateSeparator;
 
 // If we don't expose global.layerUI then custom templates can not load and call window.Layer.UI.registerTemplate()
 module.exports = LayerUI;

@@ -4,7 +4,7 @@
  * @class Layer.UI.handlers.text.Autolinker
  */
 import Autolinker from 'autolinker';
-import layerUI from '../../base';
+import { registerTextHandler } from './text-handlers';
 
 const autolinker = new Autolinker({
   truncate: {
@@ -18,7 +18,7 @@ const autolinker = new Autolinker({
  *
  * @class Layer.UI.handlers.text.Autolinker
  */
-layerUI.registerTextHandler({
+registerTextHandler({
   name: 'autolinker',
   order: 400,
   requiresEnable: true,

@@ -99,7 +99,7 @@ class ProductModel extends MessageTypeModel {
   /**
    * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
    *
-   * @method
+   * @method _parseMessage
    * @protected
    * @param {Object} payload
    */
@@ -143,7 +143,7 @@ class ProductModel extends MessageTypeModel {
    * UserX selected "Red" for "Product Name"
    * ```
    *
-   * @method
+   * @method getChoiceModelResponseTopic
    * @protected
    * @returns {String}
    */

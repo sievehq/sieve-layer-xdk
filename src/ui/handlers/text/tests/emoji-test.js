@@ -1,7 +1,6 @@
 describe("Emoji Text Handler", function() {
   var handler;
   beforeEach(function() {
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     handler = Layer.UI.textHandlers.emoji.handler;
   });
 

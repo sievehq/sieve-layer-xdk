@@ -100,6 +100,7 @@ class FileModel extends MessageTypeModel {
    * fileModel.getSourceUrl(url => window.open(url));
    * ```
    *
+   * @method getSourceUrl
    * @param {Function} callback
    * @param {String} callback.url
    */

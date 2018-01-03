@@ -4,7 +4,7 @@
  * @class Layer.UI.MessageActions.OpenExpandedView
  */
 
-import { registerMessageActionHandler } from '../base';
+import { register } from './index';
 import { logger } from '../../util';
 
 const openExpandedView = ({ messageViewer, model }) => {
@@ -24,4 +24,4 @@ const openExpandedView = ({ messageViewer, model }) => {
   }
 };
 
-registerMessageActionHandler('layer-open-expanded-view', openExpandedView);
+register('layer-open-expanded-view', openExpandedView);

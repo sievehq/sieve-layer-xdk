@@ -409,7 +409,9 @@
 import Layer from '../../core';
 import Util from '../../util';
 import UI from '../base';
+import { ComponentsHash, buildAndRegisterTemplate, registerTemplate } from '../component-services';
 import stateManagerMixin from '../mixins/state-manager';
+import Settings from '../settings';
 
 const logger = Util.logger;
 /*
@@ -745,16 +747,16 @@ function setupProperty(classDef, prop, propertyDefHash) {
 
 let registerAllCalled = false;
 function registerComponent(tagName, classDef) {
-  if (!UI.components[tagName]) UI.components[tagName] = {};
-  UI.components[tagName].def = classDef;
+  if (!ComponentsHash[tagName]) ComponentsHash[tagName] = {};
+  ComponentsHash[tagName].def = classDef;
 
   if (classDef.template) {
-    UI.components[tagName].template = classDef.template;
+    ComponentsHash[tagName].template = classDef.template;
   }
   delete classDef.template; // deletes templates that are empty and fail the above test
 
   if (classDef.style) {
-    UI.components[tagName].style = classDef.style;
+    ComponentsHash[tagName].style = classDef.style;
     delete classDef.style;
   }
 
@@ -763,28 +765,28 @@ function registerComponent(tagName, classDef) {
 
 // Docs in layer-ui.js
 function unregisterComponent(tagName) {
-  delete UI.components[tagName];
+  delete ComponentsHash[tagName];
 }
 
 // Docs in layer-ui.js
 function registerAll() {
   if (!registerAllCalled) {
     registerAllCalled = true;
-    Object.keys(UI.components)
-      .filter(tagName => typeof UI.components[tagName] !== 'function')
+    Object.keys(ComponentsHash)
+      .filter(tagName => typeof ComponentsHash[tagName] !== 'function')
       .forEach(tagName => _registerComponent(tagName));
   }
 }
 
 function _registerComponent(tagName) {
-  const classDef = UI.components[tagName].def;
-  const { template } = UI.components[tagName];
+  const classDef = ComponentsHash[tagName].def;
+  const { template } = ComponentsHash[tagName];
 
   if (template) {
     if (typeof template === 'string') {
-      UI.buildAndRegisterTemplate(tagName, template);
+      buildAndRegisterTemplate(tagName, template);
     } else if (template.getAttribute('layer-template-registered') !== 'true') {
-      UI.registerTemplate(tagName, template);
+      registerTemplate(tagName, template);
     }
   }
 
@@ -795,9 +797,9 @@ function _registerComponent(tagName) {
   if (!classDef.mixins) classDef.mixins = [];
   classDef.mixins.push(stateManagerMixin);
 
-  // Add in custom mixins specified via UI.settings
-  if (UI.settings.mixins[tagName]) {
-    classDef.mixins = classDef.mixins.concat(UI.settings.mixins[tagName]);
+  // Add in custom mixins specified via Layer.UI.settings
+  if (Settings.mixins[tagName]) {
+    classDef.mixins = classDef.mixins.concat(Settings.mixins[tagName]);
   }
 
   // Setup all events specified in the `events` property.  This adds properties,
@@ -873,7 +875,7 @@ function _registerComponent(tagName) {
    */
   classDef.createdCallback = {
     value: function createdCallback() {
-      if (!UI.components[tagName]) return;
+      if (!ComponentsHash[tagName]) return;
 
       this._initializeProperties();
       this.nodes = {};
@@ -958,7 +960,7 @@ function _registerComponent(tagName) {
       // This scneario happens during unit tests; not clear if it happens elsewhere
       if (this.properties._internalState.onAfterCreateCalled ||
         this.properties._internalState.onDestroyCalled ||
-        UI.settings.client && UI.settings.client.isDestroyed) return;
+        Settings.client && Settings.client.isDestroyed) return;
 
 
       // TODO: Test if this should be built into <layer-replaceable-content /> and moved out of the root class of all Components.
@@ -972,7 +974,7 @@ function _registerComponent(tagName) {
       // may behave a little differently than those that are fully initialized.  Any property that has its value
       // set via our setter is immediately removed from this list.
       this.properties._internalState.inPropInit =
-      UI.components[tagName].properties.map(propDef => propDef.propertyName);
+      ComponentsHash[tagName].properties.map(propDef => propDef.propertyName);
 
       // Initialize each property
       props.forEach((prop) => {
@@ -1006,7 +1008,7 @@ function _registerComponent(tagName) {
         // all parent propagateToChildren properties.
         if ((isValueUnset || value === prop.value) && this.parentComponent) {
           // Get the parentComponent's Property Definition
-          const parentComponentProps = UI.components[this.parentComponent.tagName.toLocaleLowerCase()].properties;
+          const parentComponentProps = ComponentsHash[this.parentComponent.tagName.toLocaleLowerCase()].properties;
           const parentComponentPropDef = parentComponentProps.filter(p => p.propertyName === prop.propertyName)[0];
 
           // If we found the definition and its propagateToChildren, copy its value
@@ -1204,7 +1206,7 @@ function _registerComponent(tagName) {
         if (!document.body.contains(this) && !document.head.contains(this) && this.trigger('layer-widget-destroyed')) {
           this.onDestroy();
         }
-      }, UI.settings.destroyAfterDetachDelay);
+      }, Settings.destroyAfterDetachDelay);
     },
   };
 
@@ -1227,7 +1229,7 @@ function _registerComponent(tagName) {
   // Register the component with our components hash as well as with the document.
   // WARNING: Calling this in some browsers may cause immediate registeration of the component prior
   // to reaching the next line of code; putting code after this line may be problematic.
-  UI.components[tagName].classDef = document.registerElement(tagName, {
+  ComponentsHash[tagName].classDef = document.registerElement(tagName, {
     prototype: Object.create(HTMLElement.prototype, classDef),
   });
 
@@ -1237,10 +1239,10 @@ function _registerComponent(tagName) {
    *
    * Used by adapters.  See getPropArray for the structure of each item of the props array
    *
-   * @property {Object[]}
+   * @property {Object[]} properties
    * @static
    */
-  UI.components[tagName].properties = props;
+  ComponentsHash[tagName].properties = props;
 };
 
 /**
@@ -1459,7 +1461,7 @@ const standardClassProperties = {
   client: {
     order: 1,
     get() {
-      const client = UI.settings.client;
+      const client = Settings.client;
       return client && !client.isDestroyed ? client : null;
     },
   },
@@ -1577,7 +1579,7 @@ const standardClassMethods = {
     for (let i = 0; i < children.length; i++) {
       const innerNode = children[i];
       if (innerNode instanceof HTMLElement) {
-        const isLUIComponent = Boolean(UI.components[innerNode.tagName.toLowerCase()]);
+        const isLUIComponent = Boolean(ComponentsHash[innerNode.tagName.toLowerCase()]);
         const result = callback(innerNode, isLUIComponent);
         if (result) return result;
 
@@ -1616,14 +1618,14 @@ const standardClassMethods = {
   getTemplate: function getTemplate() {
     const tagName = this.tagName.toLocaleLowerCase();
 
-    if (UI.components[tagName].style) {
+    if (ComponentsHash[tagName].style) {
       const styleNode = document.createElement('style');
       styleNode.id = 'style-' + this.tagName.toLowerCase();
-      styleNode.innerHTML = UI.components[tagName].style;
+      styleNode.innerHTML = ComponentsHash[tagName].style;
       document.getElementsByTagName('head')[0].appendChild(styleNode);
-      UI.components[tagName].style = ''; // insure it doesn't get added to head a second time
+      ComponentsHash[tagName].style = ''; // insure it doesn't get added to head a second time
     }
-    return UI.components[tagName].template;
+    return ComponentsHash[tagName].template;
   },
 
   /**
@@ -2077,20 +2079,10 @@ const standardClassMethods = {
   },
 };
 
-function registerMessageComponent(tagName, componentDefinition) {
-  const handlesMessage = componentDefinition.methods.handlesMessage;
-  const order = componentDefinition.properties.order;
-  registerComponent(tagName, componentDefinition);
-  UI.registerMessageHandler({
-    handlesMessage,
-    tagName,
-    order,
-  });
-}
 
 module.exports = {
   registerComponent,
-  registerMessageComponent,
   registerAll,
   unregisterComponent,
 };
+
