@@ -16,7 +16,7 @@ import { LayerReactUI, Layer, layerClient } from '../get-layer';
 import { googleMapsKey } from '../../common/identityServices';
 
 const { ConversationView, SendButton, FileUploadButton, MenuButton }  = LayerReactUI;
-const LayerUIUtil = Layer.UI.utils;
+const LayerUIUtil = Layer.UI.UIUtils;
 const QueryBuilder = Layer.Core.QueryBuilder;
 const ResponseModel = Layer.Core.Client.getMessageTypeModelClass('ResponseModel');
 

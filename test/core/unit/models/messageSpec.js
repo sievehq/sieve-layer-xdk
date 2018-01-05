@@ -1547,18 +1547,18 @@ describe("The Message class", function() {
                 ]
             });
 
-            var fetchTextFromFile  = layer.Util.fetchTextFromFile;
-            spyOn(layer.Util, "fetchTextFromFile").and.callThrough();
+            var fetchTextFromFile  = Layer.Utils.fetchTextFromFile;
+            spyOn(layer.Utils, "fetchTextFromFile").and.callThrough();
 
 
             m._readAllBlobs(function() {
-                layer.Util.fetchTextFromFile.calls.allArgs().forEach(function(callData) {
+                Layer.Utils.fetchTextFromFile.calls.allArgs().forEach(function(callData) {
                     expect(callData[1]).toEqual(jasmine.any(Function));
                 });
-                expect(layer.Util.fetchTextFromFile.calls.allArgs()[0][0].type).toEqual('text/plain');
-                expect(layer.Util.fetchTextFromFile.calls.allArgs()[1][0].type).toEqual('text/markdown');
-                expect(layer.Util.fetchTextFromFile.calls.allArgs().length).toEqual(2);
-                layer.Util.fetchTextFromFile = fetchTextFromFile;
+                expect(Layer.Utils.fetchTextFromFile.calls.allArgs()[0][0].type).toEqual('text/plain');
+                expect(Layer.Utils.fetchTextFromFile.calls.allArgs()[1][0].type).toEqual('text/markdown');
+                expect(Layer.Utils.fetchTextFromFile.calls.allArgs().length).toEqual(2);
+                Layer.Utils.fetchTextFromFile = fetchTextFromFile;
                 done();
             });
         });
@@ -2525,70 +2525,6 @@ describe("The Message class", function() {
                 target: "what the",
                 depends: [m.conversationId]
             });
-        });
-    });
-
-
-
-    describe("The getText() method", function() {
-        it("Should return '' if no matching parts", function() {
-            // Setup
-            var m = new Layer.Core.Message.ConversationMessage({
-                parts: [
-                    new Layer.Core.MessagePart({mimeType: "blah", body: "bleh"}),
-                    new Layer.Core.MessagePart({mimeType: "blah", body: "bleh2"}),
-                    new Layer.Core.MessagePart({mimeType: "text/plain2", body: "I fly over the plain"})
-                ],
-                client: client
-            });
-
-            // Posttest
-            expect(m.getText()).toEqual("");
-        });
-
-        it("Should only return text/plain message parts", function() {
-            // Setup
-            var m = new Layer.Core.Message.ConversationMessage({
-                parts: [
-                    new Layer.Core.MessagePart({mimeType: "blah", body: "bleh"}),
-                    new Layer.Core.MessagePart({mimeType: "blah", body: "bleh2"}),
-                    new Layer.Core.MessagePart({mimeType: "text/plain", body: "I fly over the plain"})
-                ],
-                client: client
-            });
-
-            // Posttest
-            expect(m.getText()).toEqual("I fly over the plain");
-        });
-
-        it("Should concatenate text/plain message parts using the default '.  '", function() {
-            // Setup
-            var m = new Layer.Core.Message.ConversationMessage({
-                parts: [
-                    new Layer.Core.MessagePart({mimeType: "text/plain", body: "bleh"}),
-                    new Layer.Core.MessagePart({mimeType: "blah", body: "bleh2"}),
-                    new Layer.Core.MessagePart({mimeType: "text/plain", body: "I fly over the plain"})
-                ],
-                client: client
-            });
-
-            // Posttest
-            expect(m.getText()).toEqual("bleh. I fly over the plain");
-        });
-
-        it("Should concatenate text/plain message parts using a custom join", function() {
-            // Setup
-            var m = new Layer.Core.Message.ConversationMessage({
-                parts: [
-                    new Layer.Core.MessagePart({mimeType: "text/plain", body: "bleh"}),
-                    new Layer.Core.MessagePart({mimeType: "blah", body: "bleh2"}),
-                    new Layer.Core.MessagePart({mimeType: "text/plain", body: "I fly over the plain"})
-                ],
-                client: client
-            });
-
-            // Posttest
-            expect(m.getText("DOH!")).toEqual("blehDOH!I fly over the plain");
         });
     });
 

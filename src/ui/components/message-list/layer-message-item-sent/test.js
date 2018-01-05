@@ -55,7 +55,7 @@ describe('layer-message-item', function() {
     });
 
     message = conversation.createMessage("M 0000").send();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(1);
   });
 
@@ -70,7 +70,7 @@ describe('layer-message-item', function() {
       spyOn(el, "onRerender");
 
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.onRender).toHaveBeenCalledWith();
       el.onRender.calls.reset();
 
@@ -88,7 +88,7 @@ describe('layer-message-item', function() {
 
       var m2 = conversation.createMessage("m2").send();
       el.item = m2;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el.item = message;
 
       m2.trigger("messages:change", {});
@@ -126,7 +126,7 @@ describe('layer-message-item', function() {
       el.dateRenderer = f;
       el.item = message;
       testRoot.appendChild(el);
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.nodes.date.dateRenderer).toBe(f);
     });
@@ -145,7 +145,7 @@ describe('layer-message-item', function() {
 
       var f = function() {};
       el.getMenuOptions = f;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.nodes.menuButton.getMenuOptions).toBe(f);
     });
   });
@@ -168,7 +168,7 @@ describe('layer-message-item', function() {
         week: {year: "short"},
         older: {weekday: "short"}
       };
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.nodes.date.todayFormat).toEqual({hour: "number"});
       expect(el.nodes.date.defaultFormat).toEqual({minute: "short"});
       expect(el.nodes.date.weekFormat).toEqual({year: "short"});
@@ -190,7 +190,7 @@ describe('layer-message-item', function() {
       var f = function() {};
       el.messageStatusRenderer = f;
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el.onRender();
       expect(el.nodes.status.messageStatusRenderer).toBe(f);
     });
@@ -211,7 +211,7 @@ describe('layer-message-item', function() {
       };
 
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Test with an avatar
       expect(el.querySelector('.layer-sender-name').innerHTML).toEqual(message.sender.displayName);
@@ -220,7 +220,7 @@ describe('layer-message-item', function() {
       delete el.nodes.sender;
       el.item = null;
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
 
     it("Should setup the layer-avatar", function() {
@@ -239,7 +239,7 @@ describe('layer-message-item', function() {
 
 
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Test with an avatar that lacks a presence
       expect(el.querySelector('layer-avatar').users).toEqual([message.sender]);
@@ -249,7 +249,7 @@ describe('layer-message-item', function() {
       delete el.nodes.avatar;
       el.item = null;
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
 
     it("Should setup the layer-date", function() {
@@ -262,14 +262,14 @@ describe('layer-message-item', function() {
         messageRowRightSide: date,
       };
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.querySelector('layer-date').date).toEqual(message.sentAt);
 
       // Test without a date; basically verifying it does not throw an error if this is missing
       delete el.nodes.date;
       el.item = null;
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
 
     it("Should setup the layer-message-status", function() {
@@ -283,14 +283,14 @@ describe('layer-message-item', function() {
       };
 
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.querySelector('layer-message-status').item).toEqual(message);
 
       // Test without a status; basically verifying it does not throw an error if this is missing
       delete el.nodes.status;
       el.item = null;
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
 
 
@@ -298,14 +298,14 @@ describe('layer-message-item', function() {
     it("Should call _applyContentTag", function() {
       spyOn(el, "_applyContentTag");
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el._applyContentTag).toHaveBeenCalledWith();
     });
 
     it("Should call rerender", function() {
       spyOn(el, "onRerender");
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.onRerender).toHaveBeenCalledWith();
     });
   });
@@ -313,7 +313,7 @@ describe('layer-message-item', function() {
   describe("The rerender() method", function() {
     it("Should setup read css", function() {
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       message.readStatus = Layer.Constants.RECIPIENT_STATE.ALL;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-read-by-all')).toBe(true);
@@ -335,7 +335,7 @@ describe('layer-message-item', function() {
 
     it("Should setup delivery css", function() {
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       message.deliveryStatus = Layer.Constants.RECIPIENT_STATE.ALL;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-delivered-to-all')).toBe(true);
@@ -357,7 +357,7 @@ describe('layer-message-item', function() {
 
     it("Should setup pending css", function() {
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       message.syncState = Layer.Constants.SYNC_STATE.SAVING;
       el.onRerender();
       expect(el.classList.contains('layer-message-status-pending')).toBe(true);
@@ -369,7 +369,7 @@ describe('layer-message-item', function() {
 
     it("Should setup unread css", function() {
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       message.isRead = false;
       el.onRerender();
       expect(el.classList.contains('layer-unread-message')).toBe(true);
@@ -383,7 +383,7 @@ describe('layer-message-item', function() {
   describe("The _applyContentTag() method", function() {
     it("Should create the element specified in _contentTag", function() {
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el._contentTag = "img";
       el.nodes.content = document.createElement('div');
       el.appendChild(el.nodes.content);
@@ -394,7 +394,7 @@ describe('layer-message-item', function() {
 
     it("Should setup message properties", function() {
       el.item = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el._contentTag = currentTagName;
       el.nodes.content = document.createElement('div');
       el.appendChild(el.nodes.content);
@@ -408,7 +408,7 @@ describe('layer-message-item', function() {
 
     // Dont know how to test this
     it("Should propagate the message handlers height to the content node", function() {
-      Layer.UI.registerMessageHandler({
+      Layer.UI.handlers.message.register({
         tagName: 'test-handler-height',
         handlesMessage: function(message, container) {return message.parts[0].mimeType=='text/height-test';}
       });
@@ -421,10 +421,10 @@ describe('layer-message-item', function() {
       });
 
       el.item = conversation.createMessage({parts: [{mimeType: "text/height-test", body: "bbb"}]});
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el._contentTag = 'test-handler-height';
       el._applyContentTag();
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.nodes.content.style.height).toEqual("234px");
     });

@@ -82,7 +82,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, MessageTypeModel, Root } from '../../../core';
-import { uuid } from '../../../util';
+import { uuid } from '../../../utils';
 import ChoiceModel from '../choice/layer-choice-message-model';
 import ChoiceItem from '../choice/layer-choice-message-model-item';
 

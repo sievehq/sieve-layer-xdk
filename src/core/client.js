@@ -80,8 +80,8 @@
  * @mixin Layer.Core.mixins.ClientChannels
  * @mixin Layer.Core.mixins.ClientMessages
  * @mixin Layer.Core.mixins.ClientQueries
- * @mixin Layer.mixin.WebsocketOperations
- * @mixin Layer.Core.mixins.ClientMessageModels
+ * @mixin Layer.Core.mixins.WebsocketOperations
+ * @mixin Layer.Core.mixins.ClientMessageTypeModels
  */
 
 import ClientAuth from './client-authenticator';
@@ -95,9 +95,9 @@ import MessagePart from './models/message-part';
 import Identity from './models/identity';
 import Membership from './models/membership';
 import TypingIndicatorListener from './typing-indicators/typing-indicator-listener';
-import Util from '../util';
+import Util from '../utils';
 import version from '../version';
-import logger from '../util/logger';
+import logger from '../utils/logger';
 import Root from './root';
 import ClientRegistry from './client-registry';
 import TypingListener from './typing-indicators/typing-listener';
@@ -440,6 +440,7 @@ class Client extends ClientAuth {
    * @private
    */
   _runScheduledCheckAndPurgeCache() {
+    if (this.isDestroyed) return; // Primarily triggers during unit tests
     const list = this._scheduleCheckAndPurgeCacheItems;
     this._scheduleCheckAndPurgeCacheItems = [];
     this._checkAndPurgeCache(list);

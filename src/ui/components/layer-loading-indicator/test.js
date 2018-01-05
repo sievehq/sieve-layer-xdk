@@ -9,7 +9,7 @@ describe('layer-loading-indicator', function() {
   beforeEach(function() {
     if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     el = document.createElement('layer-loading-indicator');
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

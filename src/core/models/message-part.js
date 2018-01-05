@@ -69,7 +69,7 @@ import Root from '../root';
 import Content from './content';
 import ClientRegistry from '../client-registry';
 import LayerError, { ErrorDictionary } from '../layer-error';
-import Util, { logger, xhr } from '../../util';
+import Util, { logger, xhr } from '../../utils';
 
 class MessagePart extends Root {
 

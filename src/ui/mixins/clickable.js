@@ -37,6 +37,8 @@ module.exports = {
     /**
      * Adds a named event handler to listen for tap and click events on the specified node.
      *
+     * For use in building UI Custom Components, not for apps that use the Component.
+     *
      * Its assumed that the target node is either this entire UI Component or a subcomponent of this component.
      *
      * The name is any custom unique string.
@@ -49,6 +51,7 @@ module.exports = {
      * ```
      *
      * @method addClickHandler
+     * @protected
      * @param {String} name         Any unique string
      * @param {HTMLElement} target  Target of events to listen for
      * @param {Function} fn         Handler to call when the event occurs

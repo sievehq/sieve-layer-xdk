@@ -15,7 +15,7 @@
  * @class  Layer.Core.SyncEvent
  * @extends Layer.Core.Root
  */
-import Util from '../util';
+import Util from '../utils';
 
 class SyncEvent {
   /**
@@ -213,7 +213,7 @@ class XHRSyncEvent extends SyncEvent {
    *
    * Actually it just returns the parameters needed to make the xhr call:
    *
-   *      Layer.Util.xhr(event._getRequestData(client));
+   *      Layer.Utils.xhr(event._getRequestData(client));
    *
    * @method _getRequestData
    * @param {Layer.Core.Client} client

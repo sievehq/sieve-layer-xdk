@@ -6,8 +6,8 @@
  */
 
 import { register } from './index';
-import { showFullScreen } from '../utils';
-import { logger } from '../../util';
+import { showFullScreen } from '../ui-utils';
+import { logger } from '../../utils';
 
 const openMapHandler = ({ data, model }) => {
   const mergedData = {};

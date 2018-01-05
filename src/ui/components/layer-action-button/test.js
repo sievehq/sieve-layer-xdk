@@ -12,7 +12,7 @@ describe('layer-action-button', function() {
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     testRoot.appendChild(el);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

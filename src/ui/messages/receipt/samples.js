@@ -12,7 +12,6 @@ new ReceiptModel({
   },
   paymentMethod: "VISA ****1234",
   summary: {
-    subtitle: 'Your Purchase is Complete',
     shipping_cost: 350.01,
     total_tax: 0.01,
     total_cost: 350.02
@@ -136,7 +135,7 @@ new ReceiptModel({
   },
   paymentMethod: "VISA ****1234",
   summary: {
-    subtitle: 'Your Purchase is Complete',
+    subtotal: 325.67,
     shipping_cost: 350.01,
     total_tax: 0.01,
     total_cost: 350.02

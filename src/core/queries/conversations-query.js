@@ -32,7 +32,7 @@
  * @extends Layer.Core.Query
  */
 import Root from '../root';
-import Util from '../../util';
+import Util from '../../utils';
 import { SYNC_STATE } from '../../constants';
 import Query from './query';
 

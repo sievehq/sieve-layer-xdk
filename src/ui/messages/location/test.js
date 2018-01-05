@@ -16,8 +16,8 @@ describe('Location Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -52,14 +52,14 @@ describe('Location Message Components', function() {
 
     LocationModel = Layer.Core.Client.getMessageTypeModelClass("LocationModel");
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
     if (client) client.destroy();
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -269,7 +269,7 @@ describe('Location Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.nodes.ui.childNodes.length).toEqual(1);
       expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
@@ -287,7 +287,7 @@ describe('Location Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el.nodes.ui.hideMap = false;
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -304,7 +304,7 @@ describe('Location Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el.nodes.ui.hideMap = true;
       expect(el.nodes.ui.classList.contains('layer-location-message-view-address-only')).toEqual(true);
@@ -313,8 +313,8 @@ describe('Location Message Components', function() {
     });
 
     it("Should open the map using lat/lon", function() {
-      var tmp = Layer.UI.showFullScreen;
-      spyOn(Layer.UI, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
 
       var model = new LocationModel({
         latitude: 37.7734858,
@@ -325,21 +325,21 @@ describe('Location Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-map');
 
       el._runAction({});
-      expect(Layer.UI.showFullScreen).toHaveBeenCalledWith('https://www.google.com/maps/search/?api=1&query=37.7734858,-122.3916087&zoom=16');
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith('https://www.google.com/maps/search/?api=1&query=37.7734858,-122.3916087&zoom=16');
 
       // Restore
-      Layer.UI.showFullScreen = tmp;
+      Layer.UI.UIUtils.showFullScreen = tmp;
 
     });
 
     it("Should open the map using address", function() {
-      var tmp = Layer.UI.showFullScreen;
-      spyOn(Layer.UI, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
 
       var model = new LocationModel({
         street1: "a",
@@ -354,7 +354,7 @@ describe('Location Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-map');
 
@@ -363,10 +363,10 @@ describe('Location Message Components', function() {
       expectedUrl += escape(model.street1 + (model.street2 ? ' ' + model.street2 : '') + ' ' + `${model.city} ${model.administrativeArea}, ${model.postalCode} ${model.country}`);
 
       el._runAction({});
-      expect(Layer.UI.showFullScreen).toHaveBeenCalledWith(expectedUrl);
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith(expectedUrl);
 
       // Restore
-      Layer.UI.showFullScreen = tmp;
+      Layer.UI.UIUtils.showFullScreen = tmp;
     });
   });
 });

@@ -6,7 +6,7 @@
  */
 
 import { register } from './index';
-import { showFullScreen } from '../utils';
+import { showFullScreen } from '../ui-utils';
 
 const openUrlHandler = ({ data, model }) => {
   const url = data.url || model.url;

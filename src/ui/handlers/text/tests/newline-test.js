@@ -1,7 +1,7 @@
 describe("Newline Text Handler", function() {
   var handler;
   beforeEach(function() {
-    handler = Layer.UI.textHandlers.newline.handler;
+    handler = Layer.UI.handlers.text.handlers.newline.handler;
   });
 
   it("Should replace any occurance of newline with br tags", function() {

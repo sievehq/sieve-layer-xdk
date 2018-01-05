@@ -1,5 +1,5 @@
 /**
- * @class layer.Logger
+ * @class Layer.utils.Logger
  * @private
  *
  */

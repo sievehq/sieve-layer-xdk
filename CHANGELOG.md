@@ -41,14 +41,20 @@
 * CSS Class `layer-root-card` renamed to `layer-root-viewer`
 * Twemoji emojis can be disabled using `Layer.init({useEmojiImages: false})`
 * List Item no longer provide an `addClass` `removeClass` and `toggleClass` method (`toggleClass` is now a part of all UI Components)
-* `Layer.UI.registerMessageComponent` is removed, use `Layer.UI.registerComponent` followed by `Layer.UI.MessageHandlers.registerMessageHandler` instead. Note that use of this technique is deprecated.
-* `Layer.UI.registerMessageHandlers` moved to `Layer.UI.MessageHandlers.registerMessageHandler`
-* `Layer.UI.registerTextHandler` moved to `Layer.UI.TextHandlers.registerTextHandler`
+* `Layer.UI.registerMessageComponent` is removed, use `Layer.UI.registerComponent` followed by `Layer.UI.handlers.message.register` instead. Note that use of this technique is deprecated.
+* `Layer.UI.registerMessageHandlers` moved to `Layer.UI.handlers.message.register`
+* `Layer.UI.registerTextHandler` moved to `Layer.UI.handlers.text.register`
 * `Layer.UI.isInBackground` moved to `Layer.UI.Utils.isInBackground`
 * `Layer.UI.showFullScreen` moved to `Layer.UI.Utils.showFullScreen`
-* `Layer.UI.createItemSeparator` moved to `Layer.UI.ListSeparatorManager.createItemSeparator`
+* `Layer.UI.createItemSeparator` moved to `Layer.UI.UIUtils.createItemSeparator`
 * `Layer.UI.addAdapter` moved to `Layer.UI.adapters.register`
 * `Layer.UI.registerMessageActionHandler` moved to `Layer.UI.MessageActions.register`
+* `Layer.Core.Message.getText()` is removed
+* `<layer-message-viewer />` `setupMessage()` method is now `_setupMessage()`
+* `Layer.Util` moved to `Layer.Utils`; folder paths similarly changed.
+* `Layer.UI.animatedScrollTo` and `Layer.UI.animatedScrollLeftTo` moved to `Layer.UI.UIUtils`
+* Everything in `Layer.UI.utils` renamed to `Layer.UI.UIUtils`
+* `Layer.UI.UIUtils.registerStatusModel(ModelClass)` is now used to register a Message as a Status Message rather than `Layer.UI.statusMimeTypes.push(mimeType)`
 
 ## 1.0.0-pre1.15
 

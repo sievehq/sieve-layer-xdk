@@ -990,24 +990,24 @@ describe("The SyncManager Class", function() {
         });
 
         it("Should call Utils.getExponentialBackoffSeconds with the retryCount", function() {
-            var tmp = layer.Util.getExponentialBackoffSeconds;
-            spyOn(layer.Util, "getExponentialBackoffSeconds");
+            var tmp = Layer.Utils.getExponentialBackoffSeconds;
+            spyOn(layer.Utils, "getExponentialBackoffSeconds");
 
             // Run
             syncManager._xhrHandleServerUnavailableError(result);
-            expect(layer.Util.getExponentialBackoffSeconds).toHaveBeenCalledWith(60, 0);
+            expect(Layer.Utils.getExponentialBackoffSeconds).toHaveBeenCalledWith(60, 0);
             syncManager._xhrHandleServerUnavailableError(result);
-            expect(layer.Util.getExponentialBackoffSeconds).toHaveBeenCalledWith(60, 1);
+            expect(Layer.Utils.getExponentialBackoffSeconds).toHaveBeenCalledWith(60, 1);
             syncManager._xhrHandleServerUnavailableError(result);
-            expect(layer.Util.getExponentialBackoffSeconds).toHaveBeenCalledWith(60, 2);
+            expect(Layer.Utils.getExponentialBackoffSeconds).toHaveBeenCalledWith(60, 2);
 
             // Restore
-            layer.Util.getExponentialBackoffSeconds = tmp;
+            Layer.Utils.getExponentialBackoffSeconds = tmp;
         });
 
         it("Should schedule processNextRequest for backoff seconds", function() {
-            var tmp = layer.Util.getExponentialBackoffSeconds;
-            spyOn(layer.Util, "getExponentialBackoffSeconds").and.returnValue(15);
+            var tmp = Layer.Utils.getExponentialBackoffSeconds;
+            spyOn(layer.Utils, "getExponentialBackoffSeconds").and.returnValue(15);
             spyOn(syncManager, "_processNextRequest");
 
             // Run
@@ -1018,7 +1018,7 @@ describe("The SyncManager Class", function() {
             expect(syncManager._processNextRequest).toHaveBeenCalledWith();
 
             // Restore
-            layer.Util.getExponentialBackoffSeconds = tmp;
+            Layer.Utils.getExponentialBackoffSeconds = tmp;
         });
 
         it("Should trigger a sync:error-will-retry event", function() {

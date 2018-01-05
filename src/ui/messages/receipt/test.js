@@ -6,8 +6,8 @@ describe('Receipt Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -44,14 +44,14 @@ describe('Receipt Message Components', function() {
     ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
     LocationModel = Layer.Core.Client.getMessageTypeModelClass("LocationModel");
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -152,13 +152,13 @@ describe('Receipt Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message ", function() {
-      var uuid1 = Layer.Util.generateUUID();
-      var uuid2 = Layer.Util.generateUUID();
-      var uuid3 = Layer.Util.generateUUID();
-      var uuid4 = Layer.Util.generateUUID();
-      var uuid5 = Layer.Util.generateUUID();
-      var uuid6 = Layer.Util.generateUUID();
-      var uuid7 = Layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
+      var uuid2 = Layer.Utils.generateUUID();
+      var uuid3 = Layer.Utils.generateUUID();
+      var uuid4 = Layer.Utils.generateUUID();
+      var uuid5 = Layer.Utils.generateUUID();
+      var uuid6 = Layer.Utils.generateUUID();
+      var uuid7 = Layer.Utils.generateUUID();
       var message = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [
@@ -328,7 +328,7 @@ describe('Receipt Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
     afterEach(function() {
       document.body.removeChild(testRoot);

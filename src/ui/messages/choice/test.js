@@ -17,8 +17,8 @@ describe('Choice Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -52,14 +52,14 @@ describe('Choice Message Components', function() {
 
     ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
     if (client) client.destroy();
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -136,12 +136,12 @@ describe('Choice Message Components', function() {
 
 
     it("Should instantiate a Basic Model from a Message with metadata", function() {
-      var uuid1 = Layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
 
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
-          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
             label: "hello",
@@ -249,12 +249,12 @@ describe('Choice Message Components', function() {
       });
 
       it("Should correctly initialize Model with allowReselect", function() {
-        var uuid1 = Layer.Util.generateUUID();
+        var uuid1 = Layer.Utils.generateUUID();
 
         var m = conversation.createMessage({
           id: 'layer:///messages/' + uuid1,
           parts: [{
-            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
+            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
             mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
             body: JSON.stringify({
               allow_reselect: true,
@@ -319,12 +319,12 @@ describe('Choice Message Components', function() {
       });
 
       it("Should correctly initialize Model with allowDeselect", function() {
-        var uuid1 = Layer.Util.generateUUID();
+        var uuid1 = Layer.Utils.generateUUID();
 
         var m = conversation.createMessage({
           id: 'layer:///messages/' + uuid1,
           parts: [{
-            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
+            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
             mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
             body: JSON.stringify({
               allow_deselect: true,
@@ -391,12 +391,12 @@ describe('Choice Message Components', function() {
       });
 
       it("Should correctly initialize Model with allowMultiselect", function() {
-        var uuid1 = Layer.Util.generateUUID();
+        var uuid1 = Layer.Utils.generateUUID();
 
         var m = conversation.createMessage({
           id: 'layer:///messages/' + uuid1,
           parts: [{
-            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
+            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
             mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
             body: JSON.stringify({
               allow_multiselect: true,
@@ -1297,7 +1297,7 @@ describe('Choice Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -1340,7 +1340,7 @@ describe('Choice Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el.nodes.ui.nodes.choices.childNodes[1]._onClick({
         preventDefault: function() {},
@@ -1376,7 +1376,7 @@ describe('Choice Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.nodes.ui.nodes.choices.childNodes[1].text).toEqual("b");
       model.selectAnswer({id: "bb" });
@@ -1403,7 +1403,7 @@ describe('Choice Message Components', function() {
       var spy = jasmine.createSpy('clickme');
       el.addEventListener('clickme', spy);
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el.nodes.ui.nodes.choices.childNodes[1]._onClick({
         preventDefault: function() {},

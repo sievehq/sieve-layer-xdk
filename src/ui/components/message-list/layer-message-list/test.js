@@ -7,8 +7,8 @@ describe('layer-message-list', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -61,13 +61,13 @@ describe('layer-message-list', function() {
     el.query = query;
     el.style.height = '300px';
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
   afterEach(function() {
     if (client) client.destroy();
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     document.body.removeChild(testRoot);
     if (el) el.onDestroy();
     jasmine.clock().uninstall();
@@ -127,8 +127,8 @@ describe('layer-message-list', function() {
       el.properties.stuckToBottom = false;
       el.scrollTop = 0;
       spyOn(el, "_markAsRead");
-      var tmp = window.Layer.UI.Utils.isInBackground;
-      window.Layer.UI.Utils.isInBackground = function() {return false;}
+      var tmp = window.Layer.UI.UIUtils.isInBackground;
+      window.Layer.UI.UIUtils.isInBackground = function() {return false;}
       el.query = query;
       jasmine.clock().tick(150);
 
@@ -141,7 +141,7 @@ describe('layer-message-list', function() {
       expect(el._markAsRead).toHaveBeenCalled();
 
       // Cleanup
-      window.Layer.UI.Utils.isInBackground = tmp;
+      window.Layer.UI.UIUtils.isInBackground = tmp;
     });
   });
 
@@ -149,7 +149,7 @@ describe('layer-message-list', function() {
     it("Should unwire _checkVisibility from the focus event", function() {
       query.data[0].isRead = false;
       spyOn(el, "_markAsRead");
-      var tmp = window.Layer.UI.Utils.isInBackground;
+      var tmp = window.Layer.UI.UIUtils.isInBackground;
       window.Layer.UI.isInBackground = function() {return false;}
       el.query = query;
       jasmine.clock().tick(150);
@@ -164,7 +164,7 @@ describe('layer-message-list', function() {
       expect(el._markAsRead).not.toHaveBeenCalled();
 
       // Cleanup
-      window.Layer.UI.Utils.isInBackground = tmp;
+      window.Layer.UI.UIUtils.isInBackground = tmp;
     });
 
   });
@@ -316,16 +316,16 @@ describe('layer-message-list', function() {
   });
 
   describe("The _checkVisibility() method", function() {
-    var restoreFunc = window.Layer.UI.Utils.isInBackground;
+    var restoreFunc = window.Layer.UI.UIUtils.isInBackground;
     beforeEach(function() {
       query.data.forEach(function(message) {
         message.isRead = false;
       });
-      window.Layer.UI.Utils.isInBackground = function() {return false;};
+      window.Layer.UI.UIUtils.isInBackground = function() {return false;};
     });
 
     afterEach(function() {
-      window.Layer.UI.Utils.isInBackground = restoreFunc;
+      window.Layer.UI.UIUtils.isInBackground = restoreFunc;
     });
 
     it("Should mark visible messages as read", function() {
@@ -392,13 +392,13 @@ describe('layer-message-list', function() {
   });
 
   describe("The _markAsRead() method", function() {
-    var isInBackground = window.Layer.UI.Utils.isInBackground;;
+    var isInBackground = window.Layer.UI.UIUtils.isInBackground;;
     beforeAll(function() {
       window.Layer.UI.isInBackground = function() {return false;}
     });
 
     afterAll(function() {
-      window.Layer.UI.Utils.isInBackground = isInBackground;
+      window.Layer.UI.UIUtils.isInBackground = isInBackground;
     });
 
 
@@ -425,10 +425,16 @@ describe('layer-message-list', function() {
     });
 
     it("Should  mark the 50th message as read if scrolled into view", function() {
+      var tmp = window.Layer.UI.UIUtils.isInBackground;
+      window.Layer.UI.UIUtils.isInBackground = function() {return false;}
+
       el.childNodes[50].item.isRead = false;
       el.scrollTop = el.childNodes[50].offsetTop - el.offsetTop - 50;
       el._markAsRead(el.childNodes[50]);
       expect(el.childNodes[50].item.isRead).toBe(true);
+
+      // Restore
+      window.Layer.UI.UIUtils.isInBackground = tmp;
     });
 
     it("Should  mark the 50th message as read if scrolled above the item", function() {
@@ -453,20 +459,18 @@ describe('layer-message-list', function() {
     });
 
     it("Should set a suitable _contentTag", function() {
-      var messageHandlers = window.Layer.UI.messageHandlers;
-      window.Layer.UI.messageHandlers = [
-        {
-          handlesMessage: jasmine.createSpy('handlesNo').and.returnValue(false),
-          tagName: "frodo-dom"
-        },
-        {
-          handlesMessage: jasmine.createSpy('handlesYes').and.returnValue(true),
-          tagName: "sauron-dom"
-        }
-      ];
+      window.Layer.UI.handlers.message.register({
+        handlesMessage: jasmine.createSpy('handlesNo').and.returnValue(false),
+        tagName: "frodo-dom"
+      });
+      window.Layer.UI.handlers.message.register({
+        handlesMessage: jasmine.createSpy('handlesYes').and.returnValue(true),
+        tagName: "sauron-dom"
+      });
       var m = conversation.createMessage("m?");
       expect(el._generateItem(m)._contentTag).toEqual('sauron-dom');
-      window.Layer.UI.messageHandlers = messageHandlers;
+      window.Layer.UI.handlers.message.unregister('frodo-dom');
+      window.Layer.UI.handlers.message.unregister('sauron-dom');
     });
 
     it("Should setup dateRenderer and messageStatusRenderer", function() {
@@ -494,7 +498,7 @@ describe('layer-message-list', function() {
     it("Should set dateFormat", function() {
       el.dateFormat = {year: "number"};
       var result = el._generateItem(query.data[1]);
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(result.dateFormat).toEqual({year: "number"});
     });
 
@@ -510,7 +514,7 @@ describe('layer-message-list', function() {
       var generatedItem = el._generateItem(m);
       expect(generatedItem.tagName).toEqual('LAYER-MESSAGE-ITEM-SENT');
       generatedItem.item = m;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(generatedItem.nodes.content.firstChild.tagName).toEqual('LAYER-MESSAGE-UNKNOWN');
     });
   });
@@ -744,7 +748,7 @@ describe('layer-message-list', function() {
       });
 
       // Posttest
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(500);
 
       var newElement = el.querySelector('#' + el._getItemId(message.id));
@@ -763,7 +767,7 @@ describe('layer-message-list', function() {
       });
 
       // Posttest
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(500);
 
       var newElement = el.querySelector('#' + el._getItemId(message.id));
@@ -998,7 +1002,7 @@ describe('layer-message-list', function() {
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
       el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.scrollTo).toHaveBeenCalledWith(el.scrollHeight - el.clientHeight);
     });
 
@@ -1010,7 +1014,7 @@ describe('layer-message-list', function() {
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
       el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // What was the 11th item is now the 13th item
       expect(el.scrollTo).toHaveBeenCalledWith(el.childNodes[13].offsetTop - el.firstChild.offsetTop);

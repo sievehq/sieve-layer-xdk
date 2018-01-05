@@ -55,7 +55,7 @@ import Container from './container';
 import ChannelMessage from './channel-message';
 import { ErrorDictionary } from '../layer-error';
 import LayerEvent from '../layer-event';
-import Util from '../../util';
+import Util from '../../utils';
 import Constants from '../../constants';
 
 class Channel extends Container {

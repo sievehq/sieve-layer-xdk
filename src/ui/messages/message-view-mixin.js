@@ -5,7 +5,7 @@
  */
 
 import { registerComponent } from '../components/component';
-import { Constants } from '../base';
+import Constants from '../constants';
 
 module.exports = {
   properties: {

@@ -49,7 +49,7 @@ describe("List Load Mixin", function() {
     el.query = query;
     el.style.height = '300px';
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(500);
   });
 

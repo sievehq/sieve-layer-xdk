@@ -44,8 +44,8 @@
  * @class Layer.UI.messages.ResponseMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel }  from '../../../core';
-import { registerStatusModel } from '../../base';
+import { Client, MessagePart, MessageTypeModel } from '../../../core';
+import { registerStatusModel } from '../../ui-utils';
 
 class ResponseModel extends MessageTypeModel {
 

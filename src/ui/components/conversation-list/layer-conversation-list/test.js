@@ -43,9 +43,9 @@ describe('layer-conversation-list', function() {
       );
     }
     el.query = query;
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(50);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(50);
 
   });
@@ -92,7 +92,7 @@ describe('layer-conversation-list', function() {
     it("Should call _updateQuery if there is a queryId passed into the innerHTML", function() {
       testRoot.innerHTML = '<layer-conversation-list query-id="' + query.id + '" app-id="' + client.appId + '"></layer-conversation-list>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       var el = testRoot.firstChild;
       expect(el.query).toBe(query);
 
@@ -198,28 +198,28 @@ describe('layer-conversation-list', function() {
       var spy = jasmine.createSpy('menuOptions');
       el.getMenuOptions = spy;
       var result = el._generateItem(query.data[1]);
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(result.getMenuOptions).toBe(spy);
     });
 
     it("Should set size", function() {
       el.size = "small";
       var result = el._generateItem(query.data[1]);
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(result.size).toEqual("small");
     });
 
     it("Should set dateFormat", function() {
       el.dateFormat = {year: "number"};
       var result = el._generateItem(query.data[1]);
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(result.dateFormat).toEqual({year: "number"});
     });
 
     it("Should run the filter", function() {
       el.filter = 'Not this again';
       var result = el._generateItem(query.data[10]);
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(result.classList.contains('layer-item-filtered')).toBe(true);
     });
   });

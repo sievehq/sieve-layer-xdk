@@ -2,7 +2,7 @@
  * Simple scrolling animation library forked from https://github.com/madebysource/animated-scrollto,
  * and customized to our needs.
  *
- * @class Layer.UI.utils.AnimatedScroll
+ * @class Layer.UI.UIUtils
  */
 
 const requestAnimFrame = (() => {

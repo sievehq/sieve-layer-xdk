@@ -49,7 +49,7 @@ describe("Query End Mixin", function() {
     el.query = query;
     el.style.height = '300px';
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(500);
   });
 
@@ -65,7 +65,7 @@ describe("Query End Mixin", function() {
       it("Should initialize to hidden/false", function() {
         var el = document.createElement('layer-message-list');
         testRoot.appendChild(el);
-        Layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
         expect(el.isEndOfResults).toBe(false);
         expect(el.nodes.endOfResultsNode.classList.contains('layer-end-of-results')).toBe(false);
@@ -73,7 +73,7 @@ describe("Query End Mixin", function() {
       it("Should toggle the layer-end-of-results class", function() {
         var el = document.createElement('layer-message-list');
         testRoot.appendChild(el);
-        Layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
 
         el.isEndOfResults = true;
@@ -107,7 +107,7 @@ describe("Query End Mixin", function() {
 
       el.query.pagedToEnd = false;
       el._renderPagedDataDone({}, fragment, {inRender: true});
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.isEndOfResults).toBe(false);
     });
    });

@@ -42,9 +42,9 @@ describe('layer-membership-item', function() {
         "role": "user",
         "joined_at": "2014-09-15T04:44:47+00:00"
     });
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(1000);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(10);
   });
 

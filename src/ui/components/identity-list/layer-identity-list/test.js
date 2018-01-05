@@ -42,9 +42,9 @@ describe('layer-identity-list', function() {
 
     el.query = query;
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(500);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {
@@ -109,7 +109,7 @@ describe('layer-identity-list', function() {
     it("Should call _updateQuery if there is a queryId passed into the innerHTML", function() {
       testRoot.innerHTML = '<layer-identity-list query-id="' + query.id + '" app-id="' + client.appId + '"></layer-identity-list>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       var el = testRoot.firstChild;
       expect(el.query).toBe(query);
       spyOn(el, "_processQueryEvt"); // _updateQuery sets up the query listener to call _processQueryEvt
@@ -242,7 +242,7 @@ describe('layer-identity-list', function() {
       el.size = "small";
       var result = el._generateItem(query.data[1]);
       result.parentComponent = el;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(result.size).toEqual("small");
     });
 
@@ -329,7 +329,7 @@ describe('layer-identity-list', function() {
         );
       }
       el.onRerender({type: 'data', data: query.data});
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.childNodes[5].state).toEqual({hey: "ho"});
     });
 

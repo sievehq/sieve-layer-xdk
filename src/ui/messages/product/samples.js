@@ -166,6 +166,23 @@ model = new ProductModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
+// Simple Product with no price
+model = new ProductModel({
+  customData: {
+    product_id: "Frodo-the-dodo",
+    sku: "frodo-is-askew"
+  },
+  url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+  currency: 'USD',
+  price: 0,
+  quantity: 3,
+  brand: 'Apple',
+  name: 'Apple 2 plus desktop computer',
+  description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+  imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+
 
 // Simple Product with no brand
 model = new ProductModel({

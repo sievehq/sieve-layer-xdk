@@ -1,5 +1,5 @@
 describe('layer-age', function() {
-  var el;
+  var el, d;
 
   beforeAll(function(done) {
     if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
@@ -7,12 +7,18 @@ describe('layer-age', function() {
   });
 
   beforeEach(function() {
+    jasmine.clock().install();
     if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
     el = document.createElement('layer-age');
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
+    d = new Date();
+    d.setDate(0);
+    var d2 = new Date(d);
+    jasmine.clock().mockDate(d2);
   });
 
   afterEach(function() {
+    jasmine.clock().uninstall();
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -25,7 +31,6 @@ describe('layer-age', function() {
   it("Should accept an ageRenderer", function() {
     var f = jasmine.createSpy('age');
     el.ageRenderer = f;
-    var d = new Date();
     el.date = d;
     expect(el.ageRenderer).toBe(f);
     el.onRender();
@@ -38,7 +43,6 @@ describe('layer-age', function() {
   });
 
   it('Should handle minutes ago', function() {
-    var d = new Date();
     el.date = d;
 
     el.onRender();
@@ -62,7 +66,6 @@ describe('layer-age', function() {
   });
 
   it('Should handle hours ago', function() {
-    var d = new Date();
     el.date = d;
 
     d.setMinutes(d.getMinutes() - 120);
@@ -82,8 +85,7 @@ describe('layer-age', function() {
     expect(el.innerHTML).not.toEqual("52 hours ago");
   });
 
-  it('Should handle days ago', function() {
-    var d = new Date();
+  it('Should handle days ago', function() {;
     el.date = d;
 
     d.setDate(d.getDate() - 2);
@@ -104,7 +106,6 @@ describe('layer-age', function() {
   });
 
   it('Should handle months ago', function() {
-    var d = new Date();
     el.date = d;
 
     d.setMonth(d.getMonth() - 2);

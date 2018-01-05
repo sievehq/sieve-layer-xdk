@@ -13,7 +13,7 @@
 
 import { ErrorDictionary } from '../layer-error';
 import Identity from '../models/identity';
-import Util from '../../util';
+import Util from '../../utils';
 import { RECEIPT_STATE } from '../../constants';
 import { WebsocketSyncEvent } from '../sync-event';
 

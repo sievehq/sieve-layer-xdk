@@ -10,15 +10,15 @@
  * * Event `layer-file-selected`: This widget listens for this event, and if it receives it, uses that event to retrieve a file to send in
  *   the Conversation.  Event comes from Layer.UI.components.FileUploadButton or from your custom widgets.
  * * Keyboard Handling: ENTER: Sends message unless its accompanied by a modifier key.  TAB: Enters a \t character unless you
- *   set `layerUI.settings.disableTabAsWhiteSpace` to true
+ *   set `Layer.UI.settings.disableTabAsWhiteSpace` to true
  *
  * @class Layer.UI.components.ComposeBar
  * @extends Layer.UI.Component
  */
 import Core from '../../../core';
 import { registerComponent } from '../component';
-import { settings } from '../../base';
-import { logger } from '../../../util';
+import Settings from '../../settings';
+import { logger } from '../../../utils';
 
 const ErrorDictionary = Core.LayerError.ErrorDictionary;
 const ENTER = 13;
@@ -163,7 +163,7 @@ registerComponent('layer-compose-bar', {
       this.nodes.input.addEventListener('input', this._onInput.bind(this));
 
       // Event handlers
-      this.addEventListener('layer-model-generated', this._handleAttachments.bind(this));
+      this.addEventListener('layer-models-generated', this._handleAttachments.bind(this));
       this.addEventListener('layer-send-click', this._handleSendClick.bind(this, null));
     },
 
@@ -420,7 +420,7 @@ registerComponent('layer-compose-bar', {
           event.target.value += '\n';
           this._onInput(event);
         }
-      } else if (!settings.disableTabAsWhiteSpace && event.keyCode === TAB && !event.shiftKey) {
+      } else if (!Settings.disableTabAsWhiteSpace && event.keyCode === TAB && !event.shiftKey) {
         event.preventDefault();
         event.target.value += '\t  ';
         this._onInput(event);

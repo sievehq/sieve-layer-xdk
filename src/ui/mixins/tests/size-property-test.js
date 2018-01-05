@@ -37,7 +37,7 @@ describe("Size Property Mixin", function() {
     testRoot.appendChild(el);
 
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

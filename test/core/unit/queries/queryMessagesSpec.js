@@ -326,7 +326,7 @@ describe("The MessagesQuery Class", function() {
             // Test 2
             query._nextServerFromId = 'howdy';
             query._fetchData(140);
-            expect(requests.mostRecent().url).toEqual(client.url + '/conversations/' + layer.Util.uuid(conversation.id) + "/messages?page_size=140&from_id=howdy");
+            expect(requests.mostRecent().url).toEqual(client.url + '/conversations/' + Layer.Utils.uuid(conversation.id) + "/messages?page_size=140&from_id=howdy");
         });
 
         it("Should call DB with _nextDBFromId", function() {
@@ -462,7 +462,7 @@ describe("The MessagesQuery Class", function() {
             // Test 2
             query._nextServerFromId = 'howdy';
             query._fetchData(140);
-            expect(requests.mostRecent().url).toEqual(client.url + '/channels/' + layer.Util.uuid(channel.id) + "/messages?page_size=140&from_id=howdy");
+            expect(requests.mostRecent().url).toEqual(client.url + '/channels/' + Layer.Utils.uuid(channel.id) + "/messages?page_size=140&from_id=howdy");
         });
 
         it("Should call DB with _nextDBFromId", function() {

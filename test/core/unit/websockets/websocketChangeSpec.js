@@ -275,8 +275,8 @@ describe("The Websocket Change Manager Class", function() {
 
     describe("The _handlePatch() method", function() {
         it("Should call Util.layerParse if found", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(m);
 
@@ -291,7 +291,7 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).toHaveBeenCalledWith({
+            expect(Layer.Utils.layerParse).toHaveBeenCalledWith({
                 object: m,
                 type: "Message",
                 operations: [{operation: "set", property: "joe", value: "jane"}],
@@ -299,12 +299,12 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
         });
 
         it("Should load a Conversation if not found and allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
             var _loadResourceForPatch = Layer.Core.Conversation._loadResourceForPatch;
             spyOn(Layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(true);
@@ -323,17 +323,17 @@ describe("The Websocket Change Manager Class", function() {
             jasmine.clock().tick(100);
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent().url).toEqual(client.url + "/conversations/fred");
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
             Layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should not load a Conversation if not found and not allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
             var _loadResourceForPatch = Layer.Core.Conversation._loadResourceForPatch;
             spyOn(Layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(false);
@@ -351,18 +351,18 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent()).toBe(undefined);
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
             Layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
         });
 
 
         it("Should load a Channel if not found and allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
             var _loadResourceForPatch = Layer.Core.Channel._loadResourceForPatch;
             spyOn(Layer.Core.Channel, "_loadResourceForPatch").and.returnValue(true);
@@ -381,17 +381,17 @@ describe("The Websocket Change Manager Class", function() {
             jasmine.clock().tick(100);
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent().url).toEqual(client.url + "/channels/fred");
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
             Layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should not load a Channel if not found and not allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
             var _loadResourceForPatch = Layer.Core.Channel._loadResourceForPatch;
             spyOn(Layer.Core.Channel, "_loadResourceForPatch").and.returnValue(false);
@@ -409,17 +409,17 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent()).toBe(undefined);
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
             Layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should load a Message if not found and allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
             var _loadResourceForPatch = Layer.Core.Message._loadResourceForPatch;
             spyOn(Layer.Core.Message, "_loadResourceForPatch").and.returnValue(true);
@@ -438,17 +438,17 @@ describe("The Websocket Change Manager Class", function() {
             jasmine.clock().tick(100);
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent().url).toEqual(client.url + "/messages/fred");
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
             Layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should not load a Message if not found and not allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
             var _loadResourceForPatch = Layer.Core.Message._loadResourceForPatch;
             spyOn(Layer.Core.Message, "_loadResourceForPatch").and.returnValue(false);
@@ -466,17 +466,17 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent()).toBe(undefined);
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
             Layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Shouldn't do much of anything for Announcements", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
 
 
@@ -493,11 +493,11 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent()).toBe(undefined);
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
         });
     });
     describe("Message Editing Tests", function() {

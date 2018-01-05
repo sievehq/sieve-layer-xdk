@@ -19,7 +19,7 @@
  */
 
 import Root from '../root';
-import { xhr } from '../../util';
+import { xhr } from '../../utils';
 
 class Content extends Root {
 

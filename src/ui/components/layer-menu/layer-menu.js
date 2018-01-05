@@ -24,7 +24,7 @@
  */
 import { registerComponent } from '../../components/component';
 import Clickable from '../../mixins/clickable';
-import { logger } from '../../../util';
+import { logger } from '../../../utils';
 
 registerComponent('layer-menu', {
   mixins: [Clickable],
@@ -69,7 +69,7 @@ registerComponent('layer-menu', {
      * menu.width = 200;
      * ```
      *
-     * @proeprty {Number} [menuWidth=100]
+     * @property {Number} [menuWidth=100]
      */
     menuWidth: {
       value: 100,

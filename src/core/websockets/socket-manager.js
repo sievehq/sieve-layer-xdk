@@ -15,7 +15,7 @@
  * @private
  */
 import Root from '../root';
-import Util, { logger } from '../../util';
+import Util, { logger } from '../../utils';
 import { ErrorDictionary } from '../layer-error';
 import { WEBSOCKET_PROTOCOL } from '../../constants';
 import version from '../../version';

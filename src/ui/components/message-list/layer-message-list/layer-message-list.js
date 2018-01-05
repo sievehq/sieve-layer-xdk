@@ -107,10 +107,12 @@
  * @mixin Layer.UI.mixins.ListLoadIndicator
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
-import Util from '../../../../util';
-import UI from '../../../base';
+import { defer, generateUUID } from '../../../../utils';
+import UI from '../../../layer-ui';
+import Settings from '../../../settings';
+import StatusMessageManager from '../../../ui-utils/status-message-manager';
 import MessageHandlers from '../../../handlers/message/message-handlers';
-import { isInBackground as IsInBackground } from '../../../utils';
+import UIUtils from '../../../ui-utils';
 import { registerComponent } from '../../component';
 import List from '../../../mixins/list';
 import HasQuery from '../../../mixins/has-query';
@@ -295,7 +297,7 @@ registerComponent('layer-message-list', {
   methods: {
     // Lifecycle method sets up intial properties and events
     onCreate() {
-      if (!this.id) this.id = Util.generateUUID();
+      if (!this.id) this.id = generateUUID();
 
       // Init some local props
       this.properties.lastPagedAt = 0;
@@ -426,7 +428,7 @@ registerComponent('layer-message-list', {
         if (position === this.scrollTop) return;
         this.properties.isSelfScrolling = true;
         if (this.properties.cancelAnimatedScroll) this.properties.cancelAnimatedScroll();
-        const cancel = this.properties.cancelAnimatedScroll = UI.animatedScrollTo(this, position, animateSpeed, () => {
+        const cancel = this.properties.cancelAnimatedScroll = UIUtils.animatedScrollTo(this, position, animateSpeed, () => {
           // Wait for any onScroll events to trigger before we clear isSelfScrolling and procede
           setTimeout(() => {
             if (cancel !== this.properties.cancelAnimatedScroll) return;
@@ -456,7 +458,7 @@ registerComponent('layer-message-list', {
      * @private
      */
     _checkVisibility() {
-      if (IsInBackground() || this.disable) return;
+      if (UIUtils.isInBackground() || this.disable) return;
 
       // The top that we can see is marked by how far we have scrolled.
       const visibleTop = this.scrollTop;
@@ -469,7 +471,7 @@ registerComponent('layer-message-list', {
         if (childOffset >= visibleTop && childOffset + child.clientHeight <= visibleBottom) {
           if (child.properties && child.properties.item && !child.properties.item.isRead) {
             // TODO: Use a scheduler rather than many setTimeout calls
-            setTimeout(() => this._markAsRead(child), UI.settings.markReadDelay);
+            setTimeout(() => this._markAsRead(child), Settings.markReadDelay);
           }
         }
       }, this);
@@ -486,7 +488,7 @@ registerComponent('layer-message-list', {
      * @param {Layer.UI.components.MessageListPanel.Item} child
      */
     _markAsRead(child) {
-      if (IsInBackground() || this.disable) return;
+      if (UIUtils.isInBackground() || this.disable) return;
 
       const visibleTop = this.scrollTop;
       const visibleBottom = this.scrollTop + this.clientHeight;
@@ -500,7 +502,7 @@ registerComponent('layer-message-list', {
      * Append a Message to the document fragment, updating the previous messages' lastInSeries property as needed.
      *
      * @method _generateItem
-     * @parameter {Layer.Core.Message} message
+     * @param {Layer.Core.Message} message
      * @returns {Layer.UI.components.MessageListPanel.Item}
      * @private
      */
@@ -544,7 +546,7 @@ registerComponent('layer-message-list', {
      */
     _isStatusMessage(rootPart, message) {
       if (!rootPart) return false;
-      return UI.statusMimeTypes.indexOf(rootPart.mimeType) !== -1;
+      return StatusMessageManager.isStatusMessage(rootPart.mimeType) !== -1;
     },
 
     /**
@@ -564,7 +566,7 @@ registerComponent('layer-message-list', {
       const message1 = m1.item;
       const message2 = m2.item;
       const diff = Math.abs(message1.sentAt.getTime() - message2.sentAt.getTime());
-      return message1.sender === message2.sender && diff < Layer.UI.settings.messageGroupTimeSpan;
+      return message1.sender === message2.sender && diff < Settings.messageGroupTimeSpan;
     },
 
     /**
@@ -751,7 +753,7 @@ registerComponent('layer-message-list', {
             setTimeout(() => appendMore.call(this), 20);
           } else {
             this.properties.appendingMore = false;
-            Util.defer(() => this._renderPagedDataDone(affectedItems, fragment, evt));
+            defer(() => this._renderPagedDataDone(affectedItems, fragment, evt));
           }
         }.bind(this);
         appendMore();
@@ -811,7 +813,7 @@ registerComponent('layer-message-list', {
 
       // more than just lastMessage
       if (this.query.data.length > 1) {
-        Util.defer(() => this._pagedDataDone(firstVisibleItem, evt, initialOffset));
+        defer(() => this._pagedDataDone(firstVisibleItem, evt, initialOffset));
       }
 
       // Fixes special case where first message is taller than the viewport,

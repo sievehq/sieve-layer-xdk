@@ -270,7 +270,7 @@ describe("The ChannelsQuery Class", function() {
             it("Should find the channel and apply channel ID changes without reordering and using a new data array", function() {
                 // Setup
                 var id = channel.id;
-                var tempId = layer.Util.generateUUID();
+                var tempId = Layer.Utils.generateUUID();
                 query.data[1].id = tempId;
                 var data = query.data;
                 channel._clearObject();

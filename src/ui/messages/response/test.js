@@ -7,12 +7,12 @@ describe('Response Message Components', function() {
   var client;
 
   beforeEach(function() {
-    uuidMessage = Layer.Util.generateUUID();
-    uuidPart = Layer.Util.generateUUID();
+    uuidMessage = Layer.Utils.generateUUID();
+    uuidPart = Layer.Utils.generateUUID();
 
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -50,14 +50,14 @@ describe('Response Message Components', function() {
     responseToMessage = conversation.createMessage("hello");
     responseToMessage.presend();
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
     Layer.Core.Client.removeListenerForNewClient();
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
   });
 
   describe("Model Tests", function() {
@@ -198,7 +198,7 @@ describe('Response Message Components', function() {
         }),
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.firstChild.tagName).toEqual("LAYER-MESSAGE-VIEWER");
       expect(el.firstChild.model).toBe(model.displayModel);
@@ -212,7 +212,7 @@ describe('Response Message Components', function() {
         }
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.firstChild).toBe(null);
     });

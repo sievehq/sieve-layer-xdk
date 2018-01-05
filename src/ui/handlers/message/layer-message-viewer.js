@@ -9,6 +9,16 @@
  * * `message`: A model is generated/retrieved for this message using the Root MessagePart for this Message
  * * `model`: The model unambiguously specifies what `message` and what `rootPart` are to be used for this Message Viewer
  *
+ * Note that if using a `model` that does not have a message, best practice is to create a message but
+ * not send it; you should call `message.presend()` if rendering this within a Message List.
+ *
+ * ```
+ * var model = new TextModel({ text: "Howdy" });
+ * model.generateMessage(conversation, (message) => {
+ *   messageViewer.model = model;  // model.message will be accessed by the Viewer
+ * });
+ * ```
+ *
  * @class Layer.UI.handlers.message.MessageViewer
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
@@ -18,7 +28,7 @@ import MessageHandler from '../../mixins/message-handler';
 import Clickable from '../../mixins/clickable';
 
 import messageActionHandlers from '../../message-actions/index';
-import { registerMessageHandler } from './message-handlers';
+import { register } from './message-handlers';
 
 registerComponent('layer-message-viewer', {
   mixins: [MessageHandler, Clickable],
@@ -43,7 +53,7 @@ registerComponent('layer-message-viewer', {
         if (model.message !== this.properties.message) {
           this.message = model.message;
         } else if (!model.message) {
-          this.setupMessage();
+          this._setupMessage();
         }
       }
     },
@@ -64,7 +74,7 @@ registerComponent('layer-message-viewer', {
           if (!this.properties.model) this.properties.model = message.createModel();
           if (!this.properties.model) return;
           if (this.properties._internalState.onAfterCreateCalled) {
-            this.setupMessage();
+            this._setupMessage();
           }
         }
       },
@@ -145,15 +155,16 @@ registerComponent('layer-message-viewer', {
 
     // Standard lifecycle event insures that setupMessage is called
     onAfterCreate() {
-      if (this.message) this.setupMessage();
+      if (this.message) this._setupMessage();
     },
 
     /**
      * Given a message and a model, generate the UI Component and a Display Container.
      *
-     * @method setupMessage
+     * @method _setupMessage
+     * @private
      */
-    setupMessage() {
+    _setupMessage() {
       if (!this.model) return;
 
       // The rootPart is typically the Root Part of the message, but the Card View may be asked to render subcards
@@ -246,7 +257,7 @@ registerComponent('layer-message-viewer', {
   },
 });
 
-registerMessageHandler({
+register({
   handlesMessage(message, container) {
     return Boolean(message.getRootPart());
   },

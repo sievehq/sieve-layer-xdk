@@ -36,7 +36,7 @@ describe('layer-choice-button', function() {
     });
     el.model = model;
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

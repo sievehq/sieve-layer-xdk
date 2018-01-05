@@ -103,6 +103,14 @@
  *   need to do a lookup on this id in your own servers to find a
  *   displayable name for it.
  *
+ * Note that the `message.sender.sessionOwner` boolean property is a frequently useful property:
+ *
+ * ```
+ * if (!message.sender.sessionOwner) {
+ *    alert("You didn't send this message");
+ * }
+ * ```
+ *
  * Methods:
  *
  * * Layer.Core.Message.send(): Sends the message to the server and the other participants.
@@ -122,7 +130,7 @@ import Syncable from './syncable';
 import MessagePart from './message-part';
 import { ErrorDictionary } from '../layer-error';
 import Constants from '../../constants';
-import Util from '../../util';
+import Util from '../../utils';
 import Identity from './identity';
 
 class Message extends Syncable {
@@ -617,7 +625,7 @@ class Message extends Syncable {
    * Setup message-part ids for parts that lack that id; for locally created parts.
    *
    * @private
-   * @method
+   * @method _setupPartIds
    * @param {Layer.Core.MessagePart[]} parts
    */
   _setupPartIds(parts) {
@@ -707,13 +715,6 @@ class Message extends Syncable {
     return part || null;
   }
 
-  getPartWithMimeType(mimeType) {
-    for (let i = 0; i < this.parts.length; i++) {
-      if (this.parts[i].mimeType === mimeType) return this.parts[i];
-    }
-    return null;
-  }
-
   /**
    * Returns array of Layer.Core.MessagePart that have the specified MIME Type attribute.
    *
@@ -725,7 +726,7 @@ class Message extends Syncable {
    * var sourcePart = message.getPartsMatchingAttribute({'parent-node-id': 'image1', 'role': 'source'});
    * ```
    *
-   * @method
+   * @method getPartsMatchingAttribute
    * @param {Object} matches
    * @returns {Layer.Core.MessagePart[]}
    */
@@ -804,7 +805,7 @@ class Message extends Syncable {
    *
    * If there are 0 or more than one message parts with this attribute, returns `null` instead.
    *
-   * @method
+   * @method getAttributeValue
    * @param {String} name
    * @returns {String}
    */
@@ -850,6 +851,7 @@ class Message extends Syncable {
     return this.url + (url || '');
   }
 
+  // The sync object is a hint to the sync-manager
   _setupSyncObject(sync) {
     if (sync !== false) {
       sync = super._setupSyncObject(sync);
@@ -872,37 +874,16 @@ class Message extends Syncable {
    * @method getText
    * @param {string} [joinStr='.  '] If multiple message parts of type text/plain, how do you want them joined together?
    * @return {string}
+   * @removed
    */
-  getText(joinStr = '. ') {
-    let textArray = this.parts
-      .filter(part => part.mimeType === 'text/plain')
-      .map(part => part.body);
-    textArray = textArray.filter(data => data);
-    return textArray.join(joinStr);
-  }
 
-  /**
-   * Returns a plain object.
-   *
-   * Object will have all the same public properties as this
-   * Message instance.  New object is returned any time
-   * any of this object's properties change.
-   *
-   * @method toObject
-   * @return {Object} POJO version of this object.
-   */
-  toObject() {
-    if (!this._toObject) {
-      this._toObject = super.toObject();
-    }
-    return this._toObject;
-  }
-
+  // See Root class
   _triggerAsync(evtName, args) {
     this._clearObject();
     super._triggerAsync(evtName, args);
   }
 
+  // See Root class
   trigger(evtName, args) {
     this._clearObject();
     return super.trigger(evtName, args);

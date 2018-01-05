@@ -22,7 +22,6 @@
  */
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
 import ResponseModel from '../response/layer-response-message-model';
-import { registerMessageActionHandler } from '../../base';
 
 class FeedbackModel extends MessageTypeModel {
   _generateParts(callback) {

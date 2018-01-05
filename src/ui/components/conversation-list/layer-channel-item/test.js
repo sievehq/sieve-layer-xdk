@@ -36,7 +36,7 @@ describe('layer-channel-item', function() {
       participants: ['layer:///identities/FrodoTheDodo']
     });
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

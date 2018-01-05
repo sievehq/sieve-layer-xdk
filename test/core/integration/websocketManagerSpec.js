@@ -1,11 +1,11 @@
 /* eslint-disable */
 describe("Websocket tests", function() {
-    var convId1 = Layer.Core.Conversation.prefixUUID + layer.Util.generateUUID();
-    var convId2 = Layer.Core.Conversation.prefixUUID + layer.Util.generateUUID();
-    var convId3 = Layer.Core.Conversation.prefixUUID + layer.Util.generateUUID();
-    var messId1 = Layer.Core.Message.prefixUUID + layer.Util.generateUUID();
-    var messId2 = Layer.Core.Message.prefixUUID + layer.Util.generateUUID();
-    var messId3 = Layer.Core.Message.prefixUUID + layer.Util.generateUUID();
+    var convId1 = Layer.Core.Conversation.prefixUUID + Layer.Utils.generateUUID();
+    var convId2 = Layer.Core.Conversation.prefixUUID + Layer.Utils.generateUUID();
+    var convId3 = Layer.Core.Conversation.prefixUUID + Layer.Utils.generateUUID();
+    var messId1 = Layer.Core.Message.prefixUUID + Layer.Utils.generateUUID();
+    var messId2 = Layer.Core.Message.prefixUUID + Layer.Utils.generateUUID();
+    var messId3 = Layer.Core.Message.prefixUUID + Layer.Utils.generateUUID();
     var sampleConv = {
       "type": "change",
       "counter": 1,

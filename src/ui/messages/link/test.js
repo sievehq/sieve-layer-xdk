@@ -6,8 +6,8 @@ describe('Link Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -41,14 +41,14 @@ describe('Link Message Components', function() {
 
     LinkModel = Layer.Core.Client.getMessageTypeModelClass("LinkModel");
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
     if (client) client.destroy();
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -190,7 +190,7 @@ describe('Link Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is shown as it contains the link
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -216,7 +216,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is shown as it contains the image
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -241,7 +241,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is hidden as only the title will be shown
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
@@ -268,7 +268,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is shown with an image
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -298,7 +298,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is hidden, no image to show
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
@@ -328,7 +328,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is showing an image
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -349,8 +349,8 @@ describe('Link Message Components', function() {
     });
 
     it("Should open the link using the url", function() {
-      var tmp = Layer.UI.showFullScreen;
-      spyOn(Layer.UI, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
 
       var model = new LinkModel({
         url: "http://layer.com/about",
@@ -360,19 +360,19 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-url');
       el._runAction({});
-      expect(Layer.UI.showFullScreen).toHaveBeenCalledWith("http://layer.com/about");
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith("http://layer.com/about");
 
       // Restore
-      Layer.UI.showFullScreen = tmp;
+      Layer.UI.UIUtils.showFullScreen = tmp;
     });
 
     it("Should open the link using action data url", function() {
-      var tmp = Layer.UI.showFullScreen;
-      spyOn(Layer.UI, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
 
       var model = new LinkModel({
         url: "http://layer.com/about",
@@ -387,14 +387,14 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-url');
       el._runAction({});
-      expect(Layer.UI.showFullScreen).toHaveBeenCalledWith("https://layer.com/aboutface");
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith("https://layer.com/aboutface");
 
       // Restore
-      Layer.UI.showFullScreen = tmp;
+      Layer.UI.UIUtils.showFullScreen = tmp;
     });
   });
 });

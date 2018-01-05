@@ -64,8 +64,8 @@ describe("SyncManager Integration Tests", function() {
     });
 
     it("Should schedule a retry after a service unavailable error", function() {
-        var tmp = layer.Util.getExponentialBackoffSeconds;
-        spyOn(layer.Util, "getExponentialBackoffSeconds").and.returnValue(5);
+        var tmp = Layer.Utils.getExponentialBackoffSeconds;
+        spyOn(layer.Utils, "getExponentialBackoffSeconds").and.returnValue(5);
         spyOn(syncManager, "_processNextRequest");
         syncManager._xhrError({
             success: false,
@@ -104,7 +104,7 @@ describe("SyncManager Integration Tests", function() {
         expect(syncManager.queue).toEqual([]);
 
         // Restore
-        layer.Util.getExponentialBackoffSeconds = tmp;
+        Layer.Utils.getExponentialBackoffSeconds = tmp;
     });
 
 

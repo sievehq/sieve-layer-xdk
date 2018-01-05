@@ -6,8 +6,8 @@ describe('Text Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -41,13 +41,13 @@ describe('Text Message Components', function() {
 
     TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -86,8 +86,8 @@ describe('Text Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message with metadata", function() {
-      var uuid1 = Layer.Util.generateUUID();
-      var uuid2 = Layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
+      var uuid2 = Layer.Utils.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
@@ -112,8 +112,8 @@ describe('Text Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message without metadata", function() {
-      var uuid1 = Layer.Util.generateUUID();
-      var uuid2 = Layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
+      var uuid2 = Layer.Utils.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
@@ -188,7 +188,7 @@ describe('Text Message Components', function() {
         text: "hello"
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p>");
     });
@@ -198,7 +198,7 @@ describe('Text Message Components', function() {
         text: "hello\nthere"
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p><p class=\"layer-line-wrapping-paragraphs\">there</p>");
     });
@@ -208,7 +208,7 @@ describe('Text Message Components', function() {
         text: "hello from https://layer.com"
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.firstChild.tagName).toEqual("P");
       expect(el.firstChild.className).toEqual("layer-line-wrapping-paragraphs");
       expect(el.firstChild.childNodes[0].textContent).toEqual("hello from ");
@@ -222,7 +222,7 @@ describe('Text Message Components', function() {
         text: "hello :)"
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hello <img");
     });
@@ -231,7 +231,7 @@ describe('Text Message Components', function() {
         text: "hi :smile:"
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hi <img");
 

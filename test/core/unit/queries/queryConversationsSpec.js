@@ -340,7 +340,7 @@ describe("The ConversationsQuery Class", function() {
             it("Should find the Conversation and apply Conversation ID changes without reordering and using a new data array", function() {
                 // Setup
                 var id = conversation.id;
-                var tempId = layer.Util.generateUUID();
+                var tempId = Layer.Utils.generateUUID();
                 query.data[1].id = tempId;
                 var data = query.data;
                 conversation._clearObject();
@@ -622,7 +622,7 @@ describe("The ConversationsQuery Class", function() {
             it("Should find the Conversation and apply Conversation ID changes but not reorder", function() {
                 // Setup
                 var id = conversation.id;
-                var tempId = layer.Util.generateUUID();
+                var tempId = Layer.Utils.generateUUID();
                 query.data[1].id = tempId;
                 var data = query.data = [conversation2.toObject(), conversation.toObject()];
                 conversation._clearObject();

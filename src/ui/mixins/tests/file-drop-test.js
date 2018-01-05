@@ -36,7 +36,7 @@ describe("The File Drop Mixin", function() {
     el.conversation = conversation;
 
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   it("Should send a File Message", function() {

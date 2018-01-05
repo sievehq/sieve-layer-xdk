@@ -7,7 +7,7 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import { Constants } from '../../base';
+import Constants from '../../constants';
 import { processText } from '../../handlers/text/text-handlers';
 
 registerComponent('layer-text-message-view', {

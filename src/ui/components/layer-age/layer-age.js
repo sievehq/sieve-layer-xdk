@@ -59,8 +59,8 @@ registerComponent('layer-age', {
      * });
      * ```
      *
-     * @property {Function} [dateRender=null]
-     * @property {Date} dateRenderer.value
+     * @property {Function} [ageRenderer=null]
+     * @property {Date} ageRenderer.value
      */
     ageRenderer: {},
   },

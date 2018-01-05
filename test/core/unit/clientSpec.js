@@ -1083,7 +1083,7 @@ describe("The Client class", function() {
 
         describe("The addListenerForNewClient() static method", function() {
             beforeEach(function() {
-                layer.Util.defer.flush();
+                Layer.Utils.defer.flush();
             });
 
             it("Should call callback each time a client is registered", function() {
@@ -1098,7 +1098,7 @@ describe("The Client class", function() {
                 var client3 = new Layer.Core.Client({appId: "3"});
 
                 // Posttest
-                layer.Util.defer.flush();
+                Layer.Utils.defer.flush();
                 expect(clients).toEqual([client1, client2, client3]);
 
                 // Cleanup
@@ -1116,7 +1116,7 @@ describe("The Client class", function() {
                 var client1 = new Layer.Core.Client({appId: "1"});
 
                 // Posttest
-                layer.Util.defer.flush();
+                Layer.Utils.defer.flush();
                 expect(clients).toEqual([]);
             });
         });

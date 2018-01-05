@@ -1,5 +1,5 @@
 /**
- * A Layer.Core.Message instance for use within Layer.Core.Conversation.
+ * @inheritdoc Layer.Core.Message
  *
  * @class Layer.Core.Message.ConversationMessage
  * @extends Layer.Core.Message
@@ -9,7 +9,7 @@ import Message from './message';
 import ClientRegistry from '../client-registry';
 import { ErrorDictionary } from '../layer-error';
 import Constants from '../../constants';
-import Util from '../../util';
+import Util from '../../utils';
 
 class ConversationMessage extends Message {
   constructor(options) {

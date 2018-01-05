@@ -1,12 +1,13 @@
 /**
  * Helps manage separators between List Items.
  *
- * @class Layer.UI.utils.ListSeparatorManager
+ * @class Layer.UI.UIUtils
+ * @static
  */
 
 
 /**
- * Class to use with Layer.UI.ListSeparatorManager.createItemSeparator() created ndoes
+ * CSS Class to use with Layer.UI.ListSeparatorManager.createItemSeparator() created ndoes
  *
  * @property {String} [itemSeparatorParentClassName=layer-list-item-separator-parent]
  */

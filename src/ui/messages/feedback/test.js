@@ -17,8 +17,8 @@ describe('Feedback Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -53,7 +53,7 @@ describe('Feedback Message Components', function() {
     FeedbackModel = Layer.Core.Client.getMessageTypeModelClass("FeedbackModel");
     ResponseModel = Layer.Core.Client.getMessageTypeModelClass("ResponseModel");
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
@@ -61,7 +61,7 @@ describe('Feedback Message Components', function() {
 
   afterEach(function() {
     if (client) client.destroy();
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -94,8 +94,8 @@ describe('Feedback Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message ", function() {
-      var uuid1 = Layer.Util.generateUUID();
-      var uuid2 = Layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
+      var uuid2 = Layer.Utils.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [
@@ -206,7 +206,7 @@ describe('Feedback Message Components', function() {
 
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
 
     afterEach(function() {
@@ -287,7 +287,7 @@ describe('Feedback Message Components', function() {
 
       el.model = model;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       ui = el.nodes.ui;
     });
 

@@ -12,7 +12,7 @@
  * @extends Layer.UI.Component
  */
 import Layer from '../../../../core';
-import Util from '../../../../util';
+import Util from '../../../../utils';
 import { registerComponent } from '../../component';
 import ListItem from '../../../mixins/list-item';
 import SizeProperty from '../../../mixins/size-property';

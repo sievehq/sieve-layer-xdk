@@ -1,9 +1,23 @@
 /**
+ * The Choice Message is used to present users with choices to pick from.
  *
+ * A basic Choice Message can be created with:
  *
+ * ```
+ * ChoiceMessage = Layer.Core.Client.getMessageTypeModelClass('ChoiceMessage')
+ * model = new ChoiceMessage({
+ *    label: "What do you want?",
+ *    choices: [
+ *       {text:  "Scrambled Eggs", id: "product_id_1836"},
+ *       {text:  "Coffee", id: "product_id_8746"},
+ *       {text:  "More sleep", id: "product_id_0"},
+ *   ],
+ * });
+ * model.generateMessage(conversation, message => message.send());
+ * ```
  *
- * @class Layer.UI.handlers.message.ChoiceModel
- * @extends Layer.UI.Component
+ * @class Layer.UI.messages.ChoiceMessageModel
+ * @extends Layer.Core.MessageTypeModel
  */
 import { registerComponent } from '../../components/component';
 

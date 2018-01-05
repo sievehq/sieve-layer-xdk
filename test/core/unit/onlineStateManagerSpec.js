@@ -90,7 +90,7 @@ describe("The OnlineStateManager Class", function() {
             spyOn(manager, "_connectionListener");
 
             // Run
-            Layer.Util.xhr({
+            Layer.Utils.xhr({
                 url: "test"
             });
             requests.mostRecent().response({
@@ -111,7 +111,7 @@ describe("The OnlineStateManager Class", function() {
             spyOn(manager, "_connectionListener");
 
             // Run
-            Layer.Util.xhr({
+            Layer.Utils.xhr({
                 url: "test"
             });
             requests.mostRecent().response({
@@ -239,8 +239,8 @@ describe("The OnlineStateManager Class", function() {
 
         it("Should schedule checkOnlineStatus to be called based on getExponentialBackoffSeconds if errors", function() {
             spyOn(manager, "checkOnlineStatus");
-            var tmp = layer.Util.getExponentialBackoffSeconds;
-            spyOn(layer.Util, "getExponentialBackoffSeconds").and.returnValue(50);
+            var tmp = Layer.Utils.getExponentialBackoffSeconds;
+            spyOn(layer.Utils, "getExponentialBackoffSeconds").and.returnValue(50);
 
             // Run
             manager._scheduleNextOnlineCheck(true, null);
@@ -250,16 +250,16 @@ describe("The OnlineStateManager Class", function() {
             // Posttest
             jasmine.clock().tick(2);
             expect(manager.checkOnlineStatus).toHaveBeenCalled();
-            expect(layer.Util.getExponentialBackoffSeconds).toHaveBeenCalledWith(manager.maxOfflineWait, 0);
+            expect(Layer.Utils.getExponentialBackoffSeconds).toHaveBeenCalledWith(manager.maxOfflineWait, 0);
 
             // Restore
-            layer.Util.getExponentialBackoffSeconds = tmp;
+            Layer.Utils.getExponentialBackoffSeconds = tmp;
         });
 
         it("Should schedule checkOnlineStatus to be called based on getExponentialBackoffSeconds if no errors and is offline", function() {
             spyOn(manager, "checkOnlineStatus");
-            var tmp = layer.Util.getExponentialBackoffSeconds;
-            spyOn(layer.Util, "getExponentialBackoffSeconds").and.returnValue(50);
+            var tmp = Layer.Utils.getExponentialBackoffSeconds;
+            spyOn(layer.Utils, "getExponentialBackoffSeconds").and.returnValue(50);
             manager.isOnline = false;
 
             // Run
@@ -270,10 +270,10 @@ describe("The OnlineStateManager Class", function() {
             // Posttest
             jasmine.clock().tick(2);
             expect(manager.checkOnlineStatus).toHaveBeenCalled();
-            expect(layer.Util.getExponentialBackoffSeconds).toHaveBeenCalledWith(manager.maxOfflineWait, 0);
+            expect(Layer.Utils.getExponentialBackoffSeconds).toHaveBeenCalledWith(manager.maxOfflineWait, 0);
 
             // Restore
-            layer.Util.getExponentialBackoffSeconds = tmp;
+            Layer.Utils.getExponentialBackoffSeconds = tmp;
         });
 
         it("Should set onlineCheckId", function() {

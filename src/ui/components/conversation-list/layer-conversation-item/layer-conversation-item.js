@@ -54,7 +54,7 @@ registerComponent('layer-conversation-item', {
      *
      * By default, only text/plain last-messages are fully rendered in the Conversation List.
      *
-     * All other messages are rendered using the `label` passed in with their Layer.UI.registerMessageHandler call.
+     * All other messages are rendered using the `label` passed in with their Layer.UI.handlers.message.register call.
      *
      * ```javascript
      * listItem.canFullyRenderLastMessage = function(message) {
@@ -110,15 +110,12 @@ registerComponent('layer-conversation-item', {
     /**
      * Provide a function that returns the menu items this Message Item.
      *
-     * > *Note*
+     * > *Notes*
      * >
-     * > This is called each time the user clicks on a menu button next to a message to open the menu,
+     * > 1. This is called each time the user clicks on a menu button next to a message to open the menu,
      * but is not dynamic in that it will regenerate the list while its open.
-     *
-     * > *Note*
-     * >
-     * > This only works if your `<layer-message-item-sent />` or `<layer-message-item-received />` has a `<layer-menu-button layer-id='menuButton'/>`;
-     * > The `layer-id` is required... unless explicitly setting `messageListItem.nodes.menuButton = <layer-menu-button />;`
+     * > 2. This only works if your `<layer-message-item-sent />` or `<layer-message-item-received />` has a `<layer-menu-button layer-id='menuButton'/>`;
+     * >    The `layer-id` is required... unless explicitly setting `messageListItem.nodes.menuButton = <layer-menu-button />;`
      *
      * Format is:
      *

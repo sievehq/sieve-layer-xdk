@@ -9,7 +9,7 @@
  * @class Layer.Core.mixins.ClientMessageTypeModels
  */
 import { ErrorDictionary } from '../layer-error';
-import { uuid } from '../../util';
+import { uuid } from '../../utils';
 import MessageTypeModel from '../models/message-type-model';
 
 const MessageTypeModelClasses = [];

@@ -15,7 +15,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
-import { registerStatusModel } from '../../base';
+import { registerStatusModel } from '../../ui-utils';
 
 class StatusModel extends MessageTypeModel {
 

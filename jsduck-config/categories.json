@@ -20,7 +20,7 @@
           "Layer.Core.LayerEvent",
           "Layer.Core.LayerEvent",
           "Layer.Core.Root",
-          "Layer.Util",
+          "Layer.utils",
           "Layer.Constants"
         ]
       },

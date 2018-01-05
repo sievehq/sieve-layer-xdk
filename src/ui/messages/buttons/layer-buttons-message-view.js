@@ -9,7 +9,7 @@ import { registerComponent } from '../../components/component';
 import '../../components/layer-action-button/layer-action-button';
 import '../../components/layer-choice-button/layer-choice-button';
 import MessageViewMixin from '../message-view-mixin';
-import { Constants } from '../../base';
+import Constants from '../../constants';
 
 registerComponent('layer-buttons-message-view', {
   template: `

@@ -14,7 +14,7 @@
  * @class Layer.UI.mixins.ListItem
  */
 import { registerComponent } from '../components/component';
-import { components } from '../base';
+import { ComponentsHash } from '../component-services';
 
 module.exports = {
   properties: {
@@ -160,7 +160,7 @@ module.exports = {
     onReplaceableContentAdded: {
       mode: registerComponent.MODES.AFTER,
       value: function onReplaceableContentAdded(name, node) {
-        const props = components[this.tagName.toLowerCase()].properties.filter(propDef => propDef.propagateToChildren);
+        const props = ComponentsHash[this.tagName.toLowerCase()].properties.filter(propDef => propDef.propagateToChildren);
 
         // Setup each node added this way as a full part of this component
         const nodeIterator = document.createNodeIterator(
@@ -172,7 +172,7 @@ module.exports = {
         let currentNode;
         while (currentNode = nodeIterator.nextNode()) {
           props.forEach(propDef => {
-            if (components[currentNode.tagName.toLowerCase()]) {
+            if (ComponentsHash[currentNode.tagName.toLowerCase()]) {
               if (!currentNode.properties._internalState) {
                 // hit using polyfil
                 currentNode.properties[propDef.propertyName] = this[propDef.propertyName];

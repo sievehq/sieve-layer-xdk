@@ -95,7 +95,7 @@ describe("The Client Conversation Mixin", function() {
             conversation = new Layer.Core.Conversation({
                 client: client,
                 fromServer: {
-                    id: "layer:///conversations/" + layer.Util.generateUUID(),
+                    id: "layer:///conversations/" + Layer.Utils.generateUUID(),
                     participants: ["a"]
                 }
             });

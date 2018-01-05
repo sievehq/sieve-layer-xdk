@@ -26,7 +26,7 @@
  */
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import { logger } from '../../util';
+import { logger } from '../../utils';
 import Query from './query';
 
 const findChannelIdRegex = new RegExp(

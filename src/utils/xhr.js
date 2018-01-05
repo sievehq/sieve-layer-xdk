@@ -2,7 +2,7 @@
  * Basic XHR Library with some notions hardcoded in
  * of what the Layer server expects/returns.
  *
-    Layer.Util.xhr({
+    Layer.Utils.xhr({
       url: 'http://my.com/mydata',
       data: {hey: 'ho', there: 'folk'},
       method: 'GET',
@@ -17,7 +17,7 @@
       }
     });
  *
- * @class Layer.Util.xhr
+ * @class Layer.utils.xhr
  * @private
  */
 

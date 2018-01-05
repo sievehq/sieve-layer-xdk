@@ -49,10 +49,10 @@ import ImageManager from 'blueimp-load-image/js/load-image';
 import 'blueimp-load-image/js/load-image-orientation';
 import 'blueimp-load-image/js/load-image-meta';
 import 'blueimp-load-image/js/load-image-exif';
-import normalizeSize from '../../utils/sizing';
+import { normalizeSize } from '../../ui-utils';
 
-import Layer, { Root, Client, MessagePart, MessageTypeModel }  from '../../../core';
-import { xhr } from '../../../util';
+import { Root, Client, MessagePart, MessageTypeModel } from '../../../core';
+import { xhr } from '../../../utils';
 
 class ImageModel extends MessageTypeModel {
 

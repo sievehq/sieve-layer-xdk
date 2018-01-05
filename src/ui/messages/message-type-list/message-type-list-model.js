@@ -15,7 +15,7 @@ MessageTypeListModel = Layer.Core.Client.getMessageTypeModelClass('MessageTypeLi
 * @extends layer.model
 */
 import { Client, MessagePart, MessageTypeModel } from '../../../core';
-import Util from '../../../util';
+import Util from '../../../utils';
 
 class MessageTypeListModel extends MessageTypeModel {
   _generateParts(callback) {

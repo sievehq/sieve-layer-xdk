@@ -6,7 +6,7 @@
  * And have that callback either called by the correct websocket server response, or
  * be called with a timeout.
  */
-import Util, { logger } from '../../util';
+import Util, { logger } from '../../utils';
 import LayerError from '../layer-error';
 
 // Wait 15 seconds for a response and then give up
@@ -148,7 +148,7 @@ class WebsocketRequestManager {
    *
    * @method sendRequest
    * @param  {Object} options
-   * @param  {Object} otions.data                     Data to send to the server
+   * @param  {Object} options.data                     Data to send to the server
    * @param  {Function} [options.callback=null]       Handler for success/failure callback
    * @param  {Boolean} [options.isChangesArray=false] Response contains a changes array that can be fed directly to change-manager.
    * @returns the request callback object if there is one; primarily for use in testing.
@@ -244,7 +244,7 @@ class WebsocketRequestManager {
    * Call all callbacks with a `server_unavailable` error.  The caller may retry,
    * but this component does not have built-in retry.
    *
-   * @method
+   * @method _failAll
    * @private
    */
   _failAll() {

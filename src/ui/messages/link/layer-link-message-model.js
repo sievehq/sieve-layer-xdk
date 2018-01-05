@@ -41,7 +41,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, MessageTypeModel, Root }  from '../../../core';
-import { xhr } from '../../../util';
+import { xhr } from '../../../utils';
 
 const TitleRegEx = new RegExp(/<meta [^>]*property\s*=\s*['"]og:title['"].*?\/>/);
 const DescriptionRegEx = new RegExp(/<meta [^>]*property\s*=\s*['"]og:description['"].*?\/>/);

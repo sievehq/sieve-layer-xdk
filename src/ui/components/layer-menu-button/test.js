@@ -17,7 +17,7 @@ describe('layer-menu-button', function() {
     el = document.createElement('layer-menu-button');
     testRoot.appendChild(el);
     el.enabled = true;
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

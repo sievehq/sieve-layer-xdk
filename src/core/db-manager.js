@@ -15,7 +15,7 @@
 import Root from './root';
 import SyncEvent from './sync-event';
 import Constants from '../constants';
-import Util from '../util';
+import Util from '../utils';
 import Announcement from './models/announcement';
 
 const DB_VERSION = 5;
@@ -123,7 +123,7 @@ class DbManager extends Root {
   }
 
   _getDbName() {
-    return 'LayerWebSDK_' + this.client.appId;
+    return 'LayerXDK_' + this.client.appId;
   }
 
   /**
@@ -514,7 +514,7 @@ class DbManager extends Root {
    */
   writeMessages(messages, callback) {
     this._getMessageData(
-      messages.filter(message => !message.isDestroyed),
+      messages.filter(message => !message.isDestroyed && !message.isNew()),
       dbMessageData => this._writeObjects('messages', dbMessageData, callback)
     );
   }

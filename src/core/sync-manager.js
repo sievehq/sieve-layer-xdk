@@ -19,7 +19,7 @@
  */
 import Root from './root';
 import { WebsocketSyncEvent } from './sync-event';
-import Util, { logger, xhr } from '../util';
+import Util, { logger, xhr } from '../utils';
 
 const MAX_RECEIPT_CONNECTIONS = 4;
 

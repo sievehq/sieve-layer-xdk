@@ -1,10 +1,15 @@
-/*
- * isURL returns a Regular Expression that can be used to test if a string is a URL ending in any of the specified extensions.
- *
- * @class Layer.UI.utils.isURL
- * @singleton
+/**
+ * @class Layer.UI.UIUtils
  */
 
+/**
+ * Returns a Regular Expression that can be used to test if a string is a URL ending in any of the specified extensions.
+ *
+ * @method isUrl
+ * @param {String[]} extensions    Specific file extensions our URL must match against
+ * @returns {RegExp}               Regular Expression that can test if something is a string
+ * @removed
+ */
 module.exports = function isURL(extensions) {
   let resource = '?';
 

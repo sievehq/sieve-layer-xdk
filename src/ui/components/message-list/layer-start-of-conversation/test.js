@@ -25,7 +25,7 @@ describe('layer-start-of-conversation', function() {
     el = document.createElement('layer-start-of-conversation');
     conversation = client.createConversation({participants: ["a"]});
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

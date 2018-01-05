@@ -58,12 +58,12 @@ registerComponent('layer-presence', {
    */
 
   /**
-   * The user has clicked on the `<layer-presence />` widget
+   * @inheritdoc #event-layer-presence-click
    *
    * @property {Function} onPresenceClick
-   * @param {Event} onPresenceClick.evt
-   * @param {Object} onPresenceClick.evt.detail
-   * @param {Layer.Core.Identity} onPresenceClick.evt.detail.item - The user rendered by this Presence Widget
+   * @property {Event} onPresenceClick.evt
+   * @property {Object} onPresenceClick.evt.detail
+   * @property {Layer.Core.Identity} onPresenceClick.evt.detail.item - The user rendered by this Presence Widget
    */
   events: ['layer-presence-click'],
   properties: {

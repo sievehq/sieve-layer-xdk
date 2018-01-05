@@ -129,7 +129,7 @@ module.exports = function (grunt) {
     },
     custom_copy: {
       src: {
-        src: ['src/core/*', 'src/*.js', 'src/util'],
+        src: ['src/core/*', 'src/*.js', 'src/utils'],
         dest: 'lib-es6/'
       },
     },
@@ -465,7 +465,7 @@ module.exports = function (grunt) {
 
       // Find the template file by checking for an html file of the same name as the js file in the same folder.
       var parentFolder = path.dirname(file);
-      var pathToBase = parentFolder.replace(/[/|\bsrc/ui/][^/]*/g, "/..").substring(7) + "/base"
+      var pathToLayerUI = parentFolder.replace(/[/|\bsrc/ui/][^/]*/g, "/..").substring(7) + "/layer-ui"
 
       var templates = grunt.file.expand(parentFolder + "/*.html")
       templates.forEach(function(templateFileName) {
@@ -506,7 +506,7 @@ module.exports = function (grunt) {
 
           // Generate the <template /> and <style> objects
           output += '\n(function() {\n';
-          output += 'var layerUI = require(\'' + pathToBase + '\');\n';
+          output += 'var layerUI = require(\'' + pathToLayerUI + '\');\n';
           output += 'layerUI.buildAndRegisterTemplate("' + className + '", ' + JSON.stringify(templateContents.replace(/\n/g,'').trim()) + ', "' + templateId + '");\n';
           output += 'layerUI.buildStyle("' + className + '", ' + JSON.stringify(style.trim()) + ', "' + templateId + '");\n';
           output += '})()';

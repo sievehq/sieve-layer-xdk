@@ -1625,14 +1625,14 @@ describe("The Conversation Class", function() {
 
         it("Should call layerParse", function() {
             // Setup
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
             // Run
             conversation.setMetadataProperties({"a.b.c": "fred", "a.d": "wilma"});
 
             // Posttest
-            expect(layer.Util.layerParse).toHaveBeenCalledWith({
+            expect(Layer.Utils.layerParse).toHaveBeenCalledWith({
                 object: conversation,
                 type: "Conversation",
                 operations: [
@@ -1643,7 +1643,7 @@ describe("The Conversation Class", function() {
             });
 
             // Cleanup
-            layer.Util.layerParse = tmp;
+            Layer.Utils.layerParse = tmp;
         });
 
         it("Should reload the Conversation on error", function() {
@@ -1751,14 +1751,14 @@ describe("The Conversation Class", function() {
 
         it("Should call layerParse", function() {
             // Setup
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
             // Run
             conversation.deleteMetadataProperties(["a.b.c"]);
 
             // Posttest
-            expect(layer.Util.layerParse).toHaveBeenCalledWith({
+            expect(Layer.Utils.layerParse).toHaveBeenCalledWith({
                 object: conversation,
                 type: "Conversation",
                 operations: [
@@ -1768,7 +1768,7 @@ describe("The Conversation Class", function() {
             });
 
             // Cleanup
-            layer.Util.layerParse = tmp;
+            Layer.Utils.layerParse = tmp;
         });
 
         it("Should reload the Conversation on error", function() {

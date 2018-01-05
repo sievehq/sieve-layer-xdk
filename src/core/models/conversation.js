@@ -55,7 +55,7 @@ import Syncable from './syncable';
 import Container from './container';
 import ConversationMessage from './conversation-message';
 import { ErrorDictionary } from '../layer-error';
-import Util from '../../util';
+import Util from '../../utils';
 import Constants from '../../constants';
 import LayerEvent from '../layer-event';
 

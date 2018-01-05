@@ -53,7 +53,7 @@ describe("Has Query Mixin", function() {
 
     el.query = query;
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {
@@ -149,7 +149,7 @@ describe("Has Query Mixin", function() {
         // Main test
         testRoot.innerHTML = '<has-query-test app-id="' + client.appId + '"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
         expect(el.query).toEqual(jasmine.any(Layer.Core.Query));
@@ -160,7 +160,7 @@ describe("Has Query Mixin", function() {
         var el = testRoot.firstChild;
         el._queryModel = '';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
         el._setupGeneratedQuery();
         expect(el.query).toBe(null);
@@ -171,7 +171,7 @@ describe("Has Query Mixin", function() {
         testRoot.innerHTML = '<has-query-test></has-query-test>';
         var el = testRoot.firstChild;
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
         el._setupGeneratedQuery();
         expect(el.query).toBe(null);
@@ -183,7 +183,7 @@ describe("Has Query Mixin", function() {
         testRoot.innerHTML = '<has-query-test></has-query-test>';
         var el = testRoot.firstChild;
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
         el.query = query;
         el._setupGeneratedQuery();
@@ -194,7 +194,7 @@ describe("Has Query Mixin", function() {
         // Main test
         testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
         expect(el.hasGeneratedQuery).toBe(true);
@@ -204,7 +204,7 @@ describe("Has Query Mixin", function() {
         el = testRoot.firstChild;
         el._queryModel = '';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         el._setupGeneratedQuery();
         expect(el.hasGeneratedQuery).toBe(false);
 
@@ -213,7 +213,7 @@ describe("Has Query Mixin", function() {
         Layer.UI.appId = '';
         testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
         expect(el.hasGeneratedQuery).toBe(false);
@@ -222,7 +222,7 @@ describe("Has Query Mixin", function() {
         // Alt test 3, set a query
         testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el.query = query;
         el._setupGeneratedQuery();
@@ -232,7 +232,7 @@ describe("Has Query Mixin", function() {
       it("Should respect any sortBy property", function() {
         testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
         expect(el.query.sortBy).toEqual([{ 'ardvarks': 'desc' }]);

@@ -1,4 +1,7 @@
 /**
+ * @class Layer.utils
+ */
+/**
  * Execute this function immediately after current processing is complete (setImmediate replacement).
  *
  * A depth of up to 10 is allowed.  That means that functions you schedule using defer

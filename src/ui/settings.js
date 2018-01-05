@@ -41,7 +41,7 @@
  *
  * @property {Object} [settings.defaultHandler]    The default message renderer for messages not matching any other handler
  * @property {String[]} [settings.textHandlers=['autolinker', 'emoji', 'newline']] Specify which text handlers you want
- *    Note that any custom handlers you add do not need to be in the settings, they can be called after calling `init()` using Layer.UI.TextHandlers.registerTextHandler.
+ *    Note that any custom handlers you add do not need to be in the settings, they can be called after calling `init()` using `Layer.UI.handlers.text.register`.
  * @property {Number} [settings.destroyAfterDetachDelay=10000] How long to wait after a Component is removed from the document before destroying it.
  *   Note that a common use case is to remove it, and then insert it elsewhere. This causes a remove, and this delay helps insure that the insertion
  *   happens and we can test for this and prevent destroying.

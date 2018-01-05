@@ -19,9 +19,9 @@ describe("List Item Selection Mixin", function() {
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-item');
     testRoot.appendChild(el);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(1000);
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(10);
   });
 

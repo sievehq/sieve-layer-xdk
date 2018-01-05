@@ -1,6 +1,7 @@
 /**
  * TODO: Location Model should be able to use one of these
  * TODO: Look at vcard fields
+ * @ignore
  */
 
 import { Client, MessagePart, MessageTypeModel, Util }  from '../../../core';

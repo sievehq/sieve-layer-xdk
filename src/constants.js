@@ -91,6 +91,13 @@ module.exports = {
     MY_DEVICES: 'my_devices',
   },
 
+  /**
+   * Key MIME Types that should be globally available.
+   *
+   * * `Layer.UI.Constants.STANDARD_MIME_TYPES.TEXT`: 'application/vnd.layer.text+json'
+   *
+   * @property {Object} [STANDARD_MIME_TYPES=]
+   */
   STANDARD_MIME_TYPES: {
     TEXT: 'application/vnd.layer.text+json',
   },

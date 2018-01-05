@@ -10,7 +10,7 @@
  *
  * @class Layer.UI.mixins.QueryEndIndicator
  */
-import Util from '../../util';
+import Util from '../../utils';
 module.exports = {
   properties: {
     /**

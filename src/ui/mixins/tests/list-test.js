@@ -5,8 +5,8 @@ describe("List Mixin", function() {
     beforeEach(function() {
       jasmine.clock().install();
 
-      restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-      spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+      restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+      spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
         var timeoutId = setTimeout(function() {
           node.scrollTop = position;
           if (callback) callback();
@@ -51,14 +51,14 @@ describe("List Mixin", function() {
 
       el.query = query;
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(500);
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
 
     afterEach(function() {
       try {
-        Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+        Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
         jasmine.clock().uninstall();
         Layer.UI.settings.appId = null;
         document.body.removeChild(testRoot);
@@ -70,7 +70,7 @@ describe("List Mixin", function() {
     describe("Properties", function() {
       it("Should set the query given a queryId", function() {
         var el = document.createElement('layer-identity-list');
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         el.queryId = query.id;
         expect(el.query).toBe(query);
       });
@@ -79,7 +79,7 @@ describe("List Mixin", function() {
       it("Should call render on setting the query", function() {
         var el = document.createElement('layer-identity-list');
         spyOn(el, "onRender");
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         el.query = query;
         jasmine.clock().tick(10);
         expect(el.onRender).toHaveBeenCalledWith();
@@ -88,7 +88,7 @@ describe("List Mixin", function() {
       // Tests call to onRerender as rerender has already been bound to an event before we can test it
       it("Should wire up rerender on setting the query", function() {
         var el = document.createElement('layer-identity-list');
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         spyOn(el, "_processQueryEvt");
 
         el.query = query;
@@ -104,7 +104,7 @@ describe("List Mixin", function() {
         expect(el.properties.query).toBe(null);
 
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
         expect(el.query).toEqual(jasmine.any(Layer.Core.Query));
         expect(el.properties.query).toEqual(jasmine.any(Layer.Core.Query));

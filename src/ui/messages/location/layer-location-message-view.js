@@ -9,7 +9,7 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import { Constants } from '../../base';
+import Constants from '../../constants';
 
 registerComponent('layer-location-message-view', {
   mixins: [MessageViewMixin],

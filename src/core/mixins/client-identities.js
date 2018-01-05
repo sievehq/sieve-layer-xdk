@@ -6,7 +6,7 @@
 
 import Identity from '../models/identity';
 import { ErrorDictionary } from '../layer-error';
-import Util from '../../util';
+import Util from '../../utils';
 import { WebsocketSyncEvent } from '../sync-event';
 
 
@@ -24,7 +24,6 @@ module.exports = {
     /**
      * A call to Layer.Core.Identity.load has failed
      *
-     * @event
      * @event
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.LayerEvent} evt.error

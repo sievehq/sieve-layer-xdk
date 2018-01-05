@@ -16,8 +16,8 @@ describe('Carousel Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -52,7 +52,7 @@ describe('Carousel Message Components', function() {
     CarouselModel = Layer.Core.Client.getMessageTypeModelClass("CarouselModel");
     TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
@@ -60,7 +60,7 @@ describe('Carousel Message Components', function() {
 
   afterEach(function() {
     if (client) client.destroy();
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -119,12 +119,12 @@ describe('Carousel Message Components', function() {
 
 
     it("Should instantiate a Model from a Message with metadata", function() {
-      var uuid1 = Layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
 
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
-          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type: CarouselModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
             action: {
@@ -133,15 +133,15 @@ describe('Carousel Message Components', function() {
             },
           })
         }, {
-          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type:  "application/vnd.layer.text+json; role=carousel-item; parent-node-id=a",
           body: JSON.stringify({text: "a"})
         }, {
-          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type:  "application/vnd.layer.text+json; role=carousel-item; parent-node-id=a",
           body: JSON.stringify({text: "a", action: {event: "f", data: {m: "n"}}})
         }, {
-          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type:  "application/vnd.layer.text+json; role=carousel-item; parent-node-id=a",
           body: JSON.stringify({text: "a", action: {data: {g: "h", i: "j"}}})
         }]
@@ -196,7 +196,7 @@ describe('Carousel Message Components', function() {
       });
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -227,7 +227,7 @@ describe('Carousel Message Components', function() {
       jasmine.clock().install();
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(100);
       jasmine.clock().uninstall();
 

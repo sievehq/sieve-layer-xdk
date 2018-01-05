@@ -1,7 +1,7 @@
 /**
  * Utility methods
  *
- * @class Layer.Util
+ * @class Layer.utils
  */
 
 import uuid from 'uuid';
@@ -327,41 +327,7 @@ exports.fetchTextFromFile = (file, callback) => {
 };
 
 
-/**
- * Execute this function immediately after current processing is complete (setImmediate replacement).
- *
- * A depth of up to 10 is allowed.  That means that functions you schedule using defer
- * can in turn schedule further actions.  The original actions are depth = 0; the actions scheduled
- * by your actions are depth = 1.  These new actions may in turn schedule further actions, which happen at depth = 3.
- * But to avoid infinite loops, if depth reaches 10, it clears the queue and ignores them.
- *
- * @method defer
- * @param {Function} f
- */
 exports.defer = defer;
-
-/**
- * Run the Layer Parser on the request.
- *
- * Parameters here
- * are the parameters specied in [Layer-Patch](https://github.com/layerhq/node-layer-patch), plus
- * a client object.
- *
- *      Util.layerParse({
- *          object: conversation,
- *          type: 'Conversation',
- *          operations: layerPatchOperations,
- *          client: client
- *      });
- *
- * @method
- * @deprecated Use 'utils/layer-parser' instead
- * @param {Object} request - layer-patch parameters
- * @param {Object} request.object - Object being updated  by the operations
- * @param {string} request.type - Type of object being updated
- * @param {Object[]} request.operations - Array of change operations to perform upon the object
- * @param {Layer.Core.Client} request.client
- */
 exports.layerParse = layerParse;
 
 

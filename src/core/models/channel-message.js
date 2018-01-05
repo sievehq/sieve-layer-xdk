@@ -1,6 +1,5 @@
 /**
- * For purposes of API consistency across SDKs, this class is not exposed.
- * Instead, customers will see only the Layer.Core.Message class.
+ * @inheritdoc Layer.Core.Message
  *
  * @class Layer.Core.Message.ChannelMessage
  * @extends Layer.Core.Message
@@ -9,7 +8,7 @@ import Root from '../root';
 import Message from './message';
 import ClientRegistry from '../client-registry';
 import Constants from '../../constants';
-import { logger } from '../../util';
+import { logger } from '../../utils';
 import { ErrorDictionary } from '../layer-error';
 
 class ChannelMessage extends Message {

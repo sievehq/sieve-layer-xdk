@@ -8,7 +8,7 @@
  * @private
  */
 
-import { defer } from '../util';
+import { defer } from '../utils';
 
 const registry = {};
 const listeners = [];
@@ -69,8 +69,9 @@ function addListener(listener) {
  * Remove a registered listener or all listeners.
  *
  * If called with no arguments or null arguments, removes all listeners.
+ *
  * @method removeListener
- * @param {Function}
+ * @param {Function} listener
  */
 function removeListener(listener) {
   if (listener) {

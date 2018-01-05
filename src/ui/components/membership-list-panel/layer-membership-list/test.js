@@ -53,9 +53,9 @@ describe('layer-membership-list', function() {
 
     el.query = query;
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(500);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {
@@ -83,7 +83,7 @@ describe('layer-membership-list', function() {
     beforeEach(function() {
       testRoot.innerHTML = '<layer-membership-list></layer-membership-list>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el = testRoot.firstChild;
     });
 
@@ -117,7 +117,7 @@ describe('layer-membership-list', function() {
     it("Should call _updateQuery if there is a queryId passed into the innerHTML", function() {
       testRoot.innerHTML = '<layer-membership-list query-id="' + query.id + '" app-id="' + client.appId + '"></layer-membership-list>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       var el = testRoot.firstChild;
       expect(el.query).toBe(query);
       spyOn(el, "_processQueryEvt"); // _updateQuery sets up the query listener to call _processQueryEvt

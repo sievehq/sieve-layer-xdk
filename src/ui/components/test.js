@@ -52,15 +52,15 @@ describe('Components', function() {
       var el = document.createElement('lifecycle-test');
       testRoot.appendChild(el);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(calls).toEqual(['onCreate', 'prop1', 'onAfterCreate', 'onRender', 'onAttach']);
 
       // Run removal
       testRoot.removeChild(el);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(calls).toEqual(['onCreate', 'prop1', 'onAfterCreate', 'onRender', 'onAttach', 'onDetach']);
 
       jasmine.clock().tick(1000000);
@@ -124,7 +124,7 @@ describe('Components', function() {
       var el = document.createElement('mixin-test1');
       testRoot.appendChild(el);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(calls).toEqual(['before', 'widget', 'middle1', 'middle2', 'after']);
     });
@@ -187,7 +187,7 @@ describe('Components', function() {
       var el = document.createElement('mixin-test2');
       testRoot.appendChild(el);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(calls).toEqual(['overwrite']);
     });
@@ -252,7 +252,7 @@ describe('Components', function() {
       var el = document.createElement('mixin-conditional-test1');
       testRoot.appendChild(el);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(calls).toEqual(['before', 'widget', 'middle1', 'middle2', 'after']);
 
@@ -318,7 +318,7 @@ describe('Components', function() {
       var el = document.createElement('mixin-conditional-test2');
       testRoot.appendChild(el);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(calls).toEqual([]);
     });
@@ -383,7 +383,7 @@ describe('Components', function() {
       var el = document.createElement('mixin-conditional-test3');
       testRoot.appendChild(el);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(calls).toEqual([]);
     });
@@ -429,7 +429,7 @@ describe('Components', function() {
       expect(el1.properties._internalState.onAfterCreateCalled).toBe(false);
       expect(el1.properties._internalState.disableSetters).toBe(true);
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       CustomElements.takeRecords();
 
       expect(setterCalled).toBe(true);
@@ -455,7 +455,7 @@ describe('Components', function() {
       var el2 = document.createElement('property-value-test2');
       expect(setterCalled).toBe(false);
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       CustomElements.takeRecords();
 
       expect(setterCalled).toBe(true);
@@ -484,7 +484,7 @@ describe('Components', function() {
       expect(el1.properties._internalState.onAfterCreateCalled).toBe(false);
       expect(el1.properties._internalState.disableSetters).toBe(true);
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el1.hasValue).toEqual(55);
       expect(setterCalled).toBe(true);
       expect(el1.properties._internalState.onAfterCreateCalled).toBe(true);
@@ -541,7 +541,7 @@ describe('Components', function() {
 
       var el1 = document.createElement('mixin-ordering-test1');
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(calls).toEqual([3, 5, 10, 15, 35, "X"]);
     });
 
@@ -597,7 +597,7 @@ describe('Components', function() {
 
       var el1 = document.createElement('mixin-ordering-test2');
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(calls).toEqual([3, 5, 10, 15, 35, "X"]);
     });
 
@@ -619,7 +619,7 @@ describe('Components', function() {
       el1.prop10 = 10;
 
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(inGetter).toBe(false);
       var tmp = el1.prop10;
@@ -670,7 +670,7 @@ describe('Components', function() {
       var el1 = document.createElement('mixin-prop-test2');
       el1.prop10 = 10;
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(results).toEqual(["mixin3", "widget", "mixin2", "mixin1"]);
 
@@ -688,7 +688,7 @@ describe('Components', function() {
       var el1 = document.createElement('mixin-prop-test3');
       el1.prop10 = 10;
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Results shouldn't be affected by mixin order, only by the mode property
       expect(results).toEqual(["mixin3", "widget", "mixin2", "mixin1"]);
@@ -743,7 +743,7 @@ describe('Components', function() {
       var el1 = document.createElement('mixin-prop-test4');
       el1.prop11 = 10;
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Posttest
       expect(results).toEqual(["submixin: 10"]);
@@ -752,7 +752,7 @@ describe('Components', function() {
     it("Should propagate propagateToChildren properties", function() {
       var el1 = document.createElement('layer-conversation-view');
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Run
       el1.state = {hey: "ho"};
@@ -805,7 +805,7 @@ describe('Components', function() {
       el.state = testState1;
       el.query = query;
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       var listItems = el.querySelectorAll("layer-conversation-item");
 
       // Posttest 1
@@ -831,7 +831,7 @@ describe('Components', function() {
     it("Should return itself if is a main component", function() {
       var el1 = document.createElement('layer-conversation-view');
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el1.mainComponent).toBe(el1);
     });
@@ -839,7 +839,7 @@ describe('Components', function() {
     it("Should return its parent main component", function() {
       var el1 = document.createElement('layer-conversation-view');
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el1.nodes.list.nodes.emptyNode.mainComponent).toBe(el1);
     });
@@ -849,7 +849,7 @@ describe('Components', function() {
     it("Should return null if no parent component", function() {
       var el1 = document.createElement('layer-conversation-view');
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el1.parentComponent).toBe(null);
     });
@@ -857,7 +857,7 @@ describe('Components', function() {
     it("Should return its parent component", function() {
       var el1 = document.createElement('layer-conversation-view');
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el1.nodes.list.nodes.emptyNode.parentComponent).toBe(el1.nodes.list);
     });
@@ -903,7 +903,7 @@ describe('Components', function() {
     it("Should eventually run if called after onAfterCreate", function() {
       var el = document.createElement('onrender-test1');
       el.onRender();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(called).toBe(true);
     });
   });
@@ -923,7 +923,7 @@ describe('Components', function() {
       testRoot.appendChild(el);
       jasmine.clock().tick(10);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(called).toBe(true);
     });
@@ -950,7 +950,7 @@ describe('Components', function() {
       testRoot.appendChild(el);
       jasmine.clock().tick(10);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(called).toBe(false);
       el.onAfterCreate();
@@ -968,7 +968,7 @@ describe('Components', function() {
       avatar = document.createElement('layer-avatar');
       testRoot.appendChild(avatar);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
     it("Should be called after removal", function() {
       spyOn(avatar, "onDetach");
@@ -976,7 +976,7 @@ describe('Components', function() {
       // Run
       testRoot.removeChild(avatar);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Posttest
       expect(avatar.onDetach).toHaveBeenCalledWith();
@@ -988,7 +988,7 @@ describe('Components', function() {
       // Run
       testRoot.removeChild(avatar);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(10001);
 
       // Posttest
@@ -1004,7 +1004,7 @@ describe('Components', function() {
       // Run
       testRoot.removeChild(avatar);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(10001);
 
       // Posttest
@@ -1019,7 +1019,7 @@ describe('Components', function() {
       avatar = document.createElement('layer-avatar');
       testRoot.appendChild(avatar);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       client = new Layer.Core.Client({appId: "fred53"});
       client.user = new Layer.Core.Identity({
@@ -1057,7 +1057,7 @@ describe('Components', function() {
       avatar.users = [client.user];
       testRoot.appendChild(avatar);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
     it("Should remove from parentNode", function() {
       expect(avatar.parentNode).toBe(testRoot);
@@ -1098,7 +1098,7 @@ describe('Components', function() {
       testRoot.appendChild(el);
       jasmine.clock().tick(10);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(called).toBe(true);
     });
@@ -1123,7 +1123,7 @@ describe('Components', function() {
       testRoot.appendChild(el);
       jasmine.clock().tick(10);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(called).toBe(true);
 
@@ -1149,7 +1149,7 @@ describe('Components', function() {
       testRoot.appendChild(el);
       jasmine.clock().tick(10);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(called).toBe(true);
     });
@@ -1172,7 +1172,7 @@ describe('Components', function() {
       testRoot.appendChild(el);
       jasmine.clock().tick(10);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(called).toBe(true);
     });
@@ -1197,7 +1197,7 @@ describe('Components', function() {
       el.listenTo = 'source1,source2, source3';
       testRoot.appendChild(el);
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       var source1 = document.createElement('listener-test1-source');
       source1.id = 'source1';

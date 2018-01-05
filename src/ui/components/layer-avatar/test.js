@@ -23,7 +23,7 @@ describe('layer-avatar', function() {
     el = document.createElement('layer-avatar');
     testRoot.appendChild(el);
     el.enabled = true;
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
   afterEach(function() {
     if (el) {

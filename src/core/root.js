@@ -1,4 +1,4 @@
-import Util, { logger } from '../util';
+import Util, { logger } from '../utils';
 import LayerEvent from './layer-event';
 import { ErrorDictionary } from './layer-error';
 import Events from 'backbone-events-standalone/backbone-events-standalone';

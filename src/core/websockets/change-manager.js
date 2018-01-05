@@ -5,7 +5,7 @@
  * This class listens for `change` events from the websocket server,
  * and processes them.
  */
-import Util, { logger } from '../../util';
+import Util, { logger } from '../../utils';
 import Message from '../models/message';
 import Conversation from '../models/conversation';
 import Channel from '../models/channel';

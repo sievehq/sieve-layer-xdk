@@ -26,7 +26,6 @@ module.exports.angular = module.exports.backbone = module.exports.react =  () =>
  * ```
  *
  * @method register
- * @static
  * @param {String} name      Name of the adapter. Namespaces it within layerUI.adapters
  * @param {Function} adapter The adapter to make available to apps
  */

@@ -35,7 +35,7 @@ describe('layer-replaceable-content', function() {
       composerButtonPanelRight: button
     };
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
 
 
     // Test
@@ -53,7 +53,7 @@ describe('layer-replaceable-content', function() {
       }
     };
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
 
 
     // Test
@@ -69,7 +69,7 @@ describe('layer-replaceable-content', function() {
       composerButtonPanelRight2: button
     };
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
 
 
     // Test
@@ -83,7 +83,7 @@ describe('layer-replaceable-content', function() {
       composerButtonPanelRight: button
     };
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
 
 
     // Test
@@ -101,7 +101,7 @@ describe('layer-replaceable-content', function() {
       }
     };
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
 
 
     // Test
@@ -119,7 +119,7 @@ describe('layer-replaceable-content', function() {
       }
     };
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
 
 
     // Test
@@ -133,7 +133,7 @@ describe('layer-replaceable-content', function() {
       emptyNode: button
     };
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
 
 
     // Test
@@ -146,7 +146,7 @@ describe('layer-replaceable-content', function() {
     // Setup
     testRoot.innerHTML = '<layer-conversation-view><layer-send-button layer-replaceable-name="emptyNode"></layer-send-button></layer-conversation-view>';
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
 
     // Test
     expect(testRoot.firstChild.nodes.list.nodes.emptyNode.firstChild.firstChild.tagName).toEqual("LAYER-SEND-BUTTON");
@@ -158,7 +158,7 @@ describe('layer-replaceable-content', function() {
     content = testRoot.firstChild;
     content.parentComponent = el;
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
 
 
     // Test

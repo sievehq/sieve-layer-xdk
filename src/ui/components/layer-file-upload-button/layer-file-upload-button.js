@@ -22,7 +22,7 @@
  * @mixin Layer.UI.mixins.Clickable
  */
 import Layer from '../../../core';
-import Util from '../../../util';
+import Util from '../../../utils';
 import { registerComponent } from '../component';
 import Clickable from '../../mixins/clickable';
 

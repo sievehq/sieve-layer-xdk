@@ -6,7 +6,7 @@ describe('layer-send-button', function() {
     el = document.createElement('layer-send-button');
     testRoot.appendChild(el);
     document.body.appendChild(testRoot);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

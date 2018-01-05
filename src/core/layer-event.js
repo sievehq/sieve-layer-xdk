@@ -40,7 +40,7 @@ class LayerEvent {
   /**
    * Constructor for LayerEvent.
    *
-   * @method
+   * @method constructor
    * @param  {Object} args - Properties to mixin to the event
    * @param  {string} eventName - Name of the event that generated this LayerEvent.
    * @return {Layer.Core.LayerEvent}
@@ -73,9 +73,9 @@ class LayerEvent {
   }
 
   /**
-   * Call Layer.Core.LayerEvent.cancel on any event that is Cancelable to prevent its default behavior.
+   * Call `cancel` on any event that is {@link #cancelable} to prevent its default behavior.
    *
-   * @method
+   * @method cancel
    */
   cancel() {
     if (this.cancelable) {
@@ -84,9 +84,9 @@ class LayerEvent {
   }
 
   /**
-   * Call Layer.Core.LayerEvent.returnValue on any event intended to allow handlers to return a value.
+   * Call `returnValue` on any event that expects a value from the event listeners.
    *
-   * @method
+   * @method returnValue
    * @param {Mixed} value
    */
   returnValue(value) {

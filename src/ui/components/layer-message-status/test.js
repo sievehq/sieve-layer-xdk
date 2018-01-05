@@ -27,7 +27,7 @@ describe('layer-message-status', function() {
       participants: ['layer:///identities/a']
     });
     message = conversation.createMessage('Hey ho');
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
   afterEach(function() {
     if (client) client.destroy();

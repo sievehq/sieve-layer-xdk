@@ -3,7 +3,7 @@ if (global.Layer) throw new Error('You appear to have multiple copies of the Lay
 
 import Constants from './constants';
 import Core from './core';
-import Util from './util';
+import Utils from './utils';
 import version from './version';
 
 function init(options) {
@@ -11,5 +11,5 @@ function init(options) {
   return client;
 }
 
-module.exports = { Core, Util, Constants, init, version };
+module.exports = { Core, Utils, Constants, init, version };
 if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;

@@ -34,7 +34,7 @@ describe("Focus On Keydown Mixin", function() {
     testRoot.appendChild(el);
 
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

@@ -14,7 +14,7 @@
  */
 
 import Root from './root';
-import Util, { xhr } from '../util';
+import Util, { xhr } from '../utils';
 import version from '../version';
 
 class TelemetryMonitor extends Root {
@@ -63,7 +63,7 @@ class TelemetryMonitor extends Root {
    * Given a `telemetryId` and an optional `id`, and a `started` or `ended` key,
    * track performance of the given telemetry statistic.
    *
-   * @method
+   * @method trackEvent
    */
   trackEvent(evt) {
     if (!this.enabled) return;
@@ -100,7 +100,7 @@ class TelemetryMonitor extends Root {
    *
    * The `telemetry` object should contain `name` and `duration` keys
    *
-   * @method
+   * @method trackRestPerformance
    */
   trackRestPerformance(evt) {
     if (this.enabled && evt.request.telemetry) {
@@ -117,7 +117,7 @@ class TelemetryMonitor extends Root {
    *
    * Results of writing performance are to increment count, and total time for the operation.
    *
-   * @method
+   * @method writePerformance
    */
   writePerformance(name, timing) {
     const performance = this.getCurrentStateObject().performance;
@@ -137,7 +137,7 @@ class TelemetryMonitor extends Root {
   /**
    * When writing usage, we are simply incrementing the usage counter for the metric.
    *
-   * @method
+   * @method writeUsage
    */
   writeUsage(name) {
     const usage = this.getCurrentStateObject().usage;
@@ -152,7 +152,7 @@ class TelemetryMonitor extends Root {
    * note that environmental data may change from hour to hour,
    * so we regather this information for each record we send to the server.
    *
-   * @method
+   * @method getEnvironment
    */
   getEnvironment() {
     const environment = {
@@ -176,7 +176,7 @@ class TelemetryMonitor extends Root {
    * note that device data may change from hour to hour,
    * so we regather this information for each record we send to the server.
    *
-   * @method
+   * @method getDevice
    */
   getDevice() {
     return {
@@ -195,7 +195,7 @@ class TelemetryMonitor extends Root {
   /**
    * Return the state object used to track performance for the current time slot
    *
-   * @method
+   * @method getCurrentStateObject
    */
   getCurrentStateObject(doNotCreate) {
     const today = new Date();
@@ -240,7 +240,7 @@ class TelemetryMonitor extends Root {
    * Writing the state is an expensive operation that should be done less often,
    * and containing more changes rather than done immediatley and repeated with each change.
    *
-   * @method
+   * @method writeState
    */
   writeState() {
     if (this.enabled && !this._writeTimeoutId) {
@@ -254,7 +254,7 @@ class TelemetryMonitor extends Root {
   /**
    * Given a time slot's data, convert its data to what the server expects.
    *
-   * @method
+   * @method convertRecord
    */
   convertRecord(record) {
     const result = {
@@ -281,7 +281,7 @@ class TelemetryMonitor extends Root {
    *
    * Remove any data successfully sent from our records.
    *
-   * @method
+   * @method sendData
    */
   sendData() {
     const doNotSendCurrentRecord = this.getCurrentStateObject(true);
@@ -316,7 +316,7 @@ class TelemetryMonitor extends Root {
   /**
    * Periodicalily call sendData to send updates to the server.
    *
-   * @method
+   * @method setupReportingInterval
    */
   setupReportingInterval() {
     if (this.enabled) {
@@ -335,7 +335,7 @@ class TelemetryMonitor extends Root {
    *
    * The above code will stop the telemetryMonitor from sending data.
    *
-   * @method
+   * @method __updateEnabled
    */
   __updateEnabled() {
     if (this._intervalId) {

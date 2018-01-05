@@ -22,7 +22,7 @@
  *
  * @class Layer.Core.LayerEvent
  */
-import { logger } from '../util';
+import { logger } from '../utils';
 
 class LayerError {
   constructor(options) {

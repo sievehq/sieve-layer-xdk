@@ -30,7 +30,7 @@ describe("State property", function() {
       }
     });
     var el = document.createElement('state-test1');
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     expect(el.onRenderState).not.toHaveBeenCalled();
 
     el.state = {hey: "ho"};
@@ -47,7 +47,7 @@ describe("State property", function() {
     var el = document.createElement('state-test3');
     elParent.appendChild(el);
     testRoot.appendChild(elParent);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     expect(el.state).toEqual(null);
     expect(el.onRenderState).not.toHaveBeenCalled();
   });

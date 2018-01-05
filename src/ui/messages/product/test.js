@@ -6,8 +6,8 @@ describe('Product Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -42,14 +42,14 @@ describe('Product Message Components', function() {
     ProductModel = Layer.Core.Client.getMessageTypeModelClass("ProductModel");
     ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -103,10 +103,10 @@ describe('Product Message Components', function() {
     });
 
     it("Should instantiate a Model from a Message ", function() {
-      var uuid1 = Layer.Util.generateUUID();
-      var uuid2 = Layer.Util.generateUUID();
-      var uuid3 = Layer.Util.generateUUID();
-      var uuid4 = Layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
+      var uuid2 = Layer.Utils.generateUUID();
+      var uuid3 = Layer.Utils.generateUUID();
+      var uuid4 = Layer.Utils.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
@@ -201,7 +201,7 @@ describe('Product Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Message Viewer: gets the layer-card-width-full-width class
       expect(el.classList.contains('layer-card-width-full-width')).toBe(true);
@@ -241,7 +241,7 @@ describe('Product Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.nodes.ui.nodes.choices.childNodes.length).toEqual(2);
       expect(el.nodes.ui.nodes.choices.childNodes[0].model).toBe(model.options[0]);
       expect(el.nodes.ui.nodes.choices.childNodes[1].model).toBe(model.options[1]);

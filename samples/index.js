@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var USER_ID = prompt('Enter Email Address');
       var PASSWORD = prompt('Enter Password');
       if (USER_ID && PASSWORD) {
-        Layer.Util.xhr({
+        Layer.Utils.xhr({
           url: PROVIDER_URL + '/authenticate',
           headers: {
             'Content-type': 'application/json',
@@ -83,41 +83,6 @@ document.addEventListener('DOMContentLoaded', function() {
 //     }).generateMessage(evt.detail.conversation, message => message.send());
 //   }
 // });
-
-/* Demo Async Message Handler called Ipsum Lorem Handler; creates an <ipsum-lorum-handler /> node for any message containing "ipsum lorum" */
-Layer.UI.TextHandlers.registerTextHandler({
-  name: 'ipsum',
-  handler: function(textData, message, isMessageListItemComponent) {
-    if (isMessageListItemComponent) {
-      var matches = textData.text.match(/ipsum lorem/);
-      if (matches) {
-        textData.afterText.push('<ipsum-lorem-handler></ipsum-lorem-handler>');
-      }
-    }
-  }
-});
-
-/* Define the ipsum-lorum-handler Component; comes with message and messageWidget properties
-  * refering to the Layer.Core.Message and the <layer-message-item-sent /> (or received) widget its associated with.
-  * Height MUST be locked no later than the `onAfterCreate` call.  Content of unknown height is tricky, and must
-  * allow for, or UI for expanding to full height.  We may build UI for expanding to full height in at some point.
-  */
-Layer.UI.registerComponent('ipsum-lorem-handler', {
-  style: 'ipsum-lorem-handler {height: 100px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto;}',
-  methods: {
-    onAfterCreate() {
-      Layer.Util.xhr({
-        url: "https://baconipsum.com/api/?type=meat-and-filler&paras=1&start-with-lorem=1&format=text",
-      }, this._processResult.bind(this));
-    },
-    _processResult(result) {
-      setTimeout(function() {
-        this.innerHTML = this.parentComponent.message.parts[0].body.replace(/ipsum lorem/, result.data);
-      }.bind(this), 1000);
-    },
-  }
-});
-
 var presendMessage;
 document.addEventListener('layer-send-message', function(evt) {
   if (presendMessage && evt.detail.parts[0].body === presendMessage.parts[0].body) {
@@ -141,7 +106,7 @@ document.addEventListener('layer-composer-change-value', function(evt) {
   }
 });
 
-Layer.UI.registerMessageHandler({
+Layer.UI.handlers.message.register({
   tagName: 'layer-message-viewer',
   order: -1,
   handlesMessage(message, container) {

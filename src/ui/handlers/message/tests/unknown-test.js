@@ -25,7 +25,7 @@ describe("Unknown Handler", function() {
     el = document.createElement('layer-message-unknown');
     el._contentTag = 'layer-message-unknown';
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(500);
   });
 
@@ -37,14 +37,14 @@ describe("Unknown Handler", function() {
   });
 
   it("Should select unknown", function() {
-    var handler = Layer.UI.MessageHandlers.getHandler(message);
+    var handler = Layer.UI.handlers.message.getHandler(message);
     expect(handler.tagName).toEqual('layer-message-unknown');
   });
 
   it("Should render something relevant", function() {
     el.message = message;
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     expect(el.innerHTML).toMatch(/has no renderer/);
   });
 });

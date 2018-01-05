@@ -6,16 +6,13 @@
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
-import { settings as UISettings } from '../../index';
-import { Constants } from '../../base';
+import Constants from '../../constants';
 import MessageViewMixin from '../message-view-mixin';
 
 import ImageManager from 'blueimp-load-image/js/load-image';
 import 'blueimp-load-image/js/load-image-orientation';
 import 'blueimp-load-image/js/load-image-meta';
 import 'blueimp-load-image/js/load-image-exif';
-
-import normalizeSize from '../../utils/sizing';
 
 registerComponent('layer-image-message-view', {
   mixins: [MessageViewMixin],

@@ -36,7 +36,7 @@
  */
 
 import { registerComponent } from '../../components/component';
-import { Constants } from '../../base';
+import Constants from '../../constants';
 
 import MessageViewMixin from '../message-view-mixin';
 import '../../components/layer-action-button/layer-action-button';

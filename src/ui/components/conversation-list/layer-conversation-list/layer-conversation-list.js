@@ -248,7 +248,7 @@ registerComponent('layer-conversation-list', {
      * in the Message List to render that same image in the Conversation List.
      *
      * If you prevent rendering of a Message, it will instead render the `label` attribute for that message handler;
-     * see Layer.UI.registerMessageHandler for more info on the `label`.
+     * see Layer.UI.handlers.message.register for more info on the `label`.
      *
      * TODO: Should test to see what handler is returned rather than testing the mimeType
      *

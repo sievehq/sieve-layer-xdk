@@ -1,19 +1,19 @@
 /**
  * Utilities for processing text
  *
- * @class Layer.UI.handlers.text.TextHandlers
+ * @class Layer.UI.handlers.text
  * @static
  */
-let textHandlersOrdered = [];
+let handlersOrdered = [];
 
 /**
- * Hash of Text Handlers.  See {@link registerTextHandler}.
+ * Hash of Text Handlers.  See {@link #register}.
  *
  * @property {Object} handlers
  * @private
  */
-const textHandlers = {};
-module.exports.textHandlers = textHandlers;
+const handlers = {};
+module.exports.handlers = handlers;
 
 
  /**
@@ -23,9 +23,9 @@ module.exports.textHandlers = textHandlers;
  * @private
  */
 module.exports._setupOrderedHandlers = () => {
-  textHandlersOrdered = Object.keys(textHandlers).filter(handlerName =>
-    textHandlers[handlerName].enabled)
-  .map(handlerName => textHandlers[handlerName])
+  handlersOrdered = Object.keys(handlers).filter(handlerName =>
+    handlers[handlerName].enabled)
+  .map(handlerName => handlers[handlerName])
   .sort((a, b) => {
     if (a.order > b.order) return 1;
     if (b.order > a.order) return -1;
@@ -37,6 +37,10 @@ module.exports._setupOrderedHandlers = () => {
  * Removes tags from strings before rendering.
  *
  * This prevents `<script />` tags from being added via a Message.
+ *
+ * ```
+ * this.innerHTML = Layer.UI.handlers.text.sanitizeText("hello <script> world");
+ * ```
  *
  * @method sanitizeText
  * @param {String} text
@@ -50,9 +54,11 @@ module.exports.sanitizeText = (text) => {
 }
 
 /**
- * Transform text into HTML with any processing and decorations needed.
+ * Transform text into HTML using all registered text handlers.
  *
- * Uses the textHandlers to process the text
+ * ```
+ * this.innerHTML = Layer.UI.handlers.text.processText("hello <script> world I :-) at thee");
+ * ```
  *
  * @method processText
  * @param {String} text
@@ -60,7 +66,7 @@ module.exports.sanitizeText = (text) => {
  */
 module.exports.processText = (text) => {
   if (text === '') return text;
-  if (!textHandlersOrdered.length) module.exports._setupOrderedHandlers();
+  if (!handlersOrdered.length) module.exports._setupOrderedHandlers();
 
   const processedText = module.exports.sanitizeText(text);
 
@@ -70,7 +76,7 @@ module.exports.processText = (text) => {
   };
 
   // Iterate over each handler, calling each handler.
-  textHandlersOrdered.forEach((handlerDef) => {
+  handlersOrdered.forEach((handlerDef) => {
     handlerDef.handler(textData);
   });
   return textData.text;
@@ -86,21 +92,12 @@ module.exports.processText = (text) => {
  * * Turning emoticons symbols into images
  * * Replacing image URLs with image tags
  * * Adding HTML formatting around quoted text
-
  * * Make up your own...
  *
- * You can enable a predefined Text Handler with:
+ * You can define your own handler with:
  *
  * ```
- * layerUI.registerTextHandler({
- *    name: 'emoji'
- * });
- * ```
- *
- * You can define your own handler (defaults to enabled) with:
- *
- * ```
- * layerUI.registerTextHandler({
+ * Layer.UI.handlers.text.register({
  *    name: 'youtube',
  *    order: 200,
  *    handler: function(textData) {
@@ -110,8 +107,15 @@ module.exports.processText = (text) => {
  * });
  * ```
  *
- * @method registerTextHandler
- * @static
+ * If there are Text Handlers that are defined but not yet enabled, you can enable them with:
+ *
+ * ```
+ * Layer.UI.handlers.text.register({
+ *    name: 'handler-name'
+ * });
+ * ```
+ *
+ * @method register
  * @param {Object} options
  * @param {String} options.name      A unique name to give your handler
  * @param {Number} options.order     A number used to sort your handler amongst other handlers as order
@@ -121,18 +125,18 @@ module.exports.processText = (text) => {
  * @param {String} options.handler.textData.text          Use this to read the current text value and write an update to it
  * @param {String} options.handler.textData.originalText  Text before any processing was done
  */
-module.exports.registerTextHandler = function registerTextHandler(options) {
-  if (textHandlers[options.name]) {
+module.exports.register = function register(options) {
+  if (handlers[options.name]) {
     if (options.handler) {
       Object.keys(options).forEach((optionKey) => {
-        textHandlers[options.name][optionKey] = options[optionKey];
+        handlers[options.name][optionKey] = options[optionKey];
       });
     } else {
-      textHandlers[options.name].enabled = true;
+      handlers[options.name].enabled = true;
     }
   } else {
     options.enabled = !options.handler || !options.requiresEnable;
     if (!('order' in options)) options.order = 100000;
-    textHandlers[options.name] = options;
+    handlers[options.name] = options;
   }
 };

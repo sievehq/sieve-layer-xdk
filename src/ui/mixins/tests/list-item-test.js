@@ -20,9 +20,9 @@ describe("List Item Mixin", function() {
     el = document.createElement('layer-identity-item');
     testRoot.appendChild(el);
     el.item = client.user;
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(1000);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(10);
   });
 
@@ -173,7 +173,7 @@ describe("List Item Mixin", function() {
   describe("The onReplaceableContentAdded method", function() {
     it("Should propagate any propagateToChildren items to replacement children", function() {
       el.destroy();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       var rightSide = document.createElement("div");
       var avatar = document.createElement('avatar');
       rightSide.appendChild(avatar);
@@ -184,7 +184,7 @@ describe("List Item Mixin", function() {
       };
       testRoot.appendChild(el);
       el.item = client.user;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Posttest
       expect(avatar.item).toBe(client.user);

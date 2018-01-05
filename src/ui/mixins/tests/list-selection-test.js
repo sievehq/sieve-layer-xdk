@@ -36,9 +36,9 @@ describe("List Selection Mixin", function() {
       );
     }
     el.query = query;
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(50);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(50);
 
   });

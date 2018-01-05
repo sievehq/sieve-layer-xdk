@@ -1,5 +1,6 @@
 /**
  * TODO: Location Model should be able to use one of these
+ * @ignore
  */
 
 import { Client, MessagePart, MessageTypeModel, Util }  from '../../../core';

@@ -4,12 +4,10 @@
  *
  * @class Layer.UI.messages.FeedbackMessageExpandedView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @mixin Layer.UI.messages.Clickable
+ * @mixin Layer.UI.mixins.Clickable
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
-import { statusMimeTypes } from '../../base';
-import FeedbackModel from './layer-feedback-message-model';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
 

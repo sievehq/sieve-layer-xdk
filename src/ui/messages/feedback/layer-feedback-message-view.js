@@ -4,11 +4,11 @@
  *
  * @class Layer.UI.messages.FeedbackMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
- * @mixin Layer.UI.messages.Clickable
+ * @mixin Layer.UI.mixins.Clickable
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
-import { statusMimeTypes } from '../../base';
+import { registerStatusModel } from '../../ui-utils/';
 import FeedbackModel from './layer-feedback-message-model';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
@@ -73,4 +73,4 @@ registerComponent('layer-feedback-message-view', {
   },
 });
 
-statusMimeTypes.push(FeedbackModel.MIMEType);
+registerStatusModel(FeedbackModel.MIMEType);

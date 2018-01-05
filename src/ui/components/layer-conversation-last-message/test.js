@@ -7,7 +7,7 @@ describe('layer-conversation-last-message', function() {
 
   afterEach(function() {
     document.body.removeChild(testRoot);
-    Layer.Util.defer.reset();
+    Layer.Utils.defer.reset();
     jasmine.clock().uninstall();
     Layer.Core.Client.removeListenerForNewClient();
     if (el) {
@@ -45,7 +45,7 @@ describe('layer-conversation-last-message', function() {
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
     message = conversation.createMessage("Hello Earthlings").send();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
 

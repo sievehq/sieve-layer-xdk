@@ -3,9 +3,9 @@
  *
  * @class Layer.UI.handlers.text.NewLine
  */
-import { registerTextHandler } from './text-handlers';
+import { register } from './text-handlers';
 
-registerTextHandler({
+register({
   name: 'newline',
   order: 600,
   requiresEnable: true,

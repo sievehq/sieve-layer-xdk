@@ -108,6 +108,8 @@ function initReact(React, ReactDom) {
        * On mounting, copy in all properties, and optionally setup a Query.
        *
        * Delay added to prevent Webcomponents property setters from being blown away in safari and firefox
+       *
+       * @method componentDidMount
        */
       componentDidMount() {
         this.node.componentDidMount = true;
@@ -148,6 +150,8 @@ function initReact(React, ReactDom) {
 
       /**
        * Copy all properties into the dom node, but never let React recreate this widget.
+       *
+       * @method shouldComponentUpdate
        */
       shouldComponentUpdate(nextProps) {
         // Get the properties/attributes that match those used in this.props
@@ -170,6 +174,13 @@ function initReact(React, ReactDom) {
         return false;
       }
 
+      /**
+       * If the property type is HTMLElement, assume the value is a function that generates React Components, or it IS a React Component that need to be wrapped in an HTMLElement and set as the property value.
+       *
+       * @method handleReactDom
+       * @param {Object} propDef
+       * @param {Function|Object} value
+       */
       handleReactDom(propDef, value) {
         if (!this.layerUIGeneratedNodes) this.layerUIGeneratedNodes = {};
 
@@ -198,6 +209,11 @@ function initReact(React, ReactDom) {
       }
 
 
+      /**
+       * Render method should only be called once and creates the React element with the webcomponent.
+       *
+       * @method render
+       */
       render() {
         return React.createElement(componentName, {
           ref: (node) => { this.node = node; },

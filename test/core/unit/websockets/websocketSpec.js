@@ -1165,8 +1165,8 @@ describe("The Websocket Socket Manager Class", function() {
 
     describe("The _scheduleReconnect() method", function() {
       it("Should schedule _validateSessionBeforeReconnect to be called using exponential backoff", function() {
-        var tmp = layer.Util.getExponentialBackoffSeconds;
-        layer.Util.getExponentialBackoffSeconds = function() {return 100;}
+        var tmp = Layer.Utils.getExponentialBackoffSeconds;
+        Layer.Utils.getExponentialBackoffSeconds = function() {return 100;}
         websocketManager._lostConnectionCount = 10;
         spyOn(websocketManager, "_validateSessionBeforeReconnect");
         expect(websocketManager._reconnectId).toEqual(0);
@@ -1178,7 +1178,7 @@ describe("The Websocket Socket Manager Class", function() {
         expect(websocketManager._validateSessionBeforeReconnect).not.toHaveBeenCalled();
 
         // Midtest
-        jasmine.clock().tick(1000 * layer.Util.getExponentialBackoffSeconds(100, 10) - 1);
+        jasmine.clock().tick(1000 * Layer.Utils.getExponentialBackoffSeconds(100, 10) - 1);
         expect(websocketManager._validateSessionBeforeReconnect).not.toHaveBeenCalled();
 
         // Posttest
@@ -1186,7 +1186,7 @@ describe("The Websocket Socket Manager Class", function() {
         expect(websocketManager._validateSessionBeforeReconnect).toHaveBeenCalled();
 
         // Cleanup
-        layer.Util.getExponentialBackoffSeconds = tmp;
+        Layer.Utils.getExponentialBackoffSeconds = tmp;
       });
 
       it("Should abort if destroyed or if offline", function() {

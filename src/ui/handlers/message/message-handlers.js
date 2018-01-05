@@ -2,13 +2,13 @@
  * This class is setup to handle the older way of registering messages, and should
  * not be used in new project.
  *
- * @deprecated
- * @class Layer.UI.handlers.message.MessageHandlers
+ * @deprecated Create Layer.Core.MessageTypeModel subclasses and UIs using Layer.UI.messages.MessageViewMixin instead.
+ * @class Layer.UI.handlers.message
  */
 import Settings from '../../settings';
 
 /**
- * Array of message handlers.  See layerUI.registerMessageHandler.
+ * Array of message handlers.
  *
  * @property {Object[]} messageHandlers
  * @private
@@ -26,7 +26,7 @@ module.exports.messageHandlers = messageHandlers;
  * one first.  Handlers can be reordered by directly accessing and manipulating the layerUI.messageHandlers array.
  *
  * ```
- * Layer.UI.MessageHandlers.registerMessageHandler({
+ * Layer.UI.handlers.message.register({
  *     tagName: 'text-image-location-part',
  *     label: 'Map',
  *     handlesMessage: function(message, container) {
@@ -42,7 +42,7 @@ module.exports.messageHandlers = messageHandlers;
  * Note that you can use the `container` argument to prevent some types of content from rendering as a Last Message within a Conversation List,
  * or use it so some MessageLists render things differently from others.
  *
- * @method registerMessageHandler
+ * @method register
  * @static
  * @param {Object} options
  * @param {Function} options.handlesMessage
@@ -54,7 +54,7 @@ module.exports.messageHandlers = messageHandlers;
  * @param {Number} [options.order=0]                        Some handlers may need to be tested before other handlers to control which one gets
  *                                                          selected; Defaults to order=0, this handler is first
  */
-module.exports.registerMessageHandler = function registerMessageHandler(options) {
+module.exports.register = function register(options) {
   if (!options.order) options.order = 0;
   let pushed = false;
   for (let i = 0; i < messageHandlers.length; i++) {
@@ -67,22 +67,29 @@ module.exports.registerMessageHandler = function registerMessageHandler(options)
   if (!pushed) messageHandlers.push(options);
 };
 
+// For unit test cleanup
+module.exports.unregister = (tagName) => {
+  for (let i = messageHandlers.length - 1; i >= 0; i--) {
+    if (messageHandlers[i].tagName === tagName) messageHandlers.splice(i, 1);
+  }
+};
+
 
 /**
  * Return the handler object needed to render this Message.
  *
  * ```
- * Layer.UI.MessageHandlers.getHandler(message, container);
+ * Layer.UI.handlers.message.getHandler(message, container);
  * ```
  *
- * This function calls the `handlesMessage` call for each handler registered via layerUI.registerMessageHandler and
+ * This function calls the `handlesMessage` call for each handler registered via {@link #register} and
  * returns the first handler that says it will handle this Message.
  *
  * @method getHandler
  * @static
  * @param {Layer.Core.Message} message
  * @param {HTMLElement} container     The container that this will be rendered within
- * @return {Object} handler     See layerUI.registerMessageHandler for the structure of a handler.
+ * @return {Object} handler     See {@link #register} for the structure of a handler.
  */
 module.exports.getHandler = (message, container) => {
   const handlers =

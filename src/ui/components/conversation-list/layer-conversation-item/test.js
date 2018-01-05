@@ -41,7 +41,7 @@ describe('layer-conversation-item', function() {
 
     el.replaceableContent = Layer.UI.components['layer-conversation-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

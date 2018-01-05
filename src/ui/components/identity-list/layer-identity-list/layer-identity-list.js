@@ -44,10 +44,10 @@
  * @mixin Layer.UI.mixins.ListLoadIndicator
  * @mixin Layer.UI.mixins.SizeProperty
  * @mixin Layer.UI.mixins.EmptyList
- * @mixin Layer.UI.mixinis.QueryEndIndicator
+ * @mixin Layer.UI.mixins.QueryEndIndicator
  */
 import Core from '../../../../core';
-import Util from '../../../../util';
+import Util from '../../../../utils';
 import { registerComponent } from '../../component';
 import List from '../../../mixins/list';
 import HasQuery from '../../../mixins/has-query';

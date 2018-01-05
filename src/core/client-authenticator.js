@@ -39,7 +39,7 @@ import DbManager from './db-manager';
 import Identity from './models/identity';
 import { XHRSyncEvent, WebsocketSyncEvent } from './sync-event';
 import { LOCALSTORAGE_KEYS, ACCEPT } from '../constants';
-import Util, { xhr, logger } from '../util';
+import Util, { xhr, logger } from '../utils';
 
 const MAX_XHR_RETRIES = 3;
 
@@ -212,7 +212,7 @@ class ClientAuthenticator extends Root {
   /**
    * Get a nonce and start the authentication process
    *
-   * @method
+   * @method _connect
    * @private
    */
   _connect() {

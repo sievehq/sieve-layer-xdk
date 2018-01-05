@@ -27,7 +27,7 @@ import Syncable from './syncable';
 import Root from '../root';
 import { SYNC_STATE } from '../../constants';
 import { ErrorDictionary } from '../layer-error';
-import { strictEncodeURI } from '../../util';
+import { strictEncodeURI } from '../../utils';
 
 class Identity extends Syncable {
   constructor(options = {}) {

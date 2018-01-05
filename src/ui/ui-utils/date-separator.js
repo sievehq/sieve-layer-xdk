@@ -1,19 +1,19 @@
 /**
- * @class Layer.UI
+ * @class Layer.UI.UIUtils
  */
 
 /**
  * Use this module to put a date separator between Messages from different dates in your Messages List.
  *
  * ```
- * conversationView.onRenderListItem = Layer.UI.utils.dateSeparator;
+ * conversationView.onRenderListItem = Layer.UI.UIUtils.dateSeparator;
  * ```
  *
  * Or if you have multiple `onRenderListItem` handlers:
  *
  * ```
  * conversationView.onRenderListItem = function(widget, messages, index, isTopItem) {
- *     Layer.UI.utils.dateSeparator(widget, messages, index);
+ *     Layer.UI.UIUtils.dateSeparator(widget, messages, index);
  *     handler2(widget, messages, index, isTopItem);
  *     handler3(widget, messages, index, isTopItem);
  * }

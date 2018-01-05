@@ -1,4 +1,7 @@
 /**
+ * @class Layer.utils
+ */
+/**
  * Run the Layer Parser on the request.
  *
  * Parameters here
@@ -12,7 +15,7 @@
  *          client: client
  *      });
  *
- * @method
+ * @method layerParse
  * @param {Object} request - layer-patch parameters
  * @param {Object} request.object - Object being updated  by the operations
  * @param {string} request.type - Type of object being updated

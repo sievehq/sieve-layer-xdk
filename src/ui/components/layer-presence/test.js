@@ -23,7 +23,7 @@ describe('layer-presence', function() {
     el = document.createElement('layer-presence');
     testRoot.appendChild(el);
     el.item = client.user;
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
   afterEach(function() {
     document.body.removeChild(testRoot);

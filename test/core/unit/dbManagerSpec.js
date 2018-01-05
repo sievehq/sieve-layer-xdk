@@ -21,7 +21,7 @@ var dbIt = it;
 
   describe("The DbManager Class", function() {
       var appId = "Fred's App";
-
+debugger;
       var client,
           conversation,
           channel,
@@ -55,6 +55,7 @@ var dbIt = it;
       }
 
       beforeAll(function(done) {
+        debugger;
         testDbEnabled(function(result) {
             dbIsTestable = result;
             done();
@@ -63,7 +64,8 @@ var dbIt = it;
 
       // NOTE: beforeEach finishes by deleting everything from the database. You must insert before you can query.
       beforeEach(function(done) {
-          client = new Layer.Core.Client({
+        debugger;
+          client = new Layer.init({
               appId: appId,
               url: "https://huh.com",
               isTrustedDevice: true,
@@ -94,31 +96,33 @@ var dbIt = it;
 
           client.on('ready', function() {
             dbManager = client.dbManager;
-            setTimeout(function() {
-              client.syncManager.queue = [];
-              conversation = client._createObject(responses.conversation1);
-              channel = client._createObject(responses.channel1);
-              message = conversation.lastMessage;
-              announcement = client._createObject(responses.announcement);
-              userIdentity = client._createObject(responses.useridentity);
-              basicIdentity = new Layer.Core.Identity({
-                clientId: client.appId,
-                userId: client.userId,
-                id: "layer:///identities/" + client.userId,
-                isFullIdentity: false
-              });
+            client.syncManager.queue = [];
+            conversation = client._createObject(responses.conversation1);
+            channel = client._createObject(responses.channel1);
+            message = conversation.lastMessage;
+            announcement = client._createObject(responses.announcement);
+            userIdentity = client._createObject(responses.useridentity);
+            basicIdentity = new Layer.Core.Identity({
+              clientId: client.appId,
+              userId: client.userId,
+              id: "layer:///identities/" + client.userId,
+              isFullIdentity: false
+            });
 
+            setTimeout(function() {
               deleteTables(function() {
-                done();
+                setTimeout(function() {
+                  done();
+                }, 100);
               });
-            }, 10);
+            }, 250);
           });
 
           client._clientAuthenticated();
       });
 
       afterEach(function() {
-          //client.destroy();
+          if (client && !client.isDestroyed) client.destroy();
       });
 
       describe("The constructor() method", function() {
@@ -1028,6 +1032,12 @@ var dbIt = it;
 
 
     describe("The _writeObjects() method", function() {
+      beforeEach(function(done) {
+        setTimeout(function() {
+          done();
+        }, 100);
+      });
+
       it("Should do nothing if no data", function() {
         var spy = jasmine.createSpy('spy');
         spyOn(dbManager, "onOpen");
@@ -1777,24 +1787,26 @@ var dbIt = it;
       var m1, m2, m3, m4;
       var writtenData;
       beforeEach(function(done) {
-        deleteTables(function() {
-
-          m1 = conversation.createMessage("m1").send();
-          m2 = conversation.createMessage("m2").send();
-          m3 = conversation.createMessage("m3").send();
-          m4 = conversation.createMessage("m4").send();
-          dbManager._getMessageData([message, m4, m2, m3, m1], function(result) {
-            writtenData = result;
-            dbManager._writeObjects('messages', result, done);
-          });
+        debugger;
+        m1 = conversation.createMessage("m1").presend();
+        m2 = conversation.createMessage("m2").presend();
+        m3 = conversation.createMessage("m3").presend();
+        m4 = conversation.createMessage("m4").presend();
+        dbManager._getMessageData([message, m4, m2, m3, m1], function(result) {
+          writtenData = result;
+          dbManager._writeObjects('messages', result, done);
         });
       });
 
       it("Should load everything in the table", function(done) {
         dbManager._loadAll('messages', function(result) {
-          var sortedExpect = layer.Util.sortBy(writtenData, function(item) {return item.id});
-          expect(result).toEqual(sortedExpect);
-          done();
+          try {
+            var sortedExpect = Layer.Utils.sortBy(writtenData, function(item) {return item.id});
+            expect(result).toEqual(sortedExpect);
+            done();
+          } catch(e) {
+            done(e);
+          }
         });
       });
 
@@ -1815,22 +1827,18 @@ var dbIt = it;
       var m1, m2, m3, m4;
       var writtenData;
       beforeEach(function(done) {
-        var c2 = client.createConversation({participants: ["c2"]});
-        message = conversation.createMessage("first message").send();
-        m1 = conversation.createMessage("m1").send();
-        m2 = conversation.createMessage("m2").send();
-        m3 = c2.createMessage("m3").send();
-        m4 = c2.createMessage("m4").send();
-        setTimeout(function() {
-          deleteTables(function() {
-            dbManager._getMessageData([m1, m2, m3, m4], function(result) {
-              writtenData = result;
-              dbManager._writeObjects('messages', result, function() {
-                setTimeout(done, 50);
-              });
+          var c2 = client.createConversation({participants: ["c2"]});
+          message = conversation.createMessage("first message").presend();
+          m1 = conversation.createMessage("m1").presend();
+          m2 = conversation.createMessage("m2").presend();
+          m3 = c2.createMessage("m3").presend();
+          m4 = c2.createMessage("m4").presend();
+          dbManager._getMessageData([m1, m2, m3, m4], function(result) {
+            writtenData = result;
+            dbManager._writeObjects('messages', result, function() {
+              setTimeout(done, 50);
             });
           });
-        }, 50);
       });
 
       it("Should get only items matching the index", function(done) {
@@ -1838,7 +1846,7 @@ var dbIt = it;
         dbManager._getMessageData([m2, m1], function(result) { expectedResult = result; });
         const query = window.IDBKeyRange.bound([conversation.id, 0], [conversation.id, MAX_SAFE_INTEGER]);
         dbManager._loadByIndex('messages', 'conversationId', query, false, null, function(result) {
-          var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.position}).reverse();
+          var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.position}).reverse();
           expect(result).toEqual(sortedExpect);
           done();
         });
@@ -1850,7 +1858,7 @@ var dbIt = it;
 
         const query = window.IDBKeyRange.bound([conversation.id, 0], [conversation.id, MAX_SAFE_INTEGER]);
         dbManager._loadByIndex('messages', 'conversationId', query, false, 2, function(result) {
-          var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.position}).reverse();
+          var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.position}).reverse();
 
           expect(result).toEqual([sortedExpect[0], sortedExpect[1]]);
           done();
@@ -1863,7 +1871,7 @@ var dbIt = it;
 
         const query = window.IDBKeyRange.bound([conversation.id, 0], [conversation.id, MAX_SAFE_INTEGER]);
         dbManager._loadByIndex('messages', 'conversationId', query, true, null, function(result) {
-          var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.position}).reverse();
+          var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.position}).reverse();
 
           expect(result).toEqual([sortedExpect[1]]);
           done();
@@ -1891,16 +1899,14 @@ var dbIt = it;
       var m1, m2, m3, m4;
       var writtenData;
       beforeEach(function(done) {
-        deleteTables(function() {
-          m1 = conversation.createMessage("m1").send();
-          m2 = conversation.createMessage("m2").send();
-          m3 = conversation.createMessage("m3").send();
-          m4 = conversation.createMessage("m4").send();
-          dbManager._getMessageData([m1, m2, m3, m4], function(result) {
-            writtenData = result;
-            dbManager._writeObjects('messages', result, function() {
-              setTimeout(done, 200);
-            });
+        m1 = conversation.createMessage("m1").presend();
+        m2 = conversation.createMessage("m2").presend();
+        m3 = conversation.createMessage("m3").presend();
+        m4 = conversation.createMessage("m4").presend();
+        dbManager._getMessageData([m1, m2, m3, m4], function(result) {
+          writtenData = result;
+          dbManager._writeObjects('messages', result, function() {
+            setTimeout(done, 200);
           });
         });
       });
@@ -1910,7 +1916,7 @@ var dbIt = it;
         dbManager._getMessageData([m4, m2], function(result) {expectedResult = result;});
         dbManager.deleteObjects('messages', [m1, m3], function() {
           dbManager._loadAll('messages', function(result) {
-            var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.id});
+            var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.id});
             expect(result).toEqual(sortedExpect);
             done();
           });
@@ -1933,7 +1939,7 @@ var dbIt = it;
         var expectedResult;
         dbManager._getMessageData([m2, m4, m1], function(result) {expectedResult = result;});
         dbManager.getObjects('messages', [m2.id, m4.id, m1.id], function(result) {
-          var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.id});
+          var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.id});
           expect(result).toEqual(sortedExpect);
           done();
         });
@@ -1971,7 +1977,7 @@ var dbIt = it;
       it("Should get the specified object with blob data and no encoding", function(done) {
         dbManager.getObject('messages', m1.id, function(result) {
           expect(result.parts[1].encoding).toBe(null);
-          expect(layer.Util.isBlob(result.parts[1].body)).toBe(true);
+          expect(Layer.Utils.isBlob(result.parts[1].body)).toBe(true);
           done();
         });
       });

@@ -6,8 +6,8 @@ describe('Status Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -41,13 +41,13 @@ describe('Status Message Components', function() {
 
     StatusModel = Layer.Core.Client.getMessageTypeModelClass("StatusModel");
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -107,7 +107,7 @@ describe('Status Message Components', function() {
         text: "hello"
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.firstChild.tagName).toEqual("P");
       expect(el.firstChild.className).toEqual("layer-line-wrapping-paragraphs");
@@ -120,7 +120,7 @@ describe('Status Message Components', function() {
         text: "hello\nthere"
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.childNodes[0].tagName).toEqual("P");
       expect(el.childNodes[0].className).toEqual("layer-line-wrapping-paragraphs");
@@ -136,7 +136,7 @@ describe('Status Message Components', function() {
         text: "hello from https://layer.com"
       });
       el.model = model;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.firstChild.tagName).toEqual("P");
       expect(el.firstChild.className).toEqual("layer-line-wrapping-paragraphs");

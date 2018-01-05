@@ -31,7 +31,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, MessageTypeModel, Root } from '../../../core';
-import Util from '../../../util';
+import Util from '../../../utils';
 
 class ReceiptModel extends MessageTypeModel {
 
@@ -257,11 +257,9 @@ ReceiptModel.prototype.order = null;
  * receiptModel.summary.shippingCost = 2;
  * receiptModel.summary.totalTax = 1;
  * receiptModel.summary.totalCost = 8;
- * receiptModel.summary.subtitle = 'Pay us $8 or don't expect delivery!';
  * ```
  *
  * @property {Object} summary
- * @property {String} summary.subtitle    Custom description to show in a details view (not currently rendered)
  * @property {String} summary.subtotal    Initial cost to show in a details view (not currently rendered)
  * @property {String} summary.shippingCost  Shipping cost to show in a details view (not currently rendered)
  * @property {String} summary.totalTax    Taxes added to the cost, to show in a details view (not currently rendered)

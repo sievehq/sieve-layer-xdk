@@ -256,18 +256,18 @@ describe("The MessageParts class", function() {
           var text = new Array(Layer.Core.DbManager.MaxPartSize + 10).join('a');
           var blob = new Blob([text], {type : 'text/plain'});
           part = new Layer.Core.MessagePart(blob);
-          var fetchTextFromFile = layer.Util.fetchTextFromFile;
-          spyOn(layer.Util, "fetchTextFromFile").and.callFake(function(file, callback) {callback(text);});
+          var fetchTextFromFile = Layer.Utils.fetchTextFromFile;
+          spyOn(layer.Utils, "fetchTextFromFile").and.callFake(function(file, callback) {callback(text);});
           spyOn(part, "_fetchContentComplete");
           var spy = jasmine.createSpy('callback');
           part._fetchContentCallback(null, blob, spy);
 
           // Posttest
-          expect(layer.Util.fetchTextFromFile).toHaveBeenCalledWith(blob, jasmine.any(Function));
+          expect(Layer.Utils.fetchTextFromFile).toHaveBeenCalledWith(blob, jasmine.any(Function));
           expect(part._fetchContentComplete).toHaveBeenCalledWith(text, spy);
 
           // Cleanup
-          layer.Util.fetchTextFromFile = fetchTextFromFile;
+          Layer.Utils.fetchTextFromFile = fetchTextFromFile;
         });
 
         it("Should call read_fetchContentComplete for text/plain", function() {
@@ -616,7 +616,7 @@ describe("The MessageParts class", function() {
             part._generateContentAndSend(client);
 
             // Posttest
-            var expectedBody = layer.Util.base64ToBlob(btoa(part.body), "text/plain");
+            var expectedBody = Layer.Utils.base64ToBlob(btoa(part.body), "text/plain");
             expect(client.xhr).toHaveBeenCalledWith({
                 method: "POST",
                 url: "/content",
@@ -631,7 +631,7 @@ describe("The MessageParts class", function() {
 
         it("Should call client.xhr with provided blob size", function() {
             spyOn(client, "xhr");
-            var expectedBody = layer.Util.base64ToBlob(btoa(new Array(5000).join("hello")), "text/plain");
+            var expectedBody = Layer.Utils.base64ToBlob(btoa(new Array(5000).join("hello")), "text/plain");
             var part = new Layer.Core.MessagePart({
                 body: expectedBody,
                 mimeType: "text/plain"
@@ -670,7 +670,7 @@ describe("The MessageParts class", function() {
             });
 
             // Posttest
-            var expectedBody = layer.Util.base64ToBlob(btoa(part.body), "text/plain");
+            var expectedBody = Layer.Utils.base64ToBlob(btoa(part.body), "text/plain");
             expect(part._processContentResponse).toHaveBeenCalledWith({hey: "ho"}, expectedBody, client);
         });
     });
@@ -681,7 +681,7 @@ describe("The MessageParts class", function() {
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain"
             });
-            var blobBody = layer.Util.base64ToBlob(btoa(part.body), "text/plain");
+            var blobBody = Layer.Utils.base64ToBlob(btoa(part.body), "text/plain");
 
 
             // Run
@@ -699,7 +699,7 @@ describe("The MessageParts class", function() {
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain"
             });
-            var blobBody = layer.Util.base64ToBlob(btoa(part.body), "text/plain");
+            var blobBody = Layer.Utils.base64ToBlob(btoa(part.body), "text/plain");
 
             // Run
             part._processContentResponse({
@@ -722,7 +722,7 @@ describe("The MessageParts class", function() {
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain"
             });
-            var blobBody = layer.Util.base64ToBlob(btoa(part.body), "text/plain");
+            var blobBody = Layer.Utils.base64ToBlob(btoa(part.body), "text/plain");
             spyOn(part, "_processContentUploadResponse");
 
             // Run

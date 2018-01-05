@@ -1,11 +1,12 @@
 describe('layer-date', function() {
-  var el, testRoot, client;
+  var el, testRoot, client, d;
 
   beforeAll(function(done) {
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
+    jasmine.clock().install();
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
@@ -25,7 +26,12 @@ describe('layer-date', function() {
     testRoot.appendChild(el);
 
     CustomElements.takeRecords();
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
+
+    d = new Date();
+    d.setDate(0);
+    var d2 = new Date(d);
+    jasmine.clock().mockDate(d2);
   });
 
   afterEach(function() {
@@ -39,16 +45,15 @@ describe('layer-date', function() {
       client.destroy();
       client = null;
     }
+    jasmine.clock().uninstall();
   });
 
   it('Should accept a date parameter', function() {
-    var d = new Date();
     el.date = d;
     expect(el.date).toEqual(d);
   });
 
   it('Should use todayFormat if today', function() {
-    var d = new Date();
     spyOn(d, "toLocaleString").and.callThrough();
     el.todayFormat = {hour: 'numeric'};
     el.weekFormat = {minute: 'numeric'};
@@ -60,7 +65,6 @@ describe('layer-date', function() {
   });
 
   it('Should use weekFormat if week', function() {
-    var d = new Date();
     d.setDate(d.getDate() - 3);
     spyOn(d, "toLocaleString").and.callThrough();
     el.todayFormat = {hour: 'numeric'};
@@ -73,7 +77,6 @@ describe('layer-date', function() {
   });
 
   it('Should use olderFormat if not this year', function() {
-    var d = new Date();
     d.setFullYear(d.getFullYear() - 3);
     spyOn(d, "toLocaleString").and.callThrough();
     el.todayFormat = {hour: 'numeric'};
@@ -86,7 +89,6 @@ describe('layer-date', function() {
   });
 
   it('Should use defaultFormat if this year; will fail stupid test if run first week of january', function() {
-    var d = new Date();
     d.setDate(d.getDate() - 8);
     spyOn(d, "toLocaleString").and.callThrough();
     el.todayFormat = {hour: 'numeric'};
@@ -99,7 +101,6 @@ describe('layer-date', function() {
   });
 
   it('Should rerender to empty', function() {
-    var d = new Date();
     el.date = d;
     el.date = null;
     expect(el.innerHTML).toEqual('');
@@ -108,7 +109,6 @@ describe('layer-date', function() {
   it("Should use dateRenderer if provided", function() {
     var f = function() {return "Some Day";}
     el.dateRenderer = f;
-    var d = new Date();
     el.date = d;
     expect(el.innerHTML).toEqual("Some Day");
   });

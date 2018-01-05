@@ -29,8 +29,8 @@ describe('File Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = Layer.UI.animatedScrollTo;
-    spyOn(Layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -64,7 +64,7 @@ describe('File Message Components', function() {
 
     FileModel = Layer.Core.Client.getMessageTypeModelClass("FileModel");
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
@@ -72,7 +72,7 @@ describe('File Message Components', function() {
 
   afterEach(function() {
     if (client) client.destroy();
-    Layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     Layer.Core.Client.removeListenerForNewClient();
   });
 
@@ -139,9 +139,9 @@ describe('File Message Components', function() {
 
     it("Should instantiate a Model from a Message with metadata", function() {
       var blob = generateBlob(imgBase64);
-      var uuid1 = Layer.Util.generateUUID();
-      var uuid2 = Layer.Util.generateUUID();
-      var uuid3 = Layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
+      var uuid2 = Layer.Utils.generateUUID();
+      var uuid3 = Layer.Utils.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
@@ -254,7 +254,7 @@ describe('File Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -280,7 +280,7 @@ describe('File Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -301,7 +301,7 @@ describe('File Message Components', function() {
       el.client = client;
       el.message = message;
 
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Message Viewer: gets the layer-card-width-flex-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -316,8 +316,8 @@ describe('File Message Components', function() {
     });
 
     it("Should open the image using the sourceUrl", function() {
-      var tmp = Layer.UI.showFullScreen;
-      spyOn(Layer.UI, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
       var model = new FileModel({
         sourceUrl: "https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png",
       });
@@ -326,19 +326,19 @@ describe('File Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      Layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-file');
       el._runAction({});
-      expect(Layer.UI.showFullScreen).toHaveBeenCalledWith("https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png");
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith("https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png");
 
       // Restore
-      Layer.UI.showFullScreen = tmp;
+      Layer.UI.UIUtils.showFullScreen = tmp;
     });
 
     it("Should open the link using Blob url", function(done) {
-      var tmp = Layer.UI.showFullScreen;
-      spyOn(Layer.UI, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
       var blob = generateBlob(imgBase64);
 
       var model = new FileModel({
@@ -350,18 +350,18 @@ describe('File Message Components', function() {
 
           el.client = client;
           el.message = message;
-          Layer.Util.defer.flush();
+          Layer.Utils.defer.flush();
 
           expect(model.actionEvent).toEqual('open-file');
           el._runAction({});
-          expect(Layer.UI.showFullScreen.calls.argsFor(0)[0]).toMatch(/^blob\:/);
+          expect(Layer.UI.UIUtils.showFullScreen.calls.argsFor(0)[0]).toMatch(/^blob\:/);
           done();
         } catch(e) {
           done(e);
         }
 
         // Restore
-      Layer.UI.showFullScreen = tmp;
+      Layer.UI.UIUtils.showFullScreen = tmp;
       });
     });
   });

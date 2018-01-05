@@ -1,7 +1,7 @@
 describe("Emoji Text Handler", function() {
   var handler;
   beforeEach(function() {
-    handler = Layer.UI.textHandlers.emoji.handler;
+    handler = Layer.UI.handlers.text.handlers.emoji.handler;
   });
 
   describe("Twemoji", function() {
@@ -42,7 +42,7 @@ describe("Emoji Text Handler", function() {
       expect(textData.text.match(/layer-emoji-line/g).length).toEqual(2);
     });
 
-    it("Should handle br tags safely", function() {
+    it("Should handle newline tags safely", function() {
       var textData = {
         text: "\n:-)\n:grin:\n",
         afterText: []
@@ -90,13 +90,13 @@ describe("Emoji Text Handler", function() {
       expect(textData.text.match(/layer-emoji-line/g).length).toEqual(1);
     });
 
-    it("Should handle br tags safely", function() {
+    it("Should handle newline tags safely", function() {
       var textData = {
         text: "\n:-)\n:grin:\n",
         afterText: []
       };
       handler(textData);
-      expect(textData.text).toMatch(/\n<span.*?>.<\/span><br/><span.*?>.<\/span>/);
+      expect(textData.text).toMatch(/\n<span.*?>.+<\/span>\n<span.*?>.+<\/span>/);
     });
   });
 });

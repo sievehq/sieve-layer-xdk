@@ -91,7 +91,7 @@ describe("The Client Channel Mixin", function() {
             channel = new Layer.Core.Channel({
                 client: client,
                 fromServer: {
-                    id: "layer:///channels/" + layer.Util.generateUUID(),
+                    id: "layer:///channels/" + Layer.Utils.generateUUID(),
                     membership: {
                         is_member: true
                     }

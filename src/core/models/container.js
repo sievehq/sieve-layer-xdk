@@ -8,7 +8,7 @@
  */
 import Syncable from './syncable';
 import { ErrorDictionary } from '../layer-error';
-import Util from '../../util';
+import Util from '../../utils';
 import Constants from '../../constants';
 import Root from '../root';
 
@@ -63,6 +63,7 @@ class Container extends Syncable {
   /**
    * Send the Conversation/Channel/etc... to the server to be created there and shared with other participants.
    *
+   * @method send
    * @param {Layer.Core.Message} [message]  Message being sent while creating the new resource
    * @returns this
    */

@@ -82,7 +82,7 @@ describe('layer-conversation-view', function() {
 
     it("Should call onComposBarChangeValue when child triggers layer-compose-bar-change-value", function() {
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       var spy = jasmine.createSpy('callback');
       el.onComposeBarChangeValue = spy;
       el.firstChild.trigger('layer-compose-bar-change-value', {});
@@ -94,7 +94,7 @@ describe('layer-conversation-view', function() {
     beforeEach(function() {
       testRoot.innerHTML = '<layer-conversation-view use-generated-query="false"></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el = testRoot.firstChild;
     });
 
@@ -142,7 +142,7 @@ describe('layer-conversation-view', function() {
         var el = testRoot.firstChild;
         CustomElements.takeRecords();
         spyOn(el, "_setupGeneratedQuery");
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         expect(el._setupGeneratedQuery).toHaveBeenCalledWith();
       });
 
@@ -151,7 +151,7 @@ describe('layer-conversation-view', function() {
         var el = testRoot.firstChild;
         CustomElements.takeRecords();
         spyOn(el, "_setupGeneratedQuery");
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
         expect(el.useGeneratedQuery).toBe(false);
         expect(el._setupGeneratedQuery).not.toHaveBeenCalledWith();
@@ -187,7 +187,7 @@ describe('layer-conversation-view', function() {
     beforeEach(function() {
       testRoot.innerHTML = '<layer-conversation-view></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el = testRoot.firstChild;
     });
 
@@ -244,7 +244,7 @@ describe('layer-conversation-view', function() {
     beforeEach(function() {
       testRoot.innerHTML = '<layer-conversation-view></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el = testRoot.firstChild;
     });
 
@@ -269,7 +269,7 @@ describe('layer-conversation-view', function() {
     it("Should default to desktop-only", function() {
       testRoot.innerHTML = '<layer-conversation-view></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el = testRoot.firstChild;
       expect(el.autoFocusConversation).toEqual(Layer.UI.Constants.FOCUS.DESKTOP_ONLY);
@@ -279,7 +279,7 @@ describe('layer-conversation-view', function() {
     it("Should be initializable to never", function() {
       testRoot.innerHTML = '<layer-conversation-view auto-focus-conversation="never"></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el = testRoot.firstChild;
       expect(el.autoFocusConversation).toBe('never');
@@ -288,7 +288,7 @@ describe('layer-conversation-view', function() {
     it("Should be initializable to always", function() {
       testRoot.innerHTML = '<layer-conversation-view auto-focus-conversation="always"></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el = testRoot.firstChild;
       expect(el.autoFocusConversation).toBe('always');
@@ -301,7 +301,7 @@ describe('layer-conversation-view', function() {
       CustomElements.takeRecords();
       el = testRoot.firstChild;
       spyOn(el, "_setupConversation");
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el._setupConversation).toHaveBeenCalledWith();
 
@@ -310,7 +310,7 @@ describe('layer-conversation-view', function() {
       CustomElements.takeRecords();
       el = testRoot.firstChild;
       spyOn(el, "_setupConversation");
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el._setupConversation).not.toHaveBeenCalled();
     });
@@ -320,14 +320,14 @@ describe('layer-conversation-view', function() {
       CustomElements.takeRecords();
       el = testRoot.firstChild;
       expect(el.query).toBe(null);
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.query).toBe(query);
 
       // Inverse test
       testRoot.innerHTML = '<layer-conversation-view use-generated-query="false"></layer-conversation-view>';
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el = testRoot.firstChild;
       expect(el.query).toBe(null);
@@ -340,7 +340,7 @@ describe('layer-conversation-view', function() {
     it("Should set the list onRenderListItem property", function() {
       var f = function() {};
       el.onRenderListItem = f;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.nodes.list.onRenderListItem).toBe(f);
     });
   });
@@ -349,7 +349,7 @@ describe('layer-conversation-view', function() {
     it("Should set the list getMenuOptions property", function() {
       var f = function() {};
       el.getMenuOptions = f;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.nodes.list.getMenuOptions).toBe(f);
     });
   });
@@ -357,7 +357,7 @@ describe('layer-conversation-view', function() {
   describe("The composeText property", function() {
     it("Should set the list composeText property", function() {
       el.composeText = "Frodo Must Cry";
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.nodes.composer.value).toEqual("Frodo Must Cry");
     });
   });
@@ -365,7 +365,7 @@ describe('layer-conversation-view', function() {
   describe("The composePlaceholder property", function() {
     it("Should set the list composePlaceholder property", function() {
       el.composePlaceholder = "Frodo Must Cry";
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.nodes.composer.placeholder).toEqual("Frodo Must Cry");
     });
   });
@@ -374,7 +374,7 @@ describe('layer-conversation-view', function() {
     it("Should pass the property to the list", function() {
       var f = function() {}
       el.dateRenderer = f;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.nodes.list.dateRenderer).toBe(f);
     });
   });
@@ -383,14 +383,14 @@ describe('layer-conversation-view', function() {
     it("Should pass the property to the list", function() {
       var f = function() {}
       el.messageStatusRenderer = f;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(el.nodes.list.messageStatusRenderer).toBe(f);
     });
   });
 
   describe("The disable property", function() {
     it("Should pass the property to the list", function() {
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el.disable = true;
       expect(el.nodes.list.disable).toBe(true);
       el.disable = false;
@@ -443,7 +443,7 @@ describe('layer-conversation-view', function() {
   describe("The _setupConversation() method", function() {
     beforeEach(function() {
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       el.client = client;
     });
     it("Should setup the composers Conversation", function() {

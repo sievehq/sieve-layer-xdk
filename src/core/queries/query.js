@@ -207,7 +207,7 @@
  */
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import Util, { logger } from '../../util';
+import Util, { logger } from '../../utils';
 
 class Query extends Root {
 

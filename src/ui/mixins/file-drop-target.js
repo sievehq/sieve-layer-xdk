@@ -5,8 +5,6 @@
  *
  * @class Layer.UI.mixins.FileDropTarget
  */
-import Layer, { MessagePart } from '../../core';
-import { settings } from '../base';
 import ImageModel from '../messages/image/layer-image-message-model';
 import FileModel from '../messages/file/layer-file-message-model';
 import CarouselModel from '../messages/carousel/layer-carousel-message-model';

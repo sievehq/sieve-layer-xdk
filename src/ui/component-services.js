@@ -3,13 +3,7 @@
  * @static
  */
 
-/**
- * Hash of components defined using Layer.UI.Component.
- *
- * @alias ComponentsHash
- * @property {Object} components
- * @private
- */
+
 /**
  * Hash of components defined using Layer.UI.Component.
  *

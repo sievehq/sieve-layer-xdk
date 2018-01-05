@@ -18,7 +18,7 @@ describe("The Clickable Mixin", function() {
   beforeEach(function() {
     jasmine.clock().install();
     called = false;
-    client = new Layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
@@ -36,7 +36,7 @@ describe("The Clickable Mixin", function() {
     testRoot.appendChild(el);
 
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
   it("Should respond to click events", function() {
     el.addEventListener('test-click', function() { called = true });

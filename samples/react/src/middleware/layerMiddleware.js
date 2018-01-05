@@ -12,7 +12,7 @@ import {
   selectConversation
 } from '../actions/messenger';
 
-const { uuid } = Layer.Util;
+const { uuid } = Layer.Utils;
 
 function internalSelectConversation(layerClient, state, payload, next) {
   if (state.activeConversationState.conversation) {

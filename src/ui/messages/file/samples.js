@@ -3,18 +3,18 @@ var imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44
   FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel');
 
   new FileModel({
-    source: layer.Util.base64ToBlob(imgBase64, 'image/png'),
+    source: Layer.Utils.base64ToBlob(imgBase64, 'image/png'),
     mimeType: 'image/png',
     author: 'PNG Generator',
-    size: layer.Util.base64ToBlob(imgBase64, 'image/png').size,
+    size: Layer.Utils.base64ToBlob(imgBase64, 'image/png').size,
     title: 'This is a file.png',
   }).generateMessage($("layer-conversation-view").conversation, message => message.send())
 
   new FileModel({
-    source: layer.Util.base64ToBlob(imgBase64, 'image/png'),
+    source: Layer.Utils.base64ToBlob(imgBase64, 'image/png'),
     mimeType: 'image/png',
     author: 'PNG Generator',
-    size: layer.Util.base64ToBlob(imgBase64, 'image/png').size,
+    size: Layer.Utils.base64ToBlob(imgBase64, 'image/png').size,
     title: 'This is a file with a longish title that you won\'t be bothered to read just yet if ever',
   }).generateMessage($("layer-conversation-view").conversation, message => message.send())
 

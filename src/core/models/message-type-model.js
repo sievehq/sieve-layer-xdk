@@ -14,7 +14,7 @@
  * @class  Layer.Core.MessageTypeModel
  * @extends Layer.Core.Root
  */
-import Util from '../../util';
+import Util from '../../utils';
 import version from '../../version';
 import Root from '../root';
 import Message from '../models/message';
@@ -62,7 +62,7 @@ class MessageTypeModel extends Root {
    *
    * @abstract
    * @protected
-   * @method
+   * @method _initializeProperties
    */
   _initializeProperties() {}
 
@@ -125,6 +125,7 @@ class MessageTypeModel extends Root {
    * });
    * ```
    *
+   * @method generateMessage
    * @param {Layer.Core.Conversation} conversation
    * @param {Function} callback
    * @param {Layer.Core.Message} callback.message
@@ -171,7 +172,7 @@ class MessageTypeModel extends Root {
    * ```
    *
    * @protected
-   * @method
+   * @method _addModel
    * @param {Layer.Core.MessageTypeModel} model    The sub-model to add to this model
    * @param {String} role                          The role to assign the sub-model
    * @param {Function} callback                    The function to call when the sub-model has generated its parts
@@ -193,7 +194,7 @@ class MessageTypeModel extends Root {
    * When completed, Layer.Core.MessageTypeModel._parseMessage is called upon it
    * unless explicitly suppressed.
    *
-   * @method
+   * @method _setupMessage
    * @protected
    * @param {Boolean} doNotParse     Do not call Layer.Core.MessageTypeModel._parseMessage on finishing setup
    */
@@ -261,7 +262,7 @@ class MessageTypeModel extends Root {
    * });
    * ```
    *
-   * @method
+   * @method _initBodyWithMetadata
    * @protected
    * @param {String[]} fields
    * @returns {String}
@@ -286,7 +287,7 @@ class MessageTypeModel extends Root {
    *
    * This method prevents us from writing every property to `body` and instead only write those with relevant data.
    *
-   * @method
+   * @method _propertyHasValue
    * @protected
    * @param {String} fieldName   The property name whose value may/may-not be worth writing.
    * @returns {Boolean}
@@ -316,7 +317,7 @@ class MessageTypeModel extends Root {
    *
    * Subclass this method to add additional parsing specific to your custom Layer.Core.MessageTypeModel.
    *
-   * @method
+   * @method _parseMessage
    * @protected
    * @param {Object} payload    This is the body of the message after running it through `JSON.parse(body)`
    */
@@ -369,7 +370,7 @@ class MessageTypeModel extends Root {
    * > `_parseMessage` in which all state can be updated, or a subsequent call in which
    * > you want to *not* overwrite some local state manipulations.
    *
-   * @method
+   * @method _handlePartChanges
    * @private
    * @param {Layer.Core.LayerEvent} evt
    */
@@ -387,6 +388,8 @@ class MessageTypeModel extends Root {
    *
    * Assume that the root part would never be removed as that would be an invalid operation.
    *
+   * @method _handlePartRemoved
+   * @private
    * @param {Layer.Core.LayerEvent} removeEvt
    */
   _handlePartRemoved(removeEvt) {
@@ -404,6 +407,8 @@ class MessageTypeModel extends Root {
    * If the new part is a Child Part, add it to `this.childParts` and call
    * Layer.Core.MessageTypeModel._handlePartChanges.
    *
+   * @method _handlePartAdded
+   * @private
    * @param {Layer.Core.LayerEvent} addEvt
    */
   _handlePartAdded(addEvt) {
@@ -435,7 +440,7 @@ class MessageTypeModel extends Root {
   }
 
   /**
-   * Used from Layer.Core.MessageTypeModel._parseMessage subclasses to generate submodels from the childParts.
+   * Used from {@link #_parseMessage} subclass implementations to generate submodels from the {@link #childParts}.
    *
    * This code snippet shows how a submodel is generated from the Message for the specified role name:
    *
@@ -446,9 +451,11 @@ class MessageTypeModel extends Root {
    * }
    * ```
    *
-   * Specifically, it will search the Layer.Core.MessageTypeModel.childNodes for a MessagePart whose `role`
+   * Specifically, it will search the {@link #childParts} for a MessagePart whose `role`
    * matches the specified role, and build a Layer.Core.MessageTypeModel from that MessagePart.
    *
+   * @method getModelFromPart
+   * @protected
    * @param {String} role
    * @returns {Layer.Core.MessageTypeModel}
    */
@@ -475,9 +482,11 @@ class MessageTypeModel extends Root {
    * }
    * ```
    *
-   * Specifically, it will search the Layer.Core.MessageTypeModel.childNodes for all MessagePart whose `role`
+   * Specifically, it will search the Layer.Core.MessageTypeModel.childParts for all MessagePart whose `role`
    * matches the specified role, and build a Layer.Core.MessageTypeModel from each MessagePart.
    *
+   * @method getModelsFromPart
+   * @protected
    * @param {String} role
    * @returns {Layer.Core.MessageTypeModel[]}
    */
@@ -489,7 +498,7 @@ class MessageTypeModel extends Root {
   /**
    * Returns the Layer.Core.Client associated with this Component.
    *
-   * @method
+   * @method getClient
    * @returns {Layer.Core.Client}
    */
   getClient() {
@@ -510,7 +519,7 @@ class MessageTypeModel extends Root {
   /**
    * Returns the title metadata; used by the `<layer-standard-message-view-container />`
    *
-   * @method
+   * @method getTitle
    * @returns {String}
    */
   getTitle() {
@@ -520,7 +529,7 @@ class MessageTypeModel extends Root {
   /**
    * Returns the description metadata; used by the `<layer-standard-message-view-container />`
    *
-   * @method
+   * @method getDescription
    * @returns {String}
    */
   getDescription() {
@@ -530,7 +539,7 @@ class MessageTypeModel extends Root {
   /**
    * Returns the footer metadata; used by the `<layer-standard-message-view-container />`
    *
-   * @method
+   * @method getFooter
    * @returns {String}
    */
   getFooter() {
@@ -542,7 +551,7 @@ class MessageTypeModel extends Root {
    *
    * This is currently used to represent the Layer.Core.Conversation.lastMessage.
    *
-   * @method
+   * @method getOneLineSummary
    * @returns {String}
    */
   getOneLineSummary() {
@@ -564,7 +573,7 @@ class MessageTypeModel extends Root {
    * For each subproperty within the Layer.Core.MessageTypeModel.action `data` property,
    * if it exists, leave it untouched, else copy in the value from `newValue`
    *
-   * @method
+   * @method _mergeAction
    * @protected
    * @param {Object} newValue    A new event and/or data for the action of this Model.
    */
@@ -603,6 +612,8 @@ class MessageTypeModel extends Root {
    *
    * (DISABLED) Note that `this.trigger('message-type-model:change')` is called by the `_handlePartAdded` and `_handlePartChanged` methods above.
    *
+   * @method __updateResponses
+   * @private
    * @param {Object} newResponse
    * @param {Object} oldResponse
    */
@@ -618,7 +629,7 @@ class MessageTypeModel extends Root {
    *
    * @protected
    * @abstract
-   * @method
+   * @method _processNewResponses
    */
   _processNewResponses() { }
 
@@ -632,9 +643,9 @@ class MessageTypeModel extends Root {
    * @throws
    * Multiple Responses; must use the identityId parameter
    *
-   * @method
+   * @method getParticipantResponse
    * @param {String} responseName    Name of the response to lookup
-   * @param {*} [identityId]         Identity ID of the user who made the response
+   * @param {String} identityId         Identity ID of the user who made the response
    */
   getParticipantResponse(responseName, identityId) {
     const results = []
@@ -691,7 +702,7 @@ class MessageTypeModel extends Root {
   /**
    * Access the Message Type Submodel's parent Message Type Model in the Model tree.
    *
-   * @method
+   * @method getParentModel
    * @returns {Layer.Core.MessageTypeModel}
    */
   getParentModel() {
@@ -703,8 +714,8 @@ class MessageTypeModel extends Root {
   /**
    * Multiple calls to _triggerAsync('message-type-model:change') should be replaced by a single 'message-type-model:change' event.
    *
+   * @method _processDelayedTriggers
    * @private
-   * @method
    */
   _processDelayedTriggers() {
     if (this.isDestroyed) return;

@@ -358,7 +358,7 @@ class ChoiceModel extends MessageTypeModel {
      *
      * @event message-type-model:customization
      * @param {CustomEvent} evt
-     * @param {Object} detail
+     * @param {Object} evt.detail
      * @param {Boolean} evt.detail.cancelable   This event is cancelable and will respond to `evt.preventDefault()`
      * @param {String} evt.detail.type          "layer-choice-model-generate-response-message" will accompany events for this model
      * @param {String} evt.detail.text          This is the text that the Choice Model will use for its Response Message

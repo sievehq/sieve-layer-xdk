@@ -8,8 +8,7 @@
 
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Util from '../../../util';
-import { Constants } from '../../base';
+import Constants from '../../constants';
 
 registerComponent('layer-link-message-view', {
   mixins: [MessageViewMixin],

@@ -5,7 +5,7 @@
  */
 
 import { register } from './index';
-import { logger } from '../../util';
+import { logger } from '../../utils';
 
 const openExpandedView = ({ messageViewer, model }) => {
   const dialog = document.createElement('layer-message-viewer-expanded');

@@ -407,8 +407,7 @@
  * @param {String} classDef.style       A String with CSS styles for this widget
  */
 import Layer from '../../core';
-import Util from '../../util';
-import UI from '../base';
+import Util from '../../utils';
 import { ComponentsHash, buildAndRegisterTemplate, registerTemplate } from '../component-services';
 import stateManagerMixin from '../mixins/state-manager';
 import Settings from '../settings';
@@ -763,21 +762,6 @@ function registerComponent(tagName, classDef) {
   if (registerAllCalled) _registerComponent(tagName);
 }
 
-// Docs in layer-ui.js
-function unregisterComponent(tagName) {
-  delete ComponentsHash[tagName];
-}
-
-// Docs in layer-ui.js
-function registerAll() {
-  if (!registerAllCalled) {
-    registerAllCalled = true;
-    Object.keys(ComponentsHash)
-      .filter(tagName => typeof ComponentsHash[tagName] !== 'function')
-      .forEach(tagName => _registerComponent(tagName));
-  }
-}
-
 function _registerComponent(tagName) {
   const classDef = ComponentsHash[tagName].def;
   const { template } = ComponentsHash[tagName];
@@ -1021,7 +1005,7 @@ function _registerComponent(tagName) {
       this.properties._internalState.inPropInit = [];
 
       // Warning: these listeners may miss events triggered while initializing properties
-      // only way around this is to add another Layer.Util.defer() to our lifecycle which we are not doing at this time.
+      // only way around this is to add another Layer.Utils.defer() to our lifecycle which we are not doing at this time.
       this._setupListeners();
 
       // Call all onAfterCreate methods from all mixins
@@ -1053,7 +1037,7 @@ function _registerComponent(tagName) {
    * }
    * ```
    *
-   * And then allow me to have code such as:
+   * And then allows for code such as:
    *
    * ```
    * render: function() {
@@ -1313,7 +1297,7 @@ registerComponent.MODES = {
 
 const standardClassProperties = {
   /**
-   * Provide a hash of DOM generation functions to insert custom content into.
+   * Provide a hash of DOM generation functions and/or DOM nodes to insert custom content into.
    *
    * ```
    * var emptyNode = document.createElement("div");
@@ -1345,6 +1329,7 @@ const standardClassProperties = {
    * This array makes it easy to unsubscribe to all event subscriptions when {@link Layer.UI.Component#destroy} is called.
    *
    * @property {Object[]} _layerEventSubscriptions
+   * @private
    */
   _layerEventSubscriptions: {
     value: [],
@@ -1395,6 +1380,12 @@ const standardClassProperties = {
    * widget.cssClassList = ['my-css-class1', 'my-css-class2'];
    * ```
    *
+   * > *Note*
+   * >
+   * > Do *not* try manipulating the array; only setting the `cssClassList` property with a *new* array
+   * > will cause a rendering update,
+   * > manipulating the array will not trigger any setters.
+   *
    * @property {String[]} cssClassList
    */
   cssClassList: {
@@ -1421,7 +1412,13 @@ const standardClassProperties = {
    * Refers to the parent Layer.UI.Component that contains this Component in its template.
    *
    * Note that if the parent does not contain this component in its template, then the developer
-   * who created it is responsible for setting this property directly.
+   * who created it is responsible for setting this property directly:
+   *
+   * ```
+   * var newComp = document.createElement("layer-avatar");
+   * this.nodes.mySubNode.appendChild(newComp);
+   * newComp.parentComponent = this;
+   * ```
    *
    * @property {Layer.UI.Component} parentComponent
    */
@@ -1445,18 +1442,19 @@ const standardClassProperties = {
   },
 
   /**
-   * Get/set the Layer.Core.Client used by this widget.
+   * Get the Layer.Core.Client used by this widget.
    *
    * App IDs are typically provided via:
    *
    * ```
-   * Layer.UI.init(({ appId: myAppId })
+   * Layer.init(({ appId: myAppId })
    * ```
    *
-   * The only time one would set this property
-   * is if building an app that used multiple Clients, or where the appId is not known at init time.
+   * The client property is set via the system using that appId, and should not
+   * be directly set by the application.
    *
-   * @property {Layer.Core.Client} [client=null]
+   * @property {Layer.Core.Client} client
+   * @readonly
    */
   client: {
     order: 1,
@@ -2079,10 +2077,49 @@ const standardClassMethods = {
   },
 };
 
+/**
+ * @class Layer.UI
+ */
+
+/**
+ * Unregister a component.  Must be called before Layer.init().
+ *
+ * Use this call to prevent a component from being registered with the document.
+ * Currently this works only on components that have been already called with `Layer.UI.registerComponent`
+ * but which have not yet been completed via a call to `Layer.init()`.
+ *
+ * This is not typically needed, but allows you to defer creation of a widget, and then at some point later in your application lifecycle
+ * define a replacement for that widget. You can not redefine an html tag that is registered with the document... but this prevents it from
+ * being registered yet.
+ *
+ * After calling `unregisterComponent`, you *may* register a replacement component _after_ `Layer.init()` has been called.
+ *
+ * @method unregisterComponent
+ */
+function unregisterComponent(tagName) {
+  delete ComponentsHash[tagName];
+}
+
+/**
+ * Registers all defined components with the browser as WebComponents.
+ *
+ * This is called by `Layer.init()` and should not be called directly.
+ *
+ * @private
+ * @method _registerAll
+ */
+function _registerAll() {
+  if (!registerAllCalled) {
+    registerAllCalled = true;
+    Object.keys(ComponentsHash)
+      .filter(tagName => typeof ComponentsHash[tagName] !== 'function')
+      .forEach(tagName => _registerComponent(tagName));
+  }
+}
 
 module.exports = {
   registerComponent,
-  registerAll,
+  _registerAll,
   unregisterComponent,
 };
 

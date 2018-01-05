@@ -27,9 +27,9 @@ describe('layer-identity-item', function() {
 
     el.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(1000);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(10);
   });
 
@@ -103,7 +103,7 @@ describe('layer-identity-item', function() {
 
       CustomElements.takeRecords();
       expect(testRoot.firstChild.isSelected).toBe(true);
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       expect(testRoot.firstChild.nodes.checkbox.checked).toBe(true);
     });
 
@@ -111,7 +111,7 @@ describe('layer-identity-item', function() {
       testRoot.innerHTML = '<layer-identity-item is-selected="false"></layer-identity-item>';
       testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(testRoot.firstChild.isSelected).toBe(false);
       expect(testRoot.firstChild.nodes.checkbox.checked).toBe(false);
@@ -121,7 +121,7 @@ describe('layer-identity-item', function() {
       testRoot.innerHTML = '<layer-identity-item></layer-identity-item>';
       testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(testRoot.firstChild.isSelected).toBe(false);
       expect(testRoot.firstChild.nodes.checkbox.checked).toBe(false);

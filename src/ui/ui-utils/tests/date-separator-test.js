@@ -29,7 +29,7 @@ describe("Date Separator Utility", function() {
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-message-list');
-    el.onRenderListItem = Layer.UI.utils.dateSeparator;
+    el.onRenderListItem = Layer.UI.UIUtils.dateSeparator;
 
     testRoot.appendChild(el);
     testRoot.style.display = 'flex';
@@ -54,7 +54,7 @@ describe("Date Separator Utility", function() {
 
     el.style.height = '300px';
 
-    Layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(500);
   });
 

@@ -578,7 +578,7 @@ describe("The TelemetryMonitor class", function() {
         expect(monitor.telemetryUrl).toEqual(jasmine.any(String));
         expect(requests.mostRecent().method).toEqual("POST");
         expect(JSON.parse(requests.mostRecent().params)).toEqual({
-          id: layer.Util.uuid(monitor.id),
+          id: Layer.Utils.uuid(monitor.id),
           layer_app_id: client.appId,
           records: [
             monitor.convertRecord(monitor.state.records[0]),
