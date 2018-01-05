@@ -79,7 +79,7 @@ registerComponent('layer-feedback-message-expanded-view', {
   methods: {
 
     _getIconClass() {
-      return 'layer-feedback-view-icon';
+      return 'layer-feedback-message-view-icon';
     },
     _getTitle() {
       return this.model.title;

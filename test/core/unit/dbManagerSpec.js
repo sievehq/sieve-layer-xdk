@@ -21,7 +21,6 @@ var dbIt = it;
 
   describe("The DbManager Class", function() {
       var appId = "Fred's App";
-debugger;
       var client,
           conversation,
           channel,
@@ -55,7 +54,6 @@ debugger;
       }
 
       beforeAll(function(done) {
-        debugger;
         testDbEnabled(function(result) {
             dbIsTestable = result;
             done();
@@ -64,7 +62,6 @@ debugger;
 
       // NOTE: beforeEach finishes by deleting everything from the database. You must insert before you can query.
       beforeEach(function(done) {
-        debugger;
           client = new Layer.init({
               appId: appId,
               url: "https://huh.com",
@@ -1787,7 +1784,6 @@ debugger;
       var m1, m2, m3, m4;
       var writtenData;
       beforeEach(function(done) {
-        debugger;
         m1 = conversation.createMessage("m1").presend();
         m2 = conversation.createMessage("m2").presend();
         m3 = conversation.createMessage("m3").presend();

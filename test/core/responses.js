@@ -288,6 +288,7 @@ var responseTest =  function(a, b) {
 
 var isDbEnabled = undefined;
 var testDbEnabled = function(callback) {
+    debugger;
     if (isDbEnabled !== undefined) return callback(isDbEnabled);
     var db;
     function deleteTables(callback) {
@@ -305,12 +306,11 @@ var testDbEnabled = function(callback) {
                 callback();
             }
             request.onblocked = function(err) {
-                console.error("Unable to delete tables; BLOCKED!");
+                console.error("Unable to delete tables; BLOCKED; Close other tabs running these tests to unblock!");
                 debugger;
                 callback();
             }
 
-            debugger;
             return request;
         } catch(e) {
             callback();
@@ -350,7 +350,6 @@ var testDbEnabled = function(callback) {
     }
 
     var deleteTablesResult = deleteTables(function() {
-        debugger;
         createTable(function() {
             queryTable(function(result) {
                 isDbEnabled = result;

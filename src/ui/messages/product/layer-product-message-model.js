@@ -128,7 +128,7 @@ class ProductModel extends MessageTypeModel {
    * @returns {String}
    */
   getFormattedPrice() {
-    if (!this.price) return '';
+    if (this.price === null) return '';
     return new Number(this.price).toLocaleString(navigator.language, {
       currency: this.currency,
       style: 'currency',

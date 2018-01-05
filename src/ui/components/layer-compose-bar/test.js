@@ -147,13 +147,13 @@ describe('layer-compose-bar', function() {
       expect(el.nodes.lineHeighter).toEqual(jasmine.any(HTMLElement));
     });
 
-    it("Should wire up layer-model-generated to handleAttachments", function() {
+    it("Should wire up layer-models-generated to handleAttachments", function() {
       el.client = client;
       el.properties.conversation = conversation;
       var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel')
       var model = new FileModel({sourceUrl: "hey ho", mimeType: "text/plain"});
 
-      var evt = new CustomEvent('layer-model-generated', {
+      var evt = new CustomEvent('layer-models-generated', {
         detail: {models: [model]},
         bubbles: true,
         cancelable: true
@@ -519,7 +519,7 @@ describe('layer-compose-bar', function() {
     it("Should call send with its models", function() {
       var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel')
       var model = new FileModel({sourceUrl: "hey ho", mimeType: "text/plain"});
-      var evt = new CustomEvent('layer-model-generated', {
+      var evt = new CustomEvent('layer-models-generated', {
         detail: {models: [model]},
         bubbles: true,
         cancelable: true

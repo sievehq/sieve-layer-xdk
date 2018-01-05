@@ -79,7 +79,7 @@ registerComponent('layer-choice-message-view', {
      * @protected
      */
     _getIconClass() {
-      return 'layer-poll-view-icon';
+      return 'layer-poll-message-view-icon';
     },
 
     /**
