@@ -21,11 +21,14 @@ layer-receipt-message-product-view {
   .layer-receipt-message-view-options:not(:empty)::before {
     content: "Options: ";
   }
-  & > img {
-    max-width: 50px;
-    max-height: 80px;
+  & > .layer-receipt-message-image {
+    width: 20%;
     margin-right: 12px;
     align-self: center;
+    background-size: cover;
+    background-position: 50%;
+    height: 0px;
+    padding-bottom: 20%;
   }
 }
 
@@ -37,9 +40,12 @@ layer-receipt-message-view {
     .layer-card-description {
       color: @color-black;
       font-size: @font-medium;
+      p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
+        margin-top: 0px;
+      }
     }
     label {
-      font-size: @font-small;
+      font-size: @font-medium;
       color: @color-g5;
       padding-bottom: 4px;
       display: block;

@@ -8,7 +8,7 @@ import { registerComponent } from '../../components/component';
 
 registerComponent('layer-receipt-message-product-view', {
   template: `
-    <img layer-id='img' />
+    <div class='layer-receipt-message-image' layer-id='img'></div>
     <div class='layer-receipt-message-product-view-right'>
       <div layer-id="name" class="layer-receipt-message-view-name"></div>
       <div layer-id="options" class="layer-receipt-message-view-options"></div>
@@ -43,7 +43,7 @@ registerComponent('layer-receipt-message-product-view', {
      */
     onRerender() {
       // Setup the basic DOM attributes
-      this.nodes.img.src = this.item.imageUrls[0];
+      this.nodes.img.style.backgroundImage = this.item.imageUrls[0] ? `url(${this.item.imageUrls[0]})` : '';
       this.nodes.name.innerHTML = this.item.name;
       this.nodes.price.innerHTML = this.item.getFormattedPrice();
       this.nodes.quantity.innerHTML = this.item.quantity !== 1 ? this.item.quantity : '';

@@ -40,6 +40,9 @@ registerComponent('layer-receipt-message-view', {
   layer-receipt-message-view.layer-receipt-no-payment .layer-paid-with {
     display: none;
   }
+  layer-receipt-message-view .layer-receipt-detail-item layer-message-viewer {
+    display: block;
+  }
   `,
   mixins: [MessageViewMixin],
   properties: {

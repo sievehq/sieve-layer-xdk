@@ -17,9 +17,11 @@ registerComponent('layer-location-message-view', {
   style: `
   layer-message-viewer.layer-location-message-view {
     cursor: pointer;
+  }
+  layer-message-viewer.layer-location-message-view:not(.layer-location-message-view-address-only) {
     max-width: 640px;
   }
-  layer-location-message-view.layer-location-message-view-address-only {
+  .layer-location-message-view-address-only layer-location-message-view {
     display: none;
   }
   layer-location-message-view img {
@@ -51,7 +53,7 @@ registerComponent('layer-location-message-view', {
       value: false,
       type: Boolean,
       set(value) {
-        this.toggleClass('layer-location-message-view-address-only', value);
+        this.messageViewer.toggleClass('layer-location-message-view-address-only', value);
         this._setupContainerClasses();
       },
     },
