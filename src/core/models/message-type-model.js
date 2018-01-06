@@ -137,6 +137,7 @@ class MessageTypeModel extends Root {
     if (!(conversation instanceof Root)) throw new Error(ErrorDictionary.conversationMissing);
     this._generateParts((parts) => {
       this.childParts = parts;
+      this.childModels = parts.map(part => part.createModel()).filter(model => model);
       this.part.mimeAttributes.role = 'root';
       this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
       this.message = conversation.createMessage({
@@ -216,9 +217,12 @@ class MessageTypeModel extends Root {
       this.childParts = this.message.getPartsMatchingAttribute({
         'parent-node-id': this.nodeId,
       });
+      this.childModels = this.childParts.map(part => part.createModel()).filter(model => model);
+
       this.childParts.forEach(part => part.on('messageparts:change', this._handlePartChanges, this));
     } else {
       this.childParts = [];
+      this.childModels = [];
     }
 
     // For any part added/removed call suitable handlers
@@ -399,6 +403,8 @@ class MessageTypeModel extends Root {
       this.childParts.splice(partIndex, 1);
       this._handlePartChanges(removeEvt);
     }
+
+    this.childModels = this.childModels.filter(part => part.id !== removedPart.id);
   }
 
   /**
@@ -422,6 +428,9 @@ class MessageTypeModel extends Root {
     const parentId = part.parentId;
     if (parentId && parentId === this.nodeId) {
       this.childParts.push(part);
+      const childModel = part.createModel();
+      if (childModel) this.childModels.push(childModel);
+
       part.on('messageparts:change', this._handlePartChanges, this);
       if (!this.part.body) this.part.fetchContent();
       this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
@@ -440,59 +449,28 @@ class MessageTypeModel extends Root {
   }
 
   /**
-   * Used from {@link #_parseMessage} subclass implementations to generate submodels from the {@link #childParts}.
+   * Used from {@link #_parseMessage} subclass implementations to gather submodels and assign them as properties.
    *
    * This code snippet shows how a submodel is generated from the Message for the specified role name:
    *
    * ```
    * _parseMessage(payload) {
    *     super._parseMessage(payload);
-   *     this.billingAddress = this.getModelFromPart('billing-address');
+   *     this.billingAddressModel = this.getModelsByRole('billing-address')[0];
+   *     this.productItems = this.getModelsByRole('product-item');
    * }
    * ```
    *
-   * Specifically, it will search the {@link #childParts} for a MessagePart whose `role`
-   * matches the specified role, and build a Layer.Core.MessageTypeModel from that MessagePart.
+   * Specifically, it will search the {@link #childModels} for a MessageTypeModel whose `role` value
+   * matches the specified role.  Note that `role` is part of the Layer.Core.MessagePart's attributes.
    *
-   * @method getModelFromPart
-   * @protected
-   * @param {String} role
-   * @returns {Layer.Core.MessageTypeModel}
-   */
-  getModelFromPart(role) {
-    const part = this.childParts.filter(aPart => aPart.mimeAttributes.role === role)[0];
-    if (part) {
-      return part.createModel();
-    } else {
-      return null;
-    }
-  }
-
-  /**
-   * Used from Layer.Core.MessageTypeModel._parseMessage subclasses to generate submodels from the childParts.
-   *
-   * This method is identical to Layer.Core.MessageTypeModel.getModelFromPart except that it looks for
-   * a collection of MessageParts all with the same role name and returns an array of Layer.Core.MessageTypeModel
-   * instances to represent them.
-   *
-   * ```
-   * _parseMessage(payload) {
-   *     super._parseMessage(payload);
-   *     this.productItems = this.getModelFromPart('product-item');
-   * }
-   * ```
-   *
-   * Specifically, it will search the Layer.Core.MessageTypeModel.childParts for all MessagePart whose `role`
-   * matches the specified role, and build a Layer.Core.MessageTypeModel from each MessagePart.
-   *
-   * @method getModelsFromPart
+   * @method getModelsByRole
    * @protected
    * @param {String} role
    * @returns {Layer.Core.MessageTypeModel[]}
    */
-  getModelsFromPart(role) {
-    const parts = this.childParts.filter(part => part.mimeAttributes.role === role);
-    return parts.map(part => part.createModel());
+  getModelsByRole(role) {
+    return this.childModels.filter(model => model.role === role);
   }
 
   /**
@@ -661,6 +639,22 @@ class MessageTypeModel extends Root {
     }
   }
 
+  /**
+   * Return the name of the Layer.Core.MessageTypeModel class that represents this Message; for use in simple tests.
+   *
+   * ```
+   * if (model.getModelName() === "TextModel") {
+   *    console.log("Yet another text message");
+   * }
+   * ```
+   *
+   * @method getModelName
+   * @returns {String}
+   */
+  getModelName() {
+    return this.constructor.name;
+  }
+
   // see role property docs below
   __getRole() {
     return this.part ? this.part.role : '';
@@ -776,6 +770,15 @@ MessageTypeModel.prototype.message = null;
  * @property {Layer.Core.MessagePart[]}
  */
 MessageTypeModel.prototype.childParts = null;
+
+/**
+ * Message Type Models that are directly used by this model.
+ *
+ * It is assumed to be used by this model if they are its children in the MessagePart tree.
+ *
+ * @property {Layer.Core.MessageTypeModel[]}
+ */
+MessageTypeModel.prototype.childModels = null;
 
 /**
  * Custom data for your message.

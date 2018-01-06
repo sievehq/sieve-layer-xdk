@@ -113,13 +113,13 @@ class ReceiptModel extends MessageTypeModel {
     }
 
     // Gather all of the product items for this Receipt Message, and generate models for them
-    this.items = this.getModelsFromPart('product-items');
+    this.items = this.getModelsByRole('product-items');
 
     // Gather addresses from this Receipt Message, and generate models for them
-    this.billingAddress = this.getModelFromPart('billing-address');
-    this.shippingAddress = this.getModelFromPart('shipping-address');
-    /*this.merchantModel = this.getModelFromPart('merchant');
-    this.recipientModel = this.getModelFromPart('recipient');*/
+    this.billingAddress = this.getModelsByRole('billing-address')[0];
+    this.shippingAddress = this.getModelsByRole('shipping-address')[0];
+    /*this.merchantModel = this.getModelsByRole('merchant');
+    this.recipientModel = this.getModelsByRole('recipient');*/
   }
 
   // Used to render Last Message in the Conversation List

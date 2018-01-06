@@ -107,8 +107,7 @@ class ProductModel extends MessageTypeModel {
     super._parseMessage(payload);
 
     // Read the options Message Parts, generate models for them and store them in the options property
-    const optionParts = this.childParts.filter(part => part.mimeAttributes.role === 'options');
-    this.options = optionParts.map(part => part.createModel());
+    this.options = this.getModelsByRole('options');
   }
 
   /**

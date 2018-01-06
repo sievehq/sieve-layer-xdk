@@ -11,7 +11,7 @@ class PersonModel extends MessageTypeModel {
   _parseMessage(payload) {
     super._parseMessage(payload);
 
-    this.addressModels = this.getModelsFromPart('address');
+    this.addressModels = this.getModelsByRole('address');
   }
 }
 

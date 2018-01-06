@@ -90,8 +90,7 @@ class CarouselModel extends MessageTypeModel {
    */
   _parseMessage(payload) {
     super._parseMessage(payload);
-    const parts = this.childParts.filter(part => part.mimeAttributes.role === 'carousel-item');
-    this.items = parts.map(part => part.createModel());
+    this.items = this.getModelsByRole('carousel-item');
 
     // Setup the actions for each Carousel Item Model.
     this.items.forEach(item => item._mergeAction(this.action));

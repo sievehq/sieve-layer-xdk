@@ -10,8 +10,8 @@ class OrganizationModel extends MessageTypeModel {
   _parseMessage(payload) {
     super._parseMessage(payload);
 
-    this.addressModels = this.getModelsFromPart('address');
-    this.contactModels = this.getModelsFromPart('contact');
+    this.addressModels = this.getModelsByRole('address');
+    this.contactModels = this.getModelsByRole('contact');
   }
 }
 

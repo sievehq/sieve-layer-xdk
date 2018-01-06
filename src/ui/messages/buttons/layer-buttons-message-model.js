@@ -143,9 +143,7 @@ class ButtonsModel extends MessageTypeModel {
    */
   _parseMessage(payload) {
     super._parseMessage(payload);
-
-    const contentPart = this.childParts.filter(part => part.mimeAttributes.role === 'content')[0];
-    if (contentPart) this.contentModel = contentPart.createModel();
+    this.contentModel = this.getModelsByRole('content')[0];
     this._setupButtonModels();
   }
 

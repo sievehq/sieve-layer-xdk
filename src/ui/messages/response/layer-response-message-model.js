@@ -90,10 +90,7 @@ class ResponseModel extends MessageTypeModel {
     super._parseMessage(payload);
 
     // Find the displayModel in the MessageParts and create that Model.
-    const messagePart = this.childParts.filter(part => part.mimeAttributes.role === 'message')[0];
-    if (messagePart) {
-      this.displayModel = messagePart.createModel();
-    }
+    this.displayModel = this.getModelsByRole('message')[0];
   }
 
   // Used to render Last Message in the Conversation List

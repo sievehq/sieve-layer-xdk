@@ -55,6 +55,9 @@
 * `Layer.UI.animatedScrollTo` and `Layer.UI.animatedScrollLeftTo` moved to `Layer.UI.UIUtils`
 * Everything in `Layer.UI.utils` renamed to `Layer.UI.UIUtils`
 * `Layer.UI.UIUtils.registerStatusModel(ModelClass)` is now used to register a Message as a Status Message rather than `Layer.UI.statusMimeTypes.push(mimeType)`
+* `Layer.Core.MessageTypeModel` now has a `getModelsByRole` method, and no longer `getModelsForPart` and `getModelForPart` methods
+* `Layer.Core.MessageTypeModel` now has a `childModels` property with all Child Models initialized automatically.
+
 
 ## 1.0.0-pre1.15
 
