@@ -45,9 +45,11 @@
  * @protected
  */
 
-const INTERVAL = 2500;
+import Core from '../namespace';
 import { STARTED, PAUSED, FINISHED } from './typing-indicators';
 import ClientRegistry from '../client-registry';
+
+const INTERVAL = 2500;
 
 class TypingPublisher {
 
@@ -222,5 +224,5 @@ class TypingPublisher {
     clearInterval(this._pauseLoopId);
   }
 }
-module.exports = TypingPublisher;
+module.exports = Core.TypingIndicators.TypingPublisher = TypingPublisher;
 

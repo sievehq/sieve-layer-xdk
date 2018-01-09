@@ -49,7 +49,7 @@
  * @extends Layer.Core.Container
  * @author  Michael Kantor
  */
-
+import Core from '../namespace';
 import Root from '../root';
 import Syncable from './syncable';
 import Container from './container';
@@ -1004,6 +1004,6 @@ Conversation._supportedEvents = [
    */
   'conversations:change'].concat(Syncable._supportedEvents);
 
-Root.initClass.apply(Conversation, [Conversation, 'Conversation']);
+Root.initClass.apply(Conversation, [Conversation, 'Conversation', Core]);
 Syncable.subclasses.push(Conversation);
 module.exports = Conversation;

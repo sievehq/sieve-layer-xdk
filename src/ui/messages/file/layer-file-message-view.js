@@ -1,6 +1,14 @@
 /**
  * UI for a File Message
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import using:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/file/layer-file-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.FileMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
@@ -8,6 +16,7 @@
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
+import './layer-file-message-model';
 
 registerComponent('layer-file-message-view', {
   mixins: [MessageViewMixin],

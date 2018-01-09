@@ -6,7 +6,9 @@
 
 import Syncable from '../models/syncable';
 import Message from '../models/message';
+import MessagePart from '../models/message-part';
 import { ErrorDictionary } from '../layer-error';
+import Core from '../namespace';
 
 module.exports = {
   events: [
@@ -359,5 +361,11 @@ module.exports = {
     forEachMessage(fn) {
       Object.keys(this._models.messages).forEach(id => fn(this._models.messages[id]));
     },
+
+    _createMessagePartFromServer(obj) {
+      return MessagePart._createFromServer(obj);
+    },
   },
 };
+
+Core.mixins.Client.push(module.exports);

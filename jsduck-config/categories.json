@@ -42,7 +42,7 @@
         "name": "Main Components",
         "classes": [
           "Layer.UI.components.ConversationView",
-          "Layer.UI.components.ConversationsListPanel.List",
+          "Layer.UI.components.ConversationListPanel.List",
           "Layer.UI.components.IdentityListPanel.List",
           "Layer.UI.components.Notifier"
         ]

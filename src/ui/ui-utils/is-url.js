@@ -8,7 +8,6 @@
  * @method isUrl
  * @param {String[]} extensions    Specific file extensions our URL must match against
  * @returns {RegExp}               Regular Expression that can test if something is a string
- * @removed
  */
 module.exports = function isURL(extensions) {
   let resource = '?';

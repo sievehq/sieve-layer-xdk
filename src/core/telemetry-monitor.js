@@ -12,7 +12,7 @@
  * @extends Layer.Core.Root
  * @private
  */
-
+import Core from './namespace';
 import Root from './root';
 import Util, { xhr } from '../utils';
 import version from '../version';
@@ -434,5 +434,5 @@ TelemetryMonitor._supportedEvents = Root._supportedEvents.concat([
   'telemetry-environment'
 ]);
 
-Root.initClass.apply(TelemetryMonitor, [TelemetryMonitor, 'TelemetryMonitor']);
+Root.initClass.apply(TelemetryMonitor, [TelemetryMonitor, 'TelemetryMonitor', Core]);
 module.exports = TelemetryMonitor;

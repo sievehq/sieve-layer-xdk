@@ -1,6 +1,14 @@
 /**
  * UI for a Image Message
  *
+ * ### Importing
+ *
+ * Included with the standard build. For custom build, import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/image/layer-image-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.ImageMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
@@ -8,7 +16,7 @@
 import { registerComponent } from '../../components/component';
 import Constants from '../../constants';
 import MessageViewMixin from '../message-view-mixin';
-
+import './layer-image-message-model';
 import ImageManager from 'blueimp-load-image/js/load-image';
 import 'blueimp-load-image/js/load-image-orientation';
 import 'blueimp-load-image/js/load-image-meta';

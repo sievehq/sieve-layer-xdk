@@ -22,7 +22,7 @@
  *    to the Messages and Conversations tables anyways as part of those larger objects.
  * 7. API For explicit follows/unfollows
  */
-
+import Core from '../namespace';
 import Syncable from './syncable';
 import Root from '../root';
 import { SYNC_STATE } from '../../constants';
@@ -132,7 +132,7 @@ class Identity extends Syncable {
     this._disableEvents = false;
 
     // See if we have the Full Identity Object in database
-    if (!this.isFullIdentity && client.isAuthenticated) {
+    if (!this.isFullIdentity && client.isAuthenticated && client.dbManager) {
       client.dbManager.getObjects('identities', [this.id], (result) => {
         if (result.length) this._populateFromServer(result[0]);
       });
@@ -330,9 +330,11 @@ class Identity extends Syncable {
   */
   // Turn a Full Identity into a Basic Identity and delete the Full Identity from the database
   _handleWebsocketDelete(data) {
-    this.getClient().dbManager.deleteObjects('identities', [this]);
-    ['firstName', 'lastName', 'emailAddress', 'phoneNumber', 'metadata', 'publicKey', 'isFullIdentity', 'type']
-      .forEach(key => delete this[key]);
+    if (this.getClient().dbManager) {
+      this.getClient().dbManager.deleteObjects('identities', [this]);
+      ['firstName', 'lastName', 'emailAddress', 'phoneNumber', 'metadata', 'publicKey', 'isFullIdentity', 'type']
+        .forEach(key => delete this[key]);
+    }
     this._triggerAsync('identities:unfollow');
   }
 
@@ -350,6 +352,43 @@ class Identity extends Syncable {
       client,
       fromServer: identity,
       _fromDB: identity._fromDB,
+    });
+  }
+
+  static toDbObjects(items, callback) {
+    const result = items.map((identity) => {
+      if (identity.isFullIdentity) {
+        return {
+          id: identity.id,
+          url: identity.url,
+          user_id: identity.userId,
+          first_name: identity.firstName,
+          last_name: identity.lastName,
+          display_name: identity.displayName,
+          avatar_url: identity.avatarUrl,
+          metadata: identity.metadata,
+          public_key: identity.publicKey,
+          phone_number: identity.phoneNumber,
+          email_address: identity.emailAddress,
+          sync_state: identity.syncState,
+          type: identity.type,
+        };
+      } else {
+        return Identity.toDbBasicObjects([identity])[0];
+      }
+    });
+    callback(result);
+  }
+
+  static toDbBasicObjects(items) {
+    return items.map((identity) => {
+      return {
+        id: identity.id,
+        url: identity.url,
+        user_id: identity.userId,
+        display_name: identity.displayName,
+        avatar_url: identity.avatarUrl,
+      };
     });
   }
 }
@@ -582,7 +621,7 @@ Identity.eventPrefix = 'identities';
 Identity.prefixUUID = 'layer:///identities/';
 Identity.enableOpsIfNew = true;
 
-Root.initClass.apply(Identity, [Identity, 'Identity']);
+Root.initClass.apply(Identity, [Identity, 'Identity', Core]);
 Syncable.subclasses.push(Identity);
 
 module.exports = Identity;

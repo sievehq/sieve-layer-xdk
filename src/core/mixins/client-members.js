@@ -6,7 +6,9 @@
 
 import Syncable from '../models/syncable';
 import Membership from '../models/membership';
+import MembersQuery from '../queries/members-query';
 import { ErrorDictionary } from '../layer-error';
+import Core from '../namespace';
 
 module.exports = {
   events: [
@@ -151,5 +153,15 @@ module.exports = {
         }
       }
     },
+
+    _createMembershipFromServer(obj) {
+      return Membership._createFromServer(obj, this);
+    },
+
+    _createMembersQuery(options) {
+      return new MembersQuery(options);
+    },
   },
 };
+
+Core.mixins.Client.push(module.exports);

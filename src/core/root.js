@@ -1,3 +1,4 @@
+import Core from './namespace';
 import Util, { logger } from '../utils';
 import LayerEvent from './layer-event';
 import { ErrorDictionary } from './layer-error';
@@ -594,7 +595,7 @@ class Root extends EventClass {
 
   _runMixins(mixinName, argArray) {
     this.constructor.mixins.forEach((mixin) => {
-      if (mixin.lifecycle[mixinName]) mixin.lifecycle[mixinName].apply(this, argArray);
+      if (mixin.lifecycle && mixin.lifecycle[mixinName]) mixin.lifecycle[mixinName].apply(this, argArray);
     });
   }
 
@@ -645,7 +646,7 @@ function defineProperty(newClass, propertyName) {
   }
 }
 
-function initClass(newClass, className) {
+function initClass(newClass, className, namespace) {
   // Make sure our new class has a name property
   try {
     if (newClass.name !== className) newClass.name = className;
@@ -682,6 +683,8 @@ function initClass(newClass, className) {
 
   // Define getters/setters for any property that has __adjust or __update methods defined
   keys.forEach(name => defineProperty(newClass, name));
+
+  if (namespace) namespace[className] = newClass;
 }
 
 /**
@@ -735,3 +738,4 @@ Root._supportedEvents = ['destroy', 'all'];
 Root._ignoredEvents = [];
 module.exports = Root;
 module.exports.initClass = initClass;
+Core.Root = Root;

@@ -47,6 +47,15 @@
  * model.generateMessage(conversation, message => message.send());
  * ```
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import with either:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/product/layer-product-message-view';
+ * import '@layerhq/web-xdk/lib/ui/messages/product/layer-product-message-model';
+ * ```
+ *
  * @class Layer.UI.messages.ProductMessageModel
  * @extends Layer.Core.MessageTypeModel
  */

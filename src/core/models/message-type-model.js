@@ -14,6 +14,7 @@
  * @class  Layer.Core.MessageTypeModel
  * @extends Layer.Core.Root
  */
+import Core from '../namespace';
 import Util from '../../utils';
 import version from '../../version';
 import Root from '../root';
@@ -949,6 +950,6 @@ MessageTypeModel._supportedEvents = [
   'message-type-model:change',
   'message-type-model:customization',
 ].concat(Root._supportedEvents);
-Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel']);
+Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel', Core]);
 module.exports = MessageTypeModel;
 

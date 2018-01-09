@@ -4,6 +4,14 @@
  * The Product Message may also be combined with a Button Model to allow the user to perform
  * actions upon the Message. Some UIs may provide a full screen view that enables additional interactions.
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/product/layer-product-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.ProductMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
@@ -12,6 +20,7 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
 import { processText } from '../../handlers/text/text-handlers';
+import './layer-product-message-model';
 
 registerComponent('layer-product-message-view', {
   style: `

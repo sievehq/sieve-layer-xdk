@@ -9,8 +9,8 @@
  * @class Layer.Core.mixins.ClientMessageTypeModels
  */
 import { ErrorDictionary } from '../layer-error';
-import { uuid } from '../../utils';
 import MessageTypeModel from '../models/message-type-model';
+import Core from '../namespace';
 
 const MessageTypeModelClasses = [];
 const MessageTypeModelHash = {};
@@ -154,3 +154,5 @@ module.exports = {
     },
   },
 };
+
+Core.mixins.Client.push(module.exports);

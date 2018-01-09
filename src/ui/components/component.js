@@ -390,22 +390,6 @@
  * @class Layer.UI.Component
  */
 
-
-/**
- * Register a component using the specified HTML tagName.
- *
- * See Layer.UI.Component for details on using this.
- *
- * @method registerComponent
- * @static
- * @param {String} tagName    Tag name that is being defined (`layer-avatar`)
- * @param {Object} classDef    Definition of your class
- * @param {Object} classDef.properties    Definition of your class properties
- * @param {Object} classDef.methods    Definition of your class methods
- * @param {String[]} classDef.events    Array of events to listen for and repackage as event handler properties
- * @param {Mixed} classDef.template     A `<template />` node or a template string such as `<div><button /></div>`
- * @param {String} classDef.style       A String with CSS styles for this widget
- */
 import Layer from '../../core';
 import Util from '../../utils';
 import { ComponentsHash, buildAndRegisterTemplate, registerTemplate } from '../component-services';
@@ -2079,6 +2063,22 @@ const standardClassMethods = {
 
 /**
  * @class Layer.UI
+ */
+
+/**
+ * Register a component using the specified HTML tagName.
+ *
+ * See Layer.UI.Component for details on using this.
+ *
+ * @method registerComponent
+ * @static
+ * @param {String} tagName    Tag name that is being defined (`layer-avatar`)
+ * @param {Object} classDef    Definition of your class
+ * @param {Object} classDef.properties    Definition of your class properties
+ * @param {Object} classDef.methods    Definition of your class methods
+ * @param {String[]} classDef.events    Array of events to listen for and repackage as event handler properties
+ * @param {Mixed} classDef.template     A `<template />` node or a template string such as `<div><button /></div>`
+ * @param {String} classDef.style       A String with CSS styles for this widget
  */
 
 /**

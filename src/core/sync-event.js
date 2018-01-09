@@ -16,6 +16,7 @@
  * @extends Layer.Core.Root
  */
 import Util from '../utils';
+import Core from './namespace';
 
 class SyncEvent {
   /**
@@ -333,3 +334,6 @@ class WebsocketSyncEvent extends SyncEvent {
 WebsocketSyncEvent.prototype.returnChangesArray = false;
 
 module.exports = { SyncEvent, XHRSyncEvent, WebsocketSyncEvent };
+Core.SyncEvent = SyncEvent;
+Core.XHRSyncEvent = XHRSyncEvent;
+Core.WebsocketSyncEvent = WebsocketSyncEvent;

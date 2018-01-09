@@ -38,6 +38,15 @@
  * Note that the description property can be ignored if the `showAddress` is set to `true`,
  * in which case the Address is shown instead.
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import with either:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/location/layer-location-message-view';
+ * import '@layerhq/web-xdk/lib/ui/messages/location/layer-location-message-model';
+ * ```
+ *
  * @class Layer.UI.messages.LocationMessageModel
  * @extends Layer.Core.MessageTypeModel
  */

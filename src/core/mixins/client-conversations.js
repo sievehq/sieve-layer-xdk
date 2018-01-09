@@ -6,6 +6,8 @@
 
 import Conversation from '../models/conversation';
 import { ErrorDictionary } from '../layer-error';
+import ConversationMessage from '../models/conversation-message';
+import Core from '../namespace';
 
 module.exports = {
   events: [
@@ -409,5 +411,15 @@ module.exports = {
       options._loadType = 'websocket'; // treat this the same as a websocket loaded object
       return Conversation.create(options);
     },
+
+    _createConversationMessageFromServer(obj) {
+      return ConversationMessage._createFromServer(obj, this);
+    },
+
+    _createConversationFromServer(obj) {
+      return Conversation._createFromServer(obj, this);
+    },
   },
 };
+
+Core.mixins.Client.push(module.exports);

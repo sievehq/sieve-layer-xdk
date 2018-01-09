@@ -42,10 +42,13 @@ module.exports = function (grunt) {
         fileList: ['themes/build']
       },
       lib: {
-        dirList: ['lib', 'lib-es6']
+        dirList: ['lib']
       },
       libes5: {
         dirList: ['lib-es5']
+      },
+      libes6: {
+        dirList: ['lib-es6']
       },
     },
     browserify: {
@@ -73,7 +76,7 @@ module.exports = function (grunt) {
         files: [
           {
             dest: 'build/layer-xdk.js',
-            src: 'lib/index.js'
+            src: 'lib/index-all.js'
           }
         ]
       },
@@ -87,7 +90,7 @@ module.exports = function (grunt) {
       },
       coverage: {
         files: {
-          'test/coverage-build.js': ['lib/index.js']
+          'test/coverage-build.js': ['lib/index-all.js']
         },
         options: {
           transform: [[fixBrowserifyForIstanbul], ["istanbulify"]],
@@ -253,7 +256,7 @@ module.exports = function (grunt) {
     },
     watch: {
       js: {
-        files: ['package.json', 'Gruntfile.js', 'samples/index.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
+        files: ['package.json', 'Gruntfile.js', 'samples/index-all.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
         tasks: ['debug', 'notify:watch'],
         options: {
           interrupt: true
@@ -449,24 +452,21 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('webcomponents', 'Building Web Components', function() {
     var options = this.options();
 
-    function createCombinedComponentFile(file, outputPathES5, outputPathES6) {
-      try {
-      // Extract the class name; TODO: class name should be same as file name.
-      var jsFileName = file.replace(/^.*\//, '');
-      var className = jsFileName.replace(/\.js$/, '');
+    function optimizeStrings(contents, name, commentExpr) {
+      var keyString = name + ': `';
+      var startIndex = contents.indexOf(keyString);
+      if (startIndex === -1) return contents;
 
-      if (jsFileName === 'test.js') return;
+      startIndex += keyString.length;
+      var endIndex = contents.indexOf('`', startIndex);
+      if (endIndex === -1) return contents;
 
-      var output = grunt.file.read(file);
+      var stringToOptimize = contents.substring(startIndex, endIndex).replace(commentExpr, '').split(/\n/).map(line => line.trim()).filter(line => line).join('\n');
+      return contents.substring(0, startIndex) + stringToOptimize + contents.substring(endIndex);
+    }
 
-      var templateCount = 0;
-      var outputFolderES6 = path.dirname(outputPathES6);
-      var outputFolderES5 = path.dirname(outputPathES5);
-
-      // Find the template file by checking for an html file of the same name as the js file in the same folder.
-      var parentFolder = path.dirname(file);
-      var pathToLayerUI = parentFolder.replace(/[/|\bsrc/ui/][^/]*/g, "/..").substring(7) + "/layer-ui"
-
+    function parseTemplates(parentFolder, className, pathToLayerUI) {
+      var output = '';
       var templates = grunt.file.expand(parentFolder + "/*.html")
       templates.forEach(function(templateFileName) {
       // Stick the entire template into a function comment for easy multi-line string,
@@ -477,6 +477,7 @@ module.exports = function (grunt) {
         var contents = grunt.file.read(templateFileName);
         contents = contents.replace(/\/\*[\s\S]*?\*\//mg, '');
 
+        var templateCount = 0;
         var templates = contents.match(/^\s*<template(\s+id=['"].*?['"]\s*)?>([\s\S]*?)<\/template>/mg);
         templates.forEach(function(templateString) {
           templateCount++;
@@ -512,17 +513,38 @@ module.exports = function (grunt) {
           output += '})()';
         });
       });
+      return output;
+    }
 
+    function createCombinedComponentFile(file, outputPathES5, outputPathES6) {
+      try {
+      // Extract the class name; TODO: class name should be same as file name.
+      var jsFileName = file.replace(/^.*\//, '');
+      var className = jsFileName.replace(/\.js$/, '');
+
+      if (jsFileName === 'test.js') return;
+
+      var output = grunt.file.read(file);
+      output = optimizeStrings(output, 'style', /\/\*[\s\S]*?\*\//m);
+      output = optimizeStrings(output, 'template', /<!--[\s\S]*?-->/m);
+
+      var outputFolderES6 = path.dirname(outputPathES6);
+      var outputFolderES5 = path.dirname(outputPathES5);
+
+      // Find the template file by checking for an html file of the same name as the js file in the same folder.
+      var parentFolder = path.dirname(file);
+      var pathToLayerUI = parentFolder.replace(/[/|\bsrc/ui/][^/]*/g, "/..").substring(7) + "/layer-ui"
+
+      // We have mostly migrated away from these template files
+      output += parseTemplates(parentFolder, className, pathToLayerUI);
 
       //var outputES5 = output.replace(/\/\*[\s\S]*?\*\//g, '');
       var outputES5 = output;
-      //var outputES6 = output.replace(/import\s+Layer\s+from\s+'layer-websdk'\s*;/g, 'import Layer from \'layer-websdk/index-es6\'');
-      var outputES6 = output.replace(/import\s+(Layer, {.*?}|Layer|{.*?})\s+from\s+'layer-websdk'\s*;/g, 'import $1 from \'layer-websdk/index-es6\'');
 
       if (!grunt.file.exists(outputFolderES6)) {
         grunt.file.mkdir(outputFolderES6);
       }
-      grunt.file.write(outputPathES6, outputES6);
+      grunt.file.write(outputPathES6, output);
 
       if (!grunt.file.exists(outputFolderES5)) {
         grunt.file.mkdir(outputFolderES5);
@@ -597,7 +619,7 @@ module.exports = function (grunt) {
 
         // Arbitrary subdivision of the components folder which has too many tests for IE11
         if (folderName === 'components') {
-          folderName += "_" + (componentFolderName.indexOf('layer-') === 0 ? 'basic' : 'nested');
+          folderName += "_" + (componentFolderName === 'tests' || componentFolderName.indexOf('layer-') === 0 ? 'basic' : 'nested');
         }
         if (!scripts[folderName]) scripts[folderName] = [];
         scripts[folderName].push(scriptTag);
@@ -673,14 +695,16 @@ module.exports = function (grunt) {
   // Testing
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   //grunt.registerTask('phantomtest', ['debug', 'jasmine:debug']);
-  grunt.registerTask('coverage', ['copy:fixIstanbul', 'custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
+  grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
   grunt.registerTask("test", ["generate-tests", "connect:saucelabs", "saucelabs-jasmine"]);
 
 
   grunt.registerTask('docs', ['debug', 'jsducktemplates', 'jsduck', 'jsduckfixes']);
 
   // Basic Code/theme building
-  grunt.registerTask('debug', ['version', 'webcomponents', 'custom_copy:src', 'remove:libes5', 'custom_babel', 'remove:lib', 'move:lib', 'browserify:build', 'generate-tests']);
+  // We are not going to publish lib-es6 as this risks importing of files from both lib and lib-es6 by accident and getting multiple definitions of classes
+  grunt.registerTask('debug', ['version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5', 'custom_babel', 'remove:lib', 'move:lib', 'browserify:build', 'generate-tests', 'remove:libes6']);
+
   grunt.registerTask('build', ['generate-npmignore', 'remove:build', 'debug', 'uglify', 'theme', 'cssmin']);
   grunt.registerTask('prepublish', ['build', 'wait']);
   grunt.registerTask('samples', ['debug', 'browserify:samples']);
@@ -688,5 +712,5 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['build']);
 
   // Open a port for running tests and rebuild whenever anything interesting changes
-  grunt.registerTask("develop", ["connect:develop", "watch"]);
+  grunt.registerTask("develop", ["debug", "connect:develop", "watch"]);
 };

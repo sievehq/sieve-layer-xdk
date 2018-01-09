@@ -19,6 +19,7 @@
  * @class  Layer.Core.ChannelsQuery
  * @extends Layer.Core.Query
  */
+import Core from '../namespace';
 import Root from '../root';
 import { SYNC_STATE } from '../../constants';
 import Query from './query';
@@ -27,9 +28,11 @@ import ConversationsQuery from './conversations-query';
 class ChannelsQuery extends ConversationsQuery {
 
   _fetchData(pageSize) {
-    this.client.dbManager.loadChannels(this._nextDBFromId, pageSize, (channels) => {
-      if (channels.length) this._appendResults({ data: channels }, true);
-    });
+    if (client.dbManager) {
+      this.client.dbManager.loadChannels(this._nextDBFromId, pageSize, (channels) => {
+        if (channels.length) this._appendResults({ data: channels }, true);
+      });
+    }
 
     const newRequest = `channels?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -256,6 +259,6 @@ ChannelsQuery.MaxPageSize = 100;
 
 ChannelsQuery.prototype.model = Query.Channel;
 
-Root.initClass.apply(ChannelsQuery, [ChannelsQuery, 'ChannelsQuery']);
+Root.initClass.apply(ChannelsQuery, [ChannelsQuery, 'ChannelsQuery', Core.Query]);
 
 module.exports = ChannelsQuery;

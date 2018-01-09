@@ -14,6 +14,7 @@
  * @extends Layer.Core.Root
  * @private
  */
+import Core from '../namespace';
 import Root from '../root';
 import Util, { logger } from '../../utils';
 import { ErrorDictionary } from '../layer-error';
@@ -832,5 +833,5 @@ SocketManager._supportedEvents = [
    */
   'synced',
 ].concat(Root._supportedEvents);
-Root.initClass.apply(SocketManager, [SocketManager, 'SocketManager']);
+Root.initClass.apply(SocketManager, [SocketManager, 'SocketManager', Core.Websockets]);
 module.exports = SocketManager;

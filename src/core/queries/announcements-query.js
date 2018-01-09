@@ -19,6 +19,7 @@
  * @class  Layer.Core.AnnouncementsQuery
  * @extends Layer.Core.Query
  */
+import Core from '../namespace';
 import Root from '../root';
 import Query from './query';
 import MessagesQuery from './messages-query';
@@ -30,9 +31,11 @@ class AnnouncementsQuery extends MessagesQuery {
 
   _fetchData(pageSize) {
     // Retrieve data from db cache in parallel with loading data from server
-    this.client.dbManager.loadAnnouncements(this._nextDBFromId, pageSize, (messages) => {
-      if (messages.length) this._appendResults({ data: messages }, true);
-    });
+    if (this.client.dbManager) {
+      this.client.dbManager.loadAnnouncements(this._nextDBFromId, pageSize, (messages) => {
+        if (messages.length) this._appendResults({ data: messages }, true);
+      });
+    }
 
     const newRequest = `announcements?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -61,6 +64,6 @@ AnnouncementsQuery.MaxPageSize = 100;
 
 AnnouncementsQuery.prototype.model = Query.Announcement;
 
-Root.initClass.apply(AnnouncementsQuery, [AnnouncementsQuery, 'AnnouncementsQuery']);
+Root.initClass.apply(AnnouncementsQuery, [AnnouncementsQuery, 'AnnouncementsQuery', Core]);
 
 module.exports = AnnouncementsQuery;

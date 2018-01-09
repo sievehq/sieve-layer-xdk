@@ -18,80 +18,33 @@
 
 import LayerUI from './layer-ui';
 
-// Load Adapters
-import './adapters/angular';
-import './adapters/backbone';
-import './adapters/react';
+// Load Required Components
+import Component from './components/component';
+import './components/layer-replaceable-content';
+import './components/layer-conversation-view';
 
-// Load Main Components
-import './components/';
-import './handlers/message/layer-message-viewer';
-import './messages/layer-message-viewer-expanded.js';
 
 import './handlers/text/autolinker';
 import './handlers/text/emoji';
 import './handlers/text/newline';
 import dateSeparator from './ui-utils/date-separator';
 
+// Card Viewers
+import './handlers/message/layer-message-viewer';
+import './messages/layer-message-viewer-expanded';
+
 // Load standard cards
-
-import './messages/status/layer-status-message-model';
-import './messages/status/layer-status-message-view';
-
-import './messages/response/layer-response-message-model';
 import './messages/response/layer-response-message-view';
+import './messages/text/layer-text-message-view';
+import './messages/image/layer-image-message-view';
+import './messages/buttons/layer-buttons-message-view';
 
-import './messages/receipt/layer-receipt-message-model';
-import './messages/receipt/layer-receipt-message-view';
-
-import './messages/choice/layer-choice-message-model';
-import './messages/choice/layer-choice-message-view';
-import './messages/choice/layer-choice-tiles-message-view';
-import './messages/choice/layer-choice-label-message-view';
-
-
+// Load standard card containers
 import './messages/layer-standard-message-view-container';
 import './messages/layer-titled-message-view-container';
 import './messages/layer-dialog-message-view-container';
 
-//import './messages/layer-list-item-container';
-import './messages/text/layer-text-message-view';
-import './messages/text/layer-text-message-model';
-
-import './messages/image/layer-image-message-model';
-import './messages/image/layer-image-message-view';
-
-// import './messages/list/list-model';
-// import './messages/list/layer-list-view';
-
-import './messages/carousel/layer-carousel-message-model';
-import './messages/carousel/layer-carousel-message-view';
-
-import './messages/buttons/layer-buttons-message-model';
-import './messages/buttons/layer-buttons-message-view';
-
-import './messages/file/layer-file-message-model';
-import './messages/file/layer-file-message-view';
-
-import './messages/link/layer-link-message-model';
-import './messages/link/layer-link-message-view';
-
-import './messages/location/layer-location-message-model';
-import './messages/location/layer-location-message-view';
-
-// import './messages/address/address-model';
-// import './messages/address/layer-address-view';
-
-import './messages/product/layer-product-message-model';
-import './messages/product/layer-product-message-view';
-
-import './messages/models/layer-person-model';
-import './messages/models/layer-organization-model';
-
-import './messages/feedback/layer-feedback-message-view';
-import './messages/feedback/layer-feedback-message-expanded-view';
-import './messages/feedback/layer-feedback-message-model';
-
+// Load standard card actions
 import './message-actions/open-expanded-view-action';
 import './message-actions/open-url-action';
 import './message-actions/open-file-action';
@@ -125,6 +78,7 @@ LayerUI.mixins = {
   QueryEndIndicator,
   SizeProperty,
   Throttler,
+  Component,
 };
 LayerUI.UIUtils.dateSeparator = dateSeparator;
 

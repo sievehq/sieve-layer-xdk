@@ -4,6 +4,7 @@
  * @class Layer.Core.Message.ConversationMessage
  * @extends Layer.Core.Message
  */
+import Core from '../namespace';
 import Root from '../root';
 import Message from './message';
 import ClientRegistry from '../client-registry';
@@ -472,5 +473,5 @@ ConversationMessage.prototype.deliveryStatus = Constants.RECIPIENT_STATE.NONE;
 
 ConversationMessage.inObjectIgnore = Message.inObjectIgnore;
 ConversationMessage._supportedEvents = [].concat(Message._supportedEvents);
-Root.initClass.apply(ConversationMessage, [ConversationMessage, 'ConversationMessage']);
+Root.initClass.apply(ConversationMessage, [ConversationMessage, 'ConversationMessage', Core]);
 module.exports = ConversationMessage;

@@ -8,7 +8,8 @@ import { register } from './index';
  * Initialize this adapter using:
  *
  * ```javascript
- * var Backbone = require('backbone');
+ * import Backbone from 'backbone';
+ * import '@layerhq/web-xdk/lib/ui/adapters/backbone';
  * var LayerUIViews = Layer.UI.adapters.backbone(Backbone);
  * var conversationPanelView = new LayerUIViews.ConversationPanel(client, {conversationId: 'layer:///conversations/UUID'});
  * var conversationsListView = new LayerUIViews.ConversationsList(client);
@@ -21,7 +22,7 @@ import { register } from './index';
 * Calling this will expose the following React Components:
  *
  * * ConversationPanelView: A wrapper around a Layer.UI.components.ConversationView
- * * ConversationsListView: A wrapper around a Layer.UI.components.ConversationsListPanel
+ * * ConversationsListView: A wrapper around a Layer.UI.components.ConversationListPanel
  * * IdentitiesListView: A wrapper around a Layer.UI.components.IdentityListPanel
  * * NotifierView: A wrapper around a Layer.UI.components.misc.Notifier
  * * SendButton: An optional button that can be provided to ConversationPanelView's `composeButtons` property
@@ -38,6 +39,14 @@ import { register } from './index';
  *
  * < !-- Associated with the ConversationView -->
  * < layer-conversation-view conversation-id="layer:///conversations/UUID"></layer-conversation-view>
+ * ```
+ *
+ * ### Importing
+ *
+ * Not included with the standard build. To import:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/adapters/backbone';
  * ```
  *
  * @class Layer.UI.adapters.backbone

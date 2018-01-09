@@ -1,6 +1,14 @@
 /**
  * UI for a Link Message
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/link/layer-link-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.LinkMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
@@ -9,6 +17,7 @@
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
+import './layer-link-message-model';
 
 registerComponent('layer-link-message-view', {
   mixins: [MessageViewMixin],

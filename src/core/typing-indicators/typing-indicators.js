@@ -8,7 +8,9 @@
  * @class  Layer.Core.TypingIndicators
  * @static
  */
-module.exports = {
+import Core from '../namespace';
+
+module.exports = Core.TypingIndicators = {
   /**
    * Typing has started/resumed
    * @property {String}

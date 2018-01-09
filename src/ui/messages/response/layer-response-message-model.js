@@ -41,6 +41,15 @@
  * Currently,a Response Message that does not contain a `displayModel` is not well supported,
  * its recommended that a `displayModel` always be included.
  *
+ * ### Importing
+ *
+ * Included with the standard build. For custom build, Import with either:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/response/layer-response-message-view';
+ * import '@layerhq/web-xdk/lib/ui/messages/response/layer-response-message-model';
+ * ```
+ *
  * @class Layer.UI.messages.ResponseMessageModel
  * @extends Layer.Core.MessageTypeModel
  */

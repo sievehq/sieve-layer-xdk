@@ -205,6 +205,7 @@
  * @extends Layer.Core.Root
  *
  */
+import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 import Util, { logger } from '../../utils';
@@ -1114,6 +1115,6 @@ Query._supportedEvents = [
 
 ].concat(Root._supportedEvents);
 
-Root.initClass.apply(Query, [Query, 'Query']);
+Root.initClass.apply(Query, [Query, 'Query', Core]);
 
 module.exports = Query;

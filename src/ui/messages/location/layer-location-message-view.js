@@ -3,6 +3,14 @@
  *
  * You must set your Google Maps API key in `window.googleMapsAPIKey`
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/location/layer-location-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.LocationMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
@@ -10,6 +18,7 @@
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
+import './layer-location-message-model';
 
 registerComponent('layer-location-message-view', {
   mixins: [MessageViewMixin],

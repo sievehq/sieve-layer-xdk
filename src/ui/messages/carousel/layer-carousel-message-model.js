@@ -35,6 +35,15 @@
  * model.generateMessage(conversation, message => message.send());
  * ```
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import using either of these:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/carousel/layer-carousel-message-view';
+ * import '@layerhq/web-xdk/lib/ui/messages/carousel/layer-buttons-message-model';
+ * ```
+ *
  * @class Layer.UI.messages.CarouselMessageModel
  * @extends Layer.Core.MessageTypeModel
  */

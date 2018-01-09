@@ -8,11 +8,9 @@
 import Query from '../queries/query';
 import IdentitiesQuery from '../queries/identities-query';
 import ConversationsQuery from '../queries/conversations-query';
-import ChannelsQuery from '../queries/channels-query';
-import MembersQuery from '../queries/members-query';
 import MessagesQuery from '../queries/messages-query';
-import AnnouncementsQuery from '../queries/announcements-query';
 import { ErrorDictionary } from '../layer-error';
+import Core from '../namespace';
 
 module.exports = {
   events: [
@@ -89,16 +87,16 @@ module.exports = {
           query = new ConversationsQuery(options);
           break;
         case Query.Channel:
-          query = new ChannelsQuery(options);
+          query = this._createChannelsQuery(options);
           break;
         case Query.Membership:
-          query = new MembersQuery(options);
+          query = this._createMembersQuery(options);
           break;
         case Query.Message:
           query = new MessagesQuery(options);
           break;
         case Query.Announcement:
-          query = new AnnouncementsQuery(options);
+          query = this._createAnnouncementsQuery(options);
           break;
 
         default:
@@ -140,3 +138,5 @@ module.exports = {
     },
   },
 };
+
+Core.mixins.Client.push(module.exports);

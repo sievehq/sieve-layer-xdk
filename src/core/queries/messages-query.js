@@ -27,6 +27,7 @@
  * @class  Layer.Core.MessagesQuery
  * @extends Layer.Core.Query
  */
+import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 import Util, { logger } from '../../utils';
@@ -129,9 +130,11 @@ class MessagesQuery extends Query {
     const conversation = this.client.getConversation(conversationId);
 
     // Retrieve data from db cache in parallel with loading data from server
-    this.client.dbManager.loadMessages(conversationId, this._nextDBFromId, pageSize, (messages) => {
-      if (messages.length) this._appendResults({ data: messages }, true);
-    });
+    if (this.client.dbManager) {
+      this.client.dbManager.loadMessages(conversationId, this._nextDBFromId, pageSize, (messages) => {
+        if (messages.length) this._appendResults({ data: messages }, true);
+      });
+    }
 
     const newRequest = `conversations/${predicateIds.uuid}/messages?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -176,9 +179,11 @@ class MessagesQuery extends Query {
     const channel = this.client.getChannel(channelId);
 
     // Retrieve data from db cache in parallel with loading data from server
-    this.client.dbManager.loadMessages(channelId, this._nextDBFromId, pageSize, (messages) => {
-      if (messages.length) this._appendResults({ data: messages }, true);
-    });
+    if (this.client.dbManager) {
+      this.client.dbManager.loadMessages(channelId, this._nextDBFromId, pageSize, (messages) => {
+        if (messages.length) this._appendResults({ data: messages }, true);
+      });
+    }
 
     const newRequest = `channels/${predicateIds.uuid}/messages?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -430,6 +435,6 @@ MessagesQuery.MaxPageSize = 100;
 
 MessagesQuery.prototype.model = Query.Message;
 
-Root.initClass.apply(MessagesQuery, [MessagesQuery, 'MessagesQuery']);
+Root.initClass.apply(MessagesQuery, [MessagesQuery, 'MessagesQuery', Core.Query]);
 
 module.exports = MessagesQuery;

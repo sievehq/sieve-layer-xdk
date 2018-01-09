@@ -64,7 +64,7 @@
  * @extends Layer.Core.Root
  * @author Michael Kantor
  */
-
+import Core from '../namespace';
 import Root from '../root';
 import Content from './content';
 import ClientRegistry from '../client-registry';
@@ -995,6 +995,6 @@ MessagePart._supportedEvents = [
   'content-loaded-error',
   'messageparts:change',
 ].concat(Root._supportedEvents);
-Root.initClass.apply(MessagePart, [MessagePart, 'MessagePart']);
+Root.initClass.apply(MessagePart, [MessagePart, 'MessagePart', Core]);
 
 module.exports = MessagePart;

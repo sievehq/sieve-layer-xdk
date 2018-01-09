@@ -7,7 +7,7 @@
  * @experimental This feature is incomplete, and available as Preview only.
  * @extends Layer.Core.Syncable
  */
-
+import Core from '../namespace';
 import Syncable from './syncable';
 import Root from '../root';
 import Constants from '../../constants';
@@ -190,7 +190,7 @@ Membership._supportedEvents = [
 Membership.eventPrefix = 'members';
 Membership.prefixUUID = '/members/';
 
-Root.initClass.apply(Membership, [Membership, 'Membership']);
+Root.initClass.apply(Membership, [Membership, 'Membership', Core]);
 Syncable.subclasses.push(Membership);
 
 module.exports = Membership;

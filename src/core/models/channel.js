@@ -49,6 +49,7 @@
  * @extends Layer.Core.Container
  * @author  Michael Kantor
  */
+import Core from '../namespace';
 import Root from '../root';
 import Syncable from './syncable';
 import Container from './container';
@@ -617,6 +618,6 @@ Channel._supportedEvents = [
   'channels:change'].concat(Syncable._supportedEvents);
 
 
-Root.initClass.apply(Channel, [Channel, 'Channel']);
+Root.initClass.apply(Channel, [Channel, 'Channel', Core]);
 Syncable.subclasses.push(Channel);
 module.exports = Channel;

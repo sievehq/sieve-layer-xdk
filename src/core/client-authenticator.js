@@ -27,7 +27,7 @@
  * @author Michael Kantor
  *
  */
-
+import Core, { DbManager } from './namespace'; // Optional Component
 import Root from './root';
 import SocketManager from './websockets/socket-manager';
 import WebsocketChangeManager from './websockets/change-manager';
@@ -35,7 +35,6 @@ import WebsocketRequestManager from './websockets/request-manager';
 import LayerError, { ErrorDictionary } from './layer-error';
 import OnlineManager from './online-state-manager';
 import SyncManager from './sync-manager';
-import DbManager from './db-manager';
 import Identity from './models/identity';
 import { XHRSyncEvent, WebsocketSyncEvent } from './sync-event';
 import { LOCALSTORAGE_KEYS, ACCEPT } from '../constants';
@@ -515,10 +514,12 @@ class ClientAuthenticator extends Root {
     // we don't need to update storage.
     if (!this._isPersistedSessionsDisabled() && !fromPersistence) {
       try {
-        global.localStorage[LOCALSTORAGE_KEYS.SESSIONDATA + this.appId] = JSON.stringify({
-          sessionToken: this.sessionToken || '',
-          user: DbManager.prototype._getIdentityData([this.user], true)[0],
-          expires: Date.now() + (30 * 60 * 60 * 24 * 1000),
+        Identity.toDbObjects([this.user], (userObjs) => {
+          global.localStorage[LOCALSTORAGE_KEYS.SESSIONDATA + this.appId] = JSON.stringify({
+            sessionToken: this.sessionToken || '',
+            user: userObjs[0],
+            expires: Date.now() + (30 * 60 * 60 * 24 * 1000),
+          });
         });
       } catch (e) {
         // Do nothing
@@ -567,13 +568,23 @@ class ClientAuthenticator extends Root {
    * @private
    */
   _clientAuthenticated() {
+    this._setupDbSettings();
+
     // Update state and trigger the event
     this.isAuthenticated = true;
     this.trigger('authenticated');
 
     if (!this.isTrustedDevice) this.isPersistenceEnabled = false;
 
+    // Before calling _clientReady, load the session owner's full Identity.
+    if (this.isPersistenceEnabled && this.dbManager) {
+      this.dbManager.onOpen(() => this._loadUser());
+    } else {
+      this._loadUser();
+    }
+  }
 
+  _setupDbSettings() {
     // If no persistenceFeatures are specified, set them all
     // to true or false to match isTrustedDevice.
     if (!this.persistenceFeatures || !this.isPersistenceEnabled) {
@@ -594,19 +605,12 @@ class ClientAuthenticator extends Root {
     }
 
     // Setup the Database Manager
-    if (!this.dbManager) {
+    if (!this.dbManager && DbManager) {
       this.dbManager = new DbManager({
         client: this,
         tables: this.persistenceFeatures,
         enabled: this.isPersistenceEnabled,
       });
-    }
-
-    // Before calling _clientReady, load the session owner's full Identity.
-    if (this.isPersistenceEnabled) {
-      this.dbManager.onOpen(() => this._loadUser());
-    } else {
-      this._loadUser();
     }
   }
 
@@ -653,7 +657,7 @@ class ClientAuthenticator extends Root {
     try {
       // Update the session data in localStorage with our full Identity.
       const sessionData = JSON.parse(global.localStorage[LOCALSTORAGE_KEYS.SESSIONDATA + this.appId]);
-      sessionData.user = DbManager.prototype._getIdentityData([this.user])[0];
+      Identity.toDbObjects([this.user], users => (sessionData.user = users[0]));
       global.localStorage[LOCALSTORAGE_KEYS.SESSIONDATA + this.appId] = JSON.stringify(sessionData);
     } catch (e) {
       // no-op
@@ -1533,6 +1537,6 @@ ClientAuthenticator._supportedEvents = [
   'websocket:operation',
 ].concat(Root._supportedEvents);
 
-Root.initClass.apply(ClientAuthenticator, [ClientAuthenticator, 'ClientAuthenticator']);
+Root.initClass.apply(ClientAuthenticator, [ClientAuthenticator, 'ClientAuthenticator', Core]);
 
 module.exports = ClientAuthenticator;

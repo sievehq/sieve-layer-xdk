@@ -22,6 +22,7 @@
  *
  * @class Layer.Core.LayerEvent
  */
+import Core from './namespace';
 import { logger } from '../utils';
 
 class LayerError {
@@ -178,4 +179,4 @@ LayerError.ErrorDictionary = {
   adapterError: 'You must call Layer.init() before you can use an adapter',
 };
 
-module.exports = LayerError;
+module.exports = Core.LayerError = LayerError;

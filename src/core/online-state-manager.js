@@ -25,6 +25,7 @@
  * @extends Layer.Core.Root
  *
  */
+import Core from './namespace';
 import Root from './root';
 import Util, { logger, xhr } from '../utils';
 import { ACCEPT } from '../constants';
@@ -343,5 +344,5 @@ OnlineStateManager._supportedEvents = [
    */
   'disconnected',
 ].concat(Root._supportedEvents);
-Root.initClass.apply(OnlineStateManager, [OnlineStateManager, 'OnlineStateManager']);
+Root.initClass.apply(OnlineStateManager, [OnlineStateManager, 'OnlineStateManager', Core]);
 module.exports = OnlineStateManager;

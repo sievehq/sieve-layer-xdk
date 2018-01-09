@@ -7,7 +7,7 @@
  *
  * @class Layer.UI.mixins.ListLoadIndicator
  */
-import '../components/layer-loading-indicator/layer-loading-indicator';
+import '../components/layer-loading-indicator';
 
 module.exports = {
   properties: {

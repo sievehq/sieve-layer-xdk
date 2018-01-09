@@ -22,7 +22,7 @@
 import { registerComponent } from '../../components/component';
 
 import MessageViewMixin from '../message-view-mixin';
-import '../../components/layer-action-button/layer-action-button';
+import '../../components/layer-action-button';
 
 registerComponent('layer-choice-tiles-message-view', {
   mixins: [MessageViewMixin],

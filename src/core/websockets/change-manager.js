@@ -5,10 +5,10 @@
  * This class listens for `change` events from the websocket server,
  * and processes them.
  */
+import Core from '../namespace';
 import Util, { logger } from '../../utils';
 import Message from '../models/message';
-import Conversation from '../models/conversation';
-import Channel from '../models/channel';
+import Container from '../models/container';
 
 
 class WebsocketChangeManager {
@@ -131,11 +131,10 @@ class WebsocketChangeManager {
     } else {
       switch (Util.typeFromID(msg.object.id)) {
         case 'channels':
-          if (Channel._loadResourceForPatch(msg.data)) this.client.getObject(msg.object.id, true);
-          break;
         case 'conversations':
-          if (Conversation._loadResourceForPatch(msg.data)) this.client.getObject(msg.object.id, true);
+          if (Container._loadResourceForPatch(msg.data)) this.client.getObject(msg.object.id, true);
           break;
+
         case 'messages':
           if (Message._loadResourceForPatch(msg.data)) this.client.getMessage(msg.object.id, true);
           break;
@@ -172,4 +171,4 @@ class WebsocketChangeManager {
  */
 WebsocketChangeManager.prototype.client = null;
 
-module.exports = WebsocketChangeManager;
+module.exports = Core.Websockets.WebsocketChangeManager = WebsocketChangeManager;

@@ -1,3 +1,4 @@
+import Core from '../namespace';
 import TypingPublisher from './typing-publisher';
 import {STARTED, PAUSED, FINISHED} from './typing-indicators';
 
@@ -178,4 +179,4 @@ class TypingListener {
   }
 }
 
-module.exports = TypingListener;
+module.exports = Core.TypingIndicators.TypingListener = TypingListener;

@@ -15,7 +15,7 @@
  * @class Layer.Core.TypingIndicators.TypingIndicatorListener
  * @extends {Layer.Core.Root}
  */
-
+import Core from '../namespace';
 import Root from '../root';
 import ClientRegistry from '../client-registry';
 import { STARTED, PAUSED, FINISHED } from './typing-indicators';
@@ -263,5 +263,6 @@ TypingIndicatorListener._supportedEvents = [
   'typing-indicator-change',
 ].concat(Root._supportedEvents);
 
-Root.initClass.apply(TypingIndicatorListener, [TypingIndicatorListener, 'TypingIndicatorListener']);
+Root.initClass.apply(TypingIndicatorListener,
+  [TypingIndicatorListener, 'TypingIndicatorListener', Core.TypingIndicators]);
 module.exports = TypingIndicatorListener;

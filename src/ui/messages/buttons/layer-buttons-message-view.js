@@ -1,15 +1,24 @@
 /**
  * UI for a Buttons Message.
  *
+ * ### Importing
+ *
+ * Included with the standard build. For a custom build, import:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/buttons/layer-buttons-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.ButtonsView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
-import '../../components/layer-action-button/layer-action-button';
-import '../../components/layer-choice-button/layer-choice-button';
+import '../../components/layer-action-button';
+import '../../components/layer-choice-button';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
+import './layer-buttons-message-model';
 
 registerComponent('layer-buttons-message-view', {
   template: `

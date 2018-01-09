@@ -1,6 +1,13 @@
 /**
+ * Expanded view for the Feedback Message
  *
+ * ### Importing
  *
+ * Not included with the standard build. Import using:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/choice/layer-feedback-message-view';
+ * ```
  *
  * @class Layer.UI.messages.FeedbackMessageExpandedView
  * @mixin Layer.UI.messages.MessageViewMixin

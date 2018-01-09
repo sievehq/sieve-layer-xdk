@@ -18,12 +18,21 @@ import { register } from './index';
  * Call this function to initialize angular 1.x Directives which will be part of the "layerUIControllers" controller:
  *
  * ```
+ * import '@layerhq/web-xdk/lib/ui/adapters/angular';
  * Layer.UI.adapters.angular(angular); // Creates the layerUIControllers controller
  * angular.module('MyApp', ['layerUIControllers']);
  * ```
  *
  *   Now you can put `<layer-conversation-view>` and other widgets into angular templates and expect them to work.
  *   Prefix ALL property names with `ng-` to insure that scope is evaluated prior to passing the value on to the webcomponent.
+ *
+ * ### Importing
+ *
+ * Not included with the standard build. To import:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/adapters/angular';
+ * ```
  *
  * @class Layer.UI.adapters.angular
  * @singleton

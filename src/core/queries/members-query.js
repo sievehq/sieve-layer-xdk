@@ -24,6 +24,7 @@
  * @class  Layer.Core.MembersQuery
  * @extends Layer.Core.Query
  */
+import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 import { logger } from '../../utils';
@@ -138,6 +139,6 @@ MembersQuery.MaxPageSize = 500;
 
 MembersQuery.prototype.model = Query.Membership;
 
-Root.initClass.apply(MembersQuery, [MembersQuery, 'MembersQuery']);
+Root.initClass.apply(MembersQuery, [MembersQuery, 'MembersQuery', Core.Query]);
 
 module.exports = MembersQuery;

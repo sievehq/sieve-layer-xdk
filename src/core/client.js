@@ -85,15 +85,7 @@
  */
 
 import ClientAuth from './client-authenticator';
-import Conversation from './models/conversation';
-import Channel from './models/channel';
 import { ErrorDictionary } from './layer-error';
-import ConversationMessage from './models/conversation-message';
-import ChannelMessage from './models/channel-message';
-import Announcement from './models/announcement';
-import MessagePart from './models/message-part';
-import Identity from './models/identity';
-import Membership from './models/membership';
 import TypingIndicatorListener from './typing-indicators/typing-indicator-listener';
 import Util from '../utils';
 import version from '../version';
@@ -103,15 +95,8 @@ import ClientRegistry from './client-registry';
 import TypingListener from './typing-indicators/typing-listener';
 import TypingPublisher from './typing-indicators/typing-publisher';
 import TelemetryMonitor from './telemetry-monitor';
-
-import ClientQueryMixin from './mixins/client-queries';
-import ClientIdentityMixin from './mixins/client-identities';
-import ClientMemberMixin from './mixins/client-members';
-import ClientConversationMixin from './mixins/client-conversations';
-import ClientChannelMixin from './mixins/client-channels';
-import ClientMessageMixin from './mixins/client-messages';
-import ClientOperationsMixin from './mixins/websocket-operations';
-import ClientMessageTypeModelMixin from './mixins/client-message-type-models';
+import Identity from './models/identity';
+import Core from './namespace';
 
 class Client extends ClientAuth {
 
@@ -262,26 +247,25 @@ class Client extends ClientAuth {
       return item;
     } else {
       switch (Util.typeFromID(obj.id)) {
-        case 'parts': {
-          return MessagePart._createFromServer(obj);
-        }
+        case 'parts':
+          return this._createMessagePartFromServer(obj);
         case 'messages':
           if (obj.conversation) {
-            return ConversationMessage._createFromServer(obj, this);
+            return this._createConversationMessageFromServer(obj);
           } else if (obj.channel) {
-            return ChannelMessage._createFromServer(obj, this);
+            return this._createChannelMessageFromServer(obj);
           }
           break;
         case 'announcements':
-          return Announcement._createFromServer(obj, this);
+          return this._createAnnouncementFromServer(obj);
         case 'conversations':
-          return Conversation._createFromServer(obj, this);
+          return this._createConversationFromServer(obj);
         case 'channels':
-          return Channel._createFromServer(obj, this);
+          return this._createChannelFromServer(obj);
         case 'identities':
-          return Identity._createFromServer(obj, this);
+          return this._createIdentityFromServer(obj);
         case 'members':
-          return Membership._createFromServer(obj, this);
+          return this._createMembershipFromServer(obj);
       }
     }
     return null;
@@ -296,7 +280,7 @@ class Client extends ClientAuth {
    * @param {String} oldId
    */
   _updateContainerId(container, oldId) {
-    if (container instanceof Conversation) {
+    if (container.id.match(/\/conversations\//)) {
       this._updateConversationId(container, oldId);
     } else {
       this._updateChannelId(container, oldId);
@@ -481,13 +465,20 @@ class Client extends ClientAuth {
   _connectionRestored(evt) {
     if (evt.reset) {
       logger.debug('Client Connection Restored; Resetting all Queries');
-      this.dbManager.deleteTables(() => {
-        this.dbManager._open();
+      if (this.dbManager) {
+        this.dbManager.deleteTables(() => {
+          this.dbManager._open();
+          Object.keys(this._models.queries).forEach((id) => {
+            const query = this._models.queries[id];
+            if (query) query.reset();
+          });
+        });
+      } else {
         Object.keys(this._models.queries).forEach((id) => {
           const query = this._models.queries[id];
           if (query) query.reset();
         });
-      });
+      }
     }
   }
 
@@ -695,15 +686,7 @@ Client._supportedEvents = [
 
 ].concat(ClientAuth._supportedEvents);
 
-Client.mixins = [
-  ClientQueryMixin,
-  ClientIdentityMixin,
-  ClientMemberMixin,
-  ClientConversationMixin,
-  ClientChannelMixin,
-  ClientMessageMixin,
-  ClientOperationsMixin,
-  ClientMessageTypeModelMixin,
-];
-Root.initClass.apply(Client, [Client, 'Client']);
+Client.mixins = Core.mixins.Client;
+
+Root.initClass.apply(Client, [Client, 'Client', Core]);
 module.exports = Client;

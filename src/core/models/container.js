@@ -6,6 +6,7 @@
  * @extends Layer.Core.Syncable
  * @author  Michael Kantor
  */
+import Core from '../namespace';
 import Syncable from './syncable';
 import { ErrorDictionary } from '../layer-error';
 import Util from '../../utils';
@@ -571,7 +572,6 @@ Container.FOUND = 'Found';
  */
 Container.FOUND_WITHOUT_REQUESTED_METADATA = 'FoundMismatch';
 
-
-Root.initClass.apply(Container, [Container, 'Container']);
+Root.initClass.apply(Container, [Container, 'Container', Core]);
 Syncable.subclasses.push(Container);
 module.exports = Container;

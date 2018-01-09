@@ -1,6 +1,13 @@
 /**
  * A dialog for showing a Message Type Model in an expanded full (or near-full) screen view.
  *
+ * ### Importing
+ *
+ * Included with the standard build. For custom build,  import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/layer-message-viewer-expanded
+ * ```
  *
  * @class Layer.UI.messages.MessageViewerExpanded
  * @extends Layer.UI.Component

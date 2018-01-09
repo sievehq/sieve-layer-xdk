@@ -1,6 +1,14 @@
 /**
  * Container for Message Type Views that adds a titlebar.
  *
+ * ### Importing
+ *
+ * Included with the standard build. For custom build,  import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/layer-titled-message-view-container
+ * ```
+ *
  * @class Layer.UI.messages.TitledMessageViewContainer
  * @extends Layer.UI.Component
  */

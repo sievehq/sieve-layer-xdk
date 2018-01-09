@@ -6,9 +6,8 @@
 
 import Identity from '../models/identity';
 import { ErrorDictionary } from '../layer-error';
-import Util from '../../utils';
 import { WebsocketSyncEvent } from '../sync-event';
-
+import Core from '../namespace';
 
 module.exports = {
   events: [
@@ -289,5 +288,11 @@ module.exports = {
         depends: [],
       }));
     },
+
+    _createIdentityFromServer(obj) {
+      return Identity._createFromServer(obj, this);
+    },
   },
 };
+
+Core.mixins.Client.push(module.exports);

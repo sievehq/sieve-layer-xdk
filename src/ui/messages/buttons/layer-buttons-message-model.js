@@ -78,10 +78,19 @@
  * * The Buttons Message will have a `model.responses` property that contains all of the responses from all of its Choice Buttons
  * * In generating Choice Models, this Model will pass all of its `responses` into the Choice Model as an input.
  *
+ * ### Importing
+ *
+ * Included with the standard build. For a custom build, import either of these:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/buttons/layer-buttons-message-view';
+ * import '@layerhq/web-xdk/lib/ui/messages/buttons/layer-buttons-message-model';
+ * ```
+ *
  * @class Layer.UI.messages.ButtonsMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel, Root } from '../../../core';
+import { Client, MessagePart, MessageTypeModel, Root, MessageTypeModels } from '../../../core';
 import { uuid } from '../../../utils';
 import ChoiceModel from '../choice/layer-choice-message-model';
 import ChoiceItem from '../choice/layer-choice-message-model-item';
@@ -267,7 +276,7 @@ ButtonsModel.MIMEType = 'application/vnd.layer.buttons+json';
 ButtonsModel.messageRenderer = 'layer-buttons-message-view';
 
 // Register the Class
-Root.initClass.apply(ButtonsModel, [ButtonsModel, 'ButtonsModel']);
+Root.initClass.apply(ButtonsModel, [ButtonsModel, 'ButtonsModel', MessageTypeModels]);
 
 // Register the Message Model Class with the Client
 Client.registerMessageTypeModelClass(ButtonsModel, 'ButtonsModel');

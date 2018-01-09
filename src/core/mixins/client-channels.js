@@ -6,7 +6,9 @@
 
 import Channel from '../models/channel';
 import { ErrorDictionary } from '../layer-error';
-
+import ChannelMessage from '../models/channel-message';
+import ChannelsQuery from '../queries/channels-query';
+import Core from '../namespace';
 
 module.exports = {
   events: [
@@ -401,5 +403,19 @@ module.exports = {
       options._loadType = 'websocket'; // treat this the same as a websocket loaded object
       return Channel.create(options);
     },
+
+    _createChannelMessageFromServer(obj) {
+      return ChannelMessage._createFromServer(obj, this);
+    },
+
+    _createChannelFromServer(obj) {
+      return Channel._createFromServer(obj, this);
+    },
+
+    _createChannelsQuery(options) {
+      return new ChannelsQuery(options);
+    },
   },
 };
+
+Core.mixins.Client.push(module.exports);

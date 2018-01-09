@@ -14,6 +14,7 @@
  * @abstract
  */
 
+import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 import ClientRegistry from '../client-registry';
@@ -319,6 +320,21 @@ class Syncable extends Root {
   }
 
   /**
+   * Convert array of Syncable instances into an array of objects that can be inserted into indexedDB.
+   *
+   * Values should look a lot like they would look when coming from the server.
+   *
+   * @method toDbObjects
+   * @private
+   * @param {Layer.Core.Syncable[]} items
+   * @param {Function} callback
+   * @return {Object[]} items
+   */
+  static toDbObjects(items, callback) {
+    return items.map(item => item.toObject());
+  }
+
+  /**
    * Object is new, and is not yet queued for syncing
    *
    * @method isNew
@@ -488,4 +504,4 @@ Syncable.subclasses = [];
 Syncable._supportedEvents = [].concat(Root._supportedEvents);
 Syncable.inObjectIgnore = Root.inObjectIgnore;
 module.exports = Syncable;
-
+Core.Syncable = Syncable;

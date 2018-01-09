@@ -4,6 +4,7 @@
  * @class Layer.Core.Message.ChannelMessage
  * @extends Layer.Core.Message
  */
+import Core from '../namespace';
 import Root from '../root';
 import Message from './message';
 import ClientRegistry from '../client-registry';
@@ -138,5 +139,5 @@ ChannelMessage.prototype.isRead = false;
 
 ChannelMessage.inObjectIgnore = Message.inObjectIgnore;
 ChannelMessage._supportedEvents = [].concat(Message._supportedEvents);
-Root.initClass.apply(ChannelMessage, [ChannelMessage, 'ChannelMessage']);
+Root.initClass.apply(ChannelMessage, [ChannelMessage, 'ChannelMessage', Core]);
 module.exports = ChannelMessage;

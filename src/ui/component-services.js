@@ -102,7 +102,7 @@ module.exports.buildAndRegisterTemplate = function buildTemplate(className, temp
 
   // Generate a template node
   const template = document.createElement('template');
-  template.innerHTML = templateStr;
+  template.innerHTML = templateStr.trim();
 
   // Write it as a static property of the Component
   ComponentsHash[className].template = template;

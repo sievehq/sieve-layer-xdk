@@ -37,6 +37,15 @@
  * In the above example, the LinkModel's url will be used if showing a URL.
  * The `action.data.url` if the user clicks on the Message.
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import using either:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/link/layer-link-message-view';
+ * import '@layerhq/web-xdk/lib/ui/messages/link/layer-link-message-model';
+ * ```
+ *
  * @class Layer.UI.messages.LinkMessageModel
  * @extends Layer.Core.MessageTypeModel
  */

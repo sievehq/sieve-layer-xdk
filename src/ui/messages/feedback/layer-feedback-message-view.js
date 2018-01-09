@@ -1,5 +1,13 @@
 /**
+ * Feedback message allows a user to request a rating and comment from another user.
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import using:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/choice/layer-feedback-message-view';
+ * ```
  *
  *
  * @class Layer.UI.messages.FeedbackMessageView
@@ -12,6 +20,7 @@ import { registerStatusModel } from '../../ui-utils/';
 import FeedbackModel from './layer-feedback-message-model';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
+import './layer-feedback-message-expanded-view';
 
 registerComponent('layer-feedback-message-view', {
   mixins: [MessageViewMixin, Clickable],

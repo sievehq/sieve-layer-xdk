@@ -12,11 +12,13 @@
  * @protected
  */
 
+import Core from './namespace';
 import Root from './root';
 import SyncEvent from './sync-event';
 import Constants from '../constants';
 import Util from '../utils';
 import Announcement from './models/announcement';
+import Identity from './models/announcement';
 
 const DB_VERSION = 5;
 const MAX_SAFE_INTEGER = 9007199254740991;
@@ -270,20 +272,22 @@ class DbManager extends Root {
         return true;
       }
     }).map((conversation) => {
-      const item = {
-        id: conversation.id,
-        url: conversation.url,
-        participants: this._getIdentityData(conversation.participants, true),
-        distinct: conversation.distinct,
-        created_at: getDate(conversation.createdAt),
-        metadata: conversation.metadata,
-        unread_message_count: conversation.unreadCount,
-        last_message: conversation.lastMessage ? conversation.lastMessage.id : '',
-        last_message_sent: conversation.lastMessage ?
-          getDate(conversation.lastMessage.sentAt) : getDate(conversation.createdAt),
-        sync_state: conversation.syncState,
-      };
-      return item;
+      Identity.toDbBasicObjects(conversation.participants, (participants) => {
+        const item = {
+          id: conversation.id,
+          url: conversation.url,
+          participants,
+          distinct: conversation.distinct,
+          created_at: getDate(conversation.createdAt),
+          metadata: conversation.metadata,
+          unread_message_count: conversation.unreadCount,
+          last_message: conversation.lastMessage ? conversation.lastMessage.id : '',
+          last_message_sent: conversation.lastMessage ?
+            getDate(conversation.lastMessage.sentAt) : getDate(conversation.createdAt),
+          sync_state: conversation.syncState,
+        };
+        return item;
+      });
     });
   }
 
@@ -371,18 +375,15 @@ class DbManager extends Root {
   }
 
   /**
-   * Convert array of Identity instances into Identity DB Entries.
+   * Writes an array of Identities to the Database.
    *
-   * @method _getIdentityData
-   * @private
-   * @param {Layer.Core.Identity[]} identities
-   * @param {boolean} writeBasicIdentity - Forces output as a Basic Identity
-   * @return {Object[]} identities
+   * @method writeIdentities
+   * @param {Layer.Core.Identity[]} identities - Array of Identities to write
+   * @param {Function} [callback]
    */
-  _getIdentityData(identities, writeBasicIdentity) {
-    return identities.filter((identity) => {
-      if (identity.isDestroyed || (!identity.isFullIdentity && !writeBasicIdentity)) return false;
-
+  writeIdentities(identities, callback) {
+    identities = identities.filter((identity) => {
+      if (identity.isDestroyed) return false;
       if (identity._fromDB) {
         identity._fromDB = false;
         return false;
@@ -391,45 +392,11 @@ class DbManager extends Root {
       } else {
         return true;
       }
-    }).map((identity) => {
-      if (identity.isFullIdentity && !writeBasicIdentity) {
-        return {
-          id: identity.id,
-          url: identity.url,
-          user_id: identity.userId,
-          first_name: identity.firstName,
-          last_name: identity.lastName,
-          display_name: identity.displayName,
-          avatar_url: identity.avatarUrl,
-          metadata: identity.metadata,
-          public_key: identity.publicKey,
-          phone_number: identity.phoneNumber,
-          email_address: identity.emailAddress,
-          sync_state: identity.syncState,
-          type: identity.type,
-        };
-      } else {
-        return {
-          id: identity.id,
-          url: identity.url,
-          user_id: identity.userId,
-          display_name: identity.displayName,
-          avatar_url: identity.avatarUrl,
-        };
-      }
     });
-  }
 
-  /**
-   * Writes an array of Identities to the Database.
-   *
-   * @method writeIdentities
-   * @param {Layer.Core.Identity[]} identities - Array of Identities to write
-   * @param {Function} [callback]
-   */
-  writeIdentities(identities, callback) {
-    this._writeObjects('identities',
-      this._getIdentityData(identities), callback);
+    Identity.toDbObjects(identities => (identityObjs) => {
+      this._writeObjects('identities', identityObjs, callback);
+    });
   }
 
   /**
@@ -454,34 +421,38 @@ class DbManager extends Root {
       } else {
         return true;
       }
-    }).map(message => ({
-      id: message.id,
-      url: message.url,
-      parts: message.parts.map((part) => {
-        const body = Util.isBlob(part.body) && part.body.size > DbManager.MaxPartSize ? null : part.body;
-        return {
-          body,
-          id: part.id,
-          encoding: part.encoding,
-          mime_type: part.mimeType,
-          content: !part._content ? null : {
-            id: part._content.id,
-            download_url: part._content.downloadUrl,
-            expiration: part._content.expiration,
-            refresh_url: part._content.refreshUrl,
-            size: part._content.size,
-          },
-        };
-      }),
-      position: message.position,
-      sender: this._getIdentityData([message.sender], true)[0],
-      recipient_status: message.recipientStatus,
-      sent_at: getDate(message.sentAt),
-      received_at: getDate(message.receivedAt),
-      conversationId: message instanceof Announcement ? 'announcement' : message.conversationId,
-      sync_state: message.syncState,
-      is_unread: message.isUnread,
-    }));
+    }).map(message => {
+      let sender;
+      Identity.toDbBasicObjects([message.sender], identities => sender = identities[0]);
+      return {
+        id: message.id,
+        url: message.url,
+        parts: message.parts.map((part) => {
+          const body = Util.isBlob(part.body) && part.body.size > DbManager.MaxPartSize ? null : part.body;
+          return {
+            body,
+            id: part.id,
+            encoding: part.encoding,
+            mime_type: part.mimeType,
+            content: !part._content ? null : {
+              id: part._content.id,
+              download_url: part._content.downloadUrl,
+              expiration: part._content.expiration,
+              refresh_url: part._content.refreshUrl,
+              size: part._content.size,
+            },
+          };
+        }),
+        position: message.position,
+        sender,
+        recipient_status: message.recipientStatus,
+        sent_at: getDate(message.sentAt),
+        received_at: getDate(message.receivedAt),
+        conversationId: message instanceof Announcement ? 'announcement' : message.conversationId,
+        sync_state: message.syncState,
+        is_unread: message.isUnread,
+      };
+    });
 
     // Find all blobs and convert them to base64... because Safari 9.1 doesn't support writing blobs those Frelling Smurfs.
     let count = 0;
@@ -1353,5 +1324,5 @@ DbManager._supportedEvents = [
   'open', 'error',
 ].concat(Root._supportedEvents);
 
-Root.initClass.apply(DbManager, [DbManager, 'DbManager']);
+Root.initClass.apply(DbManager, [DbManager, 'DbManager', Core]);
 module.exports = DbManager;

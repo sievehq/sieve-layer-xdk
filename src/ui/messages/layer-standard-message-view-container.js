@@ -1,6 +1,14 @@
 /**
  * This container wraps simpler Layer.UI.messages.MessageViewMixin and adds a metadata section below the UI.
  *
+ * ### Importing
+ *
+ * Included with the standard build. For custom build,  import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/layer-standard-message-view-container
+ * ```
+ *
  * @class Layer.UI.messages.StandardMessageViewContainer
  * @extends Layer.UI.Component
  */

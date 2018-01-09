@@ -42,6 +42,15 @@
  * model.generateMessage(conversation, message => message.send());
  * ```
  *
+ * ### Importing
+ *
+ * Included with the standard build. For custom build, import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/image/layer-image-message-view';
+ * import '@layerhq/web-xdk/lib/ui/messages/image/layer-image-message-model';
+ * ```
+ *
  * @class Layer.UI.messages.ImageMessageModel
  * @extends Layer.Core.MessageTypeModel
  */

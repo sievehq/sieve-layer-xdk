@@ -1,6 +1,14 @@
 /**
  * UI for a Carousel Message.
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import using:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/carousel/layer-carousel-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.CarouselView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
@@ -11,6 +19,7 @@ import Constants from '../../constants';
 import MessageViewMixin from '../message-view-mixin';
 import Throttler from '../../mixins/throttler';
 import Clickable from '../../mixins/clickable';
+import './layer-carousel-message-model';
 
 registerComponent('layer-carousel-message-view', {
   template: `

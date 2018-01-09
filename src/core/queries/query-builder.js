@@ -1,3 +1,4 @@
+import Core from '../namespace';
 import Query from './query';
 
 /**
@@ -571,4 +572,4 @@ const QueryBuilder = {
 };
 
 module.exports = QueryBuilder;
-
+Core.QueryBuilder = QueryBuilder;

@@ -1,6 +1,14 @@
 /**
  * UI for a Choice Message
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import using:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/choice/layer-choice-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.ChoiceMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
@@ -39,7 +47,9 @@ import { registerComponent } from '../../components/component';
 import Constants from '../../constants';
 
 import MessageViewMixin from '../message-view-mixin';
-import '../../components/layer-action-button/layer-action-button';
+import '../../components/layer-action-button';
+import './layer-choice-label-message-view';
+import './layer-choice-message-model';
 
 registerComponent('layer-choice-message-view', {
   mixins: [MessageViewMixin],

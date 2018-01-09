@@ -5,6 +5,14 @@
  * its state in a manner that is shared with all users and persisted.  See the Response Model for more details.
  * The Response View simply renders any renderable part of the Response Message.
  *
+ * ### Importing
+ *
+ * Included with the standard build. For custom build, Import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/response/layer-response-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.ResponseMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
@@ -12,6 +20,7 @@
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
+import './layer-response-message-model';
 
 registerComponent('layer-response-message-view', {
   mixins: [MessageViewMixin],

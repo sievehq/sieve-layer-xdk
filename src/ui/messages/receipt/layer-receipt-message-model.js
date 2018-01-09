@@ -27,6 +27,15 @@
  * 'Confirm' button or 'Procede with Purchase' button or other ways of changing
  * this from a Receipt into a Confirmation Message.
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import with either:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/receipt/layer-receipt-message-view';
+ * import '@layerhq/web-xdk/lib/ui/messages/receipt/layer-receipt-message-model';
+ * ```
+ *
  * @class Layer.UI.messages.ReceiptMessageModel
  * @extends Layer.Core.MessageTypeModel
  */

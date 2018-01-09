@@ -17,7 +17,7 @@
  * @extends Layer.Core.Root
  * @author Michael Kantor
  */
-
+import Core from '../namespace';
 import Root from '../root';
 import { xhr } from '../../utils';
 
@@ -156,5 +156,5 @@ Content.prototype.size = 0;
  */
 Content.prototype.expiration = null;
 
-Root.initClass.apply(Content, [Content, 'Content']);
+Root.initClass.apply(Content, [Content, 'Content', Core]);
 module.exports = Content;

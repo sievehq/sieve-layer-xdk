@@ -124,7 +124,7 @@
  * @class  Layer.Core.Message
  * @extends Layer.Core.Syncable
  */
-
+import Core from '../namespace';
 import Root from '../root';
 import Syncable from './syncable';
 import MessagePart from './message-part';
@@ -1177,6 +1177,6 @@ Message._supportedEvents = [
   'messages:part-removed',
 ].concat(Syncable._supportedEvents);
 
-Root.initClass.apply(Message, [Message, 'Message']);
+Root.initClass.apply(Message, [Message, 'Message', Core]);
 Syncable.subclasses.push(Message);
 module.exports = Message;

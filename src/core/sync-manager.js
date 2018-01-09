@@ -17,6 +17,7 @@
  * Applications do not typically interact with this class, but may subscribe to its events
  * to get richer detailed information than is available from the Layer.Core.Client instance.
  */
+import Core from './namespace';
 import Root from './root';
 import { WebsocketSyncEvent } from './sync-event';
 import Util, { logger, xhr } from '../utils';
@@ -147,7 +148,7 @@ class SyncManager extends Root {
   _processNextRequest(requestEvt) {
     // Fire the request if there aren't any existing requests already firing
     if (this.queue.length && !this.queue[0].isFiring) {
-      if (requestEvt) {
+      if (requestEvt && this.client.dbManager) {
         this.client.dbManager.writeSyncEvents([requestEvt], () => this._processNextStandardRequest());
       } else {
         this._processNextStandardRequest();
@@ -298,7 +299,11 @@ class SyncManager extends Root {
    * @private
    */
   _validateRequest(syncEvent, callback) {
-    this.client.dbManager.claimSyncEvent(syncEvent, isFound => callback(isFound));
+    if (!this.client.dbManager) {
+      callback(true);
+    } else {
+      this.client.dbManager.claimSyncEvent(syncEvent, isFound => callback(isFound));
+    }
   }
 
   /**
@@ -447,8 +452,10 @@ class SyncManager extends Root {
     }
 
     // Write the sync event back to the database if we haven't completed processing it
-    if (this.queue.indexOf(requestEvt) !== -1 || this.receiptQueue.indexOf(requestEvt) !== -1) {
-      this.client.dbManager.writeSyncEvents([requestEvt]);
+    if (this.client.dbManager) {
+      if (this.queue.indexOf(requestEvt) !== -1 || this.receiptQueue.indexOf(requestEvt) !== -1) {
+        this.client.dbManager.writeSyncEvents([requestEvt]);
+      }
     }
   }
 
@@ -636,7 +643,7 @@ class SyncManager extends Root {
     const queue = requestEvt.operation === 'RECEIPT' ? this.receiptQueue : this.queue;
     const index = queue.indexOf(requestEvt);
     if (index !== -1) queue.splice(index, 1);
-    if (deleteDB) this.client.dbManager.deleteObjects('syncQueue', [requestEvt]);
+    if (deleteDB && this.client.dbManager) this.client.dbManager.deleteObjects('syncQueue', [requestEvt]);
   }
 
   /**
@@ -695,12 +702,14 @@ class SyncManager extends Root {
    * @private
    */
   _loadPersistedQueue() {
-    this.client.dbManager.loadSyncQueue((data) => {
-      if (data.length) {
-        this.queue = this.queue.concat(data);
-        this._processNextRequest();
-      }
-    });
+    if (this.client.dbManager) {
+      this.client.dbManager.loadSyncQueue((data) => {
+        if (data.length) {
+          this.queue = this.queue.concat(data);
+          this._processNextRequest();
+        }
+      });
+    }
   }
 }
 
@@ -866,5 +875,5 @@ SyncManager._supportedEvents = [
   'sync:abort',
 ].concat(Root._supportedEvents);
 
-Root.initClass.apply(SyncManager, [SyncManager, 'SyncManager']);
+Root.initClass.apply(SyncManager, [SyncManager, 'SyncManager', Core]);
 module.exports = SyncManager;

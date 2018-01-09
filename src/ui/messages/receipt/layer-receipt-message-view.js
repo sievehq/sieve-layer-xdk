@@ -4,6 +4,14 @@
  * The Receipt Message may also be combined with a Button Model to act as an invoice
  * or request confirmation of a planned purchase.
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/receipt/layer-receipt-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.ReceiptMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
@@ -11,6 +19,7 @@
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import './layer-receipt-message-product-view';
+import './layer-receipt-message-model';
 import Constants from '../../constants';
 
 registerComponent('layer-receipt-message-view', {

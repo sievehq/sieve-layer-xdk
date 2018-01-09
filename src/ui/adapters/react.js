@@ -11,13 +11,14 @@ import { register } from './index';
  * ```
  * import React from 'react';
  * import ReactDom from 'react-dom';
- * const { ConversationPanel, ConversationList, UserList, Notifier } = Layer.UI.adapters.react(React, ReactDom);
+ * import '@layerhq/web-xdk/lib/ui/adapters/react';
+ * const { ConversationView, ConversationList, UserList, Notifier } = Layer.UI.adapters.react(React, ReactDom);
  * ```
  *
  * Calling this will expose the following React Components:
  *
- * * ConversationPanel: A wrapper around a Layer.UI.components.ConversationView
- * * ConversationsList: A wrapper around a Layer.UI.components.ConversationsListPanel
+ * * ConversationView: A wrapper around a Layer.UI.components.ConversationView
+ * * ConversationsList: A wrapper around a Layer.UI.components.ConversationListPanel
  * * IdentitiesList: A wrapper around a Layer.UI.components.IdentityListPanel
  * * Notifier: A wrapper around a Layer.UI.components.misc.Notifier
  * * SendButton: A wrapper around a Layer.UI.components.SendButton
@@ -39,6 +40,7 @@ import { register } from './index';
  * ```
  * import React, { Component, PropTypes } from 'react';
  * import ReactDom from 'react-dom';
+ * import '@layerhq/web-xdk/lib/ui/adapters/react';
  * import Layer from '@layerhq/web-xdk';
  *
  * Layer.init({
@@ -50,6 +52,14 @@ import { register } from './index';
  *
  * Now anywhere you need access to the LayerUIWidgets library can import this module and expect everything to
  * evaluate at the correct time, correct order, and only evaluate once.
+ *
+ * ### Importing
+ *
+ * Not included with the standard build. To import:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/adapters/react';
+ * ```
  *
  * @class Layer.UI.adapters.react
  * @singleton

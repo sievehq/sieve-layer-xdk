@@ -11,7 +11,7 @@
  * @class  Layer.Core.Announcement
  * @extends Layer.Core.Message.ConversationMessage
  */
-
+import Core from '../namespace';
 import ConversationMessage from './conversation-message';
 import Syncable from './syncable';
 import Root from '../root';
@@ -135,6 +135,6 @@ Announcement.bubbleEventParent = 'getClient';
 Announcement._supportedEvents = [].concat(ConversationMessage._supportedEvents);
 
 Announcement.inObjectIgnore = ConversationMessage.inObjectIgnore;
-Root.initClass.apply(Announcement, [Announcement, 'Announcement']);
+Root.initClass.apply(Announcement, [Announcement, 'Announcement', Core]);
 Syncable.subclasses.push(Announcement);
 module.exports = Announcement;

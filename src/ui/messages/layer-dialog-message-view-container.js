@@ -2,6 +2,14 @@
  * Similar to the Layer.UI.messages.TitledMessageViewContainer, this adds a title and a close button
  * to a container that wraps a Message Type View.
  *
+ * ### Importing
+ *
+ * Included with the standard build. For custom build,  import with:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/layer-dialog-message-view-container
+ * ```
+ *
  * @class Layer.UI.messages.DialogMessageViewContainer
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable

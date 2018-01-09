@@ -16,6 +16,14 @@
    model.generateMessage($("layer-conversation-view").conversation, message => message.send())
  * ```
  *
+ *### Importing
+ *
+ * Not included with the standard build. Import using either:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/choice/layer-feedback-message-view';
+ * import '@layerhq/web-xdk/lib/ui/messages/choice/layer-feedback-message-model';
+ * ```
  *
  * @class Layer.UI.messages.FeedbackMessageModel
  * @extends Layer.Core.MessageTypeModel

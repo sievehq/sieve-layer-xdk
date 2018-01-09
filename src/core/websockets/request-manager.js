@@ -6,6 +6,7 @@
  * And have that callback either called by the correct websocket server response, or
  * be called with a timeout.
  */
+import Core from '../namespace';
 import Util, { logger } from '../../utils';
 import LayerError from '../layer-error';
 
@@ -315,5 +316,5 @@ WebsocketRequestManager.prototype._callbackCleanupId = 0;
 
 WebsocketRequestManager.prototype.socketManager = null;
 
-module.exports = WebsocketRequestManager;
+module.exports = Core.Websockets.WebsocketRequestManager = WebsocketRequestManager;
 

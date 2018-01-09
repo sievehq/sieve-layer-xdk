@@ -1,6 +1,14 @@
 /**
  * Represents a single Choice among many Choices within the Layer.UI.messages.ChoiceMessageModel model.
  *
+ * ### Importing
+ *
+ * Not included with the standard build. Import using:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/messages/choice/layer-choice-message-view';
+ * ```
+ *
  * @class Layer.UI.messages.ChoiceMessageItemModel
  * @extends Layer.Core.Root
  */
