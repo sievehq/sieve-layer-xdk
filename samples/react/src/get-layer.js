@@ -27,9 +27,25 @@ const layerClient = Layer.init({
   useEmojiImages: false,
   textHandlers: ['autolinker', 'emoji', 'newline'],
   mixins: {
-
+    'layer-avatar': [
+      {
+        methods: {
+          onCreate() {
+            console.log("MIXIN 1");
+          }
+        }
+      },
+      {
+        methods: {
+          onCreate() {
+            console.log("MIXIN 2");
+          }
+        }
+      }
+    ]
   }
 });
+
 
 const LayerReactUI = Layer.UI.adapters.react(React, ReactDom);
 module.exports = { LayerReactUI, Layer, layerClient };

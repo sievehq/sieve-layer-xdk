@@ -124,14 +124,32 @@ LayerUI.init = function init(settings = {}) {
  * Layer.init({ appId });
  * ```
  *
- * `setupMixins` may be called multiple times; however, at this time, only
- * a single mixin is supported per component.
+ * * `setupMixins` may be called multiple times, and can add multiple mixins to the same class.
+ *
+ * `setupMixins` can also take an array of mixins:
+ *
+ * ```
+ * var mixins = {
+ *   'my-tag-name1': [
+ *     {
+ *        properties: {
+ *          prop1: {}
+ *        }
+ *      },
+ *      {
+ *        properties: {
+ *          prop2: {}
+ *        }
+ *      }
+ *    }]
+ * };
+ * Layer.UI.setupMixins(mixins);
+ * Layer.init({ appId });
+ * ```
  *
  * Why use it?  If you have multiple places in your code that specify mixins,
  * they may each separately call this method to setup your mixin instead of
  * having to do it all in one big `Layer.init()` call.
- *
- * TODO: Support arrays of mixins
  *
  * @method setupMixins
  * @param {Object} mixins
@@ -139,7 +157,12 @@ LayerUI.init = function init(settings = {}) {
 LayerUI.setupMixins = function setupMixins(mixins) {
   if (!LayerUI.settings.mixins) LayerUI.settings.mixins = {};
   Object.keys(mixins).forEach((componentName) => {
-    LayerUI.settings.mixins[componentName] = Object.assign({}, LayerUI.settings[componentName] || {}, mixins[componentName]);
+    if (!LayerUI.settings.mixins[componentName]) {
+      LayerUI.settings.mixins[componentName] = [];
+    } else if (!Array.isArray(LayerUI.settings.mixins[componentName])) {
+      LayerUI.settings.mixins[componentName] = [LayerUI.settings.mixins[componentName]];
+    }
+    LayerUI.settings.mixins[componentName] = LayerUI.settings.mixins[componentName].concat(mixins[componentName]);
   });
 };
 
