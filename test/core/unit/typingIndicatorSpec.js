@@ -32,7 +32,7 @@ describe("The Typing Indicator Classes", function() {
             displayName: "display",
             syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
-            sessionOwner: true
+            isMine: true
         });
 
         johnIdentity = new Layer.Core.Identity({

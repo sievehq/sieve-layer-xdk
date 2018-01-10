@@ -113,7 +113,7 @@ __updateParts(parts) {
     if (!conversation || Util.doesObjectMatch(status, oldStatus)) return;
 
     const id = client.user.id;
-    const isSender = this.sender.sessionOwner;
+    const isSender = this.sender.isMine;
     const userHasRead = status[id] === Constants.RECEIPT_STATE.READ;
 
     try {

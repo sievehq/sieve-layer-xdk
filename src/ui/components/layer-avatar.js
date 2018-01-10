@@ -147,7 +147,7 @@ registerComponent('layer-avatar', {
      * @private
      */
     onRender() {
-      const users = this.users.length === 1 ? this.users : this.users.filter(user => !user.sessionOwner);
+      const users = this.users.length === 1 ? this.users : this.users.filter(user => !user.isMine);
       // Clear the innerHTML if we have rendered something before
       if (this.users.length) {
         this.innerHTML = '';
@@ -249,7 +249,7 @@ registerComponent('layer-avatar', {
 
     _sortMultiAvatars() {
       return this.users
-          .filter(user => !user.sessionOwner)
+          .filter(user => !user.isMine)
           .sort((userA, userB) => {
             if (userA.type === 'BOT' && userB.type !== 'BOT') return 1;
             if (userB.type === 'BOT' && userA.type !== 'BOT') return -1;

@@ -18,7 +18,7 @@ describe('layer-conversation-title', function() {
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
     user2 = new Layer.Core.Identity({
       client: client,
@@ -109,7 +109,7 @@ describe('layer-conversation-title', function() {
         firstName: "first",
         lastName: "last",
         id: 'layer:///identities/AAA',
-        sessionOwner: false
+        isMine: false
       })];
       conversation.metadata = {};
       el.item = conversation;

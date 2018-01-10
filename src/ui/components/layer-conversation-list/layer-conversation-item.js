@@ -208,7 +208,7 @@ registerComponent('layer-conversation-item', {
 
     // Lifecycle method
     onRerender() {
-      const users = this.item.participants.filter(user => !user.sessionOwner);
+      const users = this.item.participants.filter(user => !user.isMine);
       const isUnread = this.item.lastMessage && !this.item.lastMessage.isRead;
 
       // Group counter only shows when size = tiny and there is more than one other

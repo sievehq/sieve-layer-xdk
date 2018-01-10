@@ -405,7 +405,7 @@ Identity.prototype.displayName = '';
  * All other Identities will have this as false.
  * @property {boolean}
  */
-Identity.prototype.sessionOwner = false;
+Identity.prototype.isMine = false;
 
 /**
  * ID of the Client this Identity is associated with.

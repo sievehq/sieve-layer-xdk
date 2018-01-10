@@ -75,7 +75,7 @@ registerComponent('layer-conversation-title', {
           let title = conversation.metadata.conversationName;
           if (!title) {
             const users = conversation.participants
-              .filter(user => !user.sessionOwner) // don't show the user their own name
+              .filter(user => !user.isMine) // don't show the user their own name
               .filter(user => user.displayName || user.firstName || user.lastName);
             if (users.length === 1) {
               title = users[0].displayName || users[0].firstName || users[0].lastName;
@@ -107,7 +107,7 @@ registerComponent('layer-conversation-title', {
     _sortNames() {
       const participants = this.item.participants;
       return participants
-          .filter(user => !user.sessionOwner)
+          .filter(user => !user.isMine)
           .filter(user => user.firstName || user.lastName || user.displayName)
           .sort((userA, userB) => {
             if (userA.type === 'bot' && userB.type !== 'bot') return 1;

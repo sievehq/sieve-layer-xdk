@@ -133,7 +133,7 @@ class ReceiptModel extends MessageTypeModel {
 
   // Used to render Last Message in the Conversation List
   getOneLineSummary() {
-    return (!this.message || this.message.sender.sessionOwner ? 'A ' : 'Your ') + this.constructor.Label;
+    return (!this.message || this.message.sender.isMine ? 'A ' : 'Your ') + this.constructor.Label;
   }
 }
 

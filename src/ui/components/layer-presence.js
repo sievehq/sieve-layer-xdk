@@ -95,7 +95,7 @@ registerComponent('layer-presence', {
 
           // Item will be a Conversation if widget is within a `<layer-conversation-item />` widget
           else if (value instanceof Core.Conversation) {
-            value = value.participants.filter(identity => !identity.sessionOwner)[0];
+            value = value.participants.filter(identity => !identity.isMine)[0];
           }
 
           // If item is an object, but not an Identity instance, assume its an Identity POJO and get the instance

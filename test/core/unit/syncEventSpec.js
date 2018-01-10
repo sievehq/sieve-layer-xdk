@@ -24,7 +24,7 @@ describe("The SyncEvent Classes", function() {
           displayName: "display",
           syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
         client._clientAuthenticated();

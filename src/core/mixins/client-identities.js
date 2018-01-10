@@ -183,7 +183,7 @@ module.exports = {
         this._triggerAsync('identities:add', { identities: [identity] });
 
         /* Bot messages from SAPI 1.0 generate an Identity that has no `id` */
-        if (identity.id && identity._presence.status === null && !identity.sessionOwner) {
+        if (identity.id && identity._presence.status === null && !identity.isMine) {
           this._loadPresenceIds.push(id);
           if (this._loadPresenceIds.length === 1) {
             setTimeout(() => {

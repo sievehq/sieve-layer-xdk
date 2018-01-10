@@ -15,7 +15,7 @@ describe('layer-file-upload-button', function() {
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
 
     testRoot = document.createElement('div');

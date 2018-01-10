@@ -182,7 +182,7 @@ class ClientAuthenticator extends Root {
       const userObj = JSON.parse(sessionData).user;
       return new Identity({
         clientId: this.appId,
-        sessionOwner: true,
+        isMine: true,
         fromServer: userObj,
       });
     } catch (error) {
@@ -268,7 +268,7 @@ class ClientAuthenticator extends Root {
     if (!this.user) {
       this.user = new Identity({
         userId,
-        sessionOwner: true,
+        isMine: true,
         clientId: this.appId,
         id: userId ? Identity.prefixUUID + encodeURIComponent(userId) : '',
       });
@@ -326,7 +326,7 @@ class ClientAuthenticator extends Root {
     if (!this.user) {
       this.user = new Identity({
         userId,
-        sessionOwner: true,
+        isMine: true,
         clientId: this.appId,
       });
     }

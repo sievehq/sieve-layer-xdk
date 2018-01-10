@@ -103,10 +103,10 @@
  *   need to do a lookup on this id in your own servers to find a
  *   displayable name for it.
  *
- * Note that the `message.sender.sessionOwner` boolean property is a frequently useful property:
+ * Note that the `message.sender.isMine` boolean property is a frequently useful property:
  *
  * ```
- * if (!message.sender.sessionOwner) {
+ * if (!message.sender.isMine) {
  *    alert("You didn't send this message");
  * }
  * ```

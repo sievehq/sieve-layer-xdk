@@ -42,7 +42,7 @@ describe("The Client Authenticator Class", function() {
           displayName: "display",
           syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
     });
 
@@ -165,7 +165,7 @@ describe("The Client Authenticator Class", function() {
                expect(result.userId).toEqual('FrodoTheDodo');
                expect(result.displayName).toEqual('Frodo is a Dodo');
                expect(result.avatarUrl).toEqual('https://frodo-the-dodo.com');
-               expect(result.sessionOwner).toBe(true);
+               expect(result.isMine).toBe(true);
            });
         });
 

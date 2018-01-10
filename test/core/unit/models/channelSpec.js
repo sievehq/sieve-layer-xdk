@@ -32,7 +32,7 @@ describe("The Channel Class", function() {
           displayName: "display",
           syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
         userIdentity1 = new Layer.Core.Identity({
             clientId: client.appId,

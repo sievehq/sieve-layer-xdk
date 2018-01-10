@@ -17,7 +17,7 @@ describe('layer-conversation-item', function() {
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
 
     user = new Layer.Core.Identity({

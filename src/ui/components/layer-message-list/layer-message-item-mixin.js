@@ -36,7 +36,7 @@
  * conversationView.replaceableContent = {
  *     messageRowRightSide: function(messageItemComponent) {
  *        var message = messageItemComponent.item;
- *        if (message.sender.sessionOwner) {
+ *        if (message.sender.isMine) {
  *            var div = document.createElement('div');
  *            div.innerHTML = 'some stuff that the message sender should see goes here';
  *            return div;
@@ -155,7 +155,7 @@ module.exports = {
      *
      * ```
      * widget.getDeleteEnabled = function(message) {
-     *    return message.sender.sessionOwner;
+     *    return message.sender.isMine;
      * }
      * ```
      *

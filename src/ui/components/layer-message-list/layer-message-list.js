@@ -303,7 +303,7 @@ registerComponent('layer-message-list', {
           if (model && model.constructor.messageRenderer === 'layer-carousel-message-view') return null;
 
           const div = document.createElement('div');
-          if (item.sender.sessionOwner) {
+          if (item.sender.isMine) {
             const avatar = document.createElement('layer-avatar');
             avatar.size = 'small';
             avatar.showPresence = false;
@@ -576,7 +576,7 @@ registerComponent('layer-message-list', {
       const rootPart = message.getRootPart();
       if (this._isStatusMessage(rootPart, message)) {
         return 'layer-message-item-status';
-      } else if (message.sender.sessionOwner) {
+      } else if (message.sender.isMine) {
         return 'layer-message-item-sent';
       } else {
         return 'layer-message-item-received';
@@ -741,7 +741,7 @@ registerComponent('layer-message-list', {
      */
     _updateLastMessageSent() {
       for (let i = this.properties.listData.length - 1; i >= 0; i--) {
-        if (this.properties.listData[i].sender.sessionOwner) {
+        if (this.properties.listData[i].sender.isMine) {
           const item = this.querySelector('#' + this._getItemId(this.properties.listData[i].id));
           if (item && !item.classList.contains('layer-last-message-sent')) {
             this.querySelectorAllArray('.layer-last-message-sent').forEach((node) => {

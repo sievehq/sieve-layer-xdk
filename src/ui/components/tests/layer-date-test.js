@@ -16,7 +16,7 @@ describe('layer-date', function() {
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
 
     testRoot = document.createElement('div');

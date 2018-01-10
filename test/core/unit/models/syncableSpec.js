@@ -32,7 +32,7 @@ describe("The Syncable Class", function() {
           displayName: "display",
           syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
         client.isTrustedDevice = true;
         client._clientAuthenticated();
@@ -156,7 +156,7 @@ describe("The Syncable Class", function() {
                 displayName: "display",
                 syncState: Layer.Constants.SYNC_STATE.SYNCED,
                 isFullIdentity: true,
-                sessionOwner: true
+                isMine: true
             });
             client._clientAuthenticated();
             client._clientReady();

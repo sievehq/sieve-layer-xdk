@@ -48,7 +48,7 @@ describe("The Client Authenticator Requests", function() {
           displayName: "display",
           syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
         client._initComponents();
