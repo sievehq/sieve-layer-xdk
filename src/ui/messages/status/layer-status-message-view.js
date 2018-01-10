@@ -29,6 +29,9 @@ registerComponent('layer-status-message-view', {
   .layer-root-viewer.layer-status-message-view > * > .layer-card-top {
     display: block;
   }
+  layer-status-message-view p {
+    text-align: center;
+  }
   `,
   mixins: [MessageViewMixin],
   properties: {

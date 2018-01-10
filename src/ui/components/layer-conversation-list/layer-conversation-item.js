@@ -205,10 +205,6 @@ registerComponent('layer-conversation-item', {
     },
   },
   methods: {
-    // Lifecycle method
-    onRender() {
-      this.onRerender();
-    },
 
     // Lifecycle method
     onRerender() {

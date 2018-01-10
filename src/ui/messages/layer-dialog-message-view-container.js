@@ -123,13 +123,6 @@ registerComponent('layer-dialog-message-view-container', {
       this.model.on('message-type-model:change', this.onRerender, this);
     },
 
-    /**
-     *
-     * @method
-     */
-    onRender() {
-      this.onRerender();
-    },
 
     onRerender() {
       this.icon = this.properties.ui._getIconClass();

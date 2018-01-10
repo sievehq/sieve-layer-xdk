@@ -95,10 +95,6 @@ registerComponent('layer-channel-item', {
   },
   methods: {
 
-    onRender() {
-      this.onRerender();
-    },
-
     onRerender() {
       if (this.item) this.nodes.title.innerHTML = this.item.name;
     },

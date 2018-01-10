@@ -95,9 +95,6 @@ registerComponent('layer-titled-message-view-container', {
     onAfterCreate() {
       this.model.on('message-type-model:change', this.onRerender, this);
     },
-    onRender() {
-      this.onRerender();
-    },
 
     onRerender() {
       this.icon = this.properties.ui._getIconClass();

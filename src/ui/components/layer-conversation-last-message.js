@@ -90,10 +90,6 @@ registerComponent('layer-conversation-last-message', {
      */
   },
   methods: {
-    // Lifecycle method
-    onRender() {
-      this.onRerender();
-    },
 
     // Lifecycle method
     onRerender() {

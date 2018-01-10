@@ -101,10 +101,6 @@ module.exports = {
       conditional: function onCanRender() {
         return Boolean(this.message && !this.message.isDestroyed);
       },
-      mode: registerComponent.MODES.AFTER,
-      value: function onRender() {
-        this.onRerender();
-      },
     },
 
     /**

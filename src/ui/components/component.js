@@ -409,25 +409,28 @@ function setupMethods(classDef, methodsIn) {
     const methodInDef = methodsIn[methodName];
     if (!methodDef.methodsBefore) {
       methodDef.methodsBefore = [];
+      methodDef.methodLast = [];
       methodDef.methodsAfter = [];
       methodDef.methodsMiddle = [];
       methodDef.conditional = [];
     }
+
     if (typeof methodInDef === 'function') {
-      methodDef.methodsMiddle.push(methodsIn[methodName]);
+      methodDef.methodsMiddle.push(methodInDef);
     } else if (methodInDef.mode === registerComponent.MODES.BEFORE) {
-      methodDef.methodsBefore.push(methodsIn[methodName].value);
+      methodDef.methodsBefore.push(methodInDef.value);
     } else if (methodInDef.mode === registerComponent.MODES.AFTER) {
-      methodDef.methodsAfter.push(methodsIn[methodName].value);
+      methodDef.methodsAfter.push(methodInDef.value);
     } else if (methodInDef.mode === registerComponent.MODES.OVERWRITE) {
       methodDef.lock = methodInDef.value;
-    } else if (methodInDef.mode === registerComponent.MODES.DEFAULT) {
-      methodDef.methodsMiddle.push(methodsIn[methodName].value);
+    } else if (methodInDef.mode === registerComponent.MODES.DEFAULT || methodInDef.value && !methodInDef.mode) {
+      methodDef.methodsMiddle.push(methodInDef.value);
+    } else if (methodInDef.mode === registerComponent.MODES.LAST) {
+      methodDef.methodLast.push(methodInDef.value);
     }
     if (methodInDef.conditional) methodDef.conditional.push(methodInDef.conditional);
   });
 }
-
 
 /*
  * Provides a basic mixin mechanism.
@@ -511,8 +514,8 @@ function finalizeMixinMerge(classDef) {
 
   methodNames.forEach((methodName) => {
     const methodDef = classDef.methods[methodName];
-    let methodList = [...methodDef.methodsBefore, ...methodDef.methodsMiddle, ...methodDef.methodsAfter];
-    if (methodDef.lock) methodList = [methodDef.lock];
+    let methodList = [...methodDef.methodsBefore, ...methodDef.methodsMiddle, ...methodDef.methodsAfter, ...methodDef.methodLast];
+    if (methodDef.lock) methodList = [methodDef.lock, ...methodDef.methodLast];
 
     // For each method, either set the method to be the function, or set it to be the
     // getTheMethod function which assembles all of the conditionals and mixins into a single function.
@@ -1263,11 +1266,15 @@ function _registerComponent(tagName) {
  * * AFTER: Run your method after other methods of the same name
  * * OVERWRITE: Run only your method, no other methods of the same name
  * * DEFAULT: Run your method in normal ordering.
+ * * LAST: For internal use only; this runs after `AFTER` and should not be used in Mixins,
+ *         only in the design of Components that may have mixins added to them.  This is *not* prevented
+ *         by use of the `OVERWRITE` mode.
  *
  * @static
  * @property {Object} MODES
  * @property {String} MODES.BEFORE
  * @property {String} MODES.AFTER
+ * @property {String} MODES.LAST
  * @property {String} MODES.OVERWRITE
  * @property {String} MODES.DEFAULT
  */
@@ -1276,6 +1283,7 @@ registerComponent.MODES = {
   AFTER: 'AFTER',
   OVERWRITE: 'OVERWRITE',
   DEFAULT: 'DEFAULT',
+  LAST: 'LAST',
 };
 
 
@@ -1799,11 +1807,11 @@ const standardClassMethods = {
   /**
    * MIXIN HOOK: Each time a Component is initialized, its onAfterCreate methods will be called.
    *
-   * While one could use {@link Layer.UI.Component#onCreate}, this handler allows you to wait for all
+   * While one could use {@link #onCreate}, this handler allows you to wait for all
    * properties to be set before your intialization code is run, making this ideal for any setup that
    * depends upon initial property values.
    *
-   * {@link Layer.UI.Component#onRender} is automatically called once `onAfterCreate` has completed.
+   * {@link #onRender} is automatically called once `onAfterCreate` has completed.
    *
    * ```
    * Layer.init({
@@ -1829,11 +1837,10 @@ const standardClassMethods = {
    * @method onAfterCreate
    */
   onAfterCreate: {
-    mode: registerComponent.MODES.AFTER,
+    mode: registerComponent.MODES.LAST,
     value: function onAfterCreate() {
       this.properties._internalState.onAfterCreateCalled = true;
       this.onRender();
-      this.properties._internalState.onRenderCalled = true;
       if (this.properties._callOnAttachAfterCreate) {
         this.properties._callOnAttachAfterCreate = false;
         this.onAttach();
@@ -1850,7 +1857,7 @@ const standardClassMethods = {
    *    {@link Layer.UI.Component#onAttach}
    * 2. A property that is key to rendering has been replaced with a new value
    *
-   * TODO: Investigate having this automatically call `onRerender(false)`
+   * This will call {@link #onRerender} on completion.
    *
    * ```
    * Layer.init({
@@ -1879,6 +1886,11 @@ const standardClassMethods = {
     conditional: function onCanRender() {
       return this.properties._internalState.onAfterCreateCalled;
     },
+    mode: registerComponent.MODES.LAST,
+    value: function onRender() {
+      this.properties._internalState.onRenderCalled = true;
+      this.onRerender();
+    },
   },
 
   /**
@@ -1886,9 +1898,11 @@ const standardClassMethods = {
    *
    * Typically, this is called:
    *
-   * 1. During initialization, after {@link Layer.UI.Component#onRender}, to initialize the more dynamic content
+   * 1. During initialization, after {@link #onRender}, to initialize the more dynamic content
    * 2. Any time a key property value emits a `change` event
    * 3. Any time a very minor property has changed that does not justify rerendering the whole Component
+   *
+   * Typically the {@link #onRender} method is called instead if core data for the rendering has changed.
    *
    * ```
    * Layer.init({
@@ -1925,8 +1939,8 @@ const standardClassMethods = {
    *
    * This call always happens:
    *
-   * * After {@link Layer.UI.Component#onAfterCreate}
-   * * After the first call to {@link Layer.UI.Component#onRender} but there may be subsequent calls
+   * * After {@link #onAfterCreate}
+   * * After the first call to {@link #onRender} but there may be subsequent calls to {@link #onRender}
    * * After `this.parentNode` has a value
    * * After the node is within the Document's `<body/>`
    *
@@ -1962,7 +1976,7 @@ const standardClassMethods = {
         return true;
       }
     },
-    mode: registerComponent.MODES.AFTER,
+    mode: registerComponent.MODES.LAST,
     value: function onAttach() {
       this.properties._internalState.onAttachCalled = true;
     },

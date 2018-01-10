@@ -116,21 +116,6 @@ module.exports = {
   methods: {
 
     /**
-     * Core part of the UI Lifecycle, called after onAfterCreate.
-     *
-     * Any time onRender is called, let all versions of `onRender` complete,
-     * and then call `onRerender` to handle all dynamic rendering.
-     *
-     * @method onRender
-     */
-    onRender: {
-      mode: registerComponent.MODES.AFTER,
-      value() {
-        this.onRerender();
-      },
-    },
-
-    /**
      * Core part of the UI Lifecycle, called whenever the model changes, and after initialization.
      *
      * Detect if there is any change to the width type. This could happen due to a message being

@@ -63,7 +63,10 @@
     * `import '@layerhq/web-xdk/lib/ui/messages/status/layer-status-message-view';`
     * `import '@layerhq/web-xdk/lib/ui/messages/receipt/layer-receipt-message-view';`
     * `import '@layerhq/web-xdk/lib/ui/components/layer-avatar';`
-
+* Using Persistence requires you to import the db-manager: `import '@layerhq/web-xdk/lib/core/db-manager';`
+* UI Component Lifecycle Changes:
+    * `onRerender()` is *always* called after `onRender()`, any calls you make to it from `onRender()` methods are now redundant
+    * Root implementations of UI Component lifecycle methods are no longer blocked via `registerComponent.MODES.OVERWRITE`
 
 
 

@@ -56,7 +56,7 @@ describe('layer-typing-indicator', function() {
 
   describe("Initialization", function() {
     it("Should wire up typing-indicator-change event to rerender", function() {
-      expect(el.onRerender).not.toHaveBeenCalled();
+      el.onRerender.calls.reset();
       client.trigger('typing-indicator-change');
       expect(el.onRerender).toHaveBeenCalled();
     });
@@ -85,10 +85,13 @@ describe('layer-typing-indicator', function() {
   });
 
   describe("The onRender() method", function() {
+    var userA, userB, userC;
+    beforeEach(function() {
+      userA = client._fixIdentities(["a"])[0];
+      userB = client._fixIdentities(["b"])[0];
+      userC = client._fixIdentities(["c"])[0];
+    });
     it("Should call onRerender if there is a conversation", function() {
-      var userA = client._fixIdentities(["a"])[0];
-      var userB = client._fixIdentities(["b"])[0];
-      var userC = client._fixIdentities(["c"])[0];
       client._typingIndicators.state[conversation.id] = {
         typing: ["a", "b"],
         paused: ["c"],
@@ -100,7 +103,7 @@ describe('layer-typing-indicator', function() {
       };
       el.properties.conversation = conversation;
       el.properties.client = client;
-      el.onRender();
+      el.onRender({conversationId: conversation.id, typing: [user1]});
       expect(el.onRerender).toHaveBeenCalledWith({
         conversationId: conversation.id,
         typing: [userA.toObject(), userB.toObject()],
@@ -108,19 +111,34 @@ describe('layer-typing-indicator', function() {
       });
     });
 
-    it("Should not call onRerender without a conversation", function() {
+    it("Should not trigger event without a conversation", function() {
+      var called = false;
+      el.onRerender.calls.reset();
+      el.addEventListener("layer-typing-indicator-change", function() {
+        called = true;
+      });
       client._typingIndicators.state[conversation.id] = {
         typing: ["a", "b"],
-        paused: ["c"]
+        paused: ["c"],
+        users: {
+          "a": { identity: userA},
+          "b": { identity: userB},
+          "c": { identity: userC},
+        }
       };
       el.properties.conversation = null;
-      el.onRender();
-      expect(el.onRerender).not.toHaveBeenCalled();
+      el.onRender({conversationId: conversation.id, typing: [user1]});
+      expect(called).toBe(false);
+
+      el.properties.conversation = conversation;
+      el.onRender({conversationId: conversation.id, typing: [user1]});
+      expect(called).toBe(true);
     });
   });
 
   describe("The onRerender() method", function() {
     it("Should call onRerender if there is a conversation", function() {
+      el.onRerender.calls.reset();
       el.conversation = conversation;
 
       expect(el.onRerender).toHaveBeenCalledWith({
@@ -131,7 +149,7 @@ describe('layer-typing-indicator', function() {
     });
   });
 
-  describe("The onRerender() method", function() {
+  describe("The onRerender() method again", function() {
     beforeEach(function() {
       el.conversation = conversation;
     });

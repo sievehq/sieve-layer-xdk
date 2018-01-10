@@ -204,10 +204,6 @@ registerComponent('layer-message-status', {
     onCreate() {
     },
 
-    onRender() {
-      this.onRerender();
-    },
-
     /**
      * There are many ways to render the status of a Message.
      *

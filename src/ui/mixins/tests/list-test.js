@@ -355,7 +355,7 @@ describe("List Mixin", function() {
 
         query.data = [];
         el.onRender();
-        expect(el.onRerender).not.toHaveBeenCalled();
+        expect(el.onRerender).not.toHaveBeenCalledWith(jasmine.any(Object));
       });
     });
 

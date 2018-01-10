@@ -20,9 +20,6 @@
  *      }
  *    },
  *    methods: {
- *      onRender: function() {
- *        this.onRerender();
- *      },
  *      onRerender: function() {
  *        this.className = 'my-presence-' + this.item.status;
  *      },

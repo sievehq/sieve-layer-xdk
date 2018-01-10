@@ -123,21 +123,26 @@ registerComponent('layer-typing-indicator', {
      * @method onRerender
      * @param {Layer.Core.LayerEvent} evt
      */
-    onRerender(evt) {
-      // We receive typing indicator events for ALL Conversations; ignore them if they don't apply to the current Conversation
-      if (this.conversation && evt.conversationId === this.conversation.id) {
+    onRerender: {
+      conditional: function onCanRerender(evt) {
+        return Boolean(evt);
+      },
+      value: function onRerender(evt) {
+        // We receive typing indicator events for ALL Conversations; ignore them if they don't apply to the current Conversation
+        if (this.conversation && evt.conversationId === this.conversation.id) {
 
-        // Trigger an event so that the application can decide if it wants to handle the event itself.
-        const customEvtResult = this.trigger('layer-typing-indicator-change', {
-          typing: evt.typing,
-          paused: evt.paused,
-        });
+          // Trigger an event so that the application can decide if it wants to handle the event itself.
+          const customEvtResult = this.trigger('layer-typing-indicator-change', {
+            typing: evt.typing,
+            paused: evt.paused,
+          });
 
-        // If the app lets us handle the event, set the value of this widget to something appropriate
-        if (customEvtResult) {
-          this._showAsTyping(evt.typing);
+          // If the app lets us handle the event, set the value of this widget to something appropriate
+          if (customEvtResult) {
+            this._showAsTyping(evt.typing);
+          }
         }
-      }
+      },
     },
 
     /**

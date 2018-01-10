@@ -56,10 +56,6 @@ registerComponent('layer-conversation-title', {
     },
   },
   methods: {
-    // Lifecycle method
-    onRender() {
-      this.onRerender();
-    },
 
     /**
      * Rerender the widget any time a new conversation is assigned or that conversation has a relevant change event.

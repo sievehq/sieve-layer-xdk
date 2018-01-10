@@ -695,6 +695,108 @@ describe('Components', function() {
     });
 
 
+    it("Should always call LAST mixin last", function() {
+      var results = [];
+
+      Layer.UI.registerComponent('mixin-last-method-test1', {
+        mixins: [{
+          methods: {
+            doIt() {results.push('mixin1')}
+          }
+        },
+        {
+          methods: {
+            doIt: {
+              mode: Layer.UI.registerComponent.MODES.LAST,
+              value: function() {results.push('last');}
+            }
+          }
+        }
+      ],
+        methods: {
+          doIt: {
+            mode: Layer.UI.registerComponent.MODES.AFTER,
+            value: function() {
+              results.push('widget');
+            }
+          },
+        }
+      });
+
+      var el1 = document.createElement('mixin-last-method-test1');
+      CustomElements.takeRecords();
+      Layer.Utils.defer.flush();
+      el1.doIt();
+
+      expect(results).toEqual(["mixin1", "widget", "last"]);
+    });
+
+    it("Should always call LAST mixin even if OVERWRITE", function() {
+      var results = [];
+
+      Layer.UI.registerComponent('mixin-last-method-test2', {
+        mixins: [{
+          methods: {
+            doIt: {
+              mode: Layer.UI.registerComponent.MODES.OVERWRITE,
+              value() {results.push('mixin1');}
+            }
+          }
+        },
+        {
+          methods: {
+            doIt: {
+              mode: Layer.UI.registerComponent.MODES.LAST,
+              value: function() {results.push('last');}
+            }
+          }
+        }
+      ],
+        methods: {
+          doIt: {
+            mode: Layer.UI.registerComponent.MODES.AFTER,
+            value: function() {
+              results.push('widget');
+            }
+          },
+        }
+      });
+
+      var el1 = document.createElement('mixin-last-method-test2');
+      CustomElements.takeRecords();
+      Layer.Utils.defer.flush();
+      el1.doIt();
+
+      expect(results).toEqual(["mixin1", "last"]);
+    });
+
+    it("Should always call onRerender", function() {
+      var called = false;
+      Layer.UI.registerComponent('mixin-last-method-test3', {
+        mixins: [{
+          methods: {
+            onRender: {
+              mode: Layer.UI.registerComponent.MODES.OVERWRITE,
+              value() {}
+            }
+          }
+        }],
+        methods: {
+          onRerender() {
+            called = true;
+          },
+        }
+      });
+
+      var el1 = document.createElement('mixin-last-method-test3');
+      expect(called).toBe(false);
+
+      CustomElements.takeRecords();
+      Layer.Utils.defer.flush();
+
+      expect(called).toBe(true);
+    });
+
 
     it("Should support submixins without duplication", function() {
       var results = [];

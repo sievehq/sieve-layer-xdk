@@ -35,9 +35,6 @@ registerComponent('layer-message-type-list-view', {
     },
   },
   methods: {
-    onRender() {
-      this.onRerender();
-    },
     onRerender() {
       if (!this.properties._internalState.onAttachCalled) return;
 

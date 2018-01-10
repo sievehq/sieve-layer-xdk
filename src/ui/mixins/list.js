@@ -205,6 +205,9 @@ module.exports = {
 
     onRerender: {
       mode: registerComponent.MODES.BEFORE,
+      conditional: function onCanRerender() {
+        return Boolean(this.query);
+      },
       value(evt = {}) {
         if (this.query.isDestroyed) {
           this._renderResetData(evt);

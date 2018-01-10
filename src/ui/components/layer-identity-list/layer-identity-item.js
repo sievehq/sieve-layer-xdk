@@ -177,11 +177,6 @@ registerComponent('layer-identity-item', {
     },
 
     // Lifecycle event
-    onRender() {
-      this.onRerender();
-    },
-
-    // Lifecycle event
     onRerender() {
       this.nodes.avatar.users = [this.item];
       this.nodes.title.innerHTML = this.nameRenderer ? this.nameRenderer(this.item) : this.item.displayName;

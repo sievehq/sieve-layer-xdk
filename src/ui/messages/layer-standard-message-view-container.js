@@ -148,17 +148,6 @@ registerComponent('layer-standard-message-view-container', {
     },
   },
   methods: {
-
-    /**
-     * There is no rendering other than the rendering of metadata which can dynamically be changed
-     * via message editing; Calls `onRerender` for dynamic rendering.
-     *
-     * @method
-     */
-    onRender() {
-      this.onRerender();
-    },
-
     /**
      * Render all changeable properties, hide unused DOM.
      *

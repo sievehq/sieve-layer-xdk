@@ -85,10 +85,6 @@ registerComponent('layer-choice-button', {
       });
     },
 
-    onRender() {
-      this.onRerender();
-    },
-
     /**
      * Whenever the model changes, update the selection state of all buttons.
      *

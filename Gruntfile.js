@@ -618,8 +618,10 @@ module.exports = function (grunt) {
         var componentFolderName = file.replace(/src\/ui\/components\/?(.*?)\/.*$/, "$1");
 
         // Arbitrary subdivision of the components folder which has too many tests for IE11
-        if (folderName === 'components') {
-          folderName += "_" + (componentFolderName === 'tests' || componentFolderName.indexOf('layer-') === 0 ? 'basic' : 'nested');
+        if (componentFolderName === 'tests') {
+          if (file.match(/(-list|-item)(-test)?.js/)) {
+            folderName += '-lists';
+          }
         }
         if (!scripts[folderName]) scripts[folderName] = [];
         scripts[folderName].push(scriptTag);

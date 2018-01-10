@@ -62,10 +62,6 @@ registerComponent('layer-list-item-container', {
       this.model.on('message-type-model:change', this.onRerender, this);
     },
 
-    onRender() {
-      this.onRerender();
-    },
-
     onRerender() {
       const model = this.properties.model;
       this.title = model.getTitle();
