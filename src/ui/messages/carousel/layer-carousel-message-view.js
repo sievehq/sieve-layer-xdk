@@ -14,7 +14,7 @@
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
-import { animatedScrollLeftTo } from '../../layer-ui';
+import { animatedScrollLeftTo } from '../../ui-utils';
 import Constants from '../../constants';
 import MessageViewMixin from '../message-view-mixin';
 import Throttler from '../../mixins/throttler';
@@ -131,6 +131,7 @@ registerComponent('layer-carousel-message-view', {
       window.addEventListener('resize', this.properties.onResize);
     },
 
+
     /**
      * Whenever there is a change of state in the model, or during intitializtion, rerender each carousel item.
      *
@@ -203,12 +204,9 @@ registerComponent('layer-carousel-message-view', {
      *
      * @method onAttach
      */
-    onAttach: {
-      mode: registerComponent.MODES.AFTER,
-      value() {
-        setTimeout(this._updateScrollButtons.bind(this), 10);
-        this.onRerender();
-      },
+    onAttach() {
+      setTimeout(this._updateScrollButtons.bind(this), 10);
+      this.onRerender();
     },
 
     /**

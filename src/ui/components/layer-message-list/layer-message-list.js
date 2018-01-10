@@ -274,31 +274,35 @@ registerComponent('layer-message-list', {
      */
     replaceableContent: {
       value: {
-        messageRowLeftSide: function messageRowLeftSide(widget) {
+        messageReceivedLeftSide: function messageReceivedLeftSide(widget) {
+          // const item = widget.item;
+          // const model = item.createModel();
+          // if (model && model.constructor.messageRenderer === 'layer-carousel-message-view') return null;
+
+          const div = document.createElement('div');
+          div.classList.add('layer-replaceable-inner');
+          const avatar = document.createElement('layer-avatar');
+          avatar.size = 'small';
+          avatar.showPresence = false;
+          avatar.setAttribute('layer-id', 'avatar');
+          div.appendChild(avatar);
+          return div;
+        },
+        messageReceivedRightSide: function messageReceivedRightSide(widget) {
           const item = widget.item;
           const model = item.createModel();
           if (model && model.constructor.messageRenderer === 'layer-carousel-message-view') return null;
 
-          if (item.sender.sessionOwner) {
-            return null;
-          } else {
-            const div = document.createElement('div');
-            div.classList.add('layer-replaceable-inner');
-            const avatar = document.createElement('layer-avatar');
-            avatar.size = 'small';
-            avatar.showPresence = false;
-            avatar.setAttribute('layer-id', 'avatar');
-            div.appendChild(avatar);
-            return div;
-          }
+          const menu = document.createElement('layer-menu-button');
+          menu.setAttribute('layer-id', 'menuButton');
+          return menu;
         },
-        messageRowRightSide: function messageRowRightSide(widget) {
+        messageSentRightSide: function messageSentRightSide(widget) {
           const item = widget.item;
           const model = item.createModel();
           if (model && model.constructor.messageRenderer === 'layer-carousel-message-view') return null;
 
           const div = document.createElement('div');
-          div.classList.add('layer-replaceable-inner');
           if (item.sender.sessionOwner) {
             const avatar = document.createElement('layer-avatar');
             avatar.size = 'small';
@@ -311,28 +315,29 @@ registerComponent('layer-message-list', {
           div.appendChild(menu);
           return div;
         },
-        messageRowFooter: function messageRowFooter(widget) {
-          const item = widget.item;
-          const parentNode = document.createElement('div');
-          parentNode.classList.add('layer-replaceable-inner');
-          if (item.sender.sessionOwner) {
-            const status = document.createElement('layer-message-status');
-            status.setAttribute('layer-id', 'status');
-            parentNode.appendChild(status);
-          }
+        messageReceivedFooter: function messageReceivedFooter(widget) {
           const date = document.createElement('layer-date');
           date.setAttribute('layer-id', 'date');
           date.dateFormat = this.dateFormat;
-          parentNode.appendChild(date);
-          return parentNode;
+          return date;
         },
-        messageRowHeader: function messageRowHeader(widget) {
-          if (!widget.item.sender.sessionOwner) {
-            const div = document.createElement('div');
-            div.setAttribute('layer-id', 'sender');
-            div.classList.add('layer-sender-name');
-            return div;
-          }
+        messageSentFooter: function messageRowFooter(widget) {
+          const div = document.createElement('div');
+          const status = document.createElement('layer-message-status');
+          status.setAttribute('layer-id', 'status');
+          div.appendChild(status);
+
+          const date = document.createElement('layer-date');
+          date.setAttribute('layer-id', 'date');
+          date.dateFormat = this.dateFormat;
+          div.appendChild(date);
+          return div;
+        },
+        messageReceivedHeader: function messageRowHeader(widget) {
+          const div = document.createElement('div');
+          div.setAttribute('layer-id', 'sender');
+          div.classList.add('layer-sender-name');
+          return div;
         },
       },
     },

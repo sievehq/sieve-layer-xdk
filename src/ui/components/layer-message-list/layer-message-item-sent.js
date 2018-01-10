@@ -22,13 +22,13 @@ registerComponent('layer-message-item-sent', {
     <div class='layer-list-item' layer-id='innerNode'>
 
       <!-- Header -->
-      <layer-replaceable-content class='layer-message-header' name='messageRowHeader'></layer-replaceable-content>
+      <layer-replaceable-content class='layer-message-header' name='messageSentHeader'></layer-replaceable-content>
 
       <!-- Body -->
       <div class='layer-message-row' layer-id='messageRow'>
 
         <!-- Body: left Side -->
-        <layer-replaceable-content class='layer-message-left-side' name='messageRowLeftSide'></layer-replaceable-content>
+        <layer-replaceable-content class='layer-message-left-side' name='messageSentLeftSide'></layer-replaceable-content>
 
 
         <!-- Body: Message Contents -->
@@ -38,11 +38,11 @@ registerComponent('layer-message-item-sent', {
         </div>
 
         <!-- Body: Right Side -->
-        <layer-replaceable-content class='layer-message-right-side' name='messageRowRightSide'></layer-replaceable-content>
+        <layer-replaceable-content class='layer-message-right-side' name='messageSentRightSide'></layer-replaceable-content>
       </div>
 
       <!-- Footer -->
-      <layer-replaceable-content class='layer-message-footer' name='messageRowFooter'></layer-replaceable-content>
+      <layer-replaceable-content class='layer-message-footer' name='messageSentFooter'></layer-replaceable-content>
     </div>
   `,
   style: `

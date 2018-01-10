@@ -29,9 +29,29 @@ import MessageItemMixin from './layer-message-item-mixin';
 registerComponent('layer-message-item-status', {
   mixins: [MessageItemMixin],
   template: `
-    <div class='layer-list-item' layer-id='innerNode'>
-        <layer-message-viewer layer-id='messageViewer' class='layer-message-item-main'></layer-message-viewer>
+  <div class='layer-list-item' layer-id='innerNode'>
+
+  <!-- Header -->
+  <layer-replaceable-content class='layer-message-header' name='messageStatusHeader'></layer-replaceable-content>
+
+  <!-- Body -->
+  <div class='layer-message-row' layer-id='messageRow'>
+
+    <!-- Body: Left Side -->
+    <layer-replaceable-content class='layer-message-left-side' name='messageStatusLeftSide'></layer-replaceable-content>
+
+    <!-- Body: Message Contents -->
+    <div class='layer-message-item-main'>
+      <layer-message-viewer layer-id='messageViewer'></layer-message-viewer>
     </div>
+
+    <!-- Body: Right Side -->
+    <layer-replaceable-content class='layer-message-right-side' name='messageStatusRightSide'></layer-replaceable-content>
+  </div>
+
+  <!-- Footer -->
+  <layer-replaceable-content class='layer-message-footer' name='messageStatusFooter'></layer-replaceable-content>
+</div>
   `,
   style: `
     layer-message-item-status {

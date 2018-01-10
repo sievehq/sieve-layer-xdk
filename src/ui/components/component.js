@@ -1976,7 +1976,7 @@ const standardClassMethods = {
         return true;
       }
     },
-    mode: registerComponent.MODES.LAST,
+    mode: registerComponent.MODES.BEFORE,
     value: function onAttach() {
       this.properties._internalState.onAttachCalled = true;
     },

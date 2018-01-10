@@ -22,13 +22,13 @@ registerComponent('layer-message-item-received', {
     <div class='layer-list-item' layer-id='innerNode'>
 
       <!-- Header -->
-      <layer-replaceable-content class='layer-message-header' name='messageRowHeader'></layer-replaceable-content>
+      <layer-replaceable-content class='layer-message-header' name='messageReceivedHeader'></layer-replaceable-content>
 
       <!-- Body -->
       <div class='layer-message-row' layer-id='messageRow'>
 
         <!-- Body: Left Side -->
-        <layer-replaceable-content class='layer-message-left-side' name='messageRowLeftSide'></layer-replaceable-content>
+        <layer-replaceable-content class='layer-message-left-side' name='messageReceivedLeftSide'></layer-replaceable-content>
 
         <!-- Body: Message Contents -->
         <div class='layer-message-item-main'>
@@ -37,11 +37,11 @@ registerComponent('layer-message-item-received', {
         </div>
 
         <!-- Body: Right Side -->
-        <layer-replaceable-content class='layer-message-right-side' name='messageRowRightSide'></layer-replaceable-content>
+        <layer-replaceable-content class='layer-message-right-side' name='messageReceivedRightSide'></layer-replaceable-content>
       </div>
 
       <!-- Footer -->
-      <layer-replaceable-content class='layer-message-footer' name='messageRowFooter'></layer-replaceable-content>
+      <layer-replaceable-content class='layer-message-footer' name='messageReceivedFooter'></layer-replaceable-content>
     </div>
   `,
   style: `
