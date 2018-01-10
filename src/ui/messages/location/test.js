@@ -307,7 +307,7 @@ describe('Location Message Components', function() {
       Layer.Utils.defer.flush();
 
       el.nodes.ui.hideMap = true;
-      expect(el.nodes.ui.classList.contains('layer-location-message-view-address-only')).toEqual(true);
+      expect(el.classList.contains('layer-location-message-view-address-only')).toEqual(true);
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
       expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(true);
     });

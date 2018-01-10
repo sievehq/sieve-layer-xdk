@@ -269,7 +269,7 @@ module.exports = {
       }
 
       // Remove any Message associated with this Channel
-      Object.keys(this._models.messages).forEach((id) => {
+      Object.keys(this._models.messages || {}).forEach((id) => {
         if (this._models.messages[id].channelId === channel.id) {
           this._models.messages[id].destroy();
         }

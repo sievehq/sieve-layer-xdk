@@ -144,7 +144,7 @@ describe('Status Message Components', function() {
       expect(el.firstChild.childNodes[0].textContent).toEqual("hello from ");
       expect(el.firstChild.childNodes[1].href).toEqual("https://layer.com/");
       expect(el.firstChild.childNodes[1].innerHTML).toEqual("layer.com");
-      expect(el.firstChild.childNodes[1].className).toEqual("layer-parsed-url layer-parsed-url-url");
+      expect(el.firstChild.childNodes[1].className).toEqual("layer-parsed-url");
     });
   });
 });

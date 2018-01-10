@@ -152,7 +152,7 @@ class ButtonsModel extends MessageTypeModel {
    */
   _parseMessage(payload) {
     super._parseMessage(payload);
-    this.contentModel = this.getModelsByRole('content')[0];
+    this.contentModel = this.getModelsByRole('content')[0] || null;
     this._setupButtonModels();
   }
 

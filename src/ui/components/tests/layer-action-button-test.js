@@ -1,13 +1,10 @@
 describe('layer-action-button', function() {
-  var el, testRoot;
-
-  beforeAll(function(done) {
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
-    setTimeout(done, 1000);
-  });
+  var el, testRoot, client;
 
   beforeEach(function() {
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
+    client = new Layer.init({
+      appId: 'layer:///apps/staging/Fred'
+    });
     el = document.createElement('layer-action-button');
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -16,6 +13,7 @@ describe('layer-action-button', function() {
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     Layer.Core.Client.removeListenerForNewClient();
     document.body.removeChild(testRoot);
   })

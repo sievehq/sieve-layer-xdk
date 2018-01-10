@@ -139,5 +139,5 @@ ChannelMessage.prototype.isRead = false;
 
 ChannelMessage.inObjectIgnore = Message.inObjectIgnore;
 ChannelMessage._supportedEvents = [].concat(Message._supportedEvents);
-Root.initClass.apply(ChannelMessage, [ChannelMessage, 'ChannelMessage', Core]);
+Root.initClass.apply(ChannelMessage, [ChannelMessage, 'ChannelMessage', Core.Message]);
 module.exports = ChannelMessage;

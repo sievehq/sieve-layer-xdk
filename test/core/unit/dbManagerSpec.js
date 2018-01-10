@@ -380,10 +380,12 @@ var dbIt = it;
         });
 
         it("Should generate a proper object", function() {
+          var identityData = Layer.Core.Identity.toDbBasicObjects(conversation.participants);
+
           expect(dbManager._getConversationData([conversation])).toEqual([{
             id: conversation.id,
             url: conversation.url,
-            participants: client.dbManager._getIdentityData(conversation.participants, true),
+            participants: identityData,
             distinct: conversation.distinct,
             created_at: conversation.createdAt.toISOString(),
             metadata: conversation.metadata,
@@ -862,19 +864,9 @@ var dbIt = it;
     });
 
 
-    describe("The _getIdentityData() method", function() {
-      it("Should ignore anything that just came out of the database and clear _fromDB", function() {
-        identity._fromDB = true;
-        expect(dbManager._getIdentityData([identity])).toEqual([]);
-        expect(identity._fromDB).toBe(false);
-      });
-
-      it("Should ignore Basic Identities", function() {
-        expect(dbManager._getIdentityData([identity, basicIdentity])).toEqual(dbManager._getIdentityData([identity]));
-      });
-
+    describe("The Identity.toDbObject() method", function() {
       it("Should write Basic Identities", function() {
-        expect(dbManager._getIdentityData([identity, basicIdentity], true)).toEqual([dbManager._getIdentityData([identity], true)[0], {
+        expect(Layer.Core.Identity.toDbBasicObjects([basicIdentity], true)).toEqual([{
           id: basicIdentity.id,
           url: client.url + "/identities/" + basicIdentity.userId,
           user_id: basicIdentity.userId,
@@ -883,14 +875,10 @@ var dbIt = it;
         }]);
       });
 
-      it("Should ignore Loading Identities", function() {
-        identity.syncState = Layer.Constants.SYNC_STATE.LOADING;
-        expect(dbManager._getIdentityData([identity, basicIdentity])).toEqual([]);
-      });
-
-
       it("Should generate a proper Identity object", function() {
-        expect(dbManager._getIdentityData([identity])).toEqual([{
+        var result;
+        Layer.Core.Identity.toDbObjects([identity], a => result = a);
+        expect(result).toEqual([{
           id: identity.id,
           url: identity.url,
           user_id: identity.userId,
@@ -909,25 +897,60 @@ var dbIt = it;
     });
 
     describe("The writeIdentities() method", function() {
+      it("Should ignore Basic Identities", function() {
+        var result;
+        Layer.Core.Identity.toDbObjects([identity, basicIdentity], a => result = a);
+        spyOn(dbManager, "_writeObjects");
+        dbManager.writeIdentities([identity, basicIdentity]);
+        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [jasmine.objectContaining({id: identity.id})], undefined);
+      });
+
+      it("Should ignore anything flagged as _fromDB", function(){
+        var i2 = new Layer.Core.Identity({
+          clientId: client.appId,
+          userId: "i2",
+          id: "layer:///identities/" + "i2",
+          isFullIdentity: true
+        });
+        var i3 = new Layer.Core.Identity({
+          clientId: client.appId,
+          userId: "i3",
+          id: "layer:///identities/" + "i3",
+          isFullIdentity: true
+        });
+        i2._fromDB = true;
+        spyOn(dbManager, "_writeObjects");
+//        spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
+        dbManager.writeIdentities([identity, i2, i3]);
+        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [jasmine.objectContaining({id: identity.id}), jasmine.objectContaining({id: i3.id})], undefined);
+      });
+
+      it("Should ignore Loading Identities", function() {
+        spyOn(dbManager, "_writeObjects");
+        identity.syncState = Layer.Constants.SYNC_STATE.LOADING;
+        dbManager.writeIdentities([identity]);
+        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [], undefined);
+      });
+
       it("Should forward isUpdate true to writeIdentities", function() {
         spyOn(dbManager, "_writeObjects");
-        spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
+        //spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
         dbManager.writeIdentities([identity]);
         expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', jasmine.any(Object), undefined);
       });
 
       it("Should forward isUpdate true to writeIdentities", function() {
         spyOn(dbManager, "_writeObjects");
-        spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
-        dbManager.writeIdentities([message]);
+        //spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
+        dbManager.writeIdentities([identity]);
         expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', jasmine.any(Object), undefined);
       });
 
       it("Should feed data from _getIdentityData to _writeObjects", function() {
         spyOn(dbManager, "_writeObjects");
-        spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
-        dbManager.writeIdentities([message]);
-        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [{id: 'fred'}], undefined);
+        //spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
+        dbManager.writeIdentities([identity]);
+        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [jasmine.objectContaining({id: identity.id})], undefined);
       });
     });
 
@@ -1434,11 +1457,13 @@ var dbIt = it;
         basicIdentity.isFullIdentity = true;
 
         // Run
-        dbManager._loadIdentitiesResult(dbManager._getIdentityData([identity, basicIdentity]));
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity, basicIdentity], a => identityData = a);
+        dbManager._loadIdentitiesResult(identityData);
 
         // Posttest
-        expect(dbManager._createIdentity).toHaveBeenCalledWith(dbManager._getIdentityData([identity])[0]);
-        expect(dbManager._createIdentity).toHaveBeenCalledWith(dbManager._getIdentityData([basicIdentity])[0]);
+        expect(dbManager._createIdentity).toHaveBeenCalledWith(identityData[0]);
+        expect(dbManager._createIdentity).toHaveBeenCalledWith(identityData[1]);
       });
 
       it("Only returns new identities", function() {
@@ -1448,7 +1473,9 @@ var dbIt = it;
         var spy = jasmine.createSpy('spy');
 
         // Run
-        dbManager._loadIdentitiesResult(dbManager._getIdentityData([identity, basicIdentity]), spy);
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity, basicIdentity], a => identityData = a);
+        dbManager._loadIdentitiesResult(identityData, spy);
 
         // Posttest
         expect(spy).toHaveBeenCalledWith([identity, jasmine.objectContaining({id: basicIdentity.id})]);
@@ -1538,17 +1565,23 @@ var dbIt = it;
     describe("The _createIdentity() method", function() {
       it("Should return an Identity", function() {
         delete client._models.identities[identity.id];
-        expect(dbManager._createIdentity(dbManager._getIdentityData([identity])[0])).toEqual(jasmine.any(Layer.Core.Identity));
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity], a => identityData = a);
+        expect(dbManager._createIdentity(identityData[0])).toEqual(jasmine.any(Layer.Core.Identity));
       });
 
       it("Should flag Identity with _fromDB property", function() {
         delete client._models.identities[identity.id];
-        expect(dbManager._createIdentity(dbManager._getIdentityData([identity])[0])._fromDB).toBe(true);
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity], a => identityData = a);
+        expect(dbManager._createIdentity(identityData[0])._fromDB).toBe(true);
       });
 
       it("Should do nothing if the Identity already is instantiated", function() {
         client._models.identities[identity.id] = identity;
-        expect(dbManager._createIdentity(dbManager._getIdentityData([identity])[0])).toBe(undefined);
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity], a => identityData = a);
+        expect(dbManager._createIdentity(identityData[0])).toBe(undefined);
       });
     });
 
@@ -1660,17 +1693,18 @@ var dbIt = it;
       });
 
       it("Should call _createIdentity for all identityIds", function() {
-        var rawIdentity = dbManager._getIdentityData([identity])[0];
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity], a => identityData = a[0]);
         spyOn(dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
           if (tableName === 'identities') {
-            callback([rawIdentity]);
+            callback([identityData]);
           } else {
             callback([]);
           }
         });
         spyOn(dbManager, "_createIdentity");
         dbManager._loadSyncEventRelatedData(rawSyncEvents, function() {});
-        expect(dbManager._createIdentity).toHaveBeenCalledWith(rawIdentity);
+        expect(dbManager._createIdentity).toHaveBeenCalledWith(identityData);
       });
 
       it("Should call _loadSyncEventResults", function() {
@@ -1979,7 +2013,8 @@ var dbIt = it;
       });
 
       it("Should get the specified identity", function(done) {
-        var expectedResult = dbManager._getIdentityData([userIdentity]);
+        var expectedResult;
+        Layer.Core.Identity.toDbObjects([userIdentity], result => expectedResult = result);
         dbManager.writeIdentities([userIdentity], function() {
           dbManager.getObject('identities', userIdentity.id, function(result) {
             expect(result).toEqual(expectedResult[0]);

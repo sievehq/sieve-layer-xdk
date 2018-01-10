@@ -568,13 +568,12 @@ class ClientAuthenticator extends Root {
    * @private
    */
   _clientAuthenticated() {
+    if (!this.isTrustedDevice) this.isPersistenceEnabled = false;
     this._setupDbSettings();
 
     // Update state and trigger the event
     this.isAuthenticated = true;
     this.trigger('authenticated');
-
-    if (!this.isTrustedDevice) this.isPersistenceEnabled = false;
 
     // Before calling _clientReady, load the session owner's full Identity.
     if (this.isPersistenceEnabled && this.dbManager) {

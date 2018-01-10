@@ -27,7 +27,7 @@ register({
   requiresEnable: true,
   handler(textData) {
     textData.text = textData.text.replace(testExpr, (url) => {
-      let shortUrl = url;
+      let shortUrl = url.replace(/^\w+\:\/+/, '');
       if (url.length > 50) {
         const firstSlash = url.indexOf('/', 15);
         const lastSlash = url.lastIndexOf('/');

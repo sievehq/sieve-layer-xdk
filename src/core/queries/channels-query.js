@@ -28,7 +28,7 @@ import ConversationsQuery from './conversations-query';
 class ChannelsQuery extends ConversationsQuery {
 
   _fetchData(pageSize) {
-    if (client.dbManager) {
+    if (this.client.dbManager) {
       this.client.dbManager.loadChannels(this._nextDBFromId, pageSize, (channels) => {
         if (channels.length) this._appendResults({ data: channels }, true);
       });

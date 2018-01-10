@@ -1,14 +1,12 @@
 describe('layer-age', function() {
-  var el, d;
+  var el, d, client;
 
-  beforeAll(function(done) {
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
-    setTimeout(done, 1000);
-  });
 
   beforeEach(function() {
     jasmine.clock().install();
-    if (Layer.UI.components['layer-conversation-view'] && !Layer.UI.components['layer-conversation-view'].classDef) Layer.UI.init({});
+    client = new Layer.init({
+      appId: 'layer:///apps/staging/Fred'
+    });
     el = document.createElement('layer-age');
     Layer.Utils.defer.flush();
     d = new Date();
@@ -18,6 +16,7 @@ describe('layer-age', function() {
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     jasmine.clock().uninstall();
     Layer.Core.Client.removeListenerForNewClient();
   });

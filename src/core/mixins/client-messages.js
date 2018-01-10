@@ -193,7 +193,7 @@ module.exports = {
       this._models.messages = {};
     },
     cleanup() {
-      Object.keys(this._models.messages).forEach((id) => {
+      Object.keys(this._models.messages || {}).forEach((id) => {
         const message = this._models.messages[id];
         if (message && !message.isDestroyed) {
           message.destroy();
@@ -344,7 +344,7 @@ module.exports = {
      * @param {number} fromPosition
      */
     _purgeMessagesByPosition(conversationId, fromPosition) {
-      Object.keys(this._models.messages).forEach((id) => {
+      Object.keys(this._models.messages || {}).forEach((id) => {
         const message = this._models.messages[id];
         if (message.conversationId === conversationId && message.position <= fromPosition) {
           message.destroy();
@@ -359,7 +359,7 @@ module.exports = {
      * @param {Layer.Core.Message} fn.message
      */
     forEachMessage(fn) {
-      Object.keys(this._models.messages).forEach(id => fn(this._models.messages[id]));
+      Object.keys(this._models.messages || {}).forEach(id => fn(this._models.messages[id]));
     },
 
     _createMessagePartFromServer(obj) {

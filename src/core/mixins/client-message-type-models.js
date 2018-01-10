@@ -26,10 +26,10 @@ module.exports = {
       this._models.messageTypes = {};
     },
     cleanup() {
-      Object.keys(this._models.messageTypes).forEach((id) => {
-        const query = this._models.messageTypes[id];
-        if (query && !query.isDestroyed) {
-          query.destroy();
+      Object.keys(this._models.messageTypes || {}).forEach((id) => {
+        const messageTypeModel = this._models.messageTypes[id];
+        if (messageTypeModel && !messageTypeModel.isDestroyed) {
+          messageTypeModel.destroy();
         }
       });
       this._models.messageTypes = null;

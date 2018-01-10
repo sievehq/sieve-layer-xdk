@@ -18,7 +18,7 @@ import SyncEvent from './sync-event';
 import Constants from '../constants';
 import Util from '../utils';
 import Announcement from './models/announcement';
-import Identity from './models/announcement';
+import Identity from './models/identity';
 
 const DB_VERSION = 5;
 const MAX_SAFE_INTEGER = 9007199254740991;
@@ -272,22 +272,20 @@ class DbManager extends Root {
         return true;
       }
     }).map((conversation) => {
-      Identity.toDbBasicObjects(conversation.participants, (participants) => {
-        const item = {
-          id: conversation.id,
-          url: conversation.url,
-          participants,
-          distinct: conversation.distinct,
-          created_at: getDate(conversation.createdAt),
-          metadata: conversation.metadata,
-          unread_message_count: conversation.unreadCount,
-          last_message: conversation.lastMessage ? conversation.lastMessage.id : '',
-          last_message_sent: conversation.lastMessage ?
-            getDate(conversation.lastMessage.sentAt) : getDate(conversation.createdAt),
-          sync_state: conversation.syncState,
-        };
-        return item;
-      });
+      const participants = Identity.toDbBasicObjects(conversation.participants);
+      return {
+        id: conversation.id,
+        url: conversation.url,
+        participants,
+        distinct: conversation.distinct,
+        created_at: getDate(conversation.createdAt),
+        metadata: conversation.metadata,
+        unread_message_count: conversation.unreadCount,
+        last_message: conversation.lastMessage ? conversation.lastMessage.id : '',
+        last_message_sent: conversation.lastMessage ?
+          getDate(conversation.lastMessage.sentAt) : getDate(conversation.createdAt),
+        sync_state: conversation.syncState,
+      };
     });
   }
 
@@ -387,14 +385,14 @@ class DbManager extends Root {
       if (identity._fromDB) {
         identity._fromDB = false;
         return false;
-      } else if (identity.isLoading) {
+      } else if (identity.isLoading || !identity.isFullIdentity) {
         return false;
       } else {
         return true;
       }
     });
 
-    Identity.toDbObjects(identities => (identityObjs) => {
+    Identity.toDbObjects(identities, (identityObjs) => {
       this._writeObjects('identities', identityObjs, callback);
     });
   }
@@ -421,9 +419,8 @@ class DbManager extends Root {
       } else {
         return true;
       }
-    }).map(message => {
-      let sender;
-      Identity.toDbBasicObjects([message.sender], identities => sender = identities[0]);
+    }).map((message) => {
+      const sender = Identity.toDbBasicObjects([message.sender])[0];
       return {
         id: message.id,
         url: message.url,

@@ -171,4 +171,4 @@ class WebsocketChangeManager {
  */
 WebsocketChangeManager.prototype.client = null;
 
-module.exports = Core.Websockets.WebsocketChangeManager = WebsocketChangeManager;
+module.exports = Core.Websockets.ChangeManager = WebsocketChangeManager;

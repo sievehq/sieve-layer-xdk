@@ -288,7 +288,6 @@ var responseTest =  function(a, b) {
 
 var isDbEnabled = undefined;
 var testDbEnabled = function(callback) {
-    debugger;
     if (isDbEnabled !== undefined) return callback(isDbEnabled);
     var db;
     function deleteTables(callback) {
@@ -357,5 +356,4 @@ var testDbEnabled = function(callback) {
             });
         });
     });
-    console.log(deleteTablesResult);
 };

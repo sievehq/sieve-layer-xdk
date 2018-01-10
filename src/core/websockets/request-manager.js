@@ -316,5 +316,5 @@ WebsocketRequestManager.prototype._callbackCleanupId = 0;
 
 WebsocketRequestManager.prototype.socketManager = null;
 
-module.exports = Core.Websockets.WebsocketRequestManager = WebsocketRequestManager;
+module.exports = Core.Websockets.RequestManager = WebsocketRequestManager;
 

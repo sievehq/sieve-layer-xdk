@@ -473,5 +473,5 @@ ConversationMessage.prototype.deliveryStatus = Constants.RECIPIENT_STATE.NONE;
 
 ConversationMessage.inObjectIgnore = Message.inObjectIgnore;
 ConversationMessage._supportedEvents = [].concat(Message._supportedEvents);
-Root.initClass.apply(ConversationMessage, [ConversationMessage, 'ConversationMessage', Core]);
+Root.initClass.apply(ConversationMessage, [ConversationMessage, 'ConversationMessage', Core.Message]);
 module.exports = ConversationMessage;
