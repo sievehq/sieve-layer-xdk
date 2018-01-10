@@ -404,7 +404,7 @@ __updateParts(parts) {
       fromServer: message,
       clientId: client.appId,
       _fromDB: message._fromDB,
-      _notify: fromWebsocket && message.is_unread && message.sender.user_id !== client.user.userId,
+      _notify: message.notification && fromWebsocket && message.is_unread && message.sender.user_id !== client.user.userId ? message.notification : null,
     });
   }
 }

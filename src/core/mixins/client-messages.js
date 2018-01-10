@@ -286,7 +286,10 @@ module.exports = {
         this._models.messages[message.id] = message;
         this._triggerAsync('messages:add', { messages: [message] });
         if (message._notify) {
-          this._triggerAsync('messages:notify', { message });
+          this._triggerAsync('messages:notify', {
+            message,
+            notification: message._notify,
+          });
           message._notify = false;
         }
 

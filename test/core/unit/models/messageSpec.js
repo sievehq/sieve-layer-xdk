@@ -2620,6 +2620,7 @@ describe("The Message class", function() {
 
         it("Should trigger a messages:notify event if fromWebsocket is true", function() {
             var data = JSON.parse(JSON.stringify(responses.message1));
+            data.notification = {text: "Hey", title: "ho"};
             data.fromWebsocket = true;
             client.getMessage(data.id).destroy();
             spyOn(client, "_triggerAsync");
@@ -2628,7 +2629,7 @@ describe("The Message class", function() {
             var m = Layer.Core.Message.ConversationMessage._createFromServer(data, client);
 
             // Posttest
-            expect(client._triggerAsync).toHaveBeenCalledWith('messages:notify', { message: m });
+            expect(client._triggerAsync).toHaveBeenCalledWith('messages:notify', { message: m, notification:  {text: "Hey", title: "ho"}});
         });
 
         it("Should not trigger a messages:notify event if message is from sender", function() {

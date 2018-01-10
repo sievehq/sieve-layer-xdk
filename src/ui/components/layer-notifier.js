@@ -413,9 +413,9 @@ registerComponent('layer-notifier', {
       if (type && type !== 'none') {
         if (this.trigger('layer-message-notification', { item: message, model: message.createModel(), type, isBackground })) {
           if (type === 'desktop' && this.properties.userEnabledDesktopNotifications) {
-            this.desktopNotify(evt.message);
+            this.desktopNotify(evt.notification, evt.message);
           } else if (type === 'toast') {
-            this.toastNotify(evt.message);
+            this.toastNotify(evt.notification, evt.message);
           }
         }
       }
@@ -439,19 +439,18 @@ registerComponent('layer-notifier', {
      * Show a desktop notification for this message.
      *
      * @method desktopNotify
+     * @param {Object} notification  Object with `text`, `title` and `sound` properties
      * @param {Layer.Core.Message} message
      */
-    desktopNotify(message) {
+    desktopNotify(notification, message) {
       try {
-        const model = message.createModel();
-        const text = model ? model.text || model.title : '';
         if (this.properties.desktopNotify) this.closeDesktopNotify();
-
+        if (!notification.title && !notification.text) return;
         this.properties.desktopMessage = message;
-        this.properties.desktopNotify = new Notify(`Message from ${message.sender.displayName}`, {
+        this.properties.desktopNotify = new Notify(notification.title, {
           icon: this.iconUrl || message.sender.avatarUrl,
           timeout: this.timeoutSeconds,
-          body: text || 'New file received',
+          body: notification.text,
           tag: message.conversationId || 'announcement',
           closeOnClick: true,
           notifyClick: () => {
@@ -513,22 +512,19 @@ registerComponent('layer-notifier', {
      * Show a toast notification for this message.
      *
      * @method toastNotify
+     * @param {Object} notification  Object with `text`, `title` and `sound` properties
      * @param {Layer.Core.Message} message
      */
-    toastNotify(message) {
+    toastNotify(notification, message) {
       this.closeToast();
-      const rootPart = message.getRootPart();
 
-      if (rootPart) {
+      if (notification) {
         this.nodes.avatar.users = [message.sender];
-        this.nodes.title.innerHTML = message.sender.displayName;
-        this.properties.model = message.createModel();
-        this.nodes.message.innerHTML = this.properties.model.getOneLineSummary();
+        this.nodes.title.innerHTML = notification.title;
+        this.nodes.message.innerHTML = notification.text;
 
         if (this.properties._toastTimeout) clearTimeout(this.properties._toastTimeout);
 
-        this.properties.rootPart = rootPart;
-        this.properties.message = message;
         this.classList.add('layer-notifier-toast-fade');
         this.classList.add('layer-notifier-toast');
         this.properties._toastTimeout = setTimeout(this.closeToast.bind(this), this.timeoutSeconds * 1000);
@@ -548,19 +544,14 @@ registerComponent('layer-notifier', {
      * @method closeToast
      */
     closeToast() {
-      if (this.properties.model) {
+      if (this.properties.toastMessage) {
         this.classList.add('layer-notifier-toast-fade');
         this.classList.remove('layer-notifier-toast');
-        this.properties.message.off(null, null, this);
-        this.properties.model.off(null, null, this);
-        this.properties.message = null;
-        this.properties.model = null;
-        this.properties.rootPart = null;
+        this.properties.toastMessage.off(null, null, this);
+        this.properties.toastMessage = null;
 
         clearTimeout(this.properties._toastTimeout);
         this.properties._toastTimeout = 0;
-        if (this.properties.toastMessage) this.properties.toastMessage.off(null, null, this);
-        this.properties.toastMessage = null;
       }
     },
 

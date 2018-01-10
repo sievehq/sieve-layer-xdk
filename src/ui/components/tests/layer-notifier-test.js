@@ -1,6 +1,6 @@
 if (window.Notification) {
   describe('layer-notifier', function() {
-    var el, testRoot, client, conversation, message;
+    var el, testRoot, client, conversation, message, notification;
 
     beforeAll(function(done) {
       setTimeout(done, 1000);
@@ -27,6 +27,7 @@ if (window.Notification) {
         participants: ['layer:///identities/FrodoTheDodo']
       });
       message = conversation.createMessage("Hello");
+      message._notify = notification = {title: "Hey", text: "Ho"};
       Layer.Utils.defer.flush();
     });
     afterEach(function() {
@@ -194,14 +195,14 @@ if (window.Notification) {
           var restoreFunc = window.Layer.UI.UIUtils.isInBackground;
           spyOn(window.Layer.UI.UIUtils, 'isInBackground').and.returnValue(true);
 
-          el._notify({message: message});
+          el._notify({message: message, notification: notification});
           expect(el.flagTitlebarForMessage).toBe(message);
 
 
           // Run 2: notifyInTitlebar is false
           el.flagTitlebarForMessage = null;
           el.notifyInTitlebar = false;
-          el._notify({message: message});
+          el._notify({message: message, notification: notification});
           expect(el.flagTitlebarForMessage).toBe(null);
 
           // Run 3: isInBackground is false
@@ -209,7 +210,7 @@ if (window.Notification) {
           el.notifyInTitlebar = true;
           window.Layer.UI.UIUtils.isInBackground = restoreFunc;
           spyOn(window.Layer.UI.UIUtils, 'isInBackground').and.returnValue(false);
-          el._notify({message: message});
+          el._notify({message: message, notification: notification});
           expect(el.flagTitlebarForMessage).toBe(null);
 
           // Restore
@@ -225,17 +226,17 @@ if (window.Notification) {
           // Part 1
           el.notifyInBackground = 'desktop';
           el.notifyInForeground = 'toast';
-          el._notify({message: message});
-          expect(el.desktopNotify).toHaveBeenCalledWith(message);
-          expect(el.toastNotify).not.toHaveBeenCalledWith(message);
+          el._notify({message: message, notification: notification});
+          expect(el.desktopNotify).toHaveBeenCalledWith(notification, message);
+          expect(el.toastNotify).not.toHaveBeenCalledWith(notification, message);
           el.desktopNotify.calls.reset();
 
           // Part 2
           el.notifyInBackground = 'toast';
           el.notifyInForeground = 'desktop';
-          el._notify({message: message});
-          expect(el.desktopNotify).not.toHaveBeenCalledWith(message);
-          expect(el.toastNotify).toHaveBeenCalledWith(message);
+          el._notify({message: message, notification: notification});
+          expect(el.desktopNotify).not.toHaveBeenCalledWith(notification, message);
+          expect(el.toastNotify).toHaveBeenCalledWith(notification, message);
 
           // Cleanup
           window.Layer.UI.UIUtils.isInBackground.utils = restoreFunc;
@@ -250,17 +251,17 @@ if (window.Notification) {
           // Part 1
           el.notifyInBackground = 'desktop';
           el.notifyInForeground = 'toast';
-          el._notify({message: message});
-          expect(el.desktopNotify).not.toHaveBeenCalledWith(message);
-          expect(el.toastNotify).toHaveBeenCalledWith(message);
+          el._notify({message: message, notification: notification});
+          expect(el.desktopNotify).not.toHaveBeenCalledWith(notification, message);
+          expect(el.toastNotify).toHaveBeenCalledWith(notification, message);
           el.toastNotify.calls.reset();
 
           // Part 2
           el.notifyInBackground = 'toast';
           el.notifyInForeground = 'desktop';
-          el._notify({message: message});
-          expect(el.desktopNotify).toHaveBeenCalledWith(message);
-          expect(el.toastNotify).not.toHaveBeenCalledWith(message);
+          el._notify({message: message, notification: notification});
+          expect(el.desktopNotify).toHaveBeenCalledWith(notification, message);
+          expect(el.toastNotify).not.toHaveBeenCalledWith(notification, message);
 
           // Cleanup
           window.Layer.UI.UIUtils.isInBackground = restoreFunc;
@@ -276,7 +277,7 @@ if (window.Notification) {
           spyOn(window.Layer.UI.UIUtils, 'isInBackground').and.returnValue(true);
 
           // Run
-          el._notify({message: message});
+          el._notify({message: message, notification: notification});
 
           // Posttest
           var args = spy.calls.allArgs()[0];
@@ -304,11 +305,11 @@ if (window.Notification) {
           });
 
           // Run
-          el._notify({message: message});
+          el._notify({message: message, notification: notification});
 
           // Posttest
-          expect(el.desktopNotify).not.toHaveBeenCalledWith(message);
-          expect(el.toastNotify).not.toHaveBeenCalledWith(message);
+          expect(el.desktopNotify).not.toHaveBeenCalledWith(notification, message);
+          expect(el.toastNotify).not.toHaveBeenCalledWith(notification, message);
 
           // Cleanup
           window.Layer.UI.UIUtils.isInBackground = restoreFunc;
@@ -324,11 +325,11 @@ if (window.Notification) {
           el.properties.userEnabledDesktopNotifications = false;
 
           // Run
-          el._notify({message: message});
+          el._notify({message: message, notification: notification});
 
           // Posttest
-          expect(el.desktopNotify).not.toHaveBeenCalledWith(message);
-          expect(el.toastNotify).not.toHaveBeenCalledWith(message);
+          expect(el.desktopNotify).not.toHaveBeenCalledWith(notification, message);
+          expect(el.toastNotify).not.toHaveBeenCalledWith(notification, message);
 
           // Cleanup
           window.Layer.UI.UIUtils.isInBackground = restoreFunc;
@@ -384,12 +385,12 @@ if (window.Notification) {
           expect(Boolean(el.properties.desktopNotify)).toBe(false);
 
           // Run 1
-          el.desktopNotify(message);
+          el.desktopNotify(notification, message);
           expect(el.closeDesktopNotify).not.toHaveBeenCalled();
           expect(Boolean(el.properties.desktopNotify)).toBe(true);
 
           // Run 2
-          el.desktopNotify(message);
+          el.desktopNotify(notification, message);
           expect(el.closeDesktopNotify).toHaveBeenCalled();
         });
 
@@ -398,7 +399,7 @@ if (window.Notification) {
           expect(Boolean(el.properties.desktopMessage)).toBe(false);
 
           // Run
-          el.desktopNotify(message);
+          el.desktopNotify(notification, message);
 
           // Posttest
           expect(Boolean(el.properties.desktopNotify)).toBe(true);
@@ -410,7 +411,7 @@ if (window.Notification) {
           message.isRead = false;
 
           // Run
-          el.desktopNotify(message);
+          el.desktopNotify(notification, message);
           expect(el.closeDesktopNotify).not.toHaveBeenCalled();
           message.trigger('messages:change', {});
           expect(el.closeDesktopNotify).not.toHaveBeenCalled();
@@ -424,7 +425,7 @@ if (window.Notification) {
           message.isRead = false;
 
           // Run
-          el.desktopNotify(message);
+          el.desktopNotify(notification, message);
           expect(el.closeDesktopNotify).not.toHaveBeenCalled();
           message.trigger('destroy', {});
           expect(el.closeDesktopNotify).toHaveBeenCalled();
@@ -452,28 +453,28 @@ if (window.Notification) {
       describe("The toastNotify() method", function() {
         it("Should set the avatar users", function() {
           expect(el.nodes.avatar.users).toEqual([]);
-          el.toastNotify(message);
+          el.toastNotify(notification, message);
           expect(el.nodes.avatar.users).toEqual([message.sender]);
         });
 
         it("Should set the title", function() {
           expect(el.nodes.title.innerHTML).toEqual('');
-          el.toastNotify(message);
+          el.toastNotify(notification, message);
           expect(el.nodes.title.innerHTML.indexOf(message.sender.displayName)).not.toEqual(-1);
         });
 
         it("Should set message area", function() {
           expect(el.nodes.message.innerHTML).toEqual("");
-          el.toastNotify(message);
-          expect(el.nodes.message.innerHTML).toEqual("Hello");
+          el.toastNotify(notification, message);
+          expect(el.nodes.message.innerHTML).toEqual("Ho");
         });
 
         it("Should replace the message area", function() {
           expect(el.nodes.message.innerHTML).toEqual("");
-          el.toastNotify(message);
-          el.toastNotify(conversation.createMessage("test 2"));
-          el.toastNotify(conversation.createMessage("test 3"));
-          el.toastNotify(conversation.createMessage("test 4"));
+          el.toastNotify({text: "test 1"}, message);
+          el.toastNotify({text: "test 2"}, conversation.createMessage("test 2"));
+          el.toastNotify({text: "test 3"}, conversation.createMessage("test 3"));
+          el.toastNotify({text: "test 4"}, conversation.createMessage("test 4"));
           expect(el.nodes.message.innerHTML).toEqual("test 4");
         });
 
@@ -482,7 +483,7 @@ if (window.Notification) {
           message.isRead = false;
 
           // Run
-          el.toastNotify(message);
+          el.toastNotify(notification, message);
           el.closeToast.calls.reset();
           message.trigger('messages:change', {});
           expect(el.closeToast).not.toHaveBeenCalled();
@@ -496,7 +497,7 @@ if (window.Notification) {
           message.isRead = false;
 
           // Run
-          el.toastNotify(message);
+          el.toastNotify(notification, message);
           el.closeToast.calls.reset();
           message.trigger('destroy');
           expect(el.closeToast).toHaveBeenCalled();
@@ -504,7 +505,7 @@ if (window.Notification) {
 
         it("Should add the layer-notifier-toast css class", function() {
           expect(el.classList.contains('layer-notifier-toast')).toBe(false);
-          el.toastNotify(message);
+          el.toastNotify(notification, message);
           expect(el.classList.contains('layer-notifier-toast')).toBe(true);
         });
       });
@@ -512,7 +513,7 @@ if (window.Notification) {
       describe("The closeToast() method", function() {
         it("Should clear the layer-notifier-toast css class", function() {
           el.classList.add('layer-notifier-toast');
-          el.toastNotify(message);
+          el.toastNotify(notification, message);
           el.closeToast();
           expect(el.classList.contains('layer-notifier-toast')).toBe(false);
         });
@@ -525,7 +526,7 @@ if (window.Notification) {
 
           // Posttest
           spyOn(el, "closeToast");
-          el.toastNotify(message);
+          el.toastNotify(notification, message);
           el.closeToast.calls.reset();
           message.trigger('messages:change', {});
           expect(el.closeToast).not.toHaveBeenCalled();
@@ -535,7 +536,7 @@ if (window.Notification) {
         });
 
         it("Should clear timeouts", function() {
-          el.toastNotify(message);
+          el.toastNotify(notification, message);
           el.properties._toastTimeout = 5;
           el.closeToast();
           expect(el.properties._toastTimeout).toEqual(0);

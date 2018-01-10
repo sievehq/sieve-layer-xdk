@@ -27,22 +27,7 @@ const layerClient = Layer.init({
   useEmojiImages: false,
   textHandlers: ['autolinker', 'emoji', 'newline'],
   mixins: {
-    'layer-avatar': [
-      {
-        methods: {
-          onCreate() {
-            console.log("MIXIN 1");
-          }
-        }
-      },
-      {
-        methods: {
-          onCreate() {
-            console.log("MIXIN 2");
-          }
-        }
-      }
-    ]
+
   }
 });
 
