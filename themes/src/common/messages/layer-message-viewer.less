@@ -75,6 +75,12 @@ layer-message-item-sent .layer-root-viewer.layer-card-width-any-width > layer-st
 
 
 layer-message-viewer {
+
+  &.layer-model-not-supported {
+    justify-content: center;
+    font-style: italic;
+  }
+
   &.layer-card-border-standard,
   &.layer-card-border-rounded-top,
   &.layer-card-border-rounded-bottom {
@@ -122,29 +128,5 @@ layer-message-viewer {
   }
   p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
     margin-top: 1rem;
-  }
-}
-/*
-.layer-conversation-view-width-small .layer-message-item layer-message-viewer.layer-root-viewer {
-  max-width: 90%;
-}
-
-.layer-conversation-view-width-medium .layer-message-item layer-message-viewer.layer-root-viewer {
-  max-width: 90%;
-}
-
-.layer-conversation-view-width-large .layer-message-item layer-message-viewer.layer-root-viewer {
-  max-width: 60%;
-}
-
-.layer-message-item layer-message-viewer.layer-root-viewer.layer-carousel-card {
-  max-width: 90%;
-}
-*/
-layer-conversation-last-message {
-  &.layer-has-left-icon {
-    background-size: 1rem;
-    background-position-y: 2px;
-    margin-right: 20px;
   }
 }

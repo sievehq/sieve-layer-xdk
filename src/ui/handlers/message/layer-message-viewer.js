@@ -55,7 +55,7 @@ registerComponent('layer-message-viewer', {
         } else if (!model.message) {
           this._setupMessage();
         }
-      }
+      },
     },
 
     /**
@@ -69,13 +69,16 @@ registerComponent('layer-message-viewer', {
      */
     message: {
       set(message) {
-        this.innerHTML = '';
-        if (message) {
-          if (!this.properties.model) this.properties.model = message.createModel();
-          if (!this.properties.model) return;
+        const model = (message && !this.properties.model) ? message.createModel() : null;
+        if (model) {
+          this.properties.model = model;
+          if (this.firstChild) this.innerHTML = '';
           if (this.properties._internalState.onAfterCreateCalled) {
             this._setupMessage();
           }
+        } else {
+          this.classList.add('layer-model-not-supported');
+          this.innerHTML = this.modelNotSupported + (this.message.getRootPart() || this.message.findPart()).mimeType;
         }
       },
     },
@@ -145,6 +148,10 @@ registerComponent('layer-message-viewer', {
         if (oldValue) this.classList.remove('layer-card-width-' + oldValue);
         if (newValue) this.classList.add('layer-card-width-' + newValue);
       },
+    },
+
+    modelNotSupported: {
+      value: 'No model registered to handle MIME Type: ',
     },
   },
   methods: {
