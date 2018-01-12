@@ -78,9 +78,10 @@ describe('Location Message Components', function() {
       });
 
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LocationModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(LocationModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           latitude: 37.7734858,
           longitude: -122.3916087,
           heading: 23.45,
@@ -106,9 +107,10 @@ describe('Location Message Components', function() {
       });
 
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LocationModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(message.getRootPart().mimeType).toEqual(LocationModel.MIMEType);
+        expect(JSON.parse(message.getRootPart().body)).toEqual({
           street1: "a",
           street2: "b",
           city: "c",
@@ -127,9 +129,10 @@ describe('Location Message Components', function() {
         longitude: -122.3916087,
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LocationModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(LocationModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           latitude: 37.7734858,
           longitude: -122.3916087,
         });
@@ -154,7 +157,7 @@ describe('Location Message Components', function() {
       });
       var m = new LocationModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.latitude).toEqual(37.7734858);
       expect(m.longitude).toEqual(-122.3916087);
@@ -176,7 +179,7 @@ describe('Location Message Components', function() {
       });
       var m = new LocationModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.latitude).toEqual(37.7734858);
       expect(m.longitude).toEqual(-122.3916087);

@@ -129,9 +129,7 @@ class Conversation extends Container {
    *
    * @method createMessage
    * @param  {String|Object} options - If its a string, a MessagePart is created around that string.
-   * @param {Layer.Core.MessagePart[]} options.parts - An array of MessageParts.  There is some tolerance for
-   *                                               it not being an array, or for it being a string to be turned
-   *                                               into a MessagePart.
+   * @param {Layer.Core.MessagePart[]} options.parts - A Set or array of MessageParts.  If its a String it will be turned into a Textual Message Part
    * @return {Layer.Core.Message.ConversationMessage}
    */
   createMessage(options = {}) {

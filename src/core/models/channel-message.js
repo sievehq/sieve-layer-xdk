@@ -22,7 +22,7 @@ class ChannelMessage extends Message {
     if (options && options.fromServer) {
       client._addMessage(this);
     } else {
-      this.parts.forEach(part => { part._message = this });
+      this.parts.forEach((part) => { part._message = this; });
     }
   }
 

@@ -51,7 +51,7 @@
  *   properties: {
  *     message: {
  *       setter: function(value) {
- *         this.properties.data = value.parts[0].body;
+ *         this.properties.data = value.filterPartsByMimeType('blah/blah')[0].body;
  *       }
  *     }
  *   },

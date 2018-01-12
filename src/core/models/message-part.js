@@ -922,7 +922,7 @@ MessagePart.prototype.size = 0;
  *
  * ```
  * var parentId = messagePart.parentId;
- * var parentNode = message.parts.filter(part => part.nodeId === parentId)[0];
+ * var parentNode = message.filterParts(part => part.nodeId === parentId)[0];
  * ```
  *
  * Or just:

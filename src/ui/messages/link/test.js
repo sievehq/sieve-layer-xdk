@@ -62,9 +62,10 @@ describe('Link Message Components', function() {
         imageUrl: "https://layer.com/invalidimage.png"
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LinkModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(LinkModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           url: "http://layer.com/about",
           title: "b",
           author: "c",
@@ -79,9 +80,10 @@ describe('Link Message Components', function() {
         url: "http://layer.com/about"
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LinkModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(LinkModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           url: "http://layer.com/about"
         });
       });
@@ -102,7 +104,7 @@ describe('Link Message Components', function() {
       });
       var m = new LinkModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.url).toEqual("http://layer.com/about");
       expect(m.title).toEqual("b");
@@ -122,7 +124,7 @@ describe('Link Message Components', function() {
       });
       var m = new LinkModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.url).toEqual("http://layer.com/about");
       expect(m.title).toEqual("");

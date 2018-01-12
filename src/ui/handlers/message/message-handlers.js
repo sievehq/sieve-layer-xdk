@@ -27,10 +27,11 @@ module.exports.messageHandlers = messageHandlers;
  *
  * ```
  * Layer.UI.handlers.message.register({
- *     tagName: 'text-image-location-part',
+ *     tagName: 'my-custom-message-type-handler',
  *     label: 'Map',
  *     handlesMessage: function(message, container) {
- *       return (message.parts.length === 3 && message.parts[0].mimeType.match(/image\/jpeg/ && message.parts[1].mimeType === 'text/plain' && message.parts[2].mimeType === 'location/json');
+ *       const partsWithMyType = message.filterParts(part => part.mimeType === "my/custom-type");
+ *       return partsWithMyType.length > 0;
  *    }
  * });
  * ```

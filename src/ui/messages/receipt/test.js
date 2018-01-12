@@ -1,6 +1,6 @@
 describe('Receipt Message Components', function() {
   var ReceiptModel, ProductModel, ChoiceModel, LocationModel;
-  var conversation;
+  var conversation, message;
   var testRoot;
   var client;
 
@@ -111,9 +111,15 @@ describe('Receipt Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      expect(message.parts.length).toEqual(6);
-      expect(message.parts[0].mimeType).toEqual(ReceiptModel.MIMEType);
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      expect(message.parts.size).toEqual(6);
+      var rootPart = message.getRootPart();
+      var choiceItems = message.getPartsMatchingAttribute({'role': 'options'});
+      var productItems = message.getPartsMatchingAttribute({'role': 'product-items'});
+      var shippingItems = message.getPartsMatchingAttribute({'role': 'shipping-address'});
+      var billingItems = message.getPartsMatchingAttribute({'role': 'billing-address'});
+
+      expect(rootPart.mimeType).toEqual(ReceiptModel.MIMEType);
+      expect(JSON.parse(rootPart.body)).toEqual({
         created_at: new Date("10/10/2010").toISOString(),
         currency: "EUR",
         discounts: {
@@ -131,24 +137,24 @@ describe('Receipt Message Components', function() {
         },
       });
 
-      expect(message.parts[1].mimeType).toEqual(ProductModel.MIMEType);
-      expect(JSON.parse(message.parts[1].body).name).toEqual("a");
+      expect(productItems[0].mimeType).toEqual(ProductModel.MIMEType);
+      expect(JSON.parse(productItems[0].body).name).toEqual("a");
 
-      expect(message.parts[2].mimeType).toEqual(ChoiceModel.MIMEType);
-      expect(JSON.parse(message.parts[2].body)).toEqual({
+      expect(choiceItems[0].mimeType).toEqual(ChoiceModel.MIMEType);
+      expect(JSON.parse(choiceItems[0].body)).toEqual({
         choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
       });
 
-      expect(message.parts[3].mimeType).toEqual(ChoiceModel.MIMEType);
-      expect(JSON.parse(message.parts[3].body)).toEqual({
+      expect(choiceItems[1].mimeType).toEqual(ChoiceModel.MIMEType);
+      expect(JSON.parse(choiceItems[1].body)).toEqual({
         choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
       });
 
-      expect(message.parts[4].mimeType).toEqual(LocationModel.MIMEType);
-      expect(JSON.parse(message.parts[4].body).title).toEqual("Shipping Address");
+      expect(shippingItems[0].mimeType).toEqual(LocationModel.MIMEType);
+      expect(JSON.parse(shippingItems[0].body).title).toEqual("Shipping Address");
 
-      expect(message.parts[5].mimeType).toEqual(LocationModel.MIMEType);
-      expect(JSON.parse(message.parts[5].body).title).toEqual("Billing Address");
+      expect(billingItems[0].mimeType).toEqual(LocationModel.MIMEType);
+      expect(JSON.parse(billingItems[0].body).title).toEqual("Billing Address");
     });
 
     it("Should instantiate a Model from a Message ", function() {
@@ -237,7 +243,7 @@ describe('Receipt Message Components', function() {
       });
       var m = new ReceiptModel({
         message: message,
-        part: message.parts[0]
+        part: message.getRootPart(),
       });
 
       expect(m.createdAt).toEqual(new Date("10/10/2010"));

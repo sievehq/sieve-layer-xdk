@@ -422,8 +422,9 @@ class MessageTypeModel extends Root {
     const part = addEvt.part;
     const message = this.message;
 
-    // This removes from childParts any part that is not a part of the message. Doesn't seem to useful.
-    // this.childParts = this.childParts.filter(childPart => message.parts.indexOf(childPart) !== -1);
+    // This removes from childParts any part that is not a part of the message. Doesn't seem to be a useful operation,
+    // but commented it out until more thought goes into it.
+    // this.childParts = this.childParts.filter(childPart => message.parts.has(childPart));
 
     // If this MessagePart is a Chile Node of this Model, then add it to our childParts and call _handlePartChanges
     const parentId = part.parentId;

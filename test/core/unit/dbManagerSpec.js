@@ -617,10 +617,10 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
-                body: message.parts[0].body,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                id: message.getRootPart().id,
+                body: message.getRootPart().body,
+                encoding: message.getRootPart().encoding,
+                mime_type: message.getRootPart().mimeType,
                 content: null
               }]
             }]);
@@ -665,10 +665,10 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
-                body: message.parts[0].body,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                id: message.findPart().id,
+                body: message.findPart().body,
+                encoding: message.findPart().encoding,
+                mime_type: message.findPart().mimeType,
                 content: null
               }]
             }]);
@@ -682,8 +682,10 @@ var dbIt = it;
           // Setup
           var text = new Array(1000).join('a');
           var blob = new Blob([text], {type : 'unknown/unhandlable'});
+          var part1 = new Layer.Core.MessagePart(blob);
+          var part2 = new Layer.Core.MessagePart(blob);
           var message = conversation.createMessage({
-            parts: [new Layer.Core.MessagePart(blob), new Layer.Core.MessagePart(blob)]
+            parts: [part1, part2]
           });
           message.receivedAt = new Date();
 
@@ -707,18 +709,18 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
+                id: part1.id,
                 body: jasmine.any(String),
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                encoding: part1.encoding,
+                mime_type: part1.mimeType,
                 useBlob: true,
                 content: null
               },
               {
-                id: message.parts[1].id,
+                id: part2.id,
                 body: jasmine.any(String),
-                encoding: message.parts[1].encoding,
-                mime_type: message.parts[1].mimeType,
+                encoding: part2.encoding,
+                mime_type: part2.mimeType,
                 useBlob: true,
                 content: null
               }]
@@ -760,10 +762,10 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
+                id: message.findPart().id,
                 body: null,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                encoding: message.findPart().encoding,
+                mime_type: message.findPart().mimeType,
                 content: null
               }]
             }]);
@@ -798,10 +800,10 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
-                body: message.parts[0].body,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                id: message.findPart().id,
+                body: message.findPart().body,
+                encoding: message.findPart().encoding,
+                mime_type: message.findPart().mimeType,
                 content: null
               }]
             }]);
@@ -813,24 +815,26 @@ var dbIt = it;
         it("Should generate a proper Content object", function() {
           var isDone = false;
           dbManager._getMessageData([message], function(result) {
+            var part1 = client.getMessagePart(responses.conversation1.last_message.parts[0].id);
+            var part2 = client.getMessagePart(responses.conversation1.last_message.parts[1].id);
             expect(result[0]).toEqual(jasmine.objectContaining({
               parts: [{
-                id: message.parts[0].id,
-                body: message.parts[0].body,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                id: part1.id,
+                body: part1.body,
+                encoding: part1.encoding,
+                mime_type: part1.mimeType,
                 content: null
               }, {
-                id: message.parts[1].id,
-                body: message.parts[1].body,
-                encoding: message.parts[1].encoding,
-                mime_type: message.parts[1].mimeType,
+                id: part2.id,
+                body: part2.body,
+                encoding: part2.encoding,
+                mime_type: part2.mimeType,
                 content: {
-                  download_url: message.parts[1]._content.downloadUrl,
-                  expiration:   message.parts[1]._content.expiration,
-                  id:  message.parts[1]._content.id,
-                  refresh_url:  message.parts[1]._content.refreshUrl,
-                  size:  message.parts[1]._content.size
+                  download_url: part2._content.downloadUrl,
+                  expiration:   part2._content.expiration,
+                  id:  part2._content.id,
+                  refresh_url:  part2._content.refreshUrl,
+                  size:  part2._content.size
                 }
               }]
             }));
@@ -2006,6 +2010,7 @@ var dbIt = it;
 
       it("Should get the specified object with blob data and no encoding", function(done) {
         dbManager.getObject('messages', m1.id, function(result) {
+          debugger;
           expect(result.parts[1].encoding).toBe(null);
           expect(Layer.Utils.isBlob(result.parts[1].body)).toBe(true);
           done();

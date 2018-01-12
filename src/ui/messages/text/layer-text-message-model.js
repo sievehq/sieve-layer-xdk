@@ -156,10 +156,11 @@ register({
   tagName: 'layer-message-viewer',
   handlesMessage(message, container) {
     const isCard = Boolean(message.getPartsMatchingAttribute({ role: 'root' })[0]);
-    if (!isCard && message.parts[0].mimeType === 'text/plain') {
-      message.parts[0].body = `{"text": "${message.parts[0].body}"}`;
-      message.parts[0].mimeType = TextModel.MIMEType + '; role=root';
-      message._addToMimeAttributesMap(message.parts[0]);
+    const textPlainPart = message.filterParts(part => part.mimeType === 'text/plain')[0];
+    if (!isCard && textPlainPart) {
+      textPlainPart.body = `{"text": "${textPlainPart.body}"}`;
+      textPlainPart.mimeType = TextModel.MIMEType + '; role=root';
+      message._addToMimeAttributesMap(textPlainPart);
       return true;
     }
   },

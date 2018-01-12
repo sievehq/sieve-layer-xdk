@@ -84,7 +84,8 @@
  *           Array.prototype.slice.call(this.childNodes).forEach(function(messageItem) {
  *             if (messageItem._isListItem) {
  *               var message = messageItem.item;
- *               if (message.parts[0].body.indexOf(searchText) === -1) {
+ *               const textPart = message.filterParts(part => part.mimeType === Layer.Constants.STANDARD_MIME_TYPES.TEXT)[0];
+ *               if (textPart && JSON.parse(textPart.body).text.indexOf(searchText) === -1) {
  *                 messageItem.classList.remove('search-matches');
  *               } else {
  *                 messageItem.classList.add('search-matches');

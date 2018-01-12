@@ -124,7 +124,7 @@ describe("The Message class", function() {
             var m = conversation.createMessage({});
 
             // Posttest
-            expect(m.parts).toEqual([]);
+            expect(m.parts.size).toEqual(0);
         });
 
         it("Should be created with a string for a part", function() {
@@ -134,8 +134,8 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m.parts[0].body).toEqual("Hello There");
-            expect(m.parts[0].mimeType).toEqual("text/plain");
+            expect(m.findPart().body).toEqual("Hello There");
+            expect(m.findPart().mimeType).toEqual("text/plain");
         });
 
         it("Should be created with a Part", function() {
@@ -148,9 +148,9 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m.parts[0].body).toEqual("Hello There");
-            expect(m.parts[0].mimeType).toEqual("text/greeting");
-            expect(m.parts[0].clientId).toEqual(m.clientId);
+            expect(m.findPart().body).toEqual("Hello There");
+            expect(m.findPart().mimeType).toEqual("text/greeting");
+            expect(m.findPart().clientId).toEqual(m.clientId);
         });
 
         it("Should be created with array of parts", function() {
@@ -163,9 +163,9 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m.parts[0].body).toEqual("Hello There");
-            expect(m.parts[0].mimeType).toEqual("text/greeting");
-            expect(m.parts[0].clientId).toEqual(m.clientId);
+            expect(m.findPart().body).toEqual("Hello There");
+            expect(m.findPart().mimeType).toEqual("text/greeting");
+            expect(m.findPart().clientId).toEqual(m.clientId);
         });
 
         it("Should be created with array of mixed", function() {
@@ -178,11 +178,14 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m.parts[0].body).toEqual("Hello There 1");
-            expect(m.parts[0].mimeType).toEqual("text/plain");
+            expect(m.parts.size).toEqual(2);
+            var part1 = m.findPart();
+            var part2 = m.findPart(function(part) {return part !== part1});
+            expect(part1.body).toEqual("Hello There 1");
+            expect(part1.mimeType).toEqual("text/plain");
 
-            expect(m.parts[1].body).toEqual("Hello There 2");
-            expect(m.parts[1].mimeType).toEqual("text/greeting");
+            expect(part2.body).toEqual("Hello There 2");
+            expect(part2.mimeType).toEqual("text/greeting");
         });
 
         it("Should set isRead = true and isUnread = false for normal call", function() {
@@ -193,13 +196,22 @@ describe("The Message class", function() {
         });
 
         it("Should set isRead to not isUnread", function() {
-            var m = conversation.createMessage({
-                isUnread: true
+            var m = client._createObject({
+                id: responses.message1.id,
+                conversation: responses.conversation2,
+                is_unread: true,
+                sender: userIdentity2,
+                parts: [],
             });
             expect(m.isRead).toBe(false);
+            m.destroy();
 
-            var m = conversation.createMessage({
-                isUnread: false
+            var m = client._createObject({
+                id: responses.message1.id,
+                conversation: responses.conversation2,
+                is_unread: false,
+                sender: userIdentity2,
+                parts: [],
             });
             expect(m.isRead).toBe(true);
         });
@@ -214,7 +226,7 @@ describe("The Message class", function() {
         it("Should call _populateFromServer", function() {
             // Setup
             var tmp = Layer.Core.Message.prototype._populateFromServer;
-            spyOn(Layer.Core.Message.prototype, "_populateFromServer");
+            spyOn(Layer.Core.Message.prototype, "_populateFromServer").and.callThrough();
             var serverDef = {
                 sender: {user_id: "fred"},
                 is_unread: true,
@@ -462,7 +474,9 @@ describe("The Message class", function() {
                 mimeType: "text/ho"
             });
             spyOn(message, "_onMessagePartChange");
-            message.parts = [part];
+            var parts = new Set();
+            parts.add(part);
+            message.parts = parts;
 
             // Run
             part.body = "howdy";
@@ -489,60 +503,54 @@ describe("The Message class", function() {
 
         it("Should add an object part", function() {
             // Pretest
-            expect(message.parts).toEqual([jasmine.objectContaining({
+            expect(message.parts.size).toEqual(1);
+            var part1 = message.findPart();
+            expect(part1).toEqual(jasmine.objectContaining({
                 body: "Hello There",
                 mimeType: "text/plain",
                 clientId: message.clientId
-            })]);
+            }));
 
             // Run
             message.addPart({
                 body: "ho",
                 mimeType: "text/ho"
             });
+            var part2 = message.findPart(function(part) {return part !== part1});
 
             // Posttest
-            expect(message.parts).toEqual([
-                jasmine.objectContaining({
-                    body: "Hello There",
-                    mimeType: "text/plain",
-                    clientId: message.clientId
-                }),
-                jasmine.objectContaining({
-                    body: "ho",
-                    mimeType: "text/ho",
-                    clientId: message.clientId
-                })
-            ]);
+            expect(message.parts.size).toEqual(2);
+            expect(part2).toEqual(jasmine.objectContaining({
+                body: "ho",
+                mimeType: "text/ho",
+                clientId: message.clientId
+            }));
         });
 
         it("Should add an instance part", function() {
             // Pretest
-            expect(message.parts).toEqual([jasmine.objectContaining({
+            var part1 = message.findPart();
+            expect(message.parts.size).toEqual(1);
+            expect(part1).toEqual(jasmine.objectContaining({
                 body: "Hello There",
                 mimeType: "text/plain",
                 clientId: message.clientId
-            })]);
+            }));
 
             // Run
             message.addPart(new Layer.Core.MessagePart({
                 body: "ho",
                 mimeType: "text/ho"
             }));
+            var part2 = message.findPart(function(part) {return part !== part1});
 
             // Posttest
-            expect(message.parts).toEqual([
-                jasmine.objectContaining({
-                    body: "Hello There",
-                    mimeType: "text/plain",
-                    clientId: message.clientId
-                }),
-                jasmine.objectContaining({
-                    body: "ho",
-                    mimeType: "text/ho",
-                    clientId: message.clientId
-                })
-            ]);
+            expect(message.parts.size).toEqual(2);
+            expect(part2).toEqual(jasmine.objectContaining({
+                body: "ho",
+                mimeType: "text/ho",
+                clientId: message.clientId
+            }));
         });
 
         it("Should listen for part changes", function() {
@@ -580,7 +588,9 @@ describe("The Message class", function() {
                 mimeType: "text/ho"
             });
             spyOn(message, "_triggerAsync");
-            message.parts = [part];
+            var parts = new Set();
+            parts.add(part);
+            message.parts = parts;
 
             // Run
             part.body = "howdy";
@@ -1413,7 +1423,7 @@ describe("The Message class", function() {
         });
 
         it("Should fail if there are no parts", function() {
-            m.parts = [];
+            m.parts = new Set();
             expect(function() {
                 m.send();
             }).toThrowError(Layer.Core.LayerError.ErrorDictionary.partsMissing);
@@ -1577,8 +1587,9 @@ describe("The Message class", function() {
 
         it("Should call parts.send on all parts", function() {
             // Setup
-            spyOn(m.parts[0], "_send");
-            spyOn(m.parts[1], "_send");
+            var parts = m.filterParts();
+            spyOn(parts[0], "_send");
+            spyOn(parts[1], "_send");
 
             // Run
             m._preparePartsForSending({
@@ -1587,27 +1598,28 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m.parts[0]._send).toHaveBeenCalledWith(client);
-            expect(m.parts[1]._send).toHaveBeenCalledWith(client);
+            expect(parts[0]._send).toHaveBeenCalledWith(client);
+            expect(parts[1]._send).toHaveBeenCalledWith(client);
         });
 
         it("Should copy in part data on receiving a parts:send event and call send", function() {
             // Setup
             spyOn(m, "_send");
-            spyOn(m.parts[0], "_send");
-            spyOn(m.parts[1], "_send");
+            var parts = m.filterParts();
+            spyOn(parts[0], "_send");
+            spyOn(parts[1], "_send");
 
             // Run
             m._preparePartsForSending({
               parts: [null, null],
               id: m.id
             });
-            m.parts[0].trigger("parts:send", {
+            parts[0].trigger("parts:send", {
                 mime_type: "actor/mime",
                 body: "I am a Mime",
                 id: "parta",
             });
-            m.parts[1].trigger("parts:send", {
+            parts[1].trigger("parts:send", {
                 mime_type: "actor/mimic",
                 body: "I am a Mimic",
                 id: "partb",
@@ -2071,8 +2083,9 @@ describe("The Message class", function() {
 
         it("Should destroy all parts", function() {
             // Setup
-            var p1 = m.parts[0];
-            var p2 = m.parts[1];
+            var parts = m.filterParts();
+            var p1 = parts[0];
+            var p2 = parts[1];
 
             // Pretest
             expect(p1.isDestroyed).toBe(false);
@@ -2156,14 +2169,18 @@ describe("The Message class", function() {
             });
             spyOn(m, "__adjustParts");
 
+
             // Run
             m._populateFromServer(responses.message1);
 
             // Posttest
-            expect(m.__adjustParts).toHaveBeenCalledWith([
-                jasmine.any(Layer.Core.MessagePart),
-                jasmine.any(Layer.Core.MessagePart)
-            ]);
+            var args = m.__adjustParts.calls.allArgs()[0];
+            expect(args[0]).toEqual(jasmine.any(Set));
+            var parts = [];
+            args[0].forEach(function(part) {parts.push(part);});
+
+            expect(parts).toEqual(m.filterParts());
+            expect(parts.length).toEqual(2);
         });
 
         it("Should call MessagePart._createFromServer", function() {
@@ -2192,19 +2209,20 @@ describe("The Message class", function() {
               client: client,
               fromServer: responses.message1
             });
-            spyOn(m.parts[0], "_populateFromServer");
-            spyOn(m.parts[1], "_populateFromServer");
-            var parts = m.parts;
+            var parts = m.filterParts();
+            spyOn(parts[0], "_populateFromServer");
+            spyOn(parts[1], "_populateFromServer");
 
             // Run
             m._populateFromServer(responses.message1);
+            var newParts = m.filterParts();
 
             // Posttest
-            expect(m.parts[0]).toBe(parts[0]);
-            expect(m.parts[1]).toBe(parts[1]);
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0]._populateFromServer).toHaveBeenCalledWith(responses.message1.parts[0]);
-            expect(m.parts[1]._populateFromServer).toHaveBeenCalledWith(responses.message1.parts[1]);
+            expect(newParts[0]).toBe(parts[0]);
+            expect(newParts[1]).toBe(parts[1]);
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0]._populateFromServer).toHaveBeenCalledWith(responses.message1.parts[0]);
+            expect(parts[1]._populateFromServer).toHaveBeenCalledWith(responses.message1.parts[1]);
         });
 
         it("Should call __updateRecipientStatus()", function() {
@@ -2322,15 +2340,18 @@ describe("The Message class", function() {
                 client: client,
                 parts: [
                     {mimeType: "text/plain;a=b", body: "a"},
-                    {mimeType: "text/plain;a=c", body: "a"},
-                    {mimeType: "text/plain;a=d", body: "a"},
-                    {mimeType: "text/plain;a=c", body: "a"},
-                    {mimeType: "text/plain;a=e", body: "a"},
+                    {mimeType: "text/plain;a=c", body: "b"},
+                    {mimeType: "text/plain;a=d", body: "c"},
+                    {mimeType: "text/plain;a=c", body: "d"},
+                    {mimeType: "text/plain;a=e", body: "e"},
                 ]
             });
 
             // Run
-            expect(m.getPartsMatchingAttribute({a: "c"}) ).toEqual([m.parts[1], m.parts[3]]);
+            expect(m.getPartsMatchingAttribute({a: "c"}) ).toEqual([
+                jasmine.objectContaining({body: "b"}),
+                jasmine.objectContaining({body: "d"})
+            ]);
         });
     });
 
@@ -2341,15 +2362,15 @@ describe("The Message class", function() {
                 client: client,
                 parts: [
                     {mimeType: "text/plain;a=b", body: "a"},
-                    {mimeType: "text/plain;a=c", body: "a"},
-                    {mimeType: "text/plain;a=d", body: "a"},
-                    {mimeType: "text/plain;role=root", body: "a"},
-                    {mimeType: "text/plain;a=e", body: "a"},
+                    {mimeType: "text/plain;a=c", body: "b"},
+                    {mimeType: "text/plain;a=d", body: "c"},
+                    {mimeType: "text/plain;role=root", body: "d"},
+                    {mimeType: "text/plain;a=e", body: "e"},
                 ]
             });
 
             // Run
-            expect(m.getRootPart()).toEqual(m.parts[3]);
+            expect(m.getRootPart().body).toEqual("d");
         });
     });
 
@@ -2366,11 +2387,11 @@ describe("The Message class", function() {
                     {mimeType: "application/vnd.layer.text+json;a=e", body: '{"text": "a"}'},
                 ]
             });
-            spyOn(m.parts[3], "createModel").and.callThrough();
+            spyOn(m.getRootPart(), "createModel").and.callThrough();
 
             // Run
             expect(m.createModel()).toEqual(jasmine.any(Layer.Core.MessageTypeModel));
-            expect(m.parts[3].createModel).toHaveBeenCalledWith();
+            expect(m.getRootPart().createModel).toHaveBeenCalledWith();
         });
     });
 

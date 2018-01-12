@@ -66,7 +66,7 @@ describe("The Client Message Type Model Mixin", function() {
         it("Should destroy all MessageTypes", function() {
             // Setup
             var message = conversation.createMessage("Hi").send();
-            var model = new TextModel({message: message, part: message.parts[0]});
+            var model = new TextModel({message: message, part: message.getRootPart()});
 
             // Pretest
             expect(client._models.messageTypes[model.id]).toBe(model);
@@ -84,7 +84,7 @@ describe("The Client Message Type Model Mixin", function() {
 
         it("Should get by id", function() {
             var message = conversation.createMessage("hello").send();
-            var model = new TextModel({message: message, part: message.parts[0]});
+            var model = new TextModel({message: message, part: message.getRootPart()});
             expect(client.getMessageTypeModel(model.id)).toBe(model);
         });
 
@@ -100,7 +100,7 @@ describe("The Client Message Type Model Mixin", function() {
         var message, model;
         beforeEach(function() {
             message = conversation.createMessage("hello").send();
-            model = new TextModel({message: message, part: message.parts[0]});
+            model = new TextModel({message: message, part: message.getRootPart()});
         });
 
         it("Should register a Message in _models.messageTypes", function() {

@@ -93,9 +93,9 @@ describe('Button Message Components', function() {
         message = m;
       });
 
-      expect(message.parts.length).toEqual(1);
-      expect(message.parts[0].mimeType).toEqual('application/vnd.layer.buttons+json');
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      expect(message.parts.size).toEqual(1);
+      var part = message.filterPartsByMimeType('application/vnd.layer.buttons+json')[0];
+      expect(JSON.parse(part.body)).toEqual({
         buttons: [
           {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
           {"type": "action", "text": "Give Holy Grail", "event": "grant-grail", "tooltip": "Grail", data: {who: "Lunchalot"}}
@@ -123,7 +123,7 @@ describe('Button Message Components', function() {
       });
       var model = new ButtonsModel({
         message: m,
-        part: m.parts[0],
+        part: m.findPart(),
       });
 
       expect(model.buttons).toEqual([
@@ -147,20 +147,21 @@ describe('Button Message Components', function() {
         message = m;
       });
 
-      expect(message.parts.length).toEqual(2);
-      expect(message.parts[0].mimeType).toEqual('application/vnd.layer.buttons+json');
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      var rootPart = message.getRootPart();
+      var contentPart = message.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+      expect(message.parts.size).toEqual(2);
+      expect(rootPart.mimeType).toEqual('application/vnd.layer.buttons+json');
+      expect(JSON.parse(rootPart.body)).toEqual({
         buttons: [
           {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
           {"type": "action", "text": "Give Holy Grail", "event": "grant-grail", "tooltip": "Grail", data: {who: "Lunchalot"}}
         ]
       });
-      expect(JSON.parse(message.parts[1].body)).toEqual({
+      expect(JSON.parse(contentPart.body)).toEqual({
         text: "howdy"
       });
-      expect(message.parts[1].mimeType).toEqual('application/vnd.layer.text+json');
-      expect(message.parts[1].parentId).toEqual(message.parts[0].nodeId);
-      expect(message.parts[1].parentId.length > 0).toBe(true);
+      expect(contentPart.parentId).toEqual(rootPart.nodeId);
+      expect(contentPart.parentId.length > 0).toBe(true);
     });
 
 
@@ -187,7 +188,7 @@ describe('Button Message Components', function() {
       });
       var model = new ButtonsModel({
         message: m,
-        part: m.parts[0],
+        part: m.findPart(),
       });
 
       expect(model.buttons).toEqual([
@@ -297,9 +298,11 @@ describe('Button Message Components', function() {
         message = m;
       });
 
-      expect(message.parts.length).toEqual(2);
-      expect(message.parts[0].mimeType).toEqual('application/vnd.layer.buttons+json');
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      var rootPart = message.getRootPart();
+      var contentPart = message.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+      expect(message.parts.size).toEqual(2);
+      expect(rootPart.mimeType).toEqual('application/vnd.layer.buttons+json');
+      expect(JSON.parse(rootPart.body)).toEqual({
         buttons: [
           {
             "type": "choice",
@@ -324,12 +327,11 @@ describe('Button Message Components', function() {
           }
         ]
       });
-      expect(JSON.parse(message.parts[1].body)).toEqual({
+      expect(JSON.parse(contentPart.body)).toEqual({
         text: "howdy"
       });
-      expect(message.parts[1].mimeType).toEqual('application/vnd.layer.text+json');
-      expect(message.parts[1].parentId).toEqual(message.parts[0].nodeId);
-      expect(message.parts[1].parentId.length > 0).toBe(true);
+      expect(contentPart.parentId).toEqual(rootPart.nodeId);
+      expect(contentPart.parentId.length > 0).toBe(true);
     });
 
 
@@ -365,7 +367,7 @@ describe('Button Message Components', function() {
       });
       var model = new ButtonsModel({
         message: m,
-        part: m.parts[0],
+        part: m.findPart(),
       });
 
       expect(model.buttons).toEqual([
@@ -683,8 +685,8 @@ describe('Button Message Components', function() {
       buttons.childNodes[0].childNodes[0].click();
 
       var responseMessage = model.choices.isstarred._sendResponse.calls.allArgs()[0][0];
-      var responsePart = responseMessage.parts[0];
-      var textPart = responseMessage.parts[1];
+      var responsePart = responseMessage.getRootPart();
+      var textPart = responseMessage.findPart(part => part.mimeType === Layer.Constants.STANDARD_MIME_TYPES.TEXT);
 
       expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
       expect(textPart.parentId).toEqual(responsePart.nodeId);

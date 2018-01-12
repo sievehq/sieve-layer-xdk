@@ -37,7 +37,7 @@ describe("The Client class", function() {
             displayName: "UserIdentity",
             userId: '1'
         });
-        membership = client._createObject(responses.membership1);
+        membership1 = client._createObject(responses.membership1);
         client.isReady = true;
     });
 
@@ -197,7 +197,8 @@ describe("The Client class", function() {
             });
 
             it("Should get by id", function() {
-                expect(client.getMessagePart(responses.message1.parts[1].id)).toBe(message.parts[1]);
+                var part = message.findPart(part => part.mimeType === responses.message1.parts[1].mime_type);
+                expect(client.getMessagePart(responses.message1.parts[1].id)).toBe(part);
             });
 
             it("Should fail by id", function() {
@@ -300,7 +301,7 @@ describe("The Client class", function() {
                 identHash[responses.useridentity.id] = client.getIdentity(responses.useridentity.id);
                 identHash[userIdentity2.id] = userIdentity2;
                 identHash[serviceIdentity.id] = serviceIdentity;
-                identHash[membership.identity.id] = membership.identity;
+                identHash[membership1.identity.id] = membership1.identity;
 
                 expect(client._models.conversations).toEqual(cHash);
                 expect(client._models.messages).toEqual(mHash);

@@ -63,8 +63,9 @@ describe('Response Message Components', function() {
   describe("Model Tests", function() {
 
     it("Should create an appropriate Message with a display", function() {
+      var rootResponsePart = responseToMessage.getRootPart();
       var model = new ResponseModel({
-        responseTo: responseToMessage.parts[0].id,
+        responseTo: rootResponsePart.id,
         participantData: {
           hey: "ho"
         },
@@ -73,34 +74,39 @@ describe('Response Message Components', function() {
         }),
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(2);
-        expect(message.parts[0].mimeType).toEqual(ResponseModel.MIMEType);
-        expect(message.parts[1].mimeType).toEqual(TextModel.MIMEType);
+        expect(message.parts.size).toEqual(2);
+        var rootPart = message.getRootPart();
+        var textPart = message.findPart(part => part.mimeType === Layer.Constants.STANDARD_MIME_TYPES.TEXT);
+        expect(rootPart.mimeType).toEqual(ResponseModel.MIMEType);
+        expect(textPart.mimeType).toEqual(TextModel.MIMEType);
 
-        expect(JSON.parse(message.parts[0].body)).toEqual({
-          response_to: responseToMessage.parts[0].id,
+        expect(JSON.parse(rootPart.body)).toEqual({
+          response_to: rootResponsePart.id,
           participant_data: {hey: "ho"}
         });
 
-        expect(JSON.parse(message.parts[1].body)).toEqual({
+        expect(JSON.parse(textPart.body)).toEqual({
           text: "howdy"
         });
       });
     });
 
     it("Should create an appropriate Message without a display", function() {
+      var rootResponsePart = responseToMessage.getRootPart();
+
       var model = new ResponseModel({
-        responseTo: responseToMessage.parts[0].id,
+        responseTo: rootResponsePart.id,
         participantData: {
           hey: "ho"
         }
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(ResponseModel.MIMEType);
+        var rootPart = message.getRootPart();
+        expect(message.parts.size).toEqual(1);
+        expect(rootPart.mimeType).toEqual(ResponseModel.MIMEType);
 
-        expect(JSON.parse(message.parts[0].body)).toEqual({
-          response_to: responseToMessage.parts[0].id,
+        expect(JSON.parse(rootPart.body)).toEqual({
+          response_to: rootResponsePart.id,
           participant_data: {hey: "ho"}
         });
       });
@@ -125,7 +131,7 @@ describe('Response Message Components', function() {
       });
       var model = new ResponseModel({
         message: message,
-        part: message.parts[0]
+        part: message.getRootPart(),
       });
       expect(model.responseTo).toEqual(uuidMessage);
       expect(model.participantData).toEqual({user_a: {hey: "ho"}});
@@ -146,7 +152,7 @@ describe('Response Message Components', function() {
       });
       var m = new ResponseModel({
         message: m,
-        part: m.parts[0]
+        part: m.getRootPart(),
       });
       expect(m.responseTo).toEqual(uuidMessage);
       expect(m.participantData).toEqual({user_a: {hey: "ho"}});
@@ -154,8 +160,10 @@ describe('Response Message Components', function() {
     });
 
     it("Should have a suitable one line summary", function() {
+      var rootResponsePart = responseToMessage.getRootPart();
+
       var model1 = new ResponseModel({
-        responseTo: responseToMessage.parts[0].id,
+        responseTo: rootResponsePart.id,
         participantData: {
           hey: "ho"
         },
@@ -164,7 +172,7 @@ describe('Response Message Components', function() {
         }),
       });
       var model2 = new ResponseModel({
-        responseTo: responseToMessage.parts[0].id,
+        responseTo: rootResponsePart.id,
         participantData: {
           hey: "ho"
         }
@@ -188,8 +196,10 @@ describe('Response Message Components', function() {
     });
 
     it("Should render its displayModel", function() {
+      var rootResponsePart = responseToMessage.getRootPart();
+
       var model = new ResponseModel({
-        responseTo: responseToMessage.parts[0].id,
+        responseTo: rootResponsePart.id,
         participantData: {
           hey: "ho"
         },
@@ -205,8 +215,10 @@ describe('Response Message Components', function() {
     });
 
     it("Should omit its displayModel", function() {
+      var rootResponsePart = responseToMessage.getRootPart();
+
       var model = new ResponseModel({
-        responseTo: responseToMessage.parts[0].id,
+        responseTo: rootResponsePart.id,
         participantData: {
           hey: "ho"
         }

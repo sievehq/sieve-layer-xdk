@@ -72,17 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// document.addEventListener('layer-send-message', function(evt) {
-//   if (evt.detail.parts[0].mimeType === 'text/plain' && evt.detail.parts.length === 1) {
-//     evt.preventDefault();
-//     const text = evt.detail.parts[0].body;
-//     var matches = text.match(/(.*?):(.*)/) || ['', '', text];
-//     new TextModel({
-//       text: matches[2],
-//       title: matches[1],
-//     }).generateMessage(evt.detail.conversation, message => message.send());
-//   }
-// });
+/*
 var presendMessage;
 document.addEventListener('layer-send-message', function(evt) {
   if (presendMessage && evt.detail.parts[0].body === presendMessage.parts[0].body) {
@@ -104,7 +94,7 @@ document.addEventListener('layer-composer-change-value', function(evt) {
     }
     presendMessage.parts[0].body = text;
   }
-});
+});*/
 
 Layer.UI.handlers.message.register({
   tagName: 'layer-message-viewer',
@@ -112,7 +102,7 @@ Layer.UI.handlers.message.register({
   handlesMessage(message, container) {
     const isCard = Boolean(message.getPartsMatchingAttribute({ role: 'root' })[0]);
     if (isCard) {
-      message.parts.forEach(part => { part.mimeType = part.mimeType.replace(/\.card\./, '.'); });
+      message.parts.forEach((part) => { part.mimeType = part.mimeType.replace(/\.card\./, '.'); });
       return true;
     }
   },

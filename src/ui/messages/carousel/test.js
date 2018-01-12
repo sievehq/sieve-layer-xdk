@@ -66,6 +66,7 @@ describe('Carousel Message Components', function() {
 
   describe("Model Tests", function() {
     it("Should create an appropriate Message with metadata", function() {
+      var message;
       var model = new CarouselModel({
         items: [
           new TextModel({text: "a"}),
@@ -76,19 +77,23 @@ describe('Carousel Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      expect(message.parts.length).toEqual(4);
-      expect(message.parts[0].mimeType).toEqual('application/vnd.layer.carousel+json');
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+
+      var rootPart = message.getRootPart();
+      var textParts = message.filterParts(part => part.mimeType === 'application/vnd.layer.text+json');
+
+      expect(message.parts.size).toEqual(4);
+      expect(textParts.length).toEqual(3);
+      expect(rootPart.mimeType).toEqual('application/vnd.layer.carousel+json');
+      expect(JSON.parse(rootPart.body)).toEqual({
       });
-      expect(message.parts[1].mimeType).toEqual('application/vnd.layer.text+json');
-      expect(message.parts[2].mimeType).toEqual('application/vnd.layer.text+json');
-      expect(message.parts[3].mimeType).toEqual('application/vnd.layer.text+json');
-      expect(message.parts[1].body).toEqual('{"text":"a"}');
-      expect(message.parts[2].body).toEqual('{"text":"b"}');
-      expect(message.parts[3].body).toEqual('{"text":"c"}');
+
+      expect(textParts[0].body).toEqual('{"text":"a"}');
+      expect(textParts[1].body).toEqual('{"text":"b"}');
+      expect(textParts[2].body).toEqual('{"text":"c"}');
     });
 
     it("Should setup actions correctly", function() {
+      var message;
       var model = new CarouselModel({
         action: {
           event: "fff",
@@ -103,6 +108,9 @@ describe('Carousel Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
+
+      var textParts = message.filterParts(part => part.mimeType === 'application/vnd.layer.text+json');
+
       expect(model.items[0].actionEvent).toEqual("fff");
       expect(model.items[1].actionEvent).toEqual("f");
       expect(model.items[2].actionEvent).toEqual("fff");
@@ -111,9 +119,9 @@ describe('Carousel Message Components', function() {
       expect(model.items[1].actionData).toEqual({g: "hhh", m: "n"});
       expect(model.items[2].actionData).toEqual({g: "h", i: "j"});
 
-      expect(message.parts[1].body).toEqual('{"text":"a"}');
-      expect(JSON.parse(message.parts[2].body)).toEqual({text: "b", action: {event: "f", data: {m: "n"}}});
-      expect(JSON.parse(message.parts[3].body)).toEqual({text: "c", action: {data: {g: "h", i: "j"}}});
+      expect(textParts[0].body).toEqual('{"text":"a"}');
+      expect(JSON.parse(textParts[1].body)).toEqual({text: "b", action: {event: "f", data: {m: "n"}}});
+      expect(JSON.parse(textParts[2].body)).toEqual({text: "c", action: {data: {g: "h", i: "j"}}});
     });
 
 
@@ -148,7 +156,7 @@ describe('Carousel Message Components', function() {
       });
       var model = new CarouselModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
 
       expect(model.items).toEqual([jasmine.any(TextModel), jasmine.any(TextModel), jasmine.any(TextModel)]);

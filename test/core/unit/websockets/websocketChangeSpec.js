@@ -511,8 +511,8 @@ describe("The Websocket Change Manager Class", function() {
                     mimeType: "text/plain2"
                 }]
             }).presend();
-            expect(m.parts.length).toEqual(1);
-            expect(m.parts[0].body).toEqual("hello");
+            expect(m.parts.size).toEqual(1);
+            expect(m.findPart().body).toEqual("hello");
 
             changeManager._handlePatch({
                 operation: "update",
@@ -537,17 +537,18 @@ describe("The Websocket Change Manager Class", function() {
                     "value": "2014-09-15T04:44:59+00:00"
                 }]
             });
+            var parts = m.filterParts();
 
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].body).toEqual("hello");
-            expect(m.parts[1].body).toEqual("This is the message.");
-            expect(m.parts[1].mimeType).toEqual("text/plain2");
-            expect(m.parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2017-05-15T18:05:09");
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].body).toEqual("hello");
+            expect(parts[1].body).toEqual("This is the message.");
+            expect(parts[1].mimeType).toEqual("text/plain2");
+            expect(parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2017-05-15T18:05:09");
             expect(m.updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
 
             // Should listen to events from the new part
             Layer.Core.Message.prototype._onMessagePartChange.calls.reset();
-            m.parts[1].trigger('messageparts:change', {});
+            parts[1].trigger('messageparts:change', {});
             expect(Layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
 
             // Cleanup
@@ -566,10 +567,11 @@ describe("The Websocket Change Manager Class", function() {
                     mimeType: "text/plain3"
                 }]
             }).presend();
+            var parts = m.filterParts();
 
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].body).toEqual("B1");
-            expect(m.parts[1].body).toEqual("B2");
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].body).toEqual("B1");
+            expect(parts[1].body).toEqual("B2");
             var removedPart = m.parts[0];
 
             changeManager._handlePatch({
@@ -581,7 +583,7 @@ describe("The Websocket Change Manager Class", function() {
                 "data": [{
                     "operation": "remove",
                     "property": "parts",
-                    "id": m.parts[0].id
+                    "id": parts[0].id
                 },
                 {
                     "operation": "set",
@@ -590,8 +592,9 @@ describe("The Websocket Change Manager Class", function() {
                 }]
             });
 
-            expect(m.parts.length).toEqual(1);
-            expect(m.parts[0].body).toEqual("B2");
+            parts = m.filterParts();
+            expect(m.parts.size).toEqual(1);
+            expect(parts[0].body).toEqual("B2");
 
             m = conversation.createMessage({
                 parts: [{
@@ -603,8 +606,9 @@ describe("The Websocket Change Manager Class", function() {
                     mimeType: "text/plain3"
                 }]
             }).presend();
+            var parts = m.filterParts();
 
-            removedPart = m.parts[1];
+            removedPart = parts[1];
             changeManager._handlePatch({
                 operation: "update",
                 object: {
@@ -614,7 +618,7 @@ describe("The Websocket Change Manager Class", function() {
                 "data": [{
                     "operation": "remove",
                     "property": "parts",
-                    "id": m.parts[1].id
+                    "id": parts[1].id
                 },
                 {
                     "operation": "set",
@@ -623,8 +627,9 @@ describe("The Websocket Change Manager Class", function() {
                 }]
             });
 
-            expect(m.parts.length).toEqual(1);
-            expect(m.parts[0].body).toEqual("B1");
+            parts = m.filterParts();
+            expect(m.parts.size).toEqual(1);
+            expect(parts[0].body).toEqual("B1");
         });
 
         it("Should overwrite all message parts", function() {
@@ -637,8 +642,8 @@ describe("The Websocket Change Manager Class", function() {
                     mimeType: "text/plain2"
                 }]
             }).presend();
-            expect(m.parts.length).toEqual(1);
-            expect(m.parts[0].body).toEqual("hello");
+            expect(m.parts.size).toEqual(1);
+            expect(m.findPart().body).toEqual("hello");
 
             changeManager._handlePatch({
                 operation: "update",
@@ -669,18 +674,19 @@ describe("The Websocket Change Manager Class", function() {
                 }]
             });
 
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].id).toEqual(m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a7");
-            expect(m.parts[1].id).toEqual(m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a8");
-            expect(m.parts[0].body).toEqual("This is the message.");
-            expect(m.parts[1].body).toEqual("This is not the message.");
-            expect(m.parts[0].mimeType).toEqual("text/plain2");
-            expect(m.parts[1].mimeType).toEqual("text/plain3");
-            expect(m.parts[0].updatedAt.toISOString().substr(0,19)).toEqual("2017-05-15T18:05:09");
-            expect(m.parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2017-06-15T18:05:09");
+            var parts = m.filterParts();
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].id).toEqual(m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a7");
+            expect(parts[1].id).toEqual(m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a8");
+            expect(parts[0].body).toEqual("This is the message.");
+            expect(parts[1].body).toEqual("This is not the message.");
+            expect(parts[0].mimeType).toEqual("text/plain2");
+            expect(parts[1].mimeType).toEqual("text/plain3");
+            expect(parts[0].updatedAt.toISOString().substr(0,19)).toEqual("2017-05-15T18:05:09");
+            expect(parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2017-06-15T18:05:09");
             expect(m.updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
 
-            m.parts[1].trigger('messageparts:change', {});
+            parts[1].trigger('messageparts:change', {});
             expect(Layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
 
             // Cleanup
@@ -698,14 +704,16 @@ describe("The Websocket Change Manager Class", function() {
                     mimeType: "text/plain2"
                 }]
             }).presend();
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].body).toEqual("B1");
-            expect(m.parts[1].body).toEqual("B2");
+            var parts = m.filterParts();
+
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].body).toEqual("B1");
+            expect(parts[1].body).toEqual("B2");
 
             changeManager._handlePatch({
                 operation: "update",
                 object: {
-                    id: m.parts[1].id,
+                    id: parts[1].id,
                     type: 'MessagePart'
                 },
                 "data": [{
@@ -724,13 +732,14 @@ describe("The Websocket Change Manager Class", function() {
                     "value": "2014-09-15T04:44:59+00:00"
                 }]
             });
+            parts = m.filterParts();
 
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].body).toEqual("B1");
-            expect(m.parts[1].body).toEqual("This is an updated message");
-            expect(m.parts[1].mimeType).toEqual("text/plain+updated");
-            expect(m.parts[0].updatedAt).toBe(null);
-            expect(m.parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].body).toEqual("B1");
+            expect(parts[1].body).toEqual("This is an updated message");
+            expect(parts[1].mimeType).toEqual("text/plain+updated");
+            expect(parts[0].updatedAt).toBe(null);
+            expect(parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
         });
     });
 

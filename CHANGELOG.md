@@ -26,7 +26,12 @@
 * UI Component Lifecycle Changes:
     * `onRerender()` is *always* called after `onRender()`, any calls you make to it from `onRender()` methods are now redundant
     * Root implementations of UI Component lifecycle methods are no longer blocked via `registerComponent.MODES.OVERWRITE`
-
+* `message.parts` is now represented as Set rather than an Array. To simplify working with the javascript Set object, `Layer.Core.Message` provides the following methods:
+    * `filterParts`: Standard filter returns an array of matching parts
+    * `mapParts`: Standard map returns an array from the set
+    * `findPart`: Finds a single part matching the callback
+    * `getRootPart`: Returns the Root Message Part (main part)
+    * `getPartsMatchingAttribute`: Searches parts for one with the specified MIME Type attributes
 
 ### Build Breaking Changes
 

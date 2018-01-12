@@ -31,7 +31,7 @@ class ConversationMessage extends Message {
         Util.defer(() => this._sendReceipt('delivery'));
       }
     } else {
-      this.parts.forEach(part => { part._message = this });
+      this.parts.forEach((part) => { part._message = this; });
     }
   }
 
@@ -88,9 +88,7 @@ class ConversationMessage extends Message {
     }
     return value;
   }
-__updateParts(parts) {
-    this._regenerateMimeAttributesMap();
-  }
+
   /**
    * Handle changes to the recipientStatus property.
    *

@@ -200,6 +200,7 @@ describe("The Client Members Mixin", function() {
 
         it("Should trigger event on removing membership", function() {
             // Setup
+            var membership = client._createObject(responses.membership1);
             client._addMembership(membership);
             spyOn(client, "_triggerAsync");
 

@@ -86,9 +86,10 @@ describe('File Message Components', function() {
         mimeType: "image/jpeg",
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(FileModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(FileModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           title: "b",
           author: "c",
           source_url: "e",
@@ -104,9 +105,10 @@ describe('File Message Components', function() {
         sourceUrl: "e",
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(FileModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(FileModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           source_url: "e"
         });
       });
@@ -121,15 +123,17 @@ describe('File Message Components', function() {
       });
       model.generateMessage(conversation, function(message) {
         try {
-          expect(message.parts.length).toEqual(2);
-          expect(message.parts[0].mimeType).toEqual('application/vnd.layer.file+json');
-          expect(JSON.parse(message.parts[0].body)).toEqual({
+          expect(message.parts.size).toEqual(2);
+          var rootPart = message.getRootPart();
+          var sourcePart = message.getPartsMatchingAttribute({'role': 'source'})[0];
+          expect(rootPart.mimeType).toEqual('application/vnd.layer.file+json');
+          expect(JSON.parse(rootPart.body)).toEqual({
             size: blob.size,
             title: "title",
             mime_type: 'image/png',
           });
-          expect(message.parts[1].mimeType).toEqual('image/png');
-          expect(message.parts[1].body).toBe(blob);
+          expect(sourcePart.mimeType).toEqual('image/png');
+          expect(sourcePart.body).toBe(blob);
           done();
         } catch(e) {
           done(e);
@@ -162,7 +166,7 @@ describe('File Message Components', function() {
       });
       var m = new FileModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
 
       expect(m.title).toEqual("b");
@@ -183,7 +187,7 @@ describe('File Message Components', function() {
       });
       var m = new FileModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.title).toEqual("");
       expect(m.author).toEqual("");

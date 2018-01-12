@@ -424,7 +424,7 @@ class DbManager extends Root {
       return {
         id: message.id,
         url: message.url,
-        parts: message.parts.map((part) => {
+        parts: message.mapParts((part) => {
           const body = Util.isBlob(part.body) && part.body.size > DbManager.MaxPartSize ? null : part.body;
           return {
             body,

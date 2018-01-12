@@ -57,9 +57,10 @@ describe('Status Message Components', function() {
         text: "a"
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual('application/vnd.layer.status+json');
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual('application/vnd.layer.status+json');
+        expect(JSON.parse(rootPart.body)).toEqual({
           text: "a"
         });
       });
@@ -76,7 +77,7 @@ describe('Status Message Components', function() {
       });
       var m = new StatusModel({
         message: m,
-        part: m.parts[0]
+        part: m.getRootPart(),
       });
       expect(m.text).toEqual("a");
     });

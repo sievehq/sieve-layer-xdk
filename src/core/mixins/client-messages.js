@@ -282,7 +282,7 @@ module.exports = {
      */
     _addMessage(message) {
       if (!this._models.messages[message.id]) {
-        message.parts.forEach(part => { part._message = null });
+        message.parts.forEach((part) => { part._message = null; });
         this._models.messages[message.id] = message;
         this._triggerAsync('messages:add', { messages: [message] });
         if (message._notify) {

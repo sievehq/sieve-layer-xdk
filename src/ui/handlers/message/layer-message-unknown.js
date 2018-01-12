@@ -18,7 +18,7 @@ registerComponent('layer-message-unknown', {
      * @private
      */
     onRender() {
-      const mimeTypes = this.message.parts.map(part => part.mimeType)
+      const mimeTypes = this.message.mapParts(part => part.mimeType)
       .join(', ');
       this.innerHTML = `Message with mimeTypes ${mimeTypes} has been received but has no renderer`;
     },

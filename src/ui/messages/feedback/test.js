@@ -80,9 +80,9 @@ describe('Feedback Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      expect(message.parts.length).toEqual(1);
-      expect(message.parts[0].mimeType).toEqual(FeedbackModel.MIMEType);
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      expect(message.parts.size).toEqual(1);
+      expect(message.findPart().mimeType).toEqual(FeedbackModel.MIMEType);
+      expect(JSON.parse(message.findPart().body)).toEqual({
         title: "title1",
         prompt: "rate it",
         prompt_wait: "wait to rate it",
@@ -116,7 +116,7 @@ describe('Feedback Message Components', function() {
       });
       var model = new FeedbackModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
 
       // Posttest
@@ -165,22 +165,25 @@ describe('Feedback Message Components', function() {
 
         // Posttest
         var args = Layer.Core.Conversation.prototype.send.calls.allArgs()[0];
-        var parts = args[0].parts;
-        expect(parts[0].mimeType).toEqual(ResponseModel.MIMEType);
-        expect(parts[0].mimeAttributes.role).toEqual("root");
-        expect(JSON.parse(parts[0].body)).toEqual(jasmine.objectContaining({
+
+        var responsePart = args[0].getRootPart();
+        var textPart = args[0].findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+
+        expect(responsePart.mimeType).toEqual(ResponseModel.MIMEType);
+        expect(responsePart.mimeAttributes.role).toEqual("root");
+        expect(JSON.parse(responsePart.body)).toEqual(jasmine.objectContaining({
           response_to: model.message.id,
-          response_to_node_id: model.message.parts[0].nodeId,
+          response_to_node_id: model.message.getRootPart().nodeId,
           participant_data: {
             rating: 2,
             comment: "howdy ho",
             sent_at: jasmine.any(String)
           }
         }));
-        expect(parts[1].mimeType).toEqual(TextModel.MIMEType);
-        expect(parts[1].mimeAttributes.role).toEqual("message");
-        expect(parts[1].mimeAttributes['parent-node-id']).toEqual(parts[0].nodeId);
-        expect(JSON.parse(parts[1].body)).toEqual(jasmine.objectContaining({
+        expect(textPart.mimeType).toEqual(TextModel.MIMEType);
+        expect(textPart.mimeAttributes.role).toEqual("message");
+        expect(textPart.mimeAttributes['parent-node-id']).toEqual(responsePart.nodeId);
+        expect(JSON.parse(textPart.body)).toEqual(jasmine.objectContaining({
           text: client.user.displayName + " rated the experience 2 stars"
         }));
 

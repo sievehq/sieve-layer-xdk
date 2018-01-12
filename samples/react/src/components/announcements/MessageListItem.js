@@ -34,14 +34,14 @@ export default class MessageListItem extends Component {
 
   render() {
     const { message, users } = this.props;
-
+    const messageInstance = client.getMessage(message.id);
     return (
       <div className={"announcement-item " + (message.isRead ? "is-read" : "is-unread")} onClick={this.showItem}>
         <div className={"unread-bullet " + (message.isRead ? "" : "fa fa-circle")}/>
         <div className='name'>{message.sender.displayName}</div>
 
         <div className={"announcement-parts " + (this.state.closed ? "closed" : "")}>
-          {message.parts.map((messagePart) => {
+          {messageInstance.mapParts((messagePart) => {
             return (
               <TextMessagePart
                 key={messagePart.id}

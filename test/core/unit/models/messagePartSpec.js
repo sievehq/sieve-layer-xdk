@@ -935,7 +935,7 @@ describe("The MessageParts class", function() {
                     body: '{"text": "a"}'
                 }]
             });
-            var part = message.parts[0]
+            var part = message.findPart();
             var model = part.createModel();
 
             // Run

@@ -1,6 +1,6 @@
 describe('Product Message Components', function() {
   var ProductModel, ChoiceModel;
-  var conversation;
+  var conversation, message;
   var testRoot;
   var client;
 
@@ -75,9 +75,11 @@ describe('Product Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      expect(message.parts.length).toEqual(3);
-      expect(message.parts[0].mimeType).toEqual(ProductModel.MIMEType);
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      expect(message.parts.size).toEqual(3);
+      var rootPart = message.getRootPart();
+      var choiceParts = message.getPartsMatchingAttribute({'role': 'options'});
+      expect(rootPart.mimeType).toEqual(ProductModel.MIMEType);
+      expect(JSON.parse(rootPart.body)).toEqual({
         name: "a",
         brand: "b",
         image_urls: ["c", "d"],
@@ -91,13 +93,13 @@ describe('Product Message Components', function() {
         }
       });
 
-      expect(message.parts[1].mimeType).toEqual(ChoiceModel.MIMEType);
-      expect(JSON.parse(message.parts[1].body)).toEqual({
+      expect(choiceParts[0].mimeType).toEqual(ChoiceModel.MIMEType);
+      expect(JSON.parse(choiceParts[0].body)).toEqual({
         choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
       });
 
-      expect(message.parts[2].mimeType).toEqual(ChoiceModel.MIMEType);
-      expect(JSON.parse(message.parts[2].body)).toEqual({
+      expect(choiceParts[1].mimeType).toEqual(ChoiceModel.MIMEType);
+      expect(JSON.parse(choiceParts[1].body)).toEqual({
         choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
       });
     });
@@ -141,7 +143,7 @@ describe('Product Message Components', function() {
       });
       var m = new ProductModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
 
       expect(m.name).toEqual("a");

@@ -3,6 +3,7 @@ describe('Choice Message Components', function() {
   var conversation;
   var testRoot;
   var client;
+  var message;
 
   var styleNode;
   beforeAll(function() {
@@ -100,9 +101,11 @@ describe('Choice Message Components', function() {
         message = m;
       });
 
-      expect(message.parts.length).toEqual(1);
-      expect(message.parts[0].mimeType).toEqual('application/vnd.layer.choice+json');
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      var rootPart = message.getRootPart();
+
+      expect(message.parts.size).toEqual(1);
+      expect(rootPart.mimeType).toEqual('application/vnd.layer.choice+json');
+      expect(JSON.parse(rootPart.body)).toEqual({
         label: "hello",
         choices: [
           {text: "a", id: "aa"},
@@ -160,7 +163,7 @@ describe('Choice Message Components', function() {
       });
       var model = new ChoiceModel({
         message: m,
-        part: m.parts[0],
+        part: m.findPart(),
       });
 
       expect(model.label).toEqual("hello");
@@ -245,7 +248,7 @@ describe('Choice Message Components', function() {
         model.generateMessage(conversation, function(m) {
           message = m;
         });
-        expect(JSON.parse(message.parts[0].body).allow_reselect).toBe(true);
+        expect(JSON.parse(message.findPart().body).allow_reselect).toBe(true);
       });
 
       it("Should correctly initialize Model with allowReselect", function() {
@@ -269,7 +272,7 @@ describe('Choice Message Components', function() {
         });
         var model = new ChoiceModel({
           message: m,
-          part: m.parts[0],
+          part: m.findPart(),
         });
 
         expect(model.allowReselect).toBe(true);
@@ -314,8 +317,7 @@ describe('Choice Message Components', function() {
         });
 
         // This is *not* passed as part of the message; its set implicitly via allowDeselect
-        //expect(JSON.parse(message.parts[0].body).allow_reselect).toBe(true);
-        expect(JSON.parse(message.parts[0].body).allow_deselect).toBe(true);
+        expect(JSON.parse(message.findPart().body).allow_deselect).toBe(true);
       });
 
       it("Should correctly initialize Model with allowDeselect", function() {
@@ -339,7 +341,7 @@ describe('Choice Message Components', function() {
         });
         var model = new ChoiceModel({
           message: m,
-          part: m.parts[0],
+          part: m.findPart(),
         });
 
         expect(model.allowReselect).toBe(true);
@@ -387,7 +389,7 @@ describe('Choice Message Components', function() {
         // This is *not* passed as part of the message; its set implicitly via allowMultiselect
         //expect(JSON.parse(message.parts[0].body).allow_reselect).toBe(true);
         //expect(JSON.parse(message.parts[0].body).allow_deselect).toBe(true);
-        expect(JSON.parse(message.parts[0].body).allow_multiselect).toBe(true);
+        expect(JSON.parse(message.findPart().body).allow_multiselect).toBe(true);
       });
 
       it("Should correctly initialize Model with allowMultiselect", function() {
@@ -411,7 +413,7 @@ describe('Choice Message Components', function() {
         });
         var model = new ChoiceModel({
           message: m,
-          part: m.parts[0],
+          part: m.findPart(),
         });
 
         expect(model.allowReselect).toBe(true);
@@ -523,8 +525,8 @@ describe('Choice Message Components', function() {
         expect(model.selectedAnswer).toBe("bb");
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
-        var textPart = responseMessage.parts[1];
+        var responsePart = responseMessage.getRootPart();
+        var textPart = responseMessage.findPart(part => part.mimeType === Layer.Constants.STANDARD_MIME_TYPES.TEXT);
 
         expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
         expect(textPart.parentId).toEqual(responsePart.nodeId);
@@ -567,10 +569,9 @@ describe('Choice Message Components', function() {
         expect(model.selectedAnswer).toBe('');
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
-        var textPart = responseMessage.parts[1];
+        var responsePart = responseMessage.getRootPart();
+        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
 
-        expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
         expect(textPart.parentId).toEqual(responsePart.nodeId);
         expect(textPart.role).toEqual("message");
         expect(JSON.parse(textPart.body)).toEqual({
@@ -609,7 +610,7 @@ describe('Choice Message Components', function() {
         model.selectAnswer({id: "bb"});
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
+        var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
           participant_data: {frodo: "bb"},
@@ -672,10 +673,9 @@ describe('Choice Message Components', function() {
         expect(model.selectedAnswer).toBe("cc,bb");
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
-        var textPart = responseMessage.parts[1];
+        var responsePart = responseMessage.getRootPart();
+        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
 
-        expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
         expect(textPart.parentId).toEqual(responsePart.nodeId);
         expect(textPart.role).toEqual("message");
         expect(JSON.parse(textPart.body)).toEqual({
@@ -716,8 +716,8 @@ describe('Choice Message Components', function() {
         expect(model.selectedAnswer).toBe("cc");
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
-        var textPart = responseMessage.parts[1];
+        var responsePart = responseMessage.getRootPart();
+        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
 
         expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
         expect(textPart.parentId).toEqual(responsePart.nodeId);
@@ -761,7 +761,7 @@ describe('Choice Message Components', function() {
       model.selectAnswer({id: "bb"});
 
       var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-      var responsePart = responseMessage.parts[0];
+      var responsePart = responseMessage.getRootPart();
 
       expect(JSON.parse(responsePart.body)).toEqual({
         participant_data: {frodo: "cc,bb"},
@@ -887,7 +887,7 @@ describe('Choice Message Components', function() {
         model.selectAnswer({ id: "bb" });
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
+        var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
           participant_data: {
@@ -923,7 +923,7 @@ describe('Choice Message Components', function() {
         model.selectAnswer({ id: "bb" });
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
+        var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
           participant_data: {
@@ -959,7 +959,7 @@ describe('Choice Message Components', function() {
         model.selectAnswer({ id: "bb" });
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
+        var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
           participant_data: {
@@ -999,7 +999,7 @@ describe('Choice Message Components', function() {
         model.selectAnswer({ id: "bb" });
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
+        var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
           participant_data: {
@@ -1036,7 +1036,7 @@ describe('Choice Message Components', function() {
         model.selectAnswer({ id: "bb" });
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
+        var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
           participant_data: {
@@ -1075,7 +1075,7 @@ describe('Choice Message Components', function() {
         model.selectAnswer({ id: "bb" });
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var responsePart = responseMessage.parts[0];
+        var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
           participant_data: {
@@ -1174,7 +1174,8 @@ describe('Choice Message Components', function() {
 
         model.selectAnswer({id: "bb"});
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
-        var textPart = responseMessage.parts[1];
+        var responsePart = responseMessage.getRootPart();
+        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
 
         expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
         expect(JSON.parse(textPart.body)).toEqual({

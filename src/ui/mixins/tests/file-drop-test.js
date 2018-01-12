@@ -51,7 +51,7 @@ describe("The File Drop Mixin", function() {
 
     expect(conversation.send).toHaveBeenCalled();
     var message = conversation.send.calls.allArgs()[0][0];
-    expect(message.parts[0].mimeType).toEqual('application/vnd.layer.file+json');
+    expect(message.getRootPart().mimeType).toEqual('application/vnd.layer.file+json');
   });
 
   it("Should send an Image Message", function(done) {
@@ -66,7 +66,7 @@ describe("The File Drop Mixin", function() {
       },
       function(message) {
         try {
-          expect(message.parts[0].mimeType).toEqual('application/vnd.layer.image+json');
+          expect(message.getRootPart().mimeType).toEqual('application/vnd.layer.image+json');
           done();
         } catch(e) {
           done(e);
@@ -82,18 +82,21 @@ describe("The File Drop Mixin", function() {
       stopPropagation: function() {},
       dataTransfer: {
         files: [
-          new Blob(["hey"], {type: "hey/ho"}),
-          new Blob(["ho"], {type: "hey/ho"})
+          new Blob(["hey"], {type: "hey1/ho1"}),
+          new Blob(["ho"], {type: "hey2/ho2"})
         ]
       }
     });
 
     expect(conversation.send).toHaveBeenCalled();
     var message = conversation.send.calls.allArgs()[0][0];
-    expect(message.parts[0].mimeType).toEqual('application/vnd.layer.carousel+json');
-    expect(message.parts[1].mimeType).toEqual('application/vnd.layer.file+json');
-    expect(message.parts[2].mimeType).toEqual('hey/ho');
-    expect(message.parts[3].mimeType).toEqual('application/vnd.layer.file+json');
+    var carouselParts = message.getPartsMatchingAttribute({role: 'carousel-item'});
+    var sourceParts = message.getPartsMatchingAttribute({role: 'source'});
+    expect(message.getRootPart().mimeType).toEqual('application/vnd.layer.carousel+json');
+    expect(carouselParts[0].mimeType).toEqual('application/vnd.layer.file+json');
+    expect(carouselParts[1].mimeType).toEqual('application/vnd.layer.file+json');
+    expect(sourceParts[0].mimeType).toEqual('hey1/ho1');
+    expect(sourceParts[1].mimeType).toEqual('hey2/ho2');
   });
 
   it("Should send a Carousel of Images", function(done) {
@@ -111,10 +114,13 @@ describe("The File Drop Mixin", function() {
       },
       function(message) {
         try {
-          expect(message.parts[0].mimeType).toEqual('application/vnd.layer.carousel+json');
-          expect(message.parts[1].mimeType).toEqual('application/vnd.layer.image+json');
-          expect(message.parts[2].mimeType).toEqual('image/png');
-          expect(message.parts[3].mimeType).toEqual('application/vnd.layer.image+json');
+          var carouselParts = message.getPartsMatchingAttribute({role: 'carousel-item'});
+          var sourceParts = message.getPartsMatchingAttribute({role: 'source'});
+          expect(message.getRootPart().mimeType).toEqual('application/vnd.layer.carousel+json');
+          expect(carouselParts[0].mimeType).toEqual('application/vnd.layer.image+json');
+          expect(carouselParts[1].mimeType).toEqual('application/vnd.layer.image+json');
+          expect(sourceParts[0].mimeType).toEqual('image/png');
+          expect(sourceParts[1].mimeType).toEqual('image/png');
           done();
         } catch(e) {
           done(e);

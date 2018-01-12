@@ -816,7 +816,7 @@ describe("The Conversation Class", function() {
             // Posttest
             expect(client._models.messages[conversation.lastMessage.id]).toEqual(jasmine.any(Layer.Core.Message));
             expect(conversation.lastMessage).toEqual(jasmine.any(Layer.Core.Message));
-            expect(conversation.lastMessage.parts[0].body).toEqual(c.last_message.parts[0].body);
+            expect(conversation.lastMessage.findPart().body).toEqual(c.last_message.parts[0].body);
         });
 
         it("Should keep lastMessage even if the server doesnt yet recognize it", function() {
@@ -1489,13 +1489,13 @@ describe("The Conversation Class", function() {
 
             // Run
             var m = conversation.createMessage({
-                parts: [new Layer.Core.MessagePart({body: "Hey"})]
+                parts: [new Layer.Core.MessagePart({body: "Hey", mimeType: "text/plain"})]
             });
 
             // Posttest
             expect(m).toEqual(jasmine.any(Layer.Core.Message));
-            expect(m.parts.length).toEqual(1);
-            expect(m.parts[0].body).toEqual("Hey");
+            expect(m.parts.size).toEqual(1);
+            expect(m.findPart().body).toEqual("Hey");
         });
 
         it("Should have its conversationId property set", function() {
