@@ -47,7 +47,7 @@
  * @class Layer.UI.messages.CarouselMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel, Root } from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Root } from '../../../core';
 
 class CarouselModel extends MessageTypeModel {
   /**
@@ -172,7 +172,7 @@ CarouselModel.messageRenderer = 'layer-carousel-message-view';
 Root.initClass.apply(CarouselModel, [CarouselModel, 'CarouselModel']);
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(CarouselModel, 'CarouselModel');
+Core.Client.registerMessageTypeModelClass(CarouselModel, 'CarouselModel');
 
 module.exports = CarouselModel;
 

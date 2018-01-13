@@ -10,7 +10,6 @@ describe('layer-presence', function() {
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true
@@ -27,7 +26,7 @@ describe('layer-presence', function() {
   });
   afterEach(function() {
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   describe("The item property", function() {

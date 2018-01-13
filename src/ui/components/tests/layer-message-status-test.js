@@ -10,7 +10,6 @@ describe('layer-message-status', function() {
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true
@@ -32,7 +31,7 @@ describe('layer-message-status', function() {
   afterEach(function() {
     if (client) client.destroy();
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   it('Should call rerender on any message change events', function() {
@@ -88,7 +87,6 @@ describe('layer-message-status', function() {
   it('Should show delivered to some', function() {
     message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
     conversation.participants.push(new Layer.Core.Identity({
-      client: client,
       userId: 'b',
       id: 'layer:///identities/b'
     }));
@@ -104,7 +102,6 @@ describe('layer-message-status', function() {
   it('Should show read by some', function() {
     message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
     conversation.participants.push(new Layer.Core.Identity({
-      client: client,
       userId: 'b',
       id: 'layer:///identities/b'
     }));

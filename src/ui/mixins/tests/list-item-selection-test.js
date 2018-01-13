@@ -7,7 +7,6 @@ describe("List Item Selection Mixin", function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
       displayName: 'Frodo is a Dodo',
@@ -28,7 +27,7 @@ describe("List Item Selection Mixin", function() {
   afterEach(function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
     if (client) client.destroy();
   });
 

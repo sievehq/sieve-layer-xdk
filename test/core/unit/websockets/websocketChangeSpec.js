@@ -14,7 +14,6 @@ describe("The Websocket Change Manager Class", function() {
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
-            clientId: client.appId,
             userId: client.userId,
             id: "layer:///identities/" + client.userId,
             firstName: "first",
@@ -53,13 +52,12 @@ describe("The Websocket Change Manager Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         it("Should return a Websockets.ChangeManager", function() {
             expect(new Layer.Core.Websockets.ChangeManager({
-                client: client,
                 socketManager: client.socketManager
             })).toEqual(jasmine.any(Layer.Core.Websockets.ChangeManager));
         });
@@ -69,7 +67,6 @@ describe("The Websocket Change Manager Class", function() {
             var tmp = Layer.Core.Websockets.ChangeManager.prototype._handleChange;
             Layer.Core.Websockets.ChangeManager.prototype._handleChange = jasmine.createSpy('handleChange');
             var changeManager = new Layer.Core.Websockets.ChangeManager({
-                client: client,
                 socketManager: client.socketManager
             })
             expect(Layer.Core.Websockets.ChangeManager.prototype._handleChange).not.toHaveBeenCalled();
@@ -295,7 +292,6 @@ describe("The Websocket Change Manager Class", function() {
                 object: m,
                 type: "Message",
                 operations: [{operation: "set", property: "joe", value: "jane"}],
-                client: client
             });
 
             // Cleanup

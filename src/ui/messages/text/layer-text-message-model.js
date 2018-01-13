@@ -36,7 +36,7 @@
  * @class Layer.UI.messages.TextMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
+import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
 import { register } from '../../handlers/message/message-handlers';
 import { STANDARD_MIME_TYPES } from '../../../constants';
 
@@ -144,7 +144,7 @@ TextModel.messageRenderer = 'layer-text-message-view';
 Root.initClass.apply(TextModel, [TextModel, 'TextModel']);
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(TextModel, 'TextModel');
+Core.Client.registerMessageTypeModelClass(TextModel, 'TextModel');
 
 
 /*

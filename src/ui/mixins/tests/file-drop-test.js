@@ -19,7 +19,6 @@ describe("The File Drop Mixin", function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -37,6 +36,10 @@ describe("The File Drop Mixin", function() {
 
     CustomElements.takeRecords();
     Layer.Utils.defer.flush();
+  });
+
+  afterEach(function() {
+    el.destroy();
   });
 
   it("Should send a File Message", function() {

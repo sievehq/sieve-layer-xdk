@@ -34,7 +34,7 @@ describe('layer-avatar', function() {
       client.destroy();
       client = null;
     }
-    Layer.Core.Client.removeListenerForNewClient();
+
     if (testRoot && testRoot.parentNode == document.body) document.body.removeChild(testRoot);
   });
 

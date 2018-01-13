@@ -14,7 +14,6 @@ describe("The OnlineStateManager Class", function() {
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
-            clientId: client.appId,
             userId: client.userId,
             id: "layer:///identities/" + client.userId,
             firstName: "first",
@@ -56,7 +55,7 @@ describe("The OnlineStateManager Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
 

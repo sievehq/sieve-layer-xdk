@@ -14,6 +14,7 @@
  * @extends Layer.Core.Root
  * @private
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Util, { logger } from '../../utils';
@@ -25,18 +26,14 @@ class SocketManager extends Root {
   /**
    * Create a new websocket manager
    *
-   *      var socketManager = new Layer.Core.Websockets.SocketManager({
-   *          client: client,
-   *      });
+   *      var socketManager = new Layer.Core.Websockets.SocketManager({});
    *
    * @method
    * @param  {Object} options
-   * @param {Layer.Core.Client} client
    * @return {Layer.Core.Websockets.SocketManager}
    */
   constructor(options) {
     super(options);
-    if (!this.client) throw new Error('SocketManager requires a client');
 
     // Insure that on/off methods don't need to call bind, therefore making it easy
     // to add/remove functions as event listeners.
@@ -46,14 +43,14 @@ class SocketManager extends Root {
     this._onError = this._onError.bind(this);
 
     // If the client is authenticated, start it up.
-    if (this.client.isAuthenticated && this.client.onlineManager.isOnline) {
+    if (client.isAuthenticated && client.onlineManager.isOnline) {
       this.connect();
     }
 
-    this.client.on('online', this._onlineStateChange, this);
+    client.on('online', this._onlineStateChange, this);
 
     // Any time the Client triggers a ready event we need to reconnect.
-    this.client.on('authenticated', this.connect, this);
+    client.on('authenticated', this.connect, this);
 
     this._lastTimestamp = Date.now();
   }
@@ -83,7 +80,7 @@ class SocketManager extends Root {
    * @param {Layer.Core.LayerEvent} evt
    */
   _onlineStateChange(evt) {
-    if (!this.client.isAuthenticated) return;
+    if (!client.isAuthenticated) return;
     if (evt.isOnline) {
       this._reconnect(evt.reset);
     } else {
@@ -136,7 +133,7 @@ class SocketManager extends Root {
    * @param  {Layer.Core.SyncEvent} evt - Ignored parameter
    */
   connect(evt) {
-    if (this.client.isDestroyed || !this.client.isOnline) return;
+    if (client.isDestroyed || !client.isOnline) return;
     if (this._socket) return this._reconnect();
 
     this._closing = false;
@@ -144,7 +141,7 @@ class SocketManager extends Root {
     this._lastCounter = -1;
 
     // Get the URL and connect to it
-    const url = `${this.client.websocketUrl}/?session_token=${this.client.sessionToken}`;
+    const url = `${client.websocketUrl}/?session_token=${client.sessionToken}`;
 
     logger.info('Websocket Connecting');
 
@@ -341,7 +338,7 @@ class SocketManager extends Root {
     }
 
     logger.debug('Websocket request: getCounter');
-    this.client.socketRequestManager.sendRequest({
+    client.socketRequestManager.sendRequest({
       data: {
         method: 'Counter.read',
       },
@@ -372,8 +369,8 @@ class SocketManager extends Root {
 
     // Cancel any prior operation; presumably we lost connection and they're dead anyways,
     // but the callback triggering on these could be disruptive.
-    this.client.socketRequestManager.cancelOperation('Event.replay');
-    this.client.socketRequestManager.cancelOperation('Presence.sync');
+    client.socketRequestManager.cancelOperation('Event.replay');
+    client.socketRequestManager.cancelOperation('Presence.sync');
     this._replayEvents(timestamp, () => {
       this._enablePresence(timestamp, () => {
         this.trigger('synced');
@@ -397,7 +394,7 @@ class SocketManager extends Root {
       this._needsReplayFrom = timestamp;
     } else {
       logger.info('Websocket request: _replayEvents');
-      this.client.socketRequestManager.sendRequest({
+      client.socketRequestManager.sendRequest({
         data: {
           method: 'Event.replay',
           data: {
@@ -462,7 +459,7 @@ class SocketManager extends Root {
    * @param  {Function} callback
    */
   _enablePresence(timestamp, callback) {
-    this.client.socketRequestManager.sendRequest({
+    client.socketRequestManager.sendRequest({
       data: {
         method: 'Presence.subscribe',
       },
@@ -470,8 +467,8 @@ class SocketManager extends Root {
       isChangesArray: false,
     });
 
-    if (this.client.isPresenceEnabled) {
-      this.client.socketRequestManager.sendRequest({
+    if (client.isPresenceEnabled) {
+      client.socketRequestManager.sendRequest({
         data: {
           method: 'Presence.update',
           data: [
@@ -504,7 +501,7 @@ class SocketManager extends Root {
   syncPresence(timestamp, callback) {
     if (timestamp) {
       // Return value for use in unit tests
-      return this.client.socketRequestManager.sendRequest({
+      return client.socketRequestManager.sendRequest({
         data: {
           method: 'Presence.sync',
           data: {
@@ -669,7 +666,7 @@ class SocketManager extends Root {
    * @private
    */
   _scheduleReconnect() {
-    if (this.isDestroyed || !this.client.isOnline || !this.client.isAuthenticated || this._isOpen()) return;
+    if (this.isDestroyed || !client.isOnline || !client.isAuthenticated || this._isOpen()) return;
 
     const delay = Util.getExponentialBackoffSeconds(this.maxDelaySecondsBetweenReconnect, Math.min(15, this._lostConnectionCount));
     logger.debug('Websocket Reconnect in ' + delay + ' seconds');
@@ -689,7 +686,7 @@ class SocketManager extends Root {
    * @private
    */
   _validateSessionBeforeReconnect() {
-    if (this.isDestroyed || !this.client.isOnline || !this.client.isAuthenticated || this._isOpen()) return;
+    if (this.isDestroyed || !client.isOnline || !client.isAuthenticated || this._isOpen()) return;
 
     const maxDelay = this.maxDelaySecondsBetweenReconnect * 1000;
     const diff = Date.now() - this._lastValidateSessionRequest - maxDelay;
@@ -703,7 +700,7 @@ class SocketManager extends Root {
       }
     } else {
       this._lastValidateSessionRequest = Date.now();
-      this.client.xhr({
+      client.xhr({
         url: '/?action=validateConnectionForWebsocket&client=' + version,
         method: 'GET',
         sync: false,
@@ -771,12 +768,6 @@ SocketManager.prototype.pingFrequency = 30000;
  * @property {Number}
  */
 SocketManager.prototype.maxDelaySecondsBetweenReconnect = 30;
-
-/**
- * The Client that owns this.
- * @property {Layer.Core.Client}
- */
-SocketManager.prototype.client = null;
 
 /**
  * The Socket Connection instance

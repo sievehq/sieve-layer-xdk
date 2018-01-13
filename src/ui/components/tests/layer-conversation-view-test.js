@@ -13,7 +13,6 @@ describe('layer-conversation-view', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -22,7 +21,6 @@ describe('layer-conversation-view', function() {
     });
 
     user1 = new Layer.Core.Identity({
-      client: client,
       userId: 'SaurumanTheMildlyAged',
       displayName: 'Sauruman the Mildly Aged',
       id: 'layer:///identities/SaurumanTheMildlyAged',
@@ -54,7 +52,7 @@ describe('layer-conversation-view', function() {
   afterEach(function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
     if (el) {
       el.destroy();
       el = null;

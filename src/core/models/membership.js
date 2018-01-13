@@ -7,11 +7,11 @@
  * @experimental This feature is incomplete, and available as Preview only.
  * @extends Layer.Core.Syncable
  */
+import { client  } from '../../settings';
 import Core from '../namespace';
 import Syncable from './syncable';
 import Root from '../root';
 import Constants from '../../constants';
-import { ErrorDictionary } from '../layer-error';
 
 class Membership extends Syncable {
   constructor(options = {}) {
@@ -21,10 +21,6 @@ class Membership extends Syncable {
     } else if (options.id && !options.userId) {
       options.userId = options.id.replace(/^.*\//, '');
     }
-
-    // Make sure we have an clientId property
-    if (options.client) options.clientId = options.client.appId;
-    if (!options.clientId) throw new Error(ErrorDictionary.clientMissing);
 
     super(options);
 
@@ -38,17 +34,16 @@ class Membership extends Syncable {
     }
 
     if (!this.url && this.id) {
-      this.url = `${this.getClient().url}/${this.id.substring(9)}`;
+      this.url = `${client.url}/${this.id.substring(9)}`;
     } else if (!this.url) {
       this.url = '';
     }
-    this.getClient()._addMembership(this);
+    client._addMembership(this);
 
     this.isInitializing = false;
   }
 
   destroy() {
-    const client = this.getClient();
     if (client) client._removeMembership(this);
     super.destroy();
   }
@@ -73,7 +68,6 @@ class Membership extends Syncable {
    * @param  {Object} membership - Server representation of the membership
    */
   _populateFromServer(membership) {
-    const client = this.getClient();
 
     // Disable events if creating a new Membership
     // We still want property change events for anything that DOES change
@@ -94,7 +88,7 @@ class Membership extends Syncable {
     }, this);
 
     if (!this.url && this.id) {
-      this.url = this.getClient().url + this.id.substring(8);
+      this.url = client.url + this.id.substring(8);
     }
 
     this._disableEvents = false;
@@ -136,12 +130,10 @@ class Membership extends Syncable {
    * @method _createFromServer
    * @static
    * @param {Object} membership - Server Membership Object
-   * @param {Layer.Core.Client} client
    * @returns {Layer.Core.Membership}
    */
-  static _createFromServer(membership, client) {
+  static _createFromServer(membership) {
     return new Membership({
-      client,
       fromServer: membership,
       _fromDB: membership._fromDB,
     });
@@ -178,8 +170,6 @@ Membership.prototype.role = null;
 Membership.prototype.identity = '';
 
 Membership.inObjectIgnore = Root.inObjectIgnore;
-
-Membership.bubbleEventParent = 'getClient';
 
 Membership._supportedEvents = [
   'members:change',

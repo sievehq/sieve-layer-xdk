@@ -22,7 +22,6 @@ describe("The MessagesQuery Class", function() {
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -69,7 +68,7 @@ describe("The MessagesQuery Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should be an MessagesQuery", function() {
@@ -79,7 +78,6 @@ describe("The MessagesQuery Class", function() {
     describe("The constructor() method", function() {
         it("Should accept a full predicate", function() {
           var query = client.createQuery({
-            client: client,
             model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
@@ -88,7 +86,6 @@ describe("The MessagesQuery Class", function() {
 
         it("Should accept a UUID predicate", function() {
           var query = client.createQuery({
-            client: client,
             model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
@@ -97,7 +94,6 @@ describe("The MessagesQuery Class", function() {
 
         it("Should accept a full predicate double quote", function() {
           var query = client.createQuery({
-            client: client,
             model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
@@ -106,7 +102,6 @@ describe("The MessagesQuery Class", function() {
 
         it("Should accept a UUID predicate double quote", function() {
           var query = client.createQuery({
-            client: client,
             model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
@@ -116,7 +111,6 @@ describe("The MessagesQuery Class", function() {
         it("Should reject an invalid predicate", function() {
           expect(function() {
             var query = client.createQuery({
-                client: client,
                 model: Layer.Core.Query.Message,
                 predicate: "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf-hey"
             });
@@ -191,7 +185,6 @@ describe("The MessagesQuery Class", function() {
             var tmp = Layer.Core.Query.prototype._run;
             Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15
             });
@@ -582,7 +575,6 @@ describe("The MessagesQuery Class", function() {
             message2 = conversation.createMessage("hey");
             message2.position = 10;
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object"
@@ -610,7 +602,6 @@ describe("The MessagesQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",
@@ -662,7 +653,6 @@ describe("The MessagesQuery Class", function() {
         var query, message, evt;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",
@@ -748,7 +738,6 @@ describe("The MessagesQuery Class", function() {
         var query, message;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",
@@ -931,7 +920,6 @@ describe("The MessagesQuery Class", function() {
             message1 = conversation.createMessage("hi").send();
             message2 = conversation.createMessage("ho").send();
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",
@@ -1071,7 +1059,6 @@ describe("The MessagesQuery Class", function() {
         describe("For object type", function() {
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     paginationWindow: 15,
                     dataType: "object",
                 });
@@ -1153,7 +1140,6 @@ describe("The MessagesQuery Class", function() {
         describe("For instance type", function() {
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     paginationWindow: 15,
                     dataType: "instance",
                 });
@@ -1242,7 +1228,6 @@ describe("The MessagesQuery Class", function() {
             describe("For object type", function() {
                 beforeEach(function() {
                     query = client.createQuery({
-                        client: client,
                         model: Layer.Core.Query.Message,
                         paginationWindow: 15,
                         dataType: "object",
@@ -1315,7 +1300,6 @@ describe("The MessagesQuery Class", function() {
             describe("For instance type", function() {
                 beforeEach(function() {
                     query = client.createQuery({
-                        client: client,
                         model: Layer.Core.Query.Message,
                         paginationWindow: 15,
                         dataType: "instance",
@@ -1394,7 +1378,6 @@ describe("The MessagesQuery Class", function() {
             message1 = conversation.createMessage("hi");
             message2 = conversation.createMessage("ho");
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",

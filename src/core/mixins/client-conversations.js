@@ -220,7 +220,7 @@ module.exports = {
       if (this._models.conversations[id]) {
         result = this._models.conversations[id];
       } else if (canLoad) {
-        result = Conversation.load(id, this);
+        result = Conversation.load(id);
       }
       if (canLoad) result._loadType = 'fetched';
       return result;
@@ -232,12 +232,6 @@ module.exports = {
      * Typically, you do not need to call this; the following code
      * automatically calls _addConversation for you:
      *
-     *      var conv = new Layer.Core.Conversation({
-     *          client: client,
-     *          participants: ['a', 'b']
-     *      });
-     *
-     *      // OR:
      *      var conv = client.createConversation(['a', 'b']);
      *
      * @method _addConversation
@@ -251,7 +245,6 @@ module.exports = {
         this._models.conversations[id] = conversation;
 
         // Make sure the client is set so that the next event bubbles up
-        if (conversation.clientId !== this.appId) conversation.clientId = this.appId;
         this._triggerAsync('conversations:add', { conversations: [conversation] });
       }
     },
@@ -413,11 +406,11 @@ module.exports = {
     },
 
     _createConversationMessageFromServer(obj) {
-      return ConversationMessage._createFromServer(obj, this);
+      return ConversationMessage._createFromServer(obj);
     },
 
     _createConversationFromServer(obj) {
-      return Conversation._createFromServer(obj, this);
+      return Conversation._createFromServer(obj);
     },
   },
 };

@@ -44,10 +44,9 @@
  * @class Layer.Core.TypingIndicators.TypingPublisher
  * @protected
  */
-
+import { client as Client } from '../../settings';
 import Core from '../namespace';
 import { STARTED, PAUSED, FINISHED } from './typing-indicators';
-import ClientRegistry from '../client-registry';
 
 const INTERVAL = 2500;
 
@@ -63,12 +62,10 @@ class TypingPublisher {
    *
    * @method constructor
    * @param {Object} args
-   * @param {string} clientId - The ID for the client from which we will get access to the websocket
    * @param {Object} [conversation=null] - The Conversation Object or Instance that messages are being typed to.
    */
   constructor(args) {
-    this.clientId = args.clientId;
-    if (args.conversation) this.conversation = this._getClient().getObject(args.conversation.id);
+    if (args.conversation) this.conversation = Client.getObject(args.conversation.id);
     this.state = FINISHED;
     this._lastMessageTime = 0;
   }
@@ -84,7 +81,7 @@ class TypingPublisher {
    */
   setConversation(conv) {
     this.setState(FINISHED);
-    this.conversation = conv ? this._getClient().getObject(conv.id) : null;
+    this.conversation = conv ? Client.getObject(conv.id) : null;
     this.state = FINISHED;
   }
 
@@ -193,7 +190,7 @@ class TypingPublisher {
   _send(state) {
     if (!this.conversation.isSaved()) return;
     this._lastMessageTime = Date.now();
-    const ws = this._getClient().socketManager;
+    const ws = Client.socketManager;
     ws.sendSignal({
       type: 'typing_indicator',
       object: {
@@ -203,18 +200,6 @@ class TypingPublisher {
         action: state,
       },
     });
-  }
-
-  /**
-   * Get the Client associated with this Layer.Core.Message.
-   *
-   * Uses the clientId property.
-   *
-   * @method getClient
-   * @return {Layer.Core.Client}
-   */
-  _getClient() {
-    return ClientRegistry.get(this.clientId);
   }
 
   destroy() {

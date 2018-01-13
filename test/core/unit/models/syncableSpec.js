@@ -19,7 +19,6 @@ describe("The Syncable Class", function() {
         });
         client.sessionToken = "sessionToken";
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: "Frodo",
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -59,30 +58,23 @@ describe("The Syncable Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
 
     describe("The load() method", function() {
       describe("Message subclass", function() {
         it("Should return a Message", function() {
-          expect(Layer.Core.Message.load(responses.message1.id, client) instanceof Layer.Core.Message).toEqual(true);
-          expect(Layer.Core.Message.load(responses.message1.id, client) instanceof Layer.Core.Announcement).toEqual(false);
-          expect(Layer.Core.Syncable.load(responses.message1.id, client) instanceof Layer.Core.Message).toEqual(true);
-        });
-
-        it("Should throw error if no client", function() {
-          expect(function() {
-            Layer.Core.Message.load(responses.message1.id);
-          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
-          expect(Layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
+          expect(Layer.Core.Message.load(responses.message1.id) instanceof Layer.Core.Message).toEqual(true);
+          expect(Layer.Core.Message.load(responses.message1.id) instanceof Layer.Core.Announcement).toEqual(false);
+          expect(Layer.Core.Syncable.load(responses.message1.id) instanceof Layer.Core.Message).toEqual(true);
         });
 
         it("Should call dbManager.getObject", function() {
           client.dbManager.getObject.calls.reset();
 
           // Run
-          Layer.Core.Message.load(responses.message1.id, client);
+          Layer.Core.Message.load(responses.message1.id);
 
           // Posttest
           expect(client.dbManager.getObject).toHaveBeenCalledWith('messages', responses.message1.id, jasmine.any(Function));
@@ -92,7 +84,7 @@ describe("The Syncable Class", function() {
             getObjectResult = {parts: []};
 
             // Run
-            var ident = Layer.Core.Message.load(responses.message1.id, client);
+            var ident = Layer.Core.Message.load(responses.message1.id);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "trigger");
             jasmine.clock().tick(11);
@@ -104,7 +96,7 @@ describe("The Syncable Class", function() {
 
         it("Should call _load", function() {
             // Run
-            var ident = Layer.Core.Message.load(responses.message1.id, client);
+            var ident = Layer.Core.Message.load(responses.message1.id);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "_load");
             jasmine.clock().tick(11);
@@ -116,7 +108,7 @@ describe("The Syncable Class", function() {
 
         it("Should call _load once client is ready", function() {
             client.isReady = false;
-            var ident = Layer.Core.Message.load(responses.message1.id, client);
+            var ident = Layer.Core.Message.load(responses.message1.id);
             spyOn(ident, "_load");
             jasmine.clock().tick(11);
 
@@ -136,15 +128,14 @@ describe("The Syncable Class", function() {
                 url: "https://huh.com"
             });
 
-            var ident = Layer.Core.Message.load(responses.message1.id, client);
+            var ident = Layer.Core.Message.load(responses.message1.id);
 
             // Midtest
             expect(Layer.Core.Message.prototype._load).not.toHaveBeenCalled();
 
             // Posttest
             client.user = new Layer.Core.Identity({
-                clientId: client.appId,
-                userId: "Frodo",
+                      userId: "Frodo",
                 id: "layer:///identities/" + client.userId,
                 firstName: "first",
                 lastName: "last",
@@ -169,22 +160,16 @@ describe("The Syncable Class", function() {
 
       describe("Announcement subclass", function() {
         it("Should return an Announcement", function() {
-          expect(Layer.Core.Announcement.load(responses.announcement.id, client) instanceof Layer.Core.Announcement).toEqual(true);
-          expect(Layer.Core.Syncable.load(responses.announcement.id, client) instanceof Layer.Core.Announcement).toEqual(true);
+          expect(Layer.Core.Announcement.load(responses.announcement.id) instanceof Layer.Core.Announcement).toEqual(true);
+          expect(Layer.Core.Syncable.load(responses.announcement.id) instanceof Layer.Core.Announcement).toEqual(true);
         });
 
-        it("Should throw error if no client", function() {
-          expect(function() {
-            Layer.Core.Announcement.load(responses.announcement.id);
-          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
-          expect(Layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
-        });
 
         it("Should populateFromServer and trigger loaded if db has data", function() {
             getObjectResult = {parts: []};
 
             // Run
-            var ident = Layer.Core.Announcement.load(responses.announcement.id, client);
+            var ident = Layer.Core.Announcement.load(responses.announcement.id);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "trigger");
             jasmine.clock().tick(11);
@@ -197,7 +182,7 @@ describe("The Syncable Class", function() {
         it("Should call _load", function() {
 
             // Run
-            var ident = Layer.Core.Announcement.load(responses.announcement.id, client);
+            var ident = Layer.Core.Announcement.load(responses.announcement.id);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "_load");
             jasmine.clock().tick(11);
@@ -210,22 +195,15 @@ describe("The Syncable Class", function() {
 
       describe("Conversation subclass", function() {
         it("Should return a Conversation", function() {
-          expect(Layer.Core.Conversation.load(responses.conversation1.id, client) instanceof Layer.Core.Conversation).toEqual(true);
-          expect(Layer.Core.Syncable.load(responses.conversation1.id, client) instanceof Layer.Core.Conversation).toEqual(true);
-        });
-
-        it("Should throw error if no client", function() {
-          expect(function() {
-            Layer.Core.Conversation.load(responses.conversation1.id);
-          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
-          expect(Layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
+          expect(Layer.Core.Conversation.load(responses.conversation1.id) instanceof Layer.Core.Conversation).toEqual(true);
+          expect(Layer.Core.Syncable.load(responses.conversation1.id) instanceof Layer.Core.Conversation).toEqual(true);
         });
 
         it("Should populateFromServer and trigger loaded if db has data", function() {
             getObjectResult = {participants: []};
 
             // Run
-            var ident = Layer.Core.Conversation.load(responses.conversation1.id, client);
+            var ident = Layer.Core.Conversation.load(responses.conversation1.id);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "trigger");
             jasmine.clock().tick(11);
@@ -238,7 +216,7 @@ describe("The Syncable Class", function() {
         it("Should call _load", function() {
 
             // Run
-            var ident = Layer.Core.Conversation.load(responses.conversation1.id, client);
+            var ident = Layer.Core.Conversation.load(responses.conversation1.id);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "_load");
             jasmine.clock().tick(11);
@@ -251,22 +229,15 @@ describe("The Syncable Class", function() {
 
       describe("Identity subclass", function() {
         it("Should return an Identity", function() {
-          expect(Layer.Core.Identity.load(responses.useridentity.id, client) instanceof Layer.Core.Identity).toEqual(true);
-          expect(Layer.Core.Syncable.load(responses.useridentity.id, client) instanceof Layer.Core.Identity).toEqual(true);
-        });
-
-        it("Should throw error if no client", function() {
-          expect(function() {
-            Layer.Core.Identity.load(responses.useridentity.id);
-          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
-          expect(Layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
+          expect(Layer.Core.Identity.load(responses.useridentity.id) instanceof Layer.Core.Identity).toEqual(true);
+          expect(Layer.Core.Syncable.load(responses.useridentity.id) instanceof Layer.Core.Identity).toEqual(true);
         });
 
         it("Should populateFromServer and trigger loaded if db has data", function() {
             getObjectResult = {display_name: "hey ho"};
 
             // Run
-            var ident = Layer.Core.Identity.load(responses.useridentity.id, client);
+            var ident = Layer.Core.Identity.load(responses.useridentity.id);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "trigger");
             jasmine.clock().tick(11);
@@ -278,7 +249,7 @@ describe("The Syncable Class", function() {
 
         it("Should call _load", function() {
             // Run
-            var ident = Layer.Core.Identity.load(responses.useridentity.id, client);
+            var ident = Layer.Core.Identity.load(responses.useridentity.id);
             spyOn(ident, "_populateFromServer");
             spyOn(ident, "_load");
             jasmine.clock().tick(11);

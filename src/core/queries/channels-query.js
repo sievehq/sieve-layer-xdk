@@ -19,6 +19,7 @@
  * @class  Layer.Core.ChannelsQuery
  * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { SYNC_STATE } from '../../constants';
@@ -28,8 +29,8 @@ import ConversationsQuery from './conversations-query';
 class ChannelsQuery extends ConversationsQuery {
 
   _fetchData(pageSize) {
-    if (this.client.dbManager) {
-      this.client.dbManager.loadChannels(this._nextDBFromId, pageSize, (channels) => {
+    if (client.dbManager) {
+      client.dbManager.loadChannels(this._nextDBFromId, pageSize, (channels) => {
         if (channels.length) this._appendResults({ data: channels }, true);
       });
     }
@@ -40,7 +41,7 @@ class ChannelsQuery extends ConversationsQuery {
     if (newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'channel_query_time',
         },

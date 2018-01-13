@@ -11,7 +11,6 @@ describe('layer-membership-list', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -37,16 +36,14 @@ describe('layer-membership-list', function() {
     for (i = 0; i < 100; i++) {
 
         var ident = new Layer.Core.Identity({
-          client: client,
-          userId: 'user' + i,
+              userId: 'user' + i,
           id: 'layer:///identities/user' + i,
           displayName: 'User ' + i,
           isFullIdentity: true
         })
       query.data.push(
         new Layer.Core.Membership({
-          client: client,
-          identity: ident
+              identity: ident
         })
       );
     }
@@ -64,7 +61,7 @@ describe('layer-membership-list', function() {
       if (client) client.destroy();
       Layer.UI.settings.appId = null;
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     } catch(e) {}
   });

@@ -14,7 +14,6 @@ describe("The Websocket Request Manager Class", function() {
         client.sessionToken = "sessionToken";
 
         client.user = new Layer.Core.Identity({
-            clientId: client.appId,
             userId: 'Frodo',
             id: "layer:///identities/" + 'Frodo',
             firstName: "first",
@@ -55,13 +54,12 @@ describe("The Websocket Request Manager Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         it("Should return a Websockets.RequestManager", function() {
             expect(new Layer.Core.Websockets.RequestManager({
-                client: client,
                 socketManager: client.socketManager
             })).toEqual(jasmine.any(Layer.Core.Websockets.RequestManager));
         });
@@ -74,7 +72,6 @@ describe("The Websocket Request Manager Class", function() {
             var tmp = Layer.Core.Websockets.RequestManager.prototype._handleResponse;
             Layer.Core.Websockets.RequestManager.prototype._handleResponse = jasmine.createSpy('handleResponse');
             var requestManager = new Layer.Core.Websockets.RequestManager({
-                client: client,
                 socketManager: client.socketManager
             })
             expect(Layer.Core.Websockets.RequestManager.prototype._handleResponse).not.toHaveBeenCalled();
@@ -94,7 +91,6 @@ describe("The Websocket Request Manager Class", function() {
             var tmp = Layer.Core.Websockets.RequestManager.prototype._reset;
             Layer.Core.Websockets.RequestManager.prototype._reset = jasmine.createSpy('handleResponse');
             var requestManager = new Layer.Core.Websockets.RequestManager({
-                client: client,
                 socketManager: client.socketManager
             })
             expect(Layer.Core.Websockets.RequestManager.prototype._reset).not.toHaveBeenCalled();

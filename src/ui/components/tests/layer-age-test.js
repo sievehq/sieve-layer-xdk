@@ -18,7 +18,7 @@ describe('layer-age', function() {
   afterEach(function() {
     if (client) client.destroy();
     jasmine.clock().uninstall();
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   it('Should accept a date parameter', function() {

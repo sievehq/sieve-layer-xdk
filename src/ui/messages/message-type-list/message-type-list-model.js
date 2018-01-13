@@ -14,7 +14,7 @@ MessageTypeListModel = Layer.Core.Client.getMessageTypeModelClass('MessageTypeLi
 * @class Layer.UI.cards.MessageTypeListModel
 * @extends layer.model
 */
-import { Client, MessagePart, MessageTypeModel } from '../../../core';
+import Core, { MessagePart, MessageTypeModel } from '../../../core';
 import Util from '../../../utils';
 
 class MessageTypeListModel extends MessageTypeModel {
@@ -63,7 +63,7 @@ MessageTypeListModel.messageRenderer = 'layer-message-type-list-view';
 MessageTypeListModel.MIMEType = 'application/x.layer.message-type-list+json';
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(MessageTypeListModel, 'MessageTypeListModel');
+Core.Client.registerMessageTypeModelClass(MessageTypeListModel, 'MessageTypeListModel');
 
 module.exports = MessageTypeListModel;
 

@@ -20,7 +20,6 @@ describe("The TelemetryMonitor class", function() {
         client.userId = "999";
 
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",

@@ -39,7 +39,7 @@
  * @class Layer.UI.messages.ReceiptMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel, Root } from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Root } from '../../../core';
 import Util from '../../../utils';
 
 class ReceiptModel extends MessageTypeModel {
@@ -331,6 +331,6 @@ ReceiptModel.messageRenderer = 'layer-receipt-message-view';
 Root.initClass.apply(ReceiptModel, [ReceiptModel, 'ReceiptModel']);
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(ReceiptModel, 'ReceiptModel');
+Core.Client.registerMessageTypeModelClass(ReceiptModel, 'ReceiptModel');
 
 module.exports = ReceiptModel;

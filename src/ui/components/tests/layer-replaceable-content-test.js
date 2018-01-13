@@ -10,7 +10,6 @@ describe('layer-replaceable-content', function() {
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true
@@ -25,7 +24,7 @@ describe('layer-replaceable-content', function() {
   });
   afterEach(function() {
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   it('Should accept a replaceableContent DOM node', function() {

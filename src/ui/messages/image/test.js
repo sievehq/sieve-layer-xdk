@@ -43,7 +43,6 @@ describe('Image Message Components', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -72,7 +71,7 @@ describe('Image Message Components', function() {
   afterEach(function() {
     if (client) client.destroy();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   describe("Model Tests", function() {
@@ -168,9 +167,9 @@ describe('Image Message Components', function() {
           expect(JSON.parse(rootPart.body)).toEqual({
             width: 128, height: 128,
           });
-          expect(sourcPart.mimeType).toEqual('image/png');
-          expect(sourcPart.body).toBe(blob);
-          expect(previewPart).toBe(null);
+          expect(sourcePart.mimeType).toEqual('image/png');
+          expect(sourcePart.body).toBe(blob);
+          expect(previewPart).toBe(undefined);
          /* expect(message.parts[2].mimeType).toEqual('image/jpeg');
           expect(message.parts[2].body).toEqual(jasmine.any(Blob));*/
           done();
@@ -324,7 +323,7 @@ describe('Image Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.destroy();
       el = null;
     });

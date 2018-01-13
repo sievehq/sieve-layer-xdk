@@ -23,7 +23,7 @@
  * @class Layer.UI.messages.StatusMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
+import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
 import { registerStatusModel } from '../../ui-utils';
 
 class StatusModel extends MessageTypeModel {
@@ -89,7 +89,7 @@ StatusModel.messageRenderer = 'layer-status-message-view';
 Root.initClass.apply(StatusModel, [StatusModel, 'StatusModel']);
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(StatusModel, 'StatusModel');
+Core.Client.registerMessageTypeModelClass(StatusModel, 'StatusModel');
 
 // Register this MIME Type to be handled as a Status Message
 registerStatusModel(StatusModel);

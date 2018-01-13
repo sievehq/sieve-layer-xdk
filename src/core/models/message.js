@@ -124,6 +124,7 @@
  * @class  Layer.Core.Message
  * @extends Layer.Core.Syncable
  */
+import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Syncable from './syncable';
@@ -154,16 +155,10 @@ class Message extends Syncable {
       options.id = options.fromServer.id;
     }
 
-    if (options.client) options.clientId = options.client.appId;
-    if (!options.clientId) throw new Error(ErrorDictionary.clientMissing);
-
-    // Insure __adjustParts is set AFTER clientId is set.
     const parts = options.parts;
     options.parts = null;
 
     super(options);
-
-    const client = this.getClient();
 
     this.isInitializing = true;
     if (options && options.fromServer) {
@@ -171,7 +166,7 @@ class Message extends Syncable {
       this.__updateParts(this.parts);
     } else {
       this.parts = parts || new Set();
-      if (client) this.sender = client.user;
+      if (Client) this.sender = Client.user;
       this.sentAt = new Date();
     }
     this._regenerateMimeAttributesMap();
@@ -202,7 +197,6 @@ class Message extends Syncable {
       adjustedParts.add(new MessagePart({
         body: parts,
         mimeType: 'text/plain',
-        clientId: this.clientId,
       }));
     } else if (Array.isArray(parts) || parts instanceof Set) {
       parts.forEach((part) => {
@@ -210,15 +204,13 @@ class Message extends Syncable {
         if (part instanceof MessagePart) {
           result = part;
         } else if (part.mime_type && !part.mimeType) {
-          result = this.getClient()._createObject(part);
+          result = Client._createObject(part);
         } else {
           result = new MessagePart(part);
         }
-        result.clientId = this.clientId;
         adjustedParts.add(result);
       });
     } else if (parts && typeof parts === 'object') {
-      parts.clientId = this.clientId;
       adjustedParts.add(new MessagePart(parts));
     }
     this._setupPartIds(adjustedParts);
@@ -275,7 +267,6 @@ class Message extends Syncable {
   addPart(part) {
     if (part) {
       const oldValue = this.parts ? [].concat(this.parts) : null;
-      part.clientId = this.clientId;
       const mPart = (part instanceof MessagePart) ? part : new MessagePart(part);
       if (!this.parts.has(mPart)) this.parts.add(mPart);
 
@@ -343,11 +334,6 @@ class Message extends Syncable {
    * @return this
    */
   presend() {
-    const client = this.getClient();
-    if (!client) {
-      throw new Error(ErrorDictionary.clientMissing);
-    }
-
     const conversation = this.getConversation(false);
 
     if (!conversation) {
@@ -361,7 +347,7 @@ class Message extends Syncable {
 
     // Make sure all data is in the right format for being rendered
     this._readAllBlobs(() => {
-      client._addMessage(this);
+      Client._addMessage(this);
     });
     return this;
   }
@@ -393,11 +379,6 @@ class Message extends Syncable {
    * @return {Layer.Core.Message} this
    */
   send(notification) {
-    const client = this.getClient();
-    if (!client) {
-      throw new Error(ErrorDictionary.clientMissing);
-    }
-
     const conversation = this.getConversation(true);
 
     if (!conversation) {
@@ -432,7 +413,7 @@ class Message extends Syncable {
     this._readAllBlobs(() => {
       // Calling this will add this to any listening Queries... so position needs to have been set first;
       // handled in conversation.send(this)
-      client._addMessage(this);
+      Client._addMessage(this);
 
       // allow for modification of message before sending
       this.trigger('messages:sending');
@@ -482,7 +463,6 @@ class Message extends Syncable {
    * @param  {Object} structure to be sent to the server
    */
   _preparePartsForSending(data) {
-    const client = this.getClient();
     let count = 0;
     const parts = [];
     this.parts.forEach(part => parts.push(part)); // convert set to array so we have the index
@@ -501,7 +481,7 @@ class Message extends Syncable {
           this._send(data);
         }
       }, this);
-      part._send(client);
+      part._send();
     });
   }
 
@@ -516,17 +496,16 @@ class Message extends Syncable {
    * @private
    */
   _send(data) {
-    const client = this.getClient();
     const conversation = this.getConversation(false);
 
-    this.getClient()._triggerAsync('state-change', {
+    Client._triggerAsync('state-change', {
       started: true,
       type: 'send_' + Util.typeFromID(this.id),
       telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
       id: this.id,
     });
     this.sentAt = new Date();
-    client.sendSocketRequest({
+    Client.sendSocketRequest({
       method: 'POST',
       body: {
         method: 'Message.create',
@@ -556,7 +535,7 @@ class Message extends Syncable {
     * @param {Object} messageData - Server description of the message
     */
   _sendResult({ success, data }) {
-    this.getClient()._triggerAsync('state-change', {
+    Client._triggerAsync('state-change', {
       ended: true,
       type: 'send_' + Util.typeFromID(this.id),
       telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
@@ -621,8 +600,7 @@ class Message extends Syncable {
    * @method destroy
    */
   destroy() {
-    const client = this.getClient();
-    if (client) client._removeMessage(this);
+    Client._removeMessage(this);
     this.parts.forEach(part => part.destroy());
     this.__parts = null;
 
@@ -656,7 +634,6 @@ class Message extends Syncable {
    */
   _populateFromServer(message) {
     this._inPopulateFromServer = true;
-    const client = this.getClient();
 
     this.id = message.id;
     this.url = message.url;
@@ -688,12 +665,12 @@ class Message extends Syncable {
 
     let sender;
     if (message.sender.id) {
-      sender = client.getIdentity(message.sender.id);
+      sender = Client.getIdentity(message.sender.id);
     }
 
     // Because there may be no ID, we have to bypass client._createObject and its switch statement.
     if (!sender) {
-      sender = Identity._createFromServer(message.sender, client);
+      sender = Identity._createFromServer(message.sender);
     }
     this.sender = sender;
 
@@ -909,8 +886,8 @@ class Message extends Syncable {
     } else if (paths[0] === 'parts') {
       oldValue = this.filterParts(null, oldValue);// transform to array
       newValue = this.filterParts(null, newValue);
-      const oldValueParts = oldValue.map(part => this.getClient().getMessagePart(part.id)).filter(part => part);
-      const removedParts = oldValue.filter(part => !this.getClient().getMessagePart(part.id));
+      const oldValueParts = oldValue.map(part => Client.getMessagePart(part.id)).filter(part => part);
+      const removedParts = oldValue.filter(part => !Client.getMessagePart(part.id));
       const addedParts = newValue.filter(part => oldValueParts.indexOf(part) === -1);
 
       addedParts.forEach(part => this.addPart(part));
@@ -993,15 +970,6 @@ class Message extends Syncable {
     return false;
   }
 }
-
-/**
- * Client that the Message belongs to.
- *
- * Actual value of this string matches the appId.
- * @property {string}
- * @readonly
- */
-Message.prototype.clientId = '';
 
 /**
  * Conversation ID or Channel ID that this Message belongs to.
@@ -1143,8 +1111,6 @@ Message.eventPrefix = 'messages';
 Message.prefixUUID = 'layer:///messages/';
 
 Message.inObjectIgnore = Syncable.inObjectIgnore;
-
-Message.bubbleEventParent = 'getClient';
 
 Message.imageTypes = [
   'image/gif',

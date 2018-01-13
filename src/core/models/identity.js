@@ -28,6 +28,7 @@ import Root from '../root';
 import { SYNC_STATE } from '../../constants';
 import { ErrorDictionary } from '../layer-error';
 import { strictEncodeURI } from '../../utils';
+import { client } from '../../settings';
 
 class Identity extends Syncable {
   constructor(options = {}) {
@@ -39,10 +40,6 @@ class Identity extends Syncable {
     } else if (options.id && !options.userId) {
       options.userId = decodeURIComponent(options.id.substring(Identity.prefixUUID.length));
     }
-
-    // Make sure we have an clientId property
-    if (options.client) options.clientId = options.client.appId;
-    if (!options.clientId) throw new Error(ErrorDictionary.clientMissing);
 
     super(options);
 
@@ -67,13 +64,13 @@ class Identity extends Syncable {
     }
 
     if (!this.url && this.id) {
-      this.url = `${this.getClient().url}/${this.id.substring(9)}`;
+      this.url = `${client.url}/${this.id.substring(9)}`;
     } else if (!this.url) {
       this.url = '';
     }
-    this.getClient()._addIdentity(this);
+    client._addIdentity(this);
 
-    this.getClient().on('online', (evt) => {
+    client.on('online', (evt) => {
       if (!evt.isOnline) this._updateValue(['_presence', 'status'], Identity.STATUS.OFFLINE);
     }, this);
 
@@ -81,8 +78,7 @@ class Identity extends Syncable {
   }
 
   destroy() {
-    const client = this.getClient();
-    if (client) client._removeIdentity(this);
+    client._removeIdentity(this);
     super.destroy();
   }
 
@@ -96,7 +92,6 @@ class Identity extends Syncable {
    * @param  {Object} identity - Server representation of the identity
    */
   _populateFromServer(identity) {
-    const client = this.getClient();
 
     // Disable events if creating a new Identity
     // We still want property change events for anything that DOES change
@@ -126,7 +121,7 @@ class Identity extends Syncable {
     }
 
     if (!this.url && this.id) {
-      this.url = this.getClient().url + this.id.substring(8);
+      this.url = client.url + this.id.substring(8);
     }
 
     this._disableEvents = false;
@@ -257,11 +252,11 @@ class Identity extends Syncable {
   setStatus(status) {
     status = (status || '').toLowerCase();
     if (!Identity.STATUS[status.toUpperCase()]) throw new Error(ErrorDictionary.valueNotSupported);
-    if (this !== this.getClient().user) throw new Error(ErrorDictionary.permissionDenied);
+    if (!this.isMine) throw new Error(ErrorDictionary.permissionDenied);
     if (status === Identity.STATUS.INVISIBLE) status = Identity.STATUS.OFFLINE; // these are equivalent; only one supported by server
 
     const oldValue = this._presence.status;
-    this.getClient().sendSocketRequest({
+    client.sendSocketRequest({
       method: 'PATCH',
       body: {
         method: 'Presence.update',
@@ -294,12 +289,11 @@ class Identity extends Syncable {
   * @param {string} userId
   */
   _setUserId(userId) {
-    const client = this.getClient();
     client._removeIdentity(this);
     this.__userId = userId;
     const encoded = strictEncodeURI(userId);
     this.id = Identity.prefixUUID + encoded;
-    this.url = `${this.getClient().url}/identities/${encoded}`;
+    this.url = `${client.url}/identities/${encoded}`;
     client._addIdentity(this);
   }
 
@@ -330,8 +324,8 @@ class Identity extends Syncable {
   */
   // Turn a Full Identity into a Basic Identity and delete the Full Identity from the database
   _handleWebsocketDelete(data) {
-    if (this.getClient().dbManager) {
-      this.getClient().dbManager.deleteObjects('identities', [this]);
+    if (client.dbManager) {
+      client.dbManager.deleteObjects('identities', [this]);
       ['firstName', 'lastName', 'emailAddress', 'phoneNumber', 'metadata', 'publicKey', 'isFullIdentity', 'type']
         .forEach(key => delete this[key]);
     }
@@ -344,12 +338,10 @@ class Identity extends Syncable {
    * @method _createFromServer
    * @static
    * @param {Object} identity - Server Identity Object
-   * @param {Layer.Core.Client} client
    * @returns {Layer.Core.Identity}
    */
-  static _createFromServer(identity, client) {
+  static _createFromServer(identity) {
     return new Identity({
-      client,
       fromServer: identity,
       _fromDB: identity._fromDB,
     });
@@ -400,18 +392,12 @@ class Identity extends Syncable {
 Identity.prototype.displayName = '';
 
 /**
- * The Identity matching `Layer.Core.Client.user` will have this be true.
+ * The Identity matching {@link Layer.Core.Client#user} will have this be true.
  *
  * All other Identities will have this as false.
  * @property {boolean}
  */
 Identity.prototype.isMine = false;
-
-/**
- * ID of the Client this Identity is associated with.
- * @property {string}
- */
-Identity.prototype.clientId = '';
 
 /**
  * Is this a Full Identity or Basic Identity?
@@ -607,8 +593,6 @@ Identity.STATUS = {
 };
 
 Identity.inObjectIgnore = Root.inObjectIgnore;
-
-Identity.bubbleEventParent = 'getClient';
 
 Identity._supportedEvents = [
   'identities:change',

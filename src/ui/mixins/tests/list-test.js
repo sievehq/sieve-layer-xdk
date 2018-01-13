@@ -62,7 +62,7 @@ describe("List Mixin", function() {
         jasmine.clock().uninstall();
         Layer.UI.settings.appId = null;
         document.body.removeChild(testRoot);
-        Layer.Core.Client.removeListenerForNewClient();
+
         if (el) el.onDestroy();
         if (client) client.destroy();
       } catch(e) {}

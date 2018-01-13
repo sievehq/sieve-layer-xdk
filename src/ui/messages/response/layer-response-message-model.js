@@ -53,7 +53,7 @@
  * @class Layer.UI.messages.ResponseMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel } from '../../../core';
+import Core, { MessagePart, MessageTypeModel } from '../../../core';
 import { registerStatusModel } from '../../ui-utils';
 
 class ResponseModel extends MessageTypeModel {
@@ -169,7 +169,7 @@ ResponseModel.MIMEType = 'application/vnd.layer.response+json';
 ResponseModel.messageRenderer = 'layer-response-message-view';
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(ResponseModel, 'ResponseModel');
+Core.Client.registerMessageTypeModelClass(ResponseModel, 'ResponseModel');
 
 // Register the message to be handled as a Status Message
 registerStatusModel(ResponseModel);

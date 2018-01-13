@@ -11,7 +11,7 @@ import Core from '../namespace';
 module.exports = {
   methods: {
     _createAnnouncementFromServer(obj) {
-      return Announcements._createFromServer(obj, this);
+      return Announcements._createFromServer(obj);
     },
     _createAnnouncementsQuery(options) {
       return new AnnouncementsQuery(options);

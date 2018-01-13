@@ -45,10 +45,11 @@
  * @mixin Layer.UI.mixins.Clickable
  * @mixin Layer.UI.mixins.SizeProperty
  */
-import Core from './../../core';
+import { client as Client } from '../../settings';
+import Core from '../../core';
 import { registerComponent } from './component';
-import SizeProperty from './../mixins/size-property';
-import Clickable from './../mixins/clickable';
+import SizeProperty from '../mixins/size-property';
+import Clickable from '../mixins/clickable';
 
 registerComponent('layer-presence', {
   mixins: [SizeProperty, Clickable],
@@ -100,9 +101,8 @@ registerComponent('layer-presence', {
 
           // If item is an object, but not an Identity instance, assume its an Identity POJO and get the instance
           else if (typeof value === 'object' && !(value instanceof Core.Identity)) {
-            const client = Core.Client.getClient(value.clientId);
-            if (client) {
-              value = client.getIdentity(value.id);
+            if (Client) {
+              value = Client.getIdentity(value.id);
             }
           }
 

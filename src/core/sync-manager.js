@@ -17,6 +17,7 @@
  * Applications do not typically interact with this class, but may subscribe to its events
  * to get richer detailed information than is available from the Layer.Core.Client instance.
  */
+import { client as Client } from '../settings';
 import Core from './namespace';
 import Root from './root';
 import { WebsocketSyncEvent } from './sync-event';
@@ -30,8 +31,8 @@ class SyncManager extends Root {
    *
    * An Application is expected to only have one SyncManager.
    *
-   *      var socketManager = new Layer.Core.SocketManager({client: client});
-   *      var requestManager = new Layer.Core.RequestManager({client: client, socketManager: socketManager});
+   *      var socketManager = new Layer.Core.SocketManager({});
+   *      var requestManager = new Layer.Core.RequestManager({socketManager: socketManager});
    *
    *      var onlineManager = new Layer.Core.OnlineManager({
    *          socketManager: socketManager
@@ -39,7 +40,6 @@ class SyncManager extends Root {
    *
    *      // Now we can instantiate this thing...
    *      var SyncManager = new Layer.Core.SyncManager({
-   *          client: client,
    *          onlineManager: onlineManager,
    *          socketManager: socketManager,
    *          requestManager: requestManager
@@ -49,19 +49,16 @@ class SyncManager extends Root {
    * @param  {Object} options
    * @param {Layer.Core.OnlineStateManager} options.onlineManager
    * @param {Layer.Core.Websockets.RequestManager} options.requestManager
-   * @param {Layer.Core.Client} options.client
    */
   constructor(options) {
     super(options);
-    this.client = options.client;
 
     // Note we do not store a pointer to client... it is not needed.
-    if (this.client) {
-      this.client.on('ready', () => {
-        this._processNextRequest();
-        this._loadPersistedQueue();
-      }, this);
-    }
+    Client.on('ready', () => {
+      this._processNextRequest();
+      this._loadPersistedQueue();
+    }, this);
+
     this.queue = [];
     this.receiptQueue = [];
 
@@ -148,8 +145,8 @@ class SyncManager extends Root {
   _processNextRequest(requestEvt) {
     // Fire the request if there aren't any existing requests already firing
     if (this.queue.length && !this.queue[0].isFiring) {
-      if (requestEvt && this.client.dbManager) {
-        this.client.dbManager.writeSyncEvents([requestEvt], () => this._processNextStandardRequest());
+      if (requestEvt && Client.dbManager) {
+        Client.dbManager.writeSyncEvents([requestEvt], () => this._processNextStandardRequest());
       } else {
         this._processNextStandardRequest();
       }
@@ -189,7 +186,7 @@ class SyncManager extends Root {
    * @private
    */
   _processNextStandardRequest() {
-    if (this.isDestroyed || !this.client.isAuthenticated) return;
+    if (this.isDestroyed || !Client.isAuthenticated) return;
     const requestEvt = this.queue[0];
     if (this.isOnline() && requestEvt && !requestEvt.isFiring && !requestEvt._isValidating) {
       requestEvt._isValidating = true;
@@ -256,10 +253,10 @@ class SyncManager extends Root {
   _fireRequestXHR(requestEvt) {
     requestEvt.isFiring = true;
     if (!requestEvt.headers) requestEvt.headers = {};
-    requestEvt.headers.authorization = 'Layer session-token="' + this.client.sessionToken + '"';
+    requestEvt.headers.authorization = 'Layer session-token="' + Client.sessionToken + '"';
     logger.info(`Sync Manager XHR Request Firing ${requestEvt.operation} ${requestEvt.target} at ${new Date().toISOString()}`,
       requestEvt.toObject());
-    xhr(requestEvt._getRequestData(this.client), result => this._xhrResult(result, requestEvt));
+    xhr(requestEvt._getRequestData(Client), result => this._xhrResult(result, requestEvt));
   }
 
   /**
@@ -275,7 +272,7 @@ class SyncManager extends Root {
         requestEvt.toObject());
       requestEvt.isFiring = true;
       this.requestManager.sendRequest({
-        data: requestEvt._getRequestData(this.client),
+        data: requestEvt._getRequestData(Client),
         callback: result => this._xhrResult(result, requestEvt),
         isChangesArray: requestEvt.returnChangesArray,
       });
@@ -299,10 +296,10 @@ class SyncManager extends Root {
    * @private
    */
   _validateRequest(syncEvent, callback) {
-    if (!this.client.dbManager) {
+    if (!Client.dbManager) {
       callback(true);
     } else {
-      this.client.dbManager.claimSyncEvent(syncEvent, isFound => callback(isFound));
+      Client.dbManager.claimSyncEvent(syncEvent, isFound => callback(isFound));
     }
   }
 
@@ -452,9 +449,9 @@ class SyncManager extends Root {
     }
 
     // Write the sync event back to the database if we haven't completed processing it
-    if (this.client.dbManager) {
+    if (Client.dbManager) {
       if (this.queue.indexOf(requestEvt) !== -1 || this.receiptQueue.indexOf(requestEvt) !== -1) {
-        this.client.dbManager.writeSyncEvents([requestEvt]);
+        Client.dbManager.writeSyncEvents([requestEvt]);
       }
     }
   }
@@ -643,7 +640,7 @@ class SyncManager extends Root {
     const queue = requestEvt.operation === 'RECEIPT' ? this.receiptQueue : this.queue;
     const index = queue.indexOf(requestEvt);
     if (index !== -1) queue.splice(index, 1);
-    if (deleteDB && this.client.dbManager) this.client.dbManager.deleteObjects('syncQueue', [requestEvt]);
+    if (deleteDB && Client.dbManager) Client.dbManager.deleteObjects('syncQueue', [requestEvt]);
   }
 
   /**
@@ -702,8 +699,8 @@ class SyncManager extends Root {
    * @private
    */
   _loadPersistedQueue() {
-    if (this.client.dbManager) {
-      this.client.dbManager.loadSyncQueue((data) => {
+    if (Client.dbManager) {
+      Client.dbManager.loadSyncQueue((data) => {
         if (data.length) {
           this.queue = this.queue.concat(data);
           this._processNextRequest();

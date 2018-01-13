@@ -28,7 +28,8 @@
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.ListSelection
- */
+*/
+import { client } from '../../../settings';
 import Core from '../../../core';
 import { registerComponent } from '../component';
 import List from '../../mixins/list';
@@ -121,13 +122,13 @@ registerComponent('layer-membership-list', {
         }
 
         // Set the channel... when the client is ready.
-        if (this.client && this.channelId) {
-          if (this.client.isReady && !this.client.isDestroyed) {
-            this.channel = this.client.getObject(this.channelId, true);
+        if (client && this.channelId) {
+          if (client.isReady && !client.isDestroyed) {
+            this.channel = client.getObject(this.channelId, true);
           } else {
-            this.client.once('ready', () => {
-              if (this.channelId) this.channel = this.client.getObject(this.channelId, true);
-            });
+            client.once('ready', () => {
+              if (this.channelId) this.channel = client.getObject(this.channelId, true);
+            }, this);
           }
         }
       },

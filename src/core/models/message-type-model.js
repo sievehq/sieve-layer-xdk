@@ -14,6 +14,7 @@
  * @class  Layer.Core.MessageTypeModel
  * @extends Layer.Core.Root
  */
+import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Util from '../../utils';
 import version from '../../version';
@@ -138,16 +139,16 @@ class MessageTypeModel extends Root {
     if (!(conversation instanceof Root)) throw new Error(ErrorDictionary.conversationMissing);
     this._generateParts((parts) => {
       this.childParts = parts;
-      this.childModels = parts.map(part => part.createModel()).filter(model => model);
       this.part.mimeAttributes.role = 'root';
       this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
       this.message = conversation.createMessage({
         id: Message.prefixUUID + this.id.replace(/\/parts\/.*$/, '').replace(/^.*MessageTypeModels\//, ''),
         parts: this.childParts,
       });
-      this.message.getClient()._removeMessageTypeModel(this);
+
+      Client._removeMessageTypeModel(this);
       this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
-      this.message.getClient()._addMessageTypeModel(this);
+      Client._addMessageTypeModel(this);
       this._setupMessage(true);
       if (callback) callback(this.message);
     });
@@ -234,7 +235,7 @@ class MessageTypeModel extends Root {
     this.message.on('destroy', this.destroy, this);
 
     // Register this model so that it can be retrieved instead of re-instantiated
-    this.message.getClient()._addMessageTypeModel(this);
+    Client._addMessageTypeModel(this);
 
     if (this.part) {
       // If a Message Type Model's main part does not have a body, that means it has to be fetched;
@@ -441,13 +442,6 @@ class MessageTypeModel extends Root {
       this.part = part;
       this._handlePartChanges(addEvt);
     }
-
-    // If the Message Part for this Model has been replaced by a new Part with the same nodeId,
-    // Update the model to point to it.
-    else if (part.nodeId === this.part.nodeId) {
-      this.part = part;
-      this._handlePartChanges(addEvt);
-    }
   }
 
   /**
@@ -475,21 +469,13 @@ class MessageTypeModel extends Root {
     return this.childModels.filter(model => model.role === role);
   }
 
-  /**
-   * Returns the Layer.Core.Client associated with this Component.
-   *
-   * @method getClient
-   * @returns {Layer.Core.Client}
-   */
-  getClient() {
-    if (this.part) return this.part._getClient();
-    if (this.message) return this.message.getClient();
-    return null;
+  _getBubbleEventsTo() {
+    return Client;
   }
 
   // Parent method docuemnts this
   destroy() {
-    this.getClient()._removeMessageTypeModel(this);
+    Client._removeMessageTypeModel(this);
     delete this.message;
     super.destroy();
   }
@@ -539,7 +525,7 @@ class MessageTypeModel extends Root {
     if (title) {
       return title;
     } else {
-      return this.constructor.Label + ' ' + (this.getClient().user === this.message.sender ? 'sent' : 'received');
+      return this.constructor.Label + ' ' + (Client.user === this.message.sender ? 'sent' : 'received');
     }
   }
 
@@ -778,6 +764,10 @@ MessageTypeModel.prototype.childParts = null;
  *
  * It is assumed to be used by this model if they are its children in the MessagePart tree.
  *
+ * > *Note*
+ * >
+ * > childModels is *not* initialized if creating a model without a Message (even if you later call `generateMessage()`)
+ *
  * @property {Layer.Core.MessageTypeModel[]}
  */
 MessageTypeModel.prototype.childModels = null;
@@ -943,8 +933,6 @@ MessageTypeModel.prototype.messageSentAt = null;
  * @property {Object}
  */
 MessageTypeModel.prototype.messageRecipientStatus = null;
-
-MessageTypeModel.bubbleEventParent = 'getClient';
 
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = [

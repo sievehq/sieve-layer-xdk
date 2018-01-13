@@ -22,7 +22,6 @@ describe("The Clickable Mixin", function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',

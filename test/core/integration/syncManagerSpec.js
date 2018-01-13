@@ -14,7 +14,6 @@ describe("SyncManager Integration Tests", function() {
         });
         client.sessionToken = "sessionToken";
         client.user = new Layer.Core.Identity({
-            clientId: client.appId,
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
             firstName: "first",
@@ -36,7 +35,6 @@ describe("SyncManager Integration Tests", function() {
         client.syncManager.queue = [];
         jasmine.clock().tick(1);
         syncManager = new Layer.Core.SyncManager({
-            client: client,
             onlineManager: client.onlineManager,
             socketManager: client.socketManager,
             requestManager: client.socketRequestManager
@@ -60,7 +58,7 @@ describe("SyncManager Integration Tests", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should schedule a retry after a service unavailable error", function() {

@@ -21,7 +21,6 @@ describe("The ConversationsQuery Class", function() {
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -67,7 +66,7 @@ describe("The ConversationsQuery Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should be an ConversationsQuery", function() {
@@ -78,7 +77,6 @@ describe("The ConversationsQuery Class", function() {
          it("Should reject predicate on Conversations", function() {
             expect(function() {
                 var query = client.createQuery({
-                    client: client,
                     model: Layer.Core.Query.Conversation,
                     predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
                 });
@@ -178,7 +176,6 @@ describe("The ConversationsQuery Class", function() {
             conversation2.lastMessage.sentAt = 8;
             conversation.lastMessage.sentAt = 12;
             query = client.createQuery({
-                client: client,
                 model: 'Conversation',
                 paginationWindow: 15,
                 dataType: "object",
@@ -283,7 +280,6 @@ describe("The ConversationsQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Conversation',
                 paginationWindow: 15
             });
@@ -324,7 +320,6 @@ describe("The ConversationsQuery Class", function() {
             var query;
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     model: 'Conversation',
                     paginationWindow: 15,
                     dataType: "object",
@@ -488,7 +483,6 @@ describe("The ConversationsQuery Class", function() {
             var query;
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     model: 'Conversation',
                     paginationWindow: 15,
                     dataType: "instance",
@@ -606,7 +600,6 @@ describe("The ConversationsQuery Class", function() {
             var query;
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     model: 'Conversation',
                     paginationWindow: 15,
                     dataType: "object",
@@ -774,7 +767,6 @@ describe("The ConversationsQuery Class", function() {
             var query;
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     model: 'Conversation',
                     paginationWindow: 15,
                     dataType: "instance",
@@ -918,7 +910,6 @@ describe("The ConversationsQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Conversation',
                 paginationWindow: 15,
                 dataType: "object"
@@ -1086,7 +1077,6 @@ describe("The ConversationsQuery Class", function() {
         var query, conversation2;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Conversation',
                 paginationWindow: 15,
                 dataType: "object"

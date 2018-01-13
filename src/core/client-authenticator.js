@@ -2,7 +2,7 @@
  * Layer Client.  Access the layer by calling create and receiving it
  * from the "ready" callback.
 
-  var client = new Layer.Core.Client({
+  var client = Layer.init({
     appId: "layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff",
     isTrustedDevice: false,
     challenge: function(evt) {
@@ -47,15 +47,15 @@ class ClientAuthenticator extends Root {
   /**
    * Create a new Client.
    *
-   * The appId is the only required parameter:
+   * This should be called via `Layer.init()`:
    *
-   *      var client = new Client({
+   *      var client = Layer.init({
    *          appId: "layer:///apps/staging/uuid"
    *      });
    *
    * For trusted devices, you can enable storage of data to indexedDB and localStorage with the `isTrustedDevice` and `isPersistenceEnabled` property:
    *
-   *      var client = new Client({
+   *      var client = Layer.init({
    *          appId: "layer:///apps/staging/uuid",
    *          isTrustedDevice: true,
    *          isPersistenceEnabled: true
@@ -73,12 +73,7 @@ class ClientAuthenticator extends Root {
    * @param {Object} [options.isPersistenceEnabled=false] If Layer.Core.Client.isPersistenceEnabled is true, then indexedDB will be used to manage a cache
    *                                            allowing Query results, messages sent, and all local modifications to be persisted between page reloads.
    */
-  constructor(options) {
-    // Validate required parameters
-    if (!options.appId) throw new Error(ErrorDictionary.appIdMissing);
 
-    super(options);
-  }
 
   /**
    * Initialize the subcomponents of the ClientAuthenticator
@@ -181,7 +176,6 @@ class ClientAuthenticator extends Root {
       if (!sessionData) return null;
       const userObj = JSON.parse(sessionData).user;
       return new Identity({
-        clientId: this.appId,
         isMine: true,
         fromServer: userObj,
       });
@@ -215,6 +209,7 @@ class ClientAuthenticator extends Root {
    * @private
    */
   _connect() {
+
     this._triggerAsync('state-change', {
       started: true,
       type: 'authentication',
@@ -237,7 +232,7 @@ class ClientAuthenticator extends Root {
    * or if no sessionToken, will call /nonces to start process of getting a new one.
    *
    * ```javascript
-   * var client = new Layer.Core.Client({appId: myAppId});
+   * var client = Layer.init({appId: myAppId});
    * client.connect('Frodo-the-Dodo');
    * ```
    *
@@ -246,6 +241,7 @@ class ClientAuthenticator extends Root {
    * @returns {Layer.Core.ClientAuthenticator} this
    */
   connect(userId = '') {
+    if (!this.appId) throw new Error(ErrorDictionary.appIdMissing);
     if (this.isAuthenticated) return this;
 
     let user;
@@ -269,7 +265,6 @@ class ClientAuthenticator extends Root {
       this.user = new Identity({
         userId,
         isMine: true,
-        clientId: this.appId,
         id: userId ? Identity.prefixUUID + encodeURIComponent(userId) : '',
       });
     }
@@ -295,7 +290,7 @@ class ClientAuthenticator extends Root {
    * NOTE: The `connected` event will not be triggered on this path.
    *
    * ```javascript
-   * var client = new Layer.Core.Client({appId: myAppId});
+   * var client = Layer.init({appId: myAppId});
    * client.connectWithSession('Frodo-the-Dodo', mySessionToken);
    * ```
    *
@@ -305,6 +300,7 @@ class ClientAuthenticator extends Root {
    * @returns {Layer.Core.ClientAuthenticator} this
    */
   connectWithSession(userId, sessionToken) {
+    if (!this.appId) throw new Error(ErrorDictionary.appIdMissing);
     if (this.isAuthenticated) return this;
 
     let user;
@@ -327,7 +323,6 @@ class ClientAuthenticator extends Root {
       this.user = new Identity({
         userId,
         isMine: true,
-        clientId: this.appId,
       });
     }
 
@@ -850,7 +845,7 @@ class ClientAuthenticator extends Root {
    * @param {string} value - New appId value
    */
   __adjustAppId() {
-    if (this.isConnected) throw new Error(ErrorDictionary.cantChangeIfConnected);
+    if (this.isConnected || this._wantsToBeAuthenticated) throw new Error(ErrorDictionary.cantChangeIfConnected);
   }
 
   /**
@@ -1300,7 +1295,7 @@ ClientAuthenticator.prototype.isPersistenceEnabled = false;
  *              to complete sending messages after being relaunched.
  * * sessionToken: Write the session token to localStorage for quick reauthentication on relaunching the app.
  *
- *      new Layer.Core.Client({
+ *      Layer.init({
  *        isTrustedDevice: true,
  *        persistenceFeatures: {
  *          conversations: true,

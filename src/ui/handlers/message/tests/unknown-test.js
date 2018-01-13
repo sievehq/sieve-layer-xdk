@@ -9,7 +9,6 @@ describe("Unknown Handler", function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -33,7 +32,7 @@ describe("Unknown Handler", function() {
     if (client) client.destroy();
     jasmine.clock().uninstall();
     el.onDestroy();
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   it("Should select unknown", function() {

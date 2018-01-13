@@ -28,7 +28,8 @@
  * @class Layer.UI.messages.FeedbackMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
+import { client as Client } from '../../../settings';
+import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
 import ResponseModel from '../response/layer-response-message-model';
 
 class FeedbackModel extends MessageTypeModel {
@@ -73,12 +74,12 @@ class FeedbackModel extends MessageTypeModel {
 
   isEditable() {
     if (this.sentAt) return false;
-    if (this.enabledFor[0] !== this.getClient().user.id) return false;
+    if (this.enabledFor[0] !== Client.user.id) return false;
     return true;
   }
 
   sendFeedback() {
-    if (this.enabledFor[0] !== this.getClient().user.id) return;
+    if (this.enabledFor[0] !== Client.user.id) return;
 
     const responseText = this.getSummary(this.responseMessage, false);
     this.sentAt = new Date();
@@ -93,7 +94,7 @@ class FeedbackModel extends MessageTypeModel {
       Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
     }
 
-    const TextModel = Client.getMessageTypeModelClass('TextModel');
+    const TextModel = Core.Client.getMessageTypeModelClass('TextModel');
     const responseModel = new ResponseModel({
       participantData,
       responseTo: this.message.id,
@@ -147,10 +148,10 @@ class FeedbackModel extends MessageTypeModel {
       const key = match.substring(2, match.length - 1);
       switch (key) {
         case 'customer':
-          if (useYou && this.enabledFor[0] === this.getClient().user.userId) {
+          if (useYou && this.enabledFor[0] === Client.user.userId) {
             return 'You';
           } else {
-            return this.getClient().getIdentity(this.enabledFor[0]).displayName || FeedbackModel.anonymousUserName;
+            return Client.getIdentity(this.enabledFor[0]).displayName || FeedbackModel.anonymousUserName;
           }
         default:
           return this[key];
@@ -182,7 +183,7 @@ FeedbackModel.MIMEType = 'application/vnd.layer.feedback+json';
 Root.initClass.apply(FeedbackModel, [FeedbackModel, 'FeedbackModel']);
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(FeedbackModel, 'FeedbackModel');
+Core.Client.registerMessageTypeModelClass(FeedbackModel, 'FeedbackModel');
 
 module.exports = FeedbackModel;
 

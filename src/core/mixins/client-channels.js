@@ -209,7 +209,7 @@ module.exports = {
       if (this._models.channels[id]) {
         result = this._models.channels[id];
       } else if (canLoad) {
-        result = Channel.load(id, this);
+        result = Channel.load(id);
       }
       if (canLoad) result._loadType = 'fetched';
       return result;
@@ -221,12 +221,6 @@ module.exports = {
      * Typically, you do not need to call this; the following code
      * automatically calls _addChannel for you:
      *
-     *      var conv = new Layer.Core.Channel({
-     *          client: client,
-     *          members: ['a', 'b']
-     *      });
-     *
-     *      // OR:
      *      var conv = client.createChannel(['a', 'b']);
      *
      * @method _addChannel
@@ -240,7 +234,6 @@ module.exports = {
         this._models.channels[id] = channel;
 
         // Make sure the client is set so that the next event bubbles up
-        if (channel.clientId !== this.appId) channel.clientId = this.appId;
         this._triggerAsync('channels:add', { channels: [channel] });
 
         this._scheduleCheckAndPurgeCache(channel);
@@ -405,11 +398,11 @@ module.exports = {
     },
 
     _createChannelMessageFromServer(obj) {
-      return ChannelMessage._createFromServer(obj, this);
+      return ChannelMessage._createFromServer(obj);
     },
 
     _createChannelFromServer(obj) {
-      return Channel._createFromServer(obj, this);
+      return Channel._createFromServer(obj);
     },
 
     _createChannelsQuery(options) {

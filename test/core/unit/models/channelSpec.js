@@ -19,7 +19,6 @@ describe("The Channel Class", function() {
         client.sessionToken = "sessionToken";
 
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: "Frodo",
           id: "layer:///identities/" + "Frodo",
           firstName: "first",
@@ -35,14 +34,12 @@ describe("The Channel Class", function() {
           isMine: true
         });
         userIdentity1 = new Layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/1",
+              id: "layer:///identities/1",
             displayName: "1",
             userId: "1"
         });
         userIdentity2 = new Layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/2",
+              id: "layer:///identities/2",
             displayName: "2",
             userId: "2"
         });
@@ -71,7 +68,7 @@ describe("The Channel Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -154,7 +151,6 @@ describe("The Channel Class", function() {
     describe("The _getSendData() method", function() {
       it("Should return the current state of the data in a create format", function() {
         var channel = new Layer.Core.Channel({
-          client: client,
           metadata: {hey: "ho"},
           name: "Frodo is a Dodo"
         });
@@ -172,7 +168,6 @@ describe("The Channel Class", function() {
       it("Should return null if no metadata", function() {
         var channel = new Layer.Core.Channel({
           members: [userIdentity1, client.user],
-          client: client,
           name: "Frodo is a Dodo"
         });
         expect(channel._getSendData()).toEqual({
@@ -549,25 +544,16 @@ describe("The Channel Class", function() {
     });
 
     describe("The create() method", function() {
-      it("Should throw error if no client", function() {
-        expect(function() {
-          Layer.Core.Channel.create({
-            name: "Argh"
-          });
-        }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
 
-      });
 
       it("Should return a Channel", function() {
         expect(Layer.Core.Channel.create({
-          client: client,
           name: "FrodoIsLame"
         })).toEqual(jasmine.any(Layer.Core.Channel));
       });
 
       it("Should have suitable properties", function() {
         var channel = Layer.Core.Channel.create({
-          client: client,
           name: "FrodoIsLame",
           metadata: {
             subtopic: {
@@ -586,7 +572,6 @@ describe("The Channel Class", function() {
 
       it("Should return a matching Channel with different metadata", function() {
         var channel2 = Layer.Core.Channel.create({
-          client: client,
           name: channel.name,
           metadata: {
             subtopic: {
@@ -610,7 +595,6 @@ describe("The Channel Class", function() {
 
       it("Should return a matching Channel with same metadata", function() {
         var channel2 = Layer.Core.Channel.create({
-          client: client,
           name: channel.name,
           metadata: channel.metadata
         });

@@ -10,7 +10,6 @@ describe("Query End Mixin", function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -39,7 +38,6 @@ describe("Query End Mixin", function() {
     }
 
     user1 = new Layer.Core.Identity({
-      client: client,
       userId: 'SaurumanTheMildlyAged',
       displayName: 'Sauruman the Mildly Aged',
       id: 'layer:///identities/SaurumanTheMildlyAged',
@@ -57,7 +55,7 @@ describe("Query End Mixin", function() {
     document.body.removeChild(testRoot);
     if (el) el.onDestroy();
     jasmine.clock().uninstall();
-    Layer.Core.Client.removeListenerForNewClient();
+
     if (client) client.destroy();
   });
 

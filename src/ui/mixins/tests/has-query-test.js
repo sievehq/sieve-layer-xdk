@@ -22,7 +22,6 @@ describe("Has Query Mixin", function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -42,8 +41,7 @@ describe("Has Query Mixin", function() {
     for (i = 0; i < 100; i++) {
       query.data.push(
         new Layer.Core.Identity({
-          client: client,
-          userId: 'user' + i,
+              userId: 'user' + i,
           id: 'layer:///identities/user' + i,
           displayName: 'User ' + i,
           isFullIdentity: true
@@ -60,7 +58,7 @@ describe("Has Query Mixin", function() {
     jasmine.clock().uninstall();
     client.destroy();
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
 
@@ -240,14 +238,6 @@ describe("Has Query Mixin", function() {
     });
 
     describe("The _updateQuery() method", function() {
-      it("Should update the client if its unset", function() {
-        el.client = null;
-        el.query = null;
-        el.properties.query = query;
-        el._updateQuery();
-        expect(el.client).toBe(client);
-      });
-
       it("Should call onRender", function() {
         spyOn(el, "onRender");
         el._updateQuery();

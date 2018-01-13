@@ -8,7 +8,6 @@ describe("List Selection Mixin", function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -27,8 +26,7 @@ describe("List Selection Mixin", function() {
     for (i = 0; i < 100; i++) {
       query.data.push(
         new Layer.Core.Conversation({
-          client: client,
-          participants: [client.user],
+              participants: [client.user],
           id: 'layer:///conversations/c' + i,
           distinct: false,
           metadata: {conversationName: "C " + i}
@@ -47,7 +45,7 @@ describe("List Selection Mixin", function() {
     try {
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
       if (client) client.destroy();
     } catch(e) {}
@@ -70,8 +68,7 @@ describe("List Selection Mixin", function() {
 
     it("Should set isSelected when generating items", function() {
       var query2 = new Layer.Core.Query({
-        client: client,
-      });
+        });
       el.query = query2;
       expect(el.childNodes.length).toBe(1);
       el.selectedId = query.data[5].id;

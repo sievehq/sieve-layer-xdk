@@ -72,7 +72,6 @@ registerComponent('layer-message-viewer', {
         const model = (message && !this.properties.model) ? message.createModel() : null;
         if (model) {
           this.properties.model = model;
-          if (this.firstChild) this.innerHTML = '';
           if (this.properties._internalState.onAfterCreateCalled) {
             this._setupMessage();
           }
@@ -173,6 +172,7 @@ registerComponent('layer-message-viewer', {
      */
     _setupMessage() {
       if (!this.model) return;
+      if (this.firstChild) this.innerHTML = '';
 
       // The rootPart is typically the Root Part of the message, but the Card View may be asked to render subcards
       // Clearly differentiate a top level Root Part from subparts using the layer-root-viewer css class

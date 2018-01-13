@@ -3,7 +3,7 @@
  *
  * @class Layer.UI.mixins.HasQuery
  */
-
+import { client as Client } from '../../settings';
 import Core from '../../core';
 
 module.exports = {
@@ -21,9 +21,7 @@ module.exports = {
     queryId: {
       set(value) {
         if (value && value.indexOf('layer:///') !== 0) this.properties.queryId = '';
-        if (this.client) {
-          this.query = this.queryId ? this.client.getQuery(this.queryId) : null;
-        }
+        this.query = this.queryId ? Client.getQuery(this.queryId) : null;
       },
     },
 
@@ -133,8 +131,8 @@ module.exports = {
      */
     _setupGeneratedQuery() {
       // Warning: Do not call the query getter via `this.query` as it may cause an infinite loop
-      if (this._queryModel && !this.properties.query && this.client && !this.client.isDestroyed) {
-        this.query = this.client.createQuery({
+      if (this._queryModel && !this.properties.query && Client && !Client.isDestroyed) {
+        this.query = Client.createQuery({
           model: this._queryModel,
           dataType: Core.Query.InstanceDataType,
           paginationWindow: this.pageSize || 50,
@@ -152,7 +150,6 @@ module.exports = {
      * @private
      */
     _updateQuery() {
-      this.client = this.query.client;
       this.onRender();
       this.query.on('change', this.onRerender, this);
     },

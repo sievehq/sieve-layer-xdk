@@ -19,7 +19,7 @@ describe('Components', function() {
       if (client) client.destroy();
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
     } catch(e) {}
   });
 
@@ -886,7 +886,6 @@ describe('Components', function() {
     it("Should propagate propagateToChildren properties to list items", function() {
       var client = new Layer.Core.Client({appId: "fred53"});
       client.user = new Layer.Core.Identity({
-        client: client,
         userId: 'FrodoTheDodo',
         displayName: 'Frodo the Dodo',
         id: 'layer:///identities/FrodoTheDodo',
@@ -1125,7 +1124,6 @@ describe('Components', function() {
 
       client = new Layer.Core.Client({appId: "fred53"});
       client.user = new Layer.Core.Identity({
-        client: client,
         id: "layer:///identities/frodo-the-dodo"
       });
     });
@@ -1150,7 +1148,6 @@ describe('Components', function() {
     beforeEach(function() {
       client = new Layer.Core.Client({appId: "fred53"});
       client.user = new Layer.Core.Identity({
-        client: client,
         id: "layer:///identities/frodo-the-dodo"
       });
 

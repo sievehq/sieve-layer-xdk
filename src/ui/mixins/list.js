@@ -5,6 +5,7 @@
  * @mixin Layer.UI.mixins.HasQuery
  * @mixin Layer.UI.mixins.Throttler
  */
+import { client } from '../../settings';
 import Layer from '../../core';
 import Util from '../../utils';
 import { animatedScrollTo } from '../ui-utils';
@@ -249,7 +250,7 @@ module.exports = {
      * @private
      */
     _generateFragmentItem(item, fragment) {
-      const itemInstance = item instanceof Layer.Root ? item : this.client.getObject(item.id);
+      const itemInstance = item instanceof Layer.Root ? item : client.getObject(item.id);
       if (itemInstance) {
         const widget = this._generateItem(itemInstance);
 

@@ -11,7 +11,6 @@ describe("The SyncEvent Classes", function() {
 
       client.userId = 'Frodo';
       client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -142,18 +141,18 @@ describe("The SyncEvent Classes", function() {
 
             it("Should call _updateData", function() {
                 spyOn(evt, "_updateData");
-                evt._getRequestData(client);
-                expect(evt._updateData).toHaveBeenCalledWith(client);
+                evt._getRequestData();
+                expect(evt._updateData).toHaveBeenCalledWith();
             });
 
             it("Should call _updateUrl", function() {
                 spyOn(evt, "_updateUrl");
-                evt._getRequestData(client);
-                expect(evt._updateUrl).toHaveBeenCalledWith(client);
+                evt._getRequestData();
+                expect(evt._updateUrl).toHaveBeenCalledWith();
             });
 
             it("Should return expected properties", function() {
-                expect(evt._getRequestData(client)).toEqual({
+                expect(evt._getRequestData()).toEqual({
                     url: "url",
                     data: "data",
                     headers: "headers",

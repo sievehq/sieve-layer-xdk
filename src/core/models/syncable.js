@@ -17,8 +17,8 @@
 import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import ClientRegistry from '../client-registry';
 import { SYNC_STATE } from '../../constants';
+import { client as Client } from '../../settings';
 
 class Syncable extends Root {
   constructor(options = {}) {
@@ -27,19 +27,9 @@ class Syncable extends Root {
   }
 
   /**
-   * Get the client associated with this Object.
-   *
-   * @method getClient
-   * @return {Layer.Core.Client}
-   */
-  getClient() {
-    return ClientRegistry.get(this.clientId);
-  }
-
-  /**
    * Fire an XHR request using the URL for this resource.
    *
-   * For more info on xhr method parameters see {@link Layer.Core.ClientAuthenticator#xhr}
+   * For more info on xhr method parameters see {@link Layer.Core.Client#xhr}
    *
    * @method _xhr
    * @protected
@@ -49,11 +39,9 @@ class Syncable extends Root {
     // initialize
     if (!options.url) options.url = '';
     if (!options.method) options.method = 'GET';
-    const client = this.getClient();
 
     // Validatation
     if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
-    if (!client) throw new Error(ErrorDictionary.clientMissing);
     if (!this.constructor.enableOpsIfNew &&
       options.method !== 'POST' && options.method !== 'GET' &&
       this.syncState === SYNC_STATE.NEW) return this;
@@ -70,13 +58,17 @@ class Syncable extends Root {
       this._setSyncing();
     }
 
-    client.xhr(options, (result) => {
+    Client.xhr(options, (result) => {
       if (result.success && options.method !== 'GET' && !this.isDestroyed) {
         this._setSynced();
       }
       if (callback) callback(result);
     });
     return this;
+  }
+
+  _getBubbleEventsTo() {
+    return Client;
   }
 
   /**
@@ -130,7 +122,7 @@ class Syncable extends Root {
    * the `conversations:loaded`, `messages:loaded`, etc... event has fired.
    *
    * ```
-   * var message = Layer.Core.Message.load(messageId, client);
+   * var message = Layer.Core.Message.load(messageId);
    * message.once('messages:loaded', function(evt) {
    *    alert("Message loaded");
    * });
@@ -139,16 +131,13 @@ class Syncable extends Root {
    * @method load
    * @static
    * @param {string} id - `layer:///messages/UUID`
-   * @param {Layer.Core.Client} client
    * @return {Layer.Core.Syncable} - Returns an empty object that will be populated once data is loaded.
    */
-  static load(id, client) {
-    if (!client || !(client instanceof Root)) throw new Error(ErrorDictionary.clientMissing);
+  static load(id) {
 
     const obj = {
       id,
-      url: client.url + id.substring(8),
-      clientId: client.appId,
+      url: Client.url + id.substring(8),
     };
 
     if (!Syncable.sortedSubclasses) {
@@ -167,18 +156,18 @@ class Syncable extends Root {
     const typeName = ConstructorClass.eventPrefix;
 
     if (typeName) {
-      if (!client.dbManager) {
+      if (!Client.dbManager) {
         syncItem.syncState = SYNC_STATE.LOADING;
-        client.once('ready', () => syncItem._load());
+        Client.once('ready', () => syncItem._load(), syncItem);
       } else {
-        client.dbManager.getObject(typeName, id, (item) => {
+        Client.dbManager.getObject(typeName, id, (item) => {
           if (syncItem.isDestroyed) return;
           if (item) {
             syncItem._populateFromServer(item);
             syncItem.trigger(typeName + ':loaded');
-          } else if (!client.isReady) {
+          } else if (!Client.isReady) {
             syncItem.syncState = SYNC_STATE.LOADING;
-            client.once('ready', () => syncItem._load());
+            Client.once('ready', () => syncItem._load(), syncItem);
           } else {
             syncItem._load();
           }
@@ -402,17 +391,6 @@ Syncable.prototype.url = '';
  * @property {Date}
  */
 Syncable.prototype.localCreatedAt = null;
-
-
-/**
- * Layer.Core.Client that the object belongs to.
- *
- * Actual value of this string matches the appId.
- * @property {string}
- * @protected
- * @readonly
- */
-Syncable.prototype.clientId = '';
 
 /**
  * Temporary property indicating that the instance was loaded from local database rather than server.

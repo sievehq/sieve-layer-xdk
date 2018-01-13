@@ -12,7 +12,6 @@ describe('layer-conversation-list', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -34,8 +33,7 @@ describe('layer-conversation-list', function() {
     for (i = 0; i < 100; i++) {
       query.data.push(
         new Layer.Core.Conversation({
-          client: client,
-          participants: [client.user],
+              participants: [client.user],
           id: 'layer:///conversations/c' + i,
           distinct: false,
           metadata: {conversationName: "C " + i}
@@ -54,7 +52,7 @@ describe('layer-conversation-list', function() {
     try {
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     } catch(e) {}
   });

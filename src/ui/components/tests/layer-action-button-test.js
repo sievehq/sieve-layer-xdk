@@ -14,7 +14,7 @@ describe('layer-action-button', function() {
 
   afterEach(function() {
     if (client) client.destroy();
-    Layer.Core.Client.removeListenerForNewClient();
+
     document.body.removeChild(testRoot);
   })
   ;

@@ -10,7 +10,6 @@ describe('layer-conversation-item-date', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -35,7 +34,7 @@ describe('layer-conversation-item-date', function() {
   });
 
   afterEach(function() {
-    Layer.Core.Client.removeListenerForNewClient();
+
     document.body.removeChild(testRoot);
     if (el) {
       el.destroy();

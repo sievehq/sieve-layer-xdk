@@ -6,6 +6,7 @@
  * @extends Layer.Core.Syncable
  * @author  Michael Kantor
  */
+import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Syncable from './syncable';
 import { ErrorDictionary } from '../layer-error';
@@ -36,13 +37,9 @@ class Container extends Syncable {
     // Make sure the ID from handle fromServer parameter is used by the Root.constructor
     if (options.fromServer) options.id = options.fromServer.id;
 
-    // Make sure we have an clientId property
-    if (options.client) options.clientId = options.client.appId;
     if (!options.metadata) options.metadata = {};
 
     super(options);
-
-    if (!this.clientId) throw new Error(ErrorDictionary.clientMissing);
     this.isInitializing = true;
 
     // If the options contains a full server definition of the object,
@@ -75,13 +72,13 @@ class Container extends Syncable {
       // Update the syncState
       this._setSyncing();
 
-      this.getClient()._triggerAsync('state-change', {
+      Client._triggerAsync('state-change', {
         started: true,
         type: 'send_' + Util.typeFromID(this.id),
         telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
         id: this.id,
       });
-      this.getClient().sendSocketRequest({
+      Client.sendSocketRequest({
         method: 'POST',
         body: {}, // see _getSendData
         sync: {
@@ -105,8 +102,6 @@ class Container extends Syncable {
    * @param  {Object} container - Server representation of the container
    */
   _populateFromServer(container) {
-    const client = this.getClient();
-
     this._setSynced();
 
     const id = this.id;
@@ -114,7 +109,7 @@ class Container extends Syncable {
 
     // IDs change if the server returns a matching Container
     if (id !== this.id) {
-      client._updateContainerId(this, id);
+      Client._updateContainerId(this, id);
       this._triggerAsync(`${this.constructor.eventPrefix}:change`, {
         oldValue: id,
         newValue: this.id,
@@ -142,7 +137,7 @@ class Container extends Syncable {
    * @param  {Object} result
    */
   _createResult({ success, data }) {
-    this.getClient()._triggerAsync('state-change', {
+    Client._triggerAsync('state-change', {
       ended: true,
       type: 'send_' + Util.typeFromID(this.id),
       telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
@@ -251,7 +246,6 @@ class Container extends Syncable {
       object: this,
       type: 'Conversation',
       operations: layerPatchOperations,
-      client: this.getClient(),
     });
     this._inLayerParser = false;
 
@@ -314,7 +308,6 @@ class Container extends Syncable {
       object: this,
       type: 'Conversation',
       operations: layerPatchOperations,
-      client: this.getClient(),
     });
     this._inLayerParser = false;
 
@@ -356,7 +349,7 @@ class Container extends Syncable {
 
   _handleWebsocketDelete(data) {
     if (data.mode === Constants.DELETION_MODE.MY_DEVICES && data.from_position) {
-      this.getClient()._purgeMessagesByPosition(this.id, data.from_position);
+      Client._purgeMessagesByPosition(this.id, data.from_position);
     } else {
       super._handleWebsocketDelete();
     }
@@ -530,14 +523,6 @@ Container.prototype._sendDistinctEvent = null;
  * @private
  */
 Container.prototype._toObject = null;
-
-/**
- * Property to look for when bubbling up events.
- * @property {String}
- * @static
- * @private
- */
-Container.bubbleEventParent = 'getClient';
 
 /**
  * The Conversation/Channel that was requested has been created.

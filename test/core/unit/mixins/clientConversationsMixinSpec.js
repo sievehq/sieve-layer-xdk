@@ -26,14 +26,12 @@ describe("The Client Conversation Mixin", function() {
         client.sessionToken = "sessionToken";
 
         client.user = userIdentity = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
 
         userIdentity2 = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "UserIdentity",
             userId: '1'
@@ -58,7 +56,7 @@ describe("The Client Conversation Mixin", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -148,21 +146,6 @@ describe("The Client Conversation Mixin", function() {
             expect(client.getConversation(c.id)).toBe(c);
         });
 
-        it("Should set the clientId property", function() {
-            // Setup
-            var c = new Layer.Core.Conversation({
-                client: client
-            });
-
-            // Pretest
-            expect(c.clientId).toEqual(client.appId);
-
-            // Run
-            client._addConversation(c);
-
-            // Posttest
-            expect(c.clientId).toEqual(client.appId);
-        });
 
         it("Should fire conversations:add", function() {
             // Setup

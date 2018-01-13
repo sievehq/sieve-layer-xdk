@@ -52,6 +52,7 @@
  * @extends Layer.UI.Component
  * @mixins Layer.UI.mixins.SizeProperty
  */
+import { client as Client } from '../../settings';
 import Core from '../../core';
 
 import { registerComponent } from './component';
@@ -95,7 +96,7 @@ registerComponent('layer-avatar', {
       value: [],
       set(newValue, oldValue) {
         if (Array.isArray(newValue)) {
-          newValue = newValue.map(user => (user instanceof Core.Identity ? user : this.client.getIdentity(user.id)));
+          newValue = newValue.map(user => (user instanceof Core.Identity ? user : Client.getIdentity(user.id)));
           this.properties.users = newValue;
         }
 
@@ -111,7 +112,7 @@ registerComponent('layer-avatar', {
           if (identity instanceof Core.Identity) {
             return identity;
           } else {
-            return this.client.getIdentity(identity.id);
+            return Client.getIdentity(identity.id);
           }
         });
         this.properties.users = newValue;
@@ -163,7 +164,7 @@ registerComponent('layer-avatar', {
       // Add the "cluster" css if rendering multiple users
       // No classList.toggle due to poor IE11 support
       this.toggleClass('layer-avatar-cluster', users.length > 1);
-      if (users.length === 1 && this.showPresence && users[0].getClient().isPresenceEnabled) {
+      if (users.length === 1 && this.showPresence && Client.isPresenceEnabled) {
         this.nodes.presence = document.createElement('layer-presence');
         this.nodes.presence.classList.add('layer-presence-within-avatar');
         this.nodes.presence.item = users[0];

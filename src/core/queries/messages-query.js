@@ -27,6 +27,7 @@
  * @class  Layer.Core.MessagesQuery
  * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
@@ -127,11 +128,11 @@ class MessagesQuery extends Query {
   _fetchConversationMessages(pageSize, predicateIds) {
     const conversationId = 'layer:///conversations/' + predicateIds.uuid;
     if (!this._predicate) this._predicate = predicateIds.id;
-    const conversation = this.client.getConversation(conversationId);
+    const conversation = client.getConversation(conversationId);
 
     // Retrieve data from db cache in parallel with loading data from server
-    if (this.client.dbManager) {
-      this.client.dbManager.loadMessages(conversationId, this._nextDBFromId, pageSize, (messages) => {
+    if (client.dbManager) {
+      client.dbManager.loadMessages(conversationId, this._nextDBFromId, pageSize, (messages) => {
         if (messages.length) this._appendResults({ data: messages }, true);
       });
     }
@@ -144,7 +145,7 @@ class MessagesQuery extends Query {
     if ((!conversation || conversation.isSaved()) && newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'message_query_time',
         },
@@ -167,7 +168,7 @@ class MessagesQuery extends Query {
           type: 'data',
           data: [this._getData(conversation.lastMessage)],
           query: this,
-          target: this.client,
+          target: client,
         });
       }
     }
@@ -176,11 +177,11 @@ class MessagesQuery extends Query {
   _fetchChannelMessages(pageSize, predicateIds) {
     const channelId = 'layer:///channels/' + predicateIds.uuid;
     if (!this._predicate) this._predicate = predicateIds.id;
-    const channel = this.client.getChannel(channelId);
+    const channel = client.getChannel(channelId);
 
     // Retrieve data from db cache in parallel with loading data from server
-    if (this.client.dbManager) {
-      this.client.dbManager.loadMessages(channelId, this._nextDBFromId, pageSize, (messages) => {
+    if (client.dbManager) {
+      client.dbManager.loadMessages(channelId, this._nextDBFromId, pageSize, (messages) => {
         if (messages.length) this._appendResults({ data: messages }, true);
       });
     }
@@ -192,7 +193,7 @@ class MessagesQuery extends Query {
     if ((!channel || channel.isSaved()) && newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         url: newRequest,
         method: 'GET',
         sync: false,

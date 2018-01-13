@@ -7,7 +7,7 @@
  */
 import Twemoji from 'twemoji';
 import RemarkableParser from 'remarkable-emoji/setEmoji';
-import Settings from '../../settings';
+import Settings from '../../../settings';
 import { register } from './text-handlers';
 
 function replaceEmojis (string, expr) {

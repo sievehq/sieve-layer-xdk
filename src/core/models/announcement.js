@@ -11,6 +11,7 @@
  * @class  Layer.Core.Announcement
  * @extends Layer.Core.Message.ConversationMessage
  */
+import { client as Client } from '../../settings';
 import Core from '../namespace';
 import ConversationMessage from './conversation-message';
 import Syncable from './syncable';
@@ -39,7 +40,7 @@ class Announcement extends ConversationMessage {
   getConversation() {}
 
   _loaded(data) {
-    this.getClient()._addMessage(this);
+    Client._addMessage(this);
   }
 
   /**
@@ -51,13 +52,12 @@ class Announcement extends ConversationMessage {
     if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
 
     const id = this.id;
-    const client = this.getClient();
     this._xhr({
       url: '',
       method: 'DELETE',
     }, (result) => {
       if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
-        Syncable.load(id, client);
+        Syncable.load(id);
       }
     });
 
@@ -78,11 +78,10 @@ class Announcement extends ConversationMessage {
    * @param  {Object} message - Server's representation of the announcement
    * @return {Layer.Core.Announcement}
    */
-  static _createFromServer(message, client) {
+  static _createFromServer(message) {
     const fromWebsocket = message.fromWebsocket;
     return new Announcement({
       fromServer: message,
-      clientId: client.appId,
       _notify: fromWebsocket && message.is_unread,
     });
   }
@@ -129,8 +128,6 @@ class Announcement extends ConversationMessage {
  */
 
 Announcement.prefixUUID = 'layer:///announcements/';
-
-Announcement.bubbleEventParent = 'getClient';
 
 Announcement._supportedEvents = [].concat(ConversationMessage._supportedEvents);
 

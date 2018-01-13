@@ -58,6 +58,7 @@
  * @mixin Layer.UI.mixins.HasQuery
  * @mixin Layer.UI.mixins.FileDropTarget
  */
+import { client } from '../../settings';
 import Core from '../../core';
 import Constants from '../../constants';
 import UIConstants from '../constants';
@@ -330,14 +331,14 @@ registerComponent('layer-conversation-view', {
     conversationId: {
       set(value) {
         if (value && value.indexOf('layer:///conversations') !== 0 && value.indexOf('layer:///channels') !== 0) this.properties.conversationId = '';
-        if (this.client) {
+        if (client) {
           if (this.conversationId) {
-            if (this.client.isReady && !this.client.isDestroyed) {
-              this.conversation = this.client.getObject(this.conversationId, true);
+            if (client.isReady && !client.isDestroyed) {
+              this.conversation = client.getObject(this.conversationId, true);
             } else {
-              this.client.once('ready', () => {
-                if (this.conversationId) this.conversation = this.client.getObject(this.conversationId, true);
-              });
+              client.once('ready', () => {
+                if (this.conversationId) this.conversation = client.getObject(this.conversationId, true);
+              }, this);
             }
           } else {
             this.conversation = null;
@@ -385,7 +386,7 @@ registerComponent('layer-conversation-view', {
     conversation: {
       set(value) {
         if (value && !(value instanceof Core.Conversation || value instanceof Core.Channel)) this.properties.conversation = null;
-        if (this.client) this._setupConversation();
+        if (client) this._setupConversation();
       },
     },
 
@@ -393,7 +394,7 @@ registerComponent('layer-conversation-view', {
     hasGeneratedQuery: {
       type: Boolean,
       set(value) {
-        if (value && this.conversation && this.client) this._setupQuery();
+        if (value && this.conversation && client) this._setupQuery();
       },
     },
 
@@ -857,10 +858,10 @@ registerComponent('layer-conversation-view', {
       const conversation = this.properties.conversation;
 
       // Client not ready yet? retry once authenticated.
-      if (this.client && !this.client.isReady) {
-        this.client.once('ready', this._setupConversation.bind(this));
+      if (client && !client.isReady) {
+        client.once('ready', this._setupConversation, this);
         return;
-      } else if (!this.client) {
+      } else if (!client) {
         return;
       }
 

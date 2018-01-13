@@ -11,7 +11,6 @@ describe('layer-identity-item', function() {
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
       displayName: 'Frodo is a Dodo',
@@ -37,7 +36,7 @@ describe('layer-identity-item', function() {
     if (client) client.destroy();
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   describe("The selected property", function() {

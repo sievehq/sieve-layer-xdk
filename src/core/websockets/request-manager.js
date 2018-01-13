@@ -6,6 +6,7 @@
  * And have that callback either called by the correct websocket server response, or
  * be called with a timeout.
  */
+import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Util, { logger } from '../../utils';
 import LayerError from '../layer-error';
@@ -18,18 +19,15 @@ class WebsocketRequestManager {
    * Create a new websocket change manager
    *
    *      var websocketRequestManager = new Layer.Core.RequestManager({
-   *          client: client,
    *          socketManager: client.Websockets.SocketManager
    *      });
    *
    * @method
    * @param  {Object} options
-   * @param {Layer.Core.Client} client
    * @param {Layer.Core.Websockets.SocketManager} socketManager
    * @returns {Layer.Core.Websockets.RequestManager}
    */
   constructor(options) {
-    this.client = options.client;
     this.socketManager = options.socketManager;
     this.socketManager.on({
       message: this._handleResponse,
@@ -129,8 +127,9 @@ class WebsocketRequestManager {
    * @param {Object[]} changes   "create", "update", and "delete" requests from server.
    */
   _handleChangesArray(changes) {
-    changes.forEach(change => this.client.socketChangeManager._processChange(change));
+    changes.forEach(change => Client.socketChangeManager._processChange(change));
   }
+
 
   /**
    * Shortcut for sending a request; builds in handling for callbacks

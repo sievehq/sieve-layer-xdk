@@ -86,7 +86,6 @@ describe("Websocket tests", function() {
         });
 
         var identity = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: "c",
           id: "layer:///identities/" + "c",
           firstName: "first",
@@ -151,7 +150,7 @@ describe("Websocket tests", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("Should route events to the right handler", function() {

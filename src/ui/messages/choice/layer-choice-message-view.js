@@ -29,7 +29,7 @@
  *
  * ```
  * document.body.addEventListener('layer-choice-model-generate-response-message', evt) {
- *  evt.detail.returnValue(`${evt.detail.nameOfChoice}: ${this.client.user.displayName} has ${evt.detail.action} ${evt.detail.choice.text}`);
+ *  evt.detail.returnValue(`${evt.detail.nameOfChoice}: ${client.user.displayName} has ${evt.detail.action} ${evt.detail.choice.text}`);
  * });
  * ```
  *
@@ -42,7 +42,7 @@
  * @property {String} evt.detail.action           One of "selected" or "deselected" indicating whether the user action selected or deselected a Choice
  * @property {String} evt.detail.nameOfChoice     Proposed name for the Choice Model in order to describe what the user was answering. May be empty string.
  */
-
+import { client } from '../../../settings';
 import { registerComponent } from '../../components/component';
 import Constants from '../../constants';
 
@@ -175,7 +175,7 @@ registerComponent('layer-choice-message-view', {
         this._selectChoice(data);
 
         const rootPart = this.model.message.getPartsMatchingAttribute({ role: 'root' })[0];
-        const rootModel = this.client.getMessageTypeModel(rootPart.id);
+        const rootModel = client.getMessageTypeModel(rootPart.id);
         this.trigger(this.model.responseName, {
           model: this.model,
           data: this.model,

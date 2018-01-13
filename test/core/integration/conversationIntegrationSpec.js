@@ -15,7 +15,6 @@ describe("Conversation Integration Tests", function() {
         });
         client.sessionToken = "sessionToken";
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: "Frodo",
           id: "layer:///identities/" + "Frodo",
           firstName: "first",
@@ -34,7 +33,6 @@ describe("Conversation Integration Tests", function() {
         conversation = client._createObject(JSON.parse(JSON.stringify(responses.conversation1)));
 
         syncManager = new Layer.Core.SyncManager({
-            client: client,
             onlineManager: client.onlineManager,
             socketManager: client.socketManager,
             requestManager: client.socketRequestManager
@@ -49,7 +47,6 @@ describe("Conversation Integration Tests", function() {
         };
 
         userIdentity = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/6",
             displayName: "6",
             userId: "6"
@@ -69,7 +66,7 @@ describe("Conversation Integration Tests", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
 

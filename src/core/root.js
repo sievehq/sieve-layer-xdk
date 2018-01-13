@@ -420,11 +420,9 @@ class Root extends EventClass {
 
     Events.trigger.apply(this, computedArgs);
 
-    const parentProp = this.constructor.bubbleEventParent;
-    if (parentProp && args[0] !== 'destroy') {
-      let parentValue = this[parentProp];
-      parentValue = (typeof parentValue === 'function') ? parentValue.apply(this) : parentValue;
-      if (parentValue) parentValue.trigger(...computedArgs);
+    const parent = this._getBubbleEventsTo && this._getBubbleEventsTo();
+    if (parent && args[0] !== 'destroy') {
+      parent.trigger(...computedArgs);
     }
 
     return computedArgs[1];
@@ -607,7 +605,7 @@ class Root extends EventClass {
    * @return {String}
    */
   toString() {
-    return this.internalId;
+    return '[' + this.internalId + (this.isDestroyed ? ' .destroyed' : '') + ']';
   }
 }
 

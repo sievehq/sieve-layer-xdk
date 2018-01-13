@@ -59,7 +59,7 @@
  * @class Layer.UI.messages.ProductMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
+import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
 
 class ProductModel extends MessageTypeModel {
   _initializeProperties() {
@@ -262,6 +262,6 @@ ProductModel.messageRenderer = 'layer-product-message-view';
 Root.initClass.apply(ProductModel, [ProductModel, 'ProductModel']);
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(ProductModel, 'ProductModel');
+Core.Client.registerMessageTypeModelClass(ProductModel, 'ProductModel');
 
 module.exports = ProductModel;

@@ -31,6 +31,7 @@
  * @class  Layer.Core.ConversationsQuery
  * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Util from '../../utils';
@@ -42,8 +43,8 @@ class ConversationsQuery extends Query {
   _fetchData(pageSize) {
     const sortBy = this._getSortField();
 
-    if (this.client.dbManager) {
-      this.client.dbManager.loadConversations(sortBy, this._nextDBFromId, pageSize, (conversations) => {
+    if (client.dbManager) {
+      client.dbManager.loadConversations(sortBy, this._nextDBFromId, pageSize, (conversations) => {
         if (conversations.length) this._appendResults({ data: conversations }, true);
       });
     }
@@ -54,7 +55,7 @@ class ConversationsQuery extends Query {
     if (newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'conversation_query_time',
         },

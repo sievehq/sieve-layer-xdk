@@ -5,6 +5,7 @@
  * This class listens for `change` events from the websocket server,
  * and processes them.
  */
+import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Util, { logger } from '../../utils';
 import Message from '../models/message';
@@ -16,18 +17,15 @@ class WebsocketChangeManager {
    * Create a new websocket change manager
    *
    *      var websocketChangeManager = new Layer.Core.Websockets.ChangeManager({
-   *          client: client,
    *          socketManager: client.Websockets.SocketManager
    *      });
    *
    * @method
    * @param  {Object} options
-   * @param {Layer.Core.Client} client
    * @param {Layer.Core.Websockets.SocketManager} socketManager
    * @returns {Layer.Core.Websockets.ChangeManager}
    */
   constructor(options) {
-    this.client = options.client;
     options.socketManager.on('message', this._handleChange, this);
   }
 
@@ -42,7 +40,7 @@ class WebsocketChangeManager {
     if (evt.data.type === 'change') {
       this._processChange(evt.data.body);
     } else if (evt.data.type === 'operation') {
-      this.client.trigger('websocket:operation', { data: evt.data.body });
+      Client.trigger('websocket:operation', { data: evt.data.body });
     }
   }
 
@@ -84,7 +82,7 @@ class WebsocketChangeManager {
    */
   _handleCreate(msg) {
     msg.data.fromWebsocket = true;
-    const obj = this.client._createObject(msg.data);
+    const obj = Client._createObject(msg.data);
     if (obj) obj._loadType = 'websocket';
   }
 
@@ -122,7 +120,6 @@ class WebsocketChangeManager {
           object: entity,
           type: msg.object.type,
           operations: msg.data,
-          client: this.client,
         });
         entity._inLayerParser = false;
       } catch (err) {
@@ -132,11 +129,11 @@ class WebsocketChangeManager {
       switch (Util.typeFromID(msg.object.id)) {
         case 'channels':
         case 'conversations':
-          if (Container._loadResourceForPatch(msg.data)) this.client.getObject(msg.object.id, true);
+          if (Container._loadResourceForPatch(msg.data)) Client.getObject(msg.object.id, true);
           break;
 
         case 'messages':
-          if (Message._loadResourceForPatch(msg.data)) this.client.getMessage(msg.object.id, true);
+          if (Message._loadResourceForPatch(msg.data)) Client.getMessage(msg.object.id, true);
           break;
         case 'announcements':
           break;
@@ -153,7 +150,7 @@ class WebsocketChangeManager {
    * @return {Layer.Core.Root}
    */
   getObject(msg) {
-    return this.client.getObject(msg.object.id);
+    return Client.getObject(msg.object.id);
   }
 
   /**
@@ -161,7 +158,6 @@ class WebsocketChangeManager {
    * @method destroy
    */
   destroy() {
-    this.client = null;
   }
 }
 

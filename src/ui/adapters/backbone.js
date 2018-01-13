@@ -11,12 +11,12 @@ import { register } from './index';
  * import Backbone from 'backbone';
  * import '@layerhq/web-xdk/lib/ui/adapters/backbone';
  * var LayerUIViews = Layer.UI.adapters.backbone(Backbone);
- * var conversationPanelView = new LayerUIViews.ConversationPanel(client, {conversationId: 'layer:///conversations/UUID'});
- * var conversationsListView = new LayerUIViews.ConversationsList(client);
- * var identitiesListView = new LayerUIViews.UserList(client);
- * var notifierView = new LayerUIViews.Notifier(client, {notifyInForeground: 'toast'});
- * var sendButton = new LayerUIViews.SendButton(client);
- * var fileUploadButton = new LayerUIViews.FileUploadButton(client);
+ * var conversationPanelView = new LayerUIViews.ConversationPanel({conversationId: 'layer:///conversations/UUID'});
+ * var conversationsListView = new LayerUIViews.ConversationsList();
+ * var identitiesListView = new LayerUIViews.UserList();
+ * var notifierView = new LayerUIViews.Notifier({notifyInForeground: 'toast'});
+ * var sendButton = new LayerUIViews.SendButton();
+ * var fileUploadButton = new LayerUIViews.FileUploadButton();
  * ```
  *
 * Calling this will expose the following React Components:
@@ -71,8 +71,7 @@ function initBackbone(backbone) {
     // Define the Backbone View
     const view = libraryResult[className] = backbone.View.extend({
       el: componentName,
-      initialize: function initialize(client, options) {
-        this.client = client;
+      initialize: function initialize(options) {
         Object.keys(options || {}).forEach((propertyName) => {
           this[propertyName] = options[propertyName];
         });

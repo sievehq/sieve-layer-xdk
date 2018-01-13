@@ -20,7 +20,7 @@
  *
  * @property {String} settings.appId                    Passed into the `Layer.init({ appId })` in order to initialize the Client
  *
- * @property {Layer.Core.Client} [settings.client]      Exposes the Client to all UI Components; set automatically by the `Layer.init({ appId })` call
+ * @property {Layer.Core.Client} [settings.Client]      Exposes the Client to all UI Components; set automatically by the `Layer.init({ appId })` call
  *
  * @property {Number} [settings.messageGroupTimeSpan=1,800,000]   Messages are grouped based on sender,
  *    as well as time between when Messages are sent
@@ -51,7 +51,14 @@
  */
 
 module.exports = {
-  client: null,
+  appId: '',
+  __client: null,
+  get client() {
+    return module.exports.__client;
+  },
+  set client(client) {
+    module.exports.__client = client;
+  },
   messageGroupTimeSpan: 1000 * 60 * 30,
   disableTabAsWhiteSpace: false,
   markReadDelay: 2500,
@@ -62,3 +69,4 @@ module.exports = {
   destroyAfterDetachDelay: 10000,
   useEmojiImages: true,
 };
+

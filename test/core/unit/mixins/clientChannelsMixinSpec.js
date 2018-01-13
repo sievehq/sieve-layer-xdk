@@ -22,14 +22,12 @@ describe("The Client Channel Mixin", function() {
         client.sessionToken = "sessionToken";
 
         client.user = userIdentity = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
 
         userIdentity2 = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "UserIdentity",
             userId: '1'
@@ -54,7 +52,7 @@ describe("The Client Channel Mixin", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -136,21 +134,6 @@ describe("The Client Channel Mixin", function() {
             expect(client.getChannel(c.id)).toBe(c);
         });
 
-        it("Should set the clientId property", function() {
-            // Setup
-            var c = new Layer.Core.Channel({
-                client: client
-            });
-
-            // Pretest
-            expect(c.clientId).toEqual(client.appId);
-
-            // Run
-            client._addChannel(c);
-
-            // Posttest
-            expect(c.clientId).toEqual(client.appId);
-        });
 
         it("Should fire channels:add", function() {
             // Setup

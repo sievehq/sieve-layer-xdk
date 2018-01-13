@@ -19,7 +19,6 @@ describe("The Typing Indicator Classes", function() {
         });
         client.sessionToken = "sessionToken";
         client.user = new Layer.Core.Identity({
-            clientId: client.appId,
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
             firstName: "first",
@@ -36,7 +35,6 @@ describe("The Typing Indicator Classes", function() {
         });
 
         johnIdentity = new Layer.Core.Identity({
-            client: client,
             userId: "JohnDoh",
             id: "layer:///identities/JohnDoh",
             displayName: "John Doh"
@@ -44,7 +42,6 @@ describe("The Typing Indicator Classes", function() {
         client._addIdentity(johnIdentity);
 
         janeIdentity = new Layer.Core.Identity({
-            client: client,
             userId: "JaneDoh",
             id: "layer:///identities/JaneDoh",
             displayName: "Jane Doh"
@@ -84,7 +81,7 @@ describe("The Typing Indicator Classes", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The TypingIndicatorListener class", function() {
@@ -475,10 +472,6 @@ describe("The Typing Indicator Classes", function() {
                 expect(listener.input).toBe(input);
             });
 
-            it("Should have a clientId", function() {
-                expect(listener.clientId).toBe(client.appId);
-            });
-
             it("Should have a TypingPublisher", function() {
                 expect(listener.publisher).toEqual(jasmine.any(Layer.Core.TypingIndicators.TypingPublisher));
             });
@@ -682,9 +675,6 @@ describe("The Typing Indicator Classes", function() {
         });
 
         describe("The constructor() method", function() {
-            it("Should have a clientId", function() {
-                expect(publisher.clientId).toBe(client.appId);
-            });
 
             it("Should start as FINISHED", function() {
                 expect(publisher.state).toEqual(Layer.Core.TypingIndicators.FINISHED);

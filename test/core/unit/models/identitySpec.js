@@ -39,7 +39,6 @@ function deleteTables(done) {
         client.sessionToken = "sessionToken";
         var userId = "Frodo";
         client.user = new Layer.Core.Identity({
-            clientId: client.appId,
             userId: userId,
             id: "layer:///identities/" + userId,
             firstName: "first",
@@ -71,7 +70,6 @@ function deleteTables(done) {
 
         client.syncManager.queue = [];
         identity = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -86,13 +84,11 @@ function deleteTables(done) {
           isFullIdentity: true
         });
         basicIdentity = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId + "a",
           id: "layer:///identities/" + client.userId + "a",
           isFullIdentity: false
         });
         serviceIdentity = new Layer.Core.Identity({
-          clientId: client.appId,
           display_name: "Sauron the Sore",
           id: "layer:///identities/Sauron the Sore"
         });
@@ -120,7 +116,7 @@ function deleteTables(done) {
               id: "hey"
             },
             id: "hey",
-            client: client
+
           });
 
           // Posttest
@@ -130,27 +126,8 @@ function deleteTables(done) {
           Layer.Core.Identity.prototype._populateFromServer = populateFromServer;
         });
 
-        it("Should fail if no client or clientId", function() {
-          expect(function() {
-            new Layer.Core.Identity({});
-          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
-        });
-
-        it("Should work if client", function() {
-          new Layer.Core.Identity({
-            client: client
-          });
-        });
-
-        it("Should work if clientId", function() {
-          new Layer.Core.Identity({
-            clientId: client.appId
-          });
-        });
-
         it("Should set a userId if none provided", function() {
           expect(new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/hey"
           }).userId).toEqual("hey");
         });
@@ -158,13 +135,12 @@ function deleteTables(done) {
         it("Should set a URL if none provided", function() {
           expect(new Layer.Core.Identity({
             userId: "frodo",
-            client: client
+
           }).url).toEqual(client.url + '/identities/frodo');
         });
 
         it("Should decode a userId", function() {
           expect(new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/auth0%7Cabc"
           }).userId).toEqual("auth0|abc");
         });
@@ -173,14 +149,13 @@ function deleteTables(done) {
           spyOn(client, "_addIdentity");
           var identity = new Layer.Core.Identity({
             userId: "frodo",
-            client: client
+
           })
           expect(client._addIdentity).toHaveBeenCalledWith(identity);
         });
 
         it("Should not register deprecated non-ided identities", function() {
           var oldIdentity = new Layer.Core.Identity({
-            clientId: client.appId,
             fromServer: {
               display_name: "Sauron the Sore"
             }
@@ -190,13 +165,13 @@ function deleteTables(done) {
         });
 
         it("Should always initialize the presence object", function() {
-          var i1 = new Layer.Core.Identity({client: client});
+          var i1 = new Layer.Core.Identity({});
           expect(i1._presence).toEqual({
             status: null,
             lastSeenAt: null
           });
 
-          var i2 = Layer.Core.Identity._createFromServer(responses.useridentity, client);
+          var i2 = Layer.Core.Identity._createFromServer(responses.useridentity);
           expect(i2._presence).toEqual({
             status: null,
             lastSeenAt: null
@@ -211,7 +186,7 @@ function deleteTables(done) {
         var identity;
         beforeEach(function() {
           identity = new Layer.Core.Identity({
-            client: client
+
           });
         });
 
@@ -614,8 +589,8 @@ function deleteTables(done) {
 
       describe("The _createFromServer() method", function() {
         it("Should return a new Identity", function() {
-          expect(Layer.Core.Identity._createFromServer(responses.useridentity, client)).toEqual(jasmine.any(Layer.Core.Identity));
-          expect(Layer.Core.Identity._createFromServer(responses.useridentity, client).userId).toEqual(responses.useridentity.user_id);
+          expect(Layer.Core.Identity._createFromServer(responses.useridentity)).toEqual(jasmine.any(Layer.Core.Identity));
+          expect(Layer.Core.Identity._createFromServer(responses.useridentity).userId).toEqual(responses.useridentity.user_id);
         });
       });
 

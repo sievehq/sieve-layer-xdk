@@ -26,14 +26,12 @@ describe("The Client Operations Mixin", function() {
         client.sessionToken = "sessionToken";
 
         client.user = userIdentity = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
 
         userIdentity2 = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "UserIdentity",
             userId: '1'
@@ -58,7 +56,7 @@ describe("The Client Operations Mixin", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The _handleMarkAllReadOperation() method", function() {

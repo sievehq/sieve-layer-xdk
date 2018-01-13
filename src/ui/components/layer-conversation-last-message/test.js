@@ -9,7 +9,7 @@ describe('layer-conversation-last-message', function() {
     document.body.removeChild(testRoot);
     Layer.Utils.defer.reset();
     jasmine.clock().uninstall();
-    Layer.Core.Client.removeListenerForNewClient();
+
     if (el) {
       el.destroy();
       el = null;
@@ -27,12 +27,11 @@ describe('layer-conversation-last-message', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      isMine: true
+      isMine: true,
     });
 
     client._clientAuthenticated();

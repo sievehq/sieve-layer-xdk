@@ -91,12 +91,12 @@ import Util from '../utils';
 import version from '../version';
 import logger from '../utils/logger';
 import Root from './root';
-import ClientRegistry from './client-registry';
 import TypingListener from './typing-indicators/typing-listener';
 import TypingPublisher from './typing-indicators/typing-publisher';
 import TelemetryMonitor from './telemetry-monitor';
 import Identity from './models/identity';
 import Core from './namespace';
+import Settings from '../settings';
 
 class Client extends ClientAuth {
 
@@ -106,7 +106,8 @@ class Client extends ClientAuth {
    */
   constructor(options) {
     super(options);
-    ClientRegistry.register(this);
+    Settings.client = this;
+
     this._models = {};
     this._runMixins('constructor', [options]);
 
@@ -124,11 +125,8 @@ class Client extends ClientAuth {
   _initComponents() {
     super._initComponents();
 
-    this._typingIndicators = new TypingIndicatorListener({
-      clientId: this.appId,
-    });
+    this._typingIndicators = new TypingIndicatorListener({});
     this.telemetryMonitor = new TelemetryMonitor({
-      client: this,
       enabled: this.telemetryEnabled,
     });
   }
@@ -159,14 +157,9 @@ class Client extends ClientAuth {
 
     this._destroyComponents();
 
-    ClientRegistry.unregister(this);
-
     super.destroy();
     this._inCleanup = false;
-  }
-
-  __adjustAppId() {
-    if (this.appId) throw new Error(ErrorDictionary.appIdImmutable);
+    Settings.client = null;
   }
 
   /**
@@ -499,7 +492,6 @@ class Client extends ClientAuth {
    */
   createTypingListener(inputNode) {
     return new TypingListener({
-      clientId: this.appId,
       input: inputNode,
     });
   }
@@ -528,9 +520,7 @@ class Client extends ClientAuth {
    * @return {Layer.Core.TypingIndicators.TypingPublisher}
    */
   createTypingPublisher() {
-    return new TypingPublisher({
-      clientId: this.appId,
-    });
+    return new TypingPublisher({});
   }
 
   /**
@@ -543,69 +533,6 @@ class Client extends ClientAuth {
    */
   getTypingState(conversationId) {
     return this._typingIndicators.getState(conversationId);
-  }
-
-  /**
-   * Accessor for getting a Client by appId.
-   *
-   * Most apps will only have one client,
-   * and will not need this method.
-   *
-   * @method getClient
-   * @static
-   * @param  {string} appId
-   * @return {Layer.Core.Client}
-   */
-  static getClient(appId) {
-    return ClientRegistry.get(appId);
-  }
-
-  static destroyAllClients() {
-    ClientRegistry.getAll().forEach(client => client.destroy());
-  }
-
-  /**
-   * Listen for a new Client to be registered.
-   *
-   * If your code needs a client, and it doesn't yet exist, you
-   * can use this to get called when the client exists.
-   *
-   * ```
-   * Layer.Core.Client.addListenerForNewClient(function(client) {
-   *    mycomponent.setClient(client);
-   * });
-   * ```
-   *
-   * @method addListenerForNewClient
-   * @static
-   * @param {Function} listener
-   * @param {Layer.Core.Client} listener.client
-   */
-  static addListenerForNewClient(listener) {
-    ClientRegistry.addListener(listener);
-  }
-
-  /**
-   * Remove listener for a new Client.
-   *
-   *
-   * ```
-   * var f = function(client) {
-   *    mycomponent.setClient(client);
-   *    Layer.Core.Client.removeListenerForNewClient(f);
-   * };
-   *
-   * Layer.Core.Client.addListenerForNewClient(f);
-   * ```
-   *
-   * Calling with null will remove all listeners.
-   *
-   * @method removeListenerForNewClient
-   * @static
-   * @param {Function} listener
-   */
-  static removeListenerForNewClient(listener) {
-    ClientRegistry.removeListener(listener);
   }
 }
 

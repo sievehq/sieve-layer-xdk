@@ -26,7 +26,7 @@
  */
 import Core from '../../core';
 import { registerComponent } from './component';
-import Settings from '../settings';
+import Settings, { client } from '../../settings';
 import { logger } from '../../utils';
 
 const ErrorDictionary = Core.LayerError.ErrorDictionary;
@@ -109,11 +109,8 @@ registerComponent('layer-compose-bar', {
      */
     conversation: {
       set(value) {
-        if (value) this.client = value.getClient();
-        if (this.client) {
-          this._setTypingListenerConversation();
-          if (this.manageDisabledState) this.disabled = !Boolean(value);
-        }
+        this._setTypingListenerConversation();
+        if (this.manageDisabledState) this.disabled = !Boolean(value);
       },
     },
 
@@ -296,7 +293,7 @@ registerComponent('layer-compose-bar', {
      */
     _setTypingListenerConversation() {
       if (!this.properties.typingListener) {
-        this.properties.typingListener = this.client.createTypingListener(this.nodes.input);
+        this.properties.typingListener = client.createTypingListener(this.nodes.input);
       }
       this.properties.typingListener.setConversation(this.conversation);
     },
@@ -447,7 +444,7 @@ registerComponent('layer-compose-bar', {
     _send(model) {
       if (!model) throw new Error(ErrorDictionary.modelParamRequired);
       const notification = {
-        title: `New Message from ${this.client.user.displayName}`,
+        title: `New Message from ${client.user.displayName}`,
         text: model.text || model.title || model.constructor.Label + ' received',
       };
 

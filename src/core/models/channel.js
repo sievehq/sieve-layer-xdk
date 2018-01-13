@@ -49,6 +49,7 @@
  * @extends Layer.Core.Container
  * @author  Michael Kantor
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Syncable from './syncable';
@@ -64,7 +65,7 @@ class Channel extends Container {
     // Setup default values
     if (!options.membership) options.membership = {};
     super(options);
-    this._members = this.getClient()._fixIdentities(options.members || []).map(item => item.id);
+    this._members = client._fixIdentities(options.members || []).map(item => item.id);
     this._register();
   }
 
@@ -76,7 +77,7 @@ class Channel extends Container {
    */
   destroy() {
     this.lastMessage = null;
-    this.getClient()._removeChannel(this);
+    client._removeChannel(this);
     super.destroy();
     this.membership = null;
   }
@@ -112,7 +113,6 @@ class Channel extends Container {
     } else {
       messageConfig = options;
     }
-    messageConfig.clientId = this.clientId;
     messageConfig.conversationId = this.id;
     messageConfig._loadType = 'websocket'; // treat this the same as a websocket loaded object
 
@@ -138,7 +138,7 @@ class Channel extends Container {
   _getSendData(data) {
     const isMetadataEmpty = Util.isEmpty(this.metadata);
     const members = this._members || [];
-    if (members.indexOf(this.getClient().user.id) === -1) members.push(this.getClient().user.id);
+    if (members.indexOf(client.user.id) === -1) members.push(client.user.id);
     return {
       method: 'Channel.create',
       data: {
@@ -169,7 +169,7 @@ class Channel extends Container {
 
     this.isCurrentParticipant = Boolean(channel.membership);
     this.membership = !channel.membership ||
-      !channel.membership.id ? null : this.getClient()._createObject(channel.membership);
+      !channel.membership.id ? null : client._createObject(channel.membership);
 
     super._populateFromServer(channel);
     this._register();
@@ -239,7 +239,7 @@ class Channel extends Container {
    * @ignore until server supports it
    */
   addMembers(members) {
-    members = this.getClient()._fixIdentities(members).map(item => item.id);
+    members = client._fixIdentities(members).map(item => item.id);
     if (this.syncState === Constants.SYNC_STATE.NEW) {
       this._members = this._members.concat(members);
       return this;
@@ -271,7 +271,7 @@ class Channel extends Container {
    * @ignore until server supports it
    */
   removeMembers(members) {
-    members = this.getClient()._fixIdentities(members).map(item => item.id);
+    members = client._fixIdentities(members).map(item => item.id);
 
     if (this.syncState === Constants.SYNC_STATE.NEW) {
       members.forEach((id) => {
@@ -304,7 +304,7 @@ class Channel extends Container {
    * @ignore until server supports it
    */
   join() {
-    return this.addMembers([this.getClient().user.id]);
+    return this.addMembers([client.user.id]);
   }
 
   /**
@@ -319,7 +319,7 @@ class Channel extends Container {
    * @ignore until server supports it
    */
   leave() {
-    return this.removeMembers([this.getClient().user.id]);
+    return this.removeMembers([client.user.id]);
   }
 
   /**
@@ -349,9 +349,9 @@ class Channel extends Container {
    * @returns {Layer.Core.Membership}
    */
   getMember(identityId) {
-    identityId = this.getClient()._fixIdentities([identityId])[0].id;
+    identityId = client._fixIdentities([identityId])[0].id;
     const membershipId = this.id + '/members/' + identityId.replace(/layer:\/\/\/identities\//, '');
-    return this.getClient().getMember(membershipId, true);
+    return client.getMember(membershipId, true);
   }
 
   /**
@@ -400,14 +400,12 @@ class Channel extends Container {
    * @private
    */
   _register() {
-    const client = this.getClient();
     client._addChannel(this);
   }
 
   _deleteResult(result, id) {
-    const client = this.getClient();
     if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
-      Channel.load(id, client);
+      Channel.load(id);
     }
   }
 
@@ -439,12 +437,10 @@ class Channel extends Container {
    * @protected
    * @static
    * @param  {Object} channel - Server representation of a Channel
-   * @param  {Layer.Core.Client} client
    * @return {Layer.Core.Channel}
    */
-  static _createFromServer(channel, client) {
+  static _createFromServer(channel) {
     return new Channel({
-      client,
       fromServer: channel,
       _fromDB: channel._fromDB,
     });
@@ -459,7 +455,6 @@ class Channel extends Container {
    *          metadata: {
    *              titleDetails: 'I am not a detail!'
    *          },
-   *          client: client,
    *          'channels:loaded': function(evt) {
    *
    *          }
@@ -472,24 +467,21 @@ class Channel extends Container {
    * @static
    * @protected
    * @param  {Object} options
-   * @param  {Layer.Core.Client} options.client
    * @param  {string[]/Layer.Core.Identity[]} options.members - Array of Participant IDs or Layer.Core.Identity objects to create a channel with.
    * @param {boolean} [options.private=false] - Create a private channel
    * @param {Object} [options.metadata={}] - Initial metadata for Channel
    * @return {Layer.Core.Channel}
    */
   static create(options) {
-    if (!options.client) throw new Error(ErrorDictionary.clientMissing);
     if (!options.name) options.name = 'channel-' + String(Math.random()).replace(/\./, '');
     const newOptions = {
       name: options.name,
       private: options.private,
-      members: options.members ? options.client._fixIdentities(options.members).map(item => item.id) : [],
+      members: options.members ? client._fixIdentities(options.members).map(item => item.id) : [],
       metadata: options.metadata,
-      client: options.client,
     };
 
-    const channel = options.client.findCachedChannel(aChannel => aChannel.name === newOptions.name);
+    const channel = client.findCachedChannel(aChannel => aChannel.name === newOptions.name);
 
     if (channel) {
       channel._sendDistinctEvent = new LayerEvent({

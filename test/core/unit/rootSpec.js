@@ -648,28 +648,12 @@ describe("The Root Class", function() {
         expect(a._getTriggerArgs).not.toHaveBeenCalled();
       });
 
-      it("Should bubble up events via parent property", function() {
-        A.bubbleEventParent = "myParent";
+      it("Should bubble up events via _getBubbleEventsTo", function() {
         A.prototype.myParent = null;
+        A.prototype._getBubbleEventsTo = function() {return this.myParent;}
         Layer.Core.Root.initClass(A, "A");
         var b = new A();
         a = new A({myParent: b});
-        b.on("doh", spy);
-
-        // Run
-        a._trigger("doh");  // Calls b.trigger("doh")
-
-        // Posttest
-        expect(spy).toHaveBeenCalled();
-      });
-
-      it("Should bubble up events via parent function", function() {
-        A.bubbleEventParent = "getMyParent";
-        A.prototype.getMyParent = function() {return b;};
-        Layer.Core.Root.initClass(A, "A");
-        var b = new A();
-        b.getMyParent = null;
-        a = new A();
         b.on("doh", spy);
 
         // Run
@@ -964,7 +948,7 @@ describe("The Root Class", function() {
       });
       it("Should return internal id", function() {
         var a = new A();
-        expect(a.toString()).toEqual(a.internalId);
+        expect(a.toString()).toEqual("[" + a.internalId + "]");
       });
     });
   });

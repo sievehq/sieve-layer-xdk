@@ -5,6 +5,7 @@
  *
  * @class Layer.UI.mixins.FileDropTarget
  */
+import { client } from '../../settings';
 import ImageModel from '../messages/image/layer-image-message-model';
 import FileModel from '../messages/file/layer-file-message-model';
 import CarouselModel from '../messages/carousel/layer-carousel-message-model';
@@ -134,7 +135,7 @@ module.exports = {
      *              var model = new MyCustomMessageModel({ files: files });
      *              model.generateMessage(this.conversation, message => message.send({
      *                text: 'MyCustomMessage received',
-     *                title: `New Message from ${this.client.user.displayName}`,
+     *                title: `New Message from ${client.user.displayName}`,
      *              }));
      *           }
      *         }
@@ -164,7 +165,7 @@ module.exports = {
         model.generateMessage(this.conversation, (message) => {
           message.send({
             text: 'File received',
-            title: `New Message from ${model.getClient().user.displayName}`,
+            title: `New Message from ${client.user.displayName}`,
           });
           if (callback) callback(message);
         });
@@ -173,7 +174,7 @@ module.exports = {
         model.generateMessage(this.conversation, (message) => {
           message.send({
             text: 'Carousel received',
-            title: `New Message from ${model.getClient().user.displayName}`,
+            title: `New Message from ${client.user.displayName}`,
           });
           if (callback) callback(message);
         });

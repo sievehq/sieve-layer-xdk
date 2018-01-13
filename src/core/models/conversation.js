@@ -49,6 +49,7 @@
  * @extends Layer.Core.Container
  * @author  Michael Kantor
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Syncable from './syncable';
@@ -82,7 +83,6 @@ class Conversation extends Container {
     if (!options.participants) options.participants = [];
     super(options);
     this.isInitializing = true;
-    const client = this.getClient();
 
     // If the options doesn't contain server object, setup participants.
     if (!options || !options.fromServer) {
@@ -105,7 +105,7 @@ class Conversation extends Container {
     this.lastMessage = null;
 
     // Client fires 'conversations:remove' and then removes the Conversation.
-    if (this.clientId) this.getClient()._removeConversation(this);
+    client._removeConversation(this);
 
     super.destroy();
 
@@ -145,7 +145,6 @@ class Conversation extends Container {
     } else {
       messageConfig = options;
     }
-    messageConfig.clientId = this.clientId;
     messageConfig.conversationId = this.id;
     messageConfig._loadType = 'websocket'; // treat this the same as a websocket loaded object
 
@@ -201,9 +200,6 @@ class Conversation extends Container {
    * @return {Layer.Core.Conversation} this
    */
   send(message) {
-    const client = this.getClient();
-    if (!client) throw new Error(ErrorDictionary.clientMissing);
-
     // If this is part of a create({distinct:true}).send() call where
     // the distinct conversation was found, just trigger the cached event and exit
     const wasLocalDistinct = Boolean(this._sendDistinctEvent);
@@ -317,7 +313,6 @@ class Conversation extends Container {
   }
 
   _populateFromServer(conversation) {
-    const client = this.getClient();
 
     // Disable events if creating a new Conversation
     // We still want property change events for anything that DOES change
@@ -364,7 +359,6 @@ class Conversation extends Container {
    */
   addParticipants(participants) {
     // Only add those that aren't already in the list.
-    const client = this.getClient();
     const identities = client._fixIdentities(participants);
     const adding = identities.filter(identity => this.participants.indexOf(identity) === -1);
     this._patchParticipants({ add: adding, remove: [] });
@@ -390,7 +384,6 @@ class Conversation extends Container {
   removeParticipants(participants) {
     const currentParticipants = {};
     this.participants.forEach(participant => (currentParticipants[participant.id] = true));
-    const client = this.getClient();
     const identities = client._fixIdentities(participants);
 
     const removing = identities.filter(participant => currentParticipants[participant.id]);
@@ -421,7 +414,6 @@ class Conversation extends Container {
       throw new Error(ErrorDictionary.moreParticipantsRequired);
     }
 
-    const client = this.getClient();
     const identities = client._fixIdentities(participants);
 
     const change = this._getParticipantChange(identities, this.participants);
@@ -447,7 +439,7 @@ class Conversation extends Container {
    */
   _patchParticipants(change) {
     this._applyParticipantChange(change);
-    this.isCurrentParticipant = this.participants.indexOf(this.getClient().user) !== -1;
+    this.isCurrentParticipant = this.participants.indexOf(client.user) !== -1;
 
     const ops = [];
     change.remove.forEach((participant) => {
@@ -578,7 +570,6 @@ class Conversation extends Container {
       const events = this._disableEvents;
       this._disableEvents = false;
       if (paths[0] === 'participants') {
-        const client = this.getClient();
         // oldValue/newValue come as a Basic Identity POJO; lets deliver events with actual instances
         oldValue = oldValue.map(identity => client.getIdentity(identity.id));
         newValue = newValue.map(identity => client.getIdentity(identity.id));
@@ -612,16 +603,14 @@ class Conversation extends Container {
 
 
   _deleteResult(result, id) {
-    const client = this.getClient();
     if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
-      Conversation.load(id, client);
+      Conversation.load(id);
     }
   }
 
 
   _register() {
-    const client = this.getClient();
-    if (client) client._addConversation(this);
+    client._addConversation(this);
   }
 
 
@@ -746,12 +735,10 @@ class Conversation extends Container {
    * @protected
    * @static
    * @param  {Object} conversation - Server representation of a Conversation
-   * @param  {Layer.Core.Client} client
    * @return {Layer.Core.Conversation}
    */
-  static _createFromServer(conversation, client) {
+  static _createFromServer(conversation) {
     return new Conversation({
-      client,
       fromServer: conversation,
       _fromDB: conversation._fromDB,
     });
@@ -766,7 +753,6 @@ class Conversation extends Container {
    *          metadata: {
    *              title: 'I am not a title!'
    *          },
-   *          client: client,
    *          'conversations:loaded': function(evt) {
    *
    *          }
@@ -782,19 +768,16 @@ class Conversation extends Container {
    * @static
    * @protected
    * @param  {Object} options
-   * @param  {Layer.Core.Client} options.client
    * @param  {string[]/Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity objects to create a conversation with.
    * @param {boolean} [options.distinct=true] - Create a distinct conversation
    * @param {Object} [options.metadata={}] - Initial metadata for Conversation
    * @return {Layer.Core.Conversation}
    */
   static create(options) {
-    if (!options.client) throw new Error(ErrorDictionary.clientMissing);
     const newOptions = {
       distinct: options.distinct,
-      participants: options.client._fixIdentities(options.participants),
+      participants: client._fixIdentities(options.participants),
       metadata: options.metadata,
-      client: options.client,
     };
     if (newOptions.distinct) {
       const conv = this._createDistinct(newOptions);
@@ -819,8 +802,8 @@ class Conversation extends Container {
    * @return {Layer.Core.Conversation}
    */
   static _createDistinct(options) {
-    if (options.participants.indexOf(options.client.user) === -1) {
-      options.participants.push(options.client.user);
+    if (options.participants.indexOf(client.user) === -1) {
+      options.participants.push(client.user);
     }
 
     const participantsHash = {};
@@ -828,7 +811,7 @@ class Conversation extends Container {
       participantsHash[participant.id] = participant;
     });
 
-    const conv = options.client.findCachedConversation((aConv) => {
+    const conv = client.findCachedConversation((aConv) => {
       if (aConv.distinct && aConv.participants.length === options.participants.length) {
         for (let index = 0; index < aConv.participants.length; index++) {
           if (!participantsHash[aConv.participants[index].id]) return false;

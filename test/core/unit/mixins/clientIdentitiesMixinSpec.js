@@ -26,13 +26,11 @@ describe("The Client Identities Mixin", function() {
         client.sessionToken = "sessionToken";
 
         client.user = userIdentity = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
         userIdentity2 = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "UserIdentity",
             userId: '1'
@@ -44,7 +42,6 @@ describe("The Client Identities Mixin", function() {
               userId: client.userId,
               displayName: "Frodo2",
               syncState: Layer.Constants.SYNC_STATE.LOADING,
-              clientId: client.appId,
 
           });
 
@@ -65,7 +62,7 @@ describe("The Client Identities Mixin", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -85,7 +82,6 @@ describe("The Client Identities Mixin", function() {
       it("Should destroy all Identities", function() {
         // Setup
         var userIdentity4 = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/2",
             displayName: "userIdentity4"
         });
@@ -104,8 +100,7 @@ describe("The Client Identities Mixin", function() {
       var userIdentity3;
       beforeEach(function() {
           userIdentity3 = new Layer.Core.Identity({
-              clientId: client.appId,
-              id: "layer:///identities/2",
+                id: "layer:///identities/2",
               displayName: "userIdentity3"
           });
           client._models.identities = {
@@ -254,8 +249,7 @@ describe("The Client Identities Mixin", function() {
       var userIdentity4;
       beforeEach(function() {
           userIdentity4 = new Layer.Core.Identity({
-              clientId: client.appId,
-              id: "layer:///identities/2",
+                id: "layer:///identities/2",
               displayName: "userIdentity4"
           });
           client._models.identities = {};
@@ -266,7 +260,6 @@ describe("The Client Identities Mixin", function() {
       it("Should ignore IDS not cached", function() {
           var ident = new Layer.Core.Identity({
               id: "layer:///identities/fooled-you",
-              clientId: client.appId
           });
           delete client._models.identities[ident.id];
           client._removeIdentity(ident);

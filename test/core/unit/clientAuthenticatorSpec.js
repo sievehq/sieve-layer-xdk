@@ -21,15 +21,13 @@ describe("The Client Authenticator Class", function() {
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
 
-        client = new Layer.Core.ClientAuthenticator({
+        Layer.Settings.__client = client = new Layer.Core.ClientAuthenticator({
             appId: appId,
             reset: true,
             url: "https://duh.com"
         });
-        spyOn(Layer.Core.Syncable.prototype, "getClient").and.returnValue(client);
 
         userIdentity = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: userId,
           id: "layer:///identities/" + userId,
           firstName: "first",
@@ -52,7 +50,7 @@ describe("The Client Authenticator Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor method", function() {
@@ -63,16 +61,6 @@ describe("The Client Authenticator Class", function() {
             });
 
             expect(clientLocal instanceof Layer.Core.ClientAuthenticator).toBe(true);
-        });
-
-        it("Should require an appId", function() {
-            expect(function() {
-                var clientLocal = new Layer.Core.ClientAuthenticator({
-                    appId: "",
-                    url: "https://duh.com"
-                });
-            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.appIdMissing);
-            expect(Layer.Core.LayerError.ErrorDictionary.appIdMissing.length > 0).toBe(true);
         });
 
          it("Should allow customization of the websocketUrl", function() {
@@ -305,6 +293,14 @@ describe("The Client Authenticator Class", function() {
 
 
         describe("The connect() method", function () {
+            it("Should require an appId", function() {
+                expect(function() {
+                    client.appId = '';
+                    client.connect();
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.appIdMissing);
+                expect(Layer.Core.LayerError.ErrorDictionary.appIdMissing.length > 0).toBe(true);
+            });
+
             it("Should call onlineManager.start()", function () {
                 spyOn(client.onlineManager, "start");
                 client.connect('Frodo');
@@ -540,6 +536,13 @@ describe("The Client Authenticator Class", function() {
         });
 
         describe("The connectWithSession() method", function () {
+            it("Should require an appId", function() {
+                expect(function() {
+                    client.appId = '';
+                    client.connectWithSession('Frodo', 'FrodoSession');
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.appIdMissing);
+                expect(Layer.Core.LayerError.ErrorDictionary.appIdMissing.length > 0).toBe(true);
+            });
             it("Should call onlineManager.start()", function () {
                 spyOn(client.onlineManager, "start");
                 client.connectWithSession('Frodo', 'FrodoSession');
@@ -1624,7 +1627,6 @@ describe("The Client Authenticator Class", function() {
                 client.isConnected = true;
                 expect(function () {
                     client.user = new Layer.Core.Identity({
-                        clientId: client.appId
                     });
                 }).toThrowError(Layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);
             });

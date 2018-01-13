@@ -205,22 +205,16 @@
  * @extends Layer.Core.Root
  *
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import Util, { logger } from '../../utils';
+import { logger } from '../../utils';
 
 class Query extends Root {
 
-  constructor(...args) {
-    let options;
-    if (args.length === 2) {
-      options = args[1].build();
-      options.client = args[0];
-    } else {
-      options = args[0];
-    }
-
+  constructor(options) {
+    if (typeof options.build === 'function') options = options.build();
     super(options);
     this.predicate = this._fixPredicate(options.predicate || '');
 
@@ -235,11 +229,10 @@ class Query extends Root {
 
     this.data = [];
     this._initialPaginationWindow = this.paginationWindow;
-    if (!this.client) throw new Error(ErrorDictionary.clientMissing);
-    this.client.on('all', this._handleEvents, this);
+    client.on('all', this._handleEvents, this);
 
-    if (!this.client.isReady) {
-      this.client.once('ready', () => this._run(), this);
+    if (!client.isReady) {
+      client.once('ready', () => this._run(), this);
     } else {
       this._run();
     }
@@ -256,8 +249,8 @@ class Query extends Root {
       data: [],
       type: 'reset',
     });
-    this.client.off(null, null, this);
-    this.client._removeQuery(this);
+    client.off(null, null, this);
+    client._removeQuery(this);
     this.data = null;
     super.destroy();
   }
@@ -369,7 +362,7 @@ class Query extends Root {
     this.totalSize = 0;
     const data = this.data;
     this.data = [];
-    this.client._checkAndPurgeCache(data);
+    client._checkAndPurgeCache(data);
     this.isFiring = false;
     this._predicate = null;
     this._nextDBFromId = '';
@@ -410,7 +403,7 @@ class Query extends Root {
     if (pageSize < 0) {
       const removedData = this.data.slice(this.paginationWindow);
       this.data = this.data.slice(0, this.paginationWindow);
-      this.client._checkAndPurgeCache(removedData);
+      client._checkAndPurgeCache(removedData);
       this.pagedToEnd = false;
       this._triggerAsync('change', { data: [] });
     } else if (pageSize === 0 || this.pagedToEnd) {
@@ -460,9 +453,9 @@ class Query extends Root {
       this._appendResults(results, false);
 
     } else if (results.data.getNonce()) {
-      this.client.once('ready', () => {
+      client.once('ready', () => {
         this._run();
-      });
+      }, this);
     } else {
       this.trigger('error', { error: results.data });
     }
@@ -481,7 +474,7 @@ class Query extends Root {
     // If already registered with the client, properties will be updated as needed
     // Database results rather than server results will arrive already registered.
     results.data.forEach((item) => {
-      if (!(item instanceof Root)) this.client._createObject(item);
+      if (!(item instanceof Root)) client._createObject(item);
     });
 
     // Filter results to just the new results
@@ -504,7 +497,7 @@ class Query extends Root {
 
     // Insert the results... if the results are a match
     newResults.forEach((itemIn) => {
-      const item = this.client.getObject(itemIn.id);
+      const item = client.getObject(itemIn.id);
       if (item && (!this.filter || this.filter(item))) {
         this._appendResultsSplice(item);
         finalResults.push(item);
@@ -517,7 +510,7 @@ class Query extends Root {
       type: 'data',
       data: finalResults.map(item => this._getData(item)),
       query: this,
-      target: this.client,
+      target: client,
     });
   }
 
@@ -559,7 +552,7 @@ class Query extends Root {
    */
   _getInstance(item) {
     if (item instanceof Root) return item;
-    return this.client.getObject(item.id);
+    return client.getObject(item.id);
   }
 
   /**
@@ -718,7 +711,7 @@ class Query extends Root {
    * If this is ever changed to be async, make sure that destroy() still triggers synchronous events
    */
   _triggerChange(evt) {
-    if (this.isDestroyed || this.client._inCleanup) return;
+    if (this.isDestroyed || client._inCleanup) return;
     this.trigger('change', evt);
     this.trigger('change:' + evt.type, evt);
   }
@@ -834,16 +827,6 @@ Object.defineProperty(Query.prototype, 'size', {
  * @readonly
  */
 Query.prototype.totalSize = 0;
-
-
-/**
- * Access to the client so it can listen to websocket and local events.
- *
- * @property {Layer.Core.Client}
- * @protected
- * @readonly
- */
-Query.prototype.client = null;
 
 /**
  * Query results.

@@ -108,18 +108,14 @@ const animatedScrollLeftTo = function (element, to, duration, callback) {
     const val = Math.floor(easeInOutQuad(now - animationStart, start, change, duration));
     if (lastpos) {
       if (lastpos === element.scrollLeft) {
-        console.log(`lastpost === element.scrollLeft: ${lastpos}; val=${val}`);
         element.scrollLeft = val;
         lastpos = element.scrollLeft;
-        console.log(`Updated to ${element.scrollLeft}`);
       } else {
-        console.log('ScrollLeft has moved; canceling');
         animating = false;
       }
     } else {
       element.scrollLeft = val;
       lastpos = element.scrollLeft;
-      console.log(`Scrolling to ${val}; actual value ${element.scrollLeft}`);
     }
     if (now > animationStart + duration) {
       element.scrollLeft = to;

@@ -5,14 +5,12 @@
  * Run the Layer Parser on the request.
  *
  * Parameters here
- * are the parameters specied in [Layer-Patch](https://github.com/layerhq/node-layer-patch), plus
- * a client object.
+ * are the parameters specied in [Layer-Patch](https://github.com/layerhq/node-layer-patch)
  *
  *      layerParse({
  *          object: conversation,
  *          type: 'Conversation',
  *          operations: layerPatchOperations,
- *          client: client
  *      });
  *
  * @method layerParse
@@ -20,19 +18,19 @@
  * @param {Object} request.object - Object being updated  by the operations
  * @param {string} request.type - Type of object being updated
  * @param {Object[]} request.operations - Array of change operations to perform upon the object
- * @param {Layer.Core.Client} request.client
  */
 import LayerParser from 'layer-patch';
+import { client } from '../settings';
 
 let parser;
 
 function createParser(request) {
-  request.client.once('destroy', () => (parser = null));
+  client.once('destroy', () => (parser = null));
 
   parser = new LayerParser({
     camelCase: true,
-    getObjectCallback: id => request.client.getObject(id),
-    createObjectCallback: (id, obj) => request.client._createObject(obj),
+    getObjectCallback: id => client.getObject(id),
+    createObjectCallback: (id, obj) => client._createObject(obj),
     propertyNameMap: {
       Conversation: {
         unreadMessageCount: 'unreadCount',

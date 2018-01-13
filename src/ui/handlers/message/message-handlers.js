@@ -5,7 +5,7 @@
  * @deprecated Create Layer.Core.MessageTypeModel subclasses and UIs using Layer.UI.messages.MessageViewMixin instead.
  * @class Layer.UI.handlers.message
  */
-import Settings from '../../settings';
+import Settings from '../../../settings';
 
 /**
  * Array of message handlers.

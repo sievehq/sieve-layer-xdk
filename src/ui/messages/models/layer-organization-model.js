@@ -3,7 +3,7 @@
  * @ignore
  */
 
-import { Client, MessagePart, MessageTypeModel, Util }  from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Util }  from '../../../core';
 
 class OrganizationModel extends MessageTypeModel {
 
@@ -22,6 +22,6 @@ OrganizationModel.prototype.type = '';
 OrganizationModel.MIMEType = 'application/vnd.layer.organization+json';
 
 // Register the Card Model Class with the Client
-Client.registerMessageTypeModelClass(OrganizationModel, 'OrganizationModel');
+Core.Client.registerMessageTypeModelClass(OrganizationModel, 'OrganizationModel');
 
 module.exports = OrganizationModel;

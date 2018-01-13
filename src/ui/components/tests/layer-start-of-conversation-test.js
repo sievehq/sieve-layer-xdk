@@ -10,7 +10,6 @@ describe('layer-start-of-conversation', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -30,7 +29,7 @@ describe('layer-start-of-conversation', function() {
 
   afterEach(function() {
     if (client) client.destroy();
-    Layer.Core.Client.removeListenerForNewClient();
+
     document.body.removeChild(testRoot);
   });
 

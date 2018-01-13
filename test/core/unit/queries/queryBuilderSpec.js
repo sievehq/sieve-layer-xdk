@@ -23,13 +23,12 @@ describe("The QueryBuilder Classes", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The fromQueryObject() method", function() {
         it("Should return a new MessageQuery", function() {
             var q = new Layer.Core.Query({
-                client: client,
                 model: "Message"
             });
             expect(Layer.Core.QueryBuilder.fromQueryObject(q).forConversation(responses.conversation1.id).build()).toEqual(jasmine.objectContaining({
@@ -40,7 +39,6 @@ describe("The QueryBuilder Classes", function() {
 
         it("Should return a new ConversationQuery", function() {
             var q = new Layer.Core.Query({
-                client: client,
                 model: "Conversation"
             });
             expect(Layer.Core.QueryBuilder.fromQueryObject(q).build()).toEqual(jasmine.objectContaining({
@@ -51,7 +49,6 @@ describe("The QueryBuilder Classes", function() {
 
         it("Should return a null", function() {
             var q = new Layer.Core.Query({
-                client: client,
                 model: "Fred"
             });
             expect(Layer.Core.QueryBuilder.fromQueryObject(q)).toBe(null);
@@ -75,8 +72,7 @@ describe("The QueryBuilder Classes", function() {
 
             it("Should initialize from a Query", function() {
                 var query = new Layer.Core.Query({
-                    client: client,
-                    model: "Message",
+                        model: "Message",
                     dataType: "instance",
                     returnType: "object"
                 });
@@ -169,8 +165,7 @@ describe("The QueryBuilder Classes", function() {
 
             it("Should initialize from a Query", function() {
                 var query = new Layer.Core.Query({
-                    client: client,
-                    model: "Announcement",
+                        model: "Announcement",
                     dataType: "instance",
                     returnType: "object"
                 });
@@ -213,8 +208,7 @@ describe("The QueryBuilder Classes", function() {
 
             it("Should initialize from a Query", function() {
                 var query = new Layer.Core.Query({
-                    client: client,
-                    model: "Identity",
+                        model: "Identity",
                     dataType: "instance",
                     returnType: "object"
                 });
@@ -258,8 +252,7 @@ describe("The QueryBuilder Classes", function() {
 
             it("Should initialize from a Query", function() {
                 var query = new Layer.Core.Query({
-                    client: client,
-                    model: 'Conversation',
+                        model: 'Conversation',
                     returnType: 'count',
                     dataType: 'instance'
                 });
@@ -344,8 +337,7 @@ describe("The QueryBuilder Classes", function() {
 
             it("Should initialize from a Query", function() {
                 var query = new Layer.Core.Query({
-                    client: client,
-                    model: 'Channel',
+                        model: 'Channel',
                     returnType: 'count',
                     dataType: 'instance'
                 });
@@ -390,8 +382,7 @@ describe("The QueryBuilder Classes", function() {
 
             it("Should initialize from a Query", function() {
                 var query = new Layer.Core.Query({
-                    client: client,
-                    model: Layer.Core.Query.Membership,
+                        model: Layer.Core.Query.Membership,
                     returnType: 'count',
                     dataType: 'instance'
                 });

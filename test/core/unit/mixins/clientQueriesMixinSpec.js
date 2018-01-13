@@ -26,13 +26,11 @@ describe("The Client Queries Mixin", function() {
         client.sessionToken = "sessionToken";
 
         client.user = userIdentity = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
         userIdentity2 = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/1",
             displayName: "UserIdentity",
             userId: '1'
@@ -44,7 +42,7 @@ describe("The Client Queries Mixin", function() {
               userId: client.userId,
               displayName: "Frodo2",
               syncState: Layer.Constants.SYNC_STATE.LOADING,
-              clientId: client.appId,
+
 
           });
 
@@ -65,7 +63,7 @@ describe("The Client Queries Mixin", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -108,7 +106,6 @@ describe("The Client Queries Mixin", function() {
               });
 
               expect(query).toEqual(jasmine.any(Layer.Core.Query));
-              expect(query.client).toBe(client);
               expect(query.model).toEqual("Conversation");
           });
 
@@ -116,7 +113,6 @@ describe("The Client Queries Mixin", function() {
               var query = client.createQuery(Layer.Core.QueryBuilder.conversations());
 
               expect(query).toEqual(jasmine.any(Layer.Core.Query));
-              expect(query.client).toBe(client);
               expect(query.model).toEqual("Conversation");
           });
 

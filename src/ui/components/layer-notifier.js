@@ -53,6 +53,7 @@
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
  */
+import { client } from '../../settings';
 import NotifyLib from 'notifyjs';
 import { isInBackground as IsInBackground } from '../ui-utils';
 import { registerComponent } from './component';
@@ -363,7 +364,7 @@ registerComponent('layer-notifier', {
 
     // Lifecycle method depends upon `client` property
     onAfterCreate() {
-      this.client.on('messages:notify', this._notify.bind(this));
+      client.on('messages:notify', this._notify.bind(this));
     },
 
     /**

@@ -9,7 +9,7 @@ describe("The MessageParts class", function() {
 
     afterAll(function() {
         if (oldBlob) window.Blob = oldBlob;
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     beforeAll(function() {
@@ -26,7 +26,6 @@ describe("The MessageParts class", function() {
         });
         client.userId = "999";
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -53,7 +52,7 @@ describe("The MessageParts class", function() {
         client._clientReady();
         client.onlineManager.isOnline = true;
 
-        conversation = Layer.Core.Conversation._createFromServer(responses.conversation2, client);
+        conversation = Layer.Core.Conversation._createFromServer(responses.conversation2);
         conversation.lastMessage.destroy();
 
         requests.reset();
@@ -471,10 +470,10 @@ describe("The MessageParts class", function() {
             spyOn(part, "_generateContentAndSend");
 
             // Run
-            part._send(client);
+            part._send();
 
             // Posttest
-            expect(part._generateContentAndSend).toHaveBeenCalledWith(client);
+            expect(part._generateContentAndSend).toHaveBeenCalledWith();
         });
 
         it("Should call _sendBlob", function() {
@@ -485,10 +484,10 @@ describe("The MessageParts class", function() {
             spyOn(part, "_sendBlob");
 
             // Run
-            part._send(client);
+            part._send();
 
             // Posttest
-            expect(part._sendBlob).toHaveBeenCalledWith(client);
+            expect(part._sendBlob).toHaveBeenCalledWith();
         });
 
         it("Should call _sendBody", function() {
@@ -671,7 +670,7 @@ describe("The MessageParts class", function() {
 
             // Posttest
             var expectedBody = Layer.Utils.base64ToBlob(btoa(part.body), "text/plain");
-            expect(part._processContentResponse).toHaveBeenCalledWith({hey: "ho"}, expectedBody, client);
+            expect(part._processContentResponse).toHaveBeenCalledWith({hey: "ho"}, expectedBody);
         });
     });
 
@@ -687,7 +686,7 @@ describe("The MessageParts class", function() {
             // Run
             part._processContentResponse({
                 id: "layer:///content/fred"
-            },  blobBody, client);
+            },  blobBody);
 
             // Posttest
             expect(part._content.id).toEqual("layer:///content/fred");
@@ -705,7 +704,7 @@ describe("The MessageParts class", function() {
             part._processContentResponse({
                 upload_url: "http://argh.com",
                 id: "layer:///content/fred"
-            }, blobBody, client);
+            }, blobBody);
 
             // Posttest
             expect(requests.mostRecent().url).toEqual("http://argh.com");
@@ -729,7 +728,7 @@ describe("The MessageParts class", function() {
             part._processContentResponse({
                 upload_url: "http://argh.com",
                 id: "layer:///content/fred"
-            }, blobBody, client);
+            }, blobBody);
             requests.mostRecent().response({
                 status: 200,
                 responseText: JSON.stringify({hey: "ho"})
@@ -746,7 +745,7 @@ describe("The MessageParts class", function() {
                 upload_url: "http://argh.com",
                     id: "layer:///content/fred"
                 },
-                client, blobBody, 0);
+                blobBody, 0);
         });
     });
 
@@ -767,7 +766,7 @@ describe("The MessageParts class", function() {
             // Run
             part._processContentUploadResponse({
                 success: true
-            }, {id: "doh"}, part.body, client, 0);
+            }, {id: "doh"}, part.body, 0);
 
 
             // Posttest
@@ -796,11 +795,11 @@ describe("The MessageParts class", function() {
             // Run
             part._processContentUploadResponse({
                 success: false
-            }, {id: "doh"}, client, part.body, 0);
+            }, {id: "doh"}, part.body, 0);
             client.onlineManager.trigger("connected");
 
             // Posttest
-            expect(part._processContentResponse).toHaveBeenCalledWith({id: "doh"}, client, jasmine.any(Layer.Core.LayerEvent));
+            expect(part._processContentResponse).toHaveBeenCalledWith({id: "doh"}, jasmine.any(Layer.Core.LayerEvent));
         });
 
         it("Should call _processContentResponse on error", function() {
@@ -815,18 +814,17 @@ describe("The MessageParts class", function() {
             // Run
             part._processContentUploadResponse({
                 success: false
-            }, {id: "doh"}, client, part.body, 0);
+            }, {id: "doh"}, part.body, 0);
 
             // Posttest
             expect(part.trigger).not.toHaveBeenCalled();
-            expect(part._processContentResponse).toHaveBeenCalledWith({id: "doh"}, part.body, client, 1);
+            expect(part._processContentResponse).toHaveBeenCalledWith({id: "doh"}, part.body, 1);
         });
 
         it("Should trigger messages:sent-error after max-retries", function() {
             var part = new Layer.Core.MessagePart({
                 body: new Array(5000).join("hello"),
                 mimeType: "text/plain",
-                clientId: client.appId
             });
             var message = conversation.createMessage({
                 parts: [part]
@@ -838,7 +836,7 @@ describe("The MessageParts class", function() {
             // Run
             part._processContentUploadResponse({
                 success: false
-            }, {id: "doh"}, client, part.body, Layer.Core.MessagePart.MaxRichContentRetryCount);
+            }, {id: "doh"}, part.body, Layer.Core.MessagePart.MaxRichContentRetryCount);
 
             // Posttest
             expect(message.trigger).toHaveBeenCalledWith('messages:sent-error', {
@@ -912,7 +910,6 @@ describe("The MessageParts class", function() {
                 it("Should call rootPart.createModel()", function() {
                     // Setup
                     var part = new Layer.Core.MessagePart({
-                        client: client,
                         mimeType: "application/vnd.layer.text+json",
                         body: '{"text": "a"}'
                     });
@@ -929,7 +926,6 @@ describe("The MessageParts class", function() {
         it("Should return a cached model", function() {
             // Setup
             var message = new Layer.Core.Message({
-                client: client,
                 parts: [{
                     mimeType: "application/vnd.layer.text+json",
                     body: '{"text": "a"}'

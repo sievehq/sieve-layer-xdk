@@ -20,7 +20,6 @@ describe("The Client Members Mixin", function() {
         client.sessionToken = "sessionToken";
 
         client.user = userIdentity = new Layer.Core.Identity({
-            clientId: client.appId,
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
@@ -46,7 +45,7 @@ describe("The Client Members Mixin", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -122,22 +121,6 @@ describe("The Client Members Mixin", function() {
 
             // Posttest
             expect(client.getMember(membership.id)).toBe(membership);
-        });
-
-        it("Should set the clientId property", function() {
-            // Setup
-            var m = new Layer.Core.Membership({
-                client: client
-            });
-
-            // Pretest
-            expect(m.clientId).toEqual(client.appId);
-
-            // Run
-            client._addMembership(m);
-
-            // Posttest
-            expect(m.clientId).toEqual(client.appId);
         });
 
         it("Should fire members:add", function() {

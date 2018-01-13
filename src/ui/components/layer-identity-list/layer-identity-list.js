@@ -55,6 +55,7 @@
  * @mixin Layer.UI.mixins.EmptyList
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
+import { client } from '../../../settings';
 import Core from '../../../core';
 import Util from '../../../utils';
 import { registerComponent } from '../component';
@@ -211,7 +212,7 @@ registerComponent('layer-identity-list', {
         if (!Array.isArray(value)) return;
         if (!value) value = [];
         this.properties.selectedIdentities = value.map((identity) => {
-          if (!(identity instanceof Core.Identity)) return this.client.getIdentity(identity.id);
+          if (!(identity instanceof Core.Identity)) return client.getIdentity(identity.id);
           return identity;
         });
         this._renderSelection();

@@ -30,10 +30,9 @@
 import 'webcomponents.js/webcomponents-lite';
 import { registerComponent, _registerAll, unregisterComponent } from './components/component';
 import './handlers/message/layer-message-unknown';
-import { Client } from '../core';
 import Constants from './constants';
 import ComponentServices, { ComponentsHash } from './component-services';
-import Settings from './settings';
+import Settings from '../settings';
 import MessageHandlers from './handlers/message/message-handlers';
 import TextHandlers from './handlers/text/text-handlers';
 import ListSeparatorManager from './ui-utils/list-separator-manager';
@@ -80,26 +79,15 @@ const LayerUI = {
  *
  * @method init
  * @static
- * @param {Object} settings     list any settings you want changed from their default values.
- * @param {Object} mixins       hash of component names with mixins to add to the component
  */
-LayerUI.init = function init(settings = {}) {
-  Object.keys(settings).forEach((name) => {
-    if (name !== 'mixins') {
-      LayerUI.settings[name] = settings[name];
-    }
-  });
-  if (!LayerUI.settings.client && LayerUI.settings.appId) {
-    LayerUI.settings.client = Client.getClient(LayerUI.settings.appId);
-  }
-
-  LayerUI.setupMixins(settings.mixins || {});
+LayerUI.init = function init() {
+  LayerUI.setupMixins(Settings.mixins || {});
 
   // Register all widgets
   _registerAll();
 
   // Enable the text handlers
-  LayerUI.settings.textHandlers.forEach((handlerName) => {
+  Settings.textHandlers.forEach((handlerName) => {
     TextHandlers.register({ name: handlerName });
   });
 };

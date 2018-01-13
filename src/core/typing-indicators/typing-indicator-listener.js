@@ -17,7 +17,7 @@
  */
 import Core from '../namespace';
 import Root from '../root';
-import ClientRegistry from '../client-registry';
+import { client as Client } from '../../settings';
 import { STARTED, PAUSED, FINISHED } from './typing-indicators';
 
 class TypingIndicatorListener extends Root {
@@ -28,7 +28,6 @@ class TypingIndicatorListener extends Root {
    * @method constructor
    * @protected
    * @param  {Object} args
-   * @param {string} args.clientId - ID of the client this belongs to
    */
   constructor(args) {
     super(args);
@@ -41,8 +40,7 @@ class TypingIndicatorListener extends Root {
      */
     this.state = {};
     this._pollId = 0;
-    const client = this._getClient();
-    client.on('ready', () => this._clientReady());
+    Client.on('ready', () => this._clientReady());
   }
 
   /**
@@ -52,9 +50,8 @@ class TypingIndicatorListener extends Root {
    * @private
    */
   _clientReady() {
-    const client = this._getClient();
-    this.user = client.user;
-    const ws = client.socketManager;
+    this.user = Client.user;
+    const ws = Client.socketManager;
     ws.on('message', this._handleSocketEvent, this);
     this._startPolling();
   }
@@ -89,8 +86,8 @@ class TypingIndicatorListener extends Root {
     if (this._isRelevantEvent(evt)) {
       // Could just do _createObject() but for ephemeral events, going through _createObject and updating
       // objects for every typing indicator seems a bit much.  Try getIdentity and only create if needed.
-      const identity = this._getClient().getIdentity(evt.body.data.sender.id) ||
-        this._getClient()._createObject(evt.body.data.sender);
+      const identity = Client.getIdentity(evt.body.data.sender.id) ||
+        Client._createObject(evt.body.data.sender);
       const state = evt.body.data.action;
       const conversationId = evt.body.object.id;
       let stateEntry = this.state[conversationId];
@@ -222,16 +219,8 @@ class TypingIndicatorListener extends Root {
     });
   }
 
-  /**
-   * Get the Client associated with this class.  Uses the clientId
-   * property.
-   *
-   * @method _getClient
-   * @protected
-   * @return {Layer.Core.Client}
-   */
-  _getClient() {
-    return ClientRegistry.get(this.clientId);
+  _getBubbleEventsTo() {
+    return Client;
   }
 }
 
@@ -241,15 +230,6 @@ class TypingIndicatorListener extends Root {
  * @private
  */
 TypingIndicatorListener.prototype._pollId = 0;
-
-/**
- * ID of the client this instance is associated with
- * @property {String}
- */
-TypingIndicatorListener.prototype.clientId = '';
-
-TypingIndicatorListener.bubbleEventParent = '_getClient';
-
 
 TypingIndicatorListener._supportedEvents = [
   /**

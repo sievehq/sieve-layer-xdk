@@ -32,7 +32,6 @@ describe('Feedback Message Components', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -62,7 +61,7 @@ describe('Feedback Message Components', function() {
   afterEach(function() {
     if (client) client.destroy();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   describe("Model Tests", function() {
@@ -214,7 +213,7 @@ describe('Feedback Message Components', function() {
 
     afterEach(function() {
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     });
 
@@ -296,7 +295,7 @@ describe('Feedback Message Components', function() {
 
     afterEach(function() {
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     });
 

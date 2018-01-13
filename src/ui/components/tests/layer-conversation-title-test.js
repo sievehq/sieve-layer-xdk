@@ -13,7 +13,6 @@ describe('layer-conversation-title', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -21,7 +20,6 @@ describe('layer-conversation-title', function() {
       isMine: true
     });
     user2 = new Layer.Core.Identity({
-      client: client,
       userId: 'SaurumanTheMildlyAged',
       displayName: 'Sauruman the Mildly Aged',
       firstName: 'Sauruman',
@@ -29,7 +27,6 @@ describe('layer-conversation-title', function() {
       isFullIdentity: true
     });
     user3 = new Layer.Core.Identity({
-      client: client,
       userId: 'GandalfTheGruesome',
       displayName: 'Gandalf the Gruesome',
       id: 'layer:///identities/GandalfTheGruesome',
@@ -49,7 +46,7 @@ describe('layer-conversation-title', function() {
 
   afterEach(function() {
     jasmine.clock().uninstall();
-    Layer.Core.Client.removeListenerForNewClient();
+
     document.body.removeChild(testRoot);
     if (el) {
       el.destroy();
@@ -103,8 +100,7 @@ describe('layer-conversation-title', function() {
 
     it("Should use displayName or firstName or lastName if one-on-one conversation", function() {
       conversation.participants = [new Layer.Core.Identity({
-        client: client,
-        userId: 'AAA',
+          userId: 'AAA',
         displayName: 'display',
         firstName: "first",
         lastName: "last",
@@ -162,26 +158,22 @@ describe('layer-conversation-title', function() {
       conversation.participants = [
         client.user,
         new Layer.Core.Identity({
-          client: client,
-          userId: 'A',
+              userId: 'A',
           id: 'layer:///identities/A',
         }),
         new Layer.Core.Identity({
-          client: client,
-          userId: 'B',
+              userId: 'B',
           id: 'layer:///identities/B',
           displayName: "B"
         }),
         new Layer.Core.Identity({
-          client: client,
-          userId: 'bot',
+              userId: 'bot',
           id: 'layer:///identities/bot',
           firstName: "bot",
           type: "bot"
         }),
         new Layer.Core.Identity({
-          client: client,
-          userId: 'D',
+              userId: 'D',
           id: 'layer:///identities/D',
           lastName: "D"
         }),

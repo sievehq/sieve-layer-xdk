@@ -49,7 +49,7 @@
  * @class Layer.UI.messages.LinkMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel, Root }  from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Root }  from '../../../core';
 import { xhr } from '../../../utils';
 
 const TitleRegEx = new RegExp(/<meta [^>]*property\s*=\s*['"]og:title['"].*?\/>/);
@@ -263,6 +263,6 @@ LinkModel.messageRenderer = 'layer-link-message-view';
 Root.initClass.apply(LinkModel, [LinkModel, 'LinkModel']);
 
 // Register the Card Model Class with the Client
-Client.registerMessageTypeModelClass(LinkModel, 'LinkModel');
+Core.Client.registerMessageTypeModelClass(LinkModel, 'LinkModel');
 
 module.exports = LinkModel;

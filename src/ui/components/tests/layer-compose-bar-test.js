@@ -8,7 +8,7 @@ describe('layer-compose-bar', function() {
 
   afterEach(function() {
     jasmine.clock().uninstall();
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   beforeEach(function() {
@@ -18,7 +18,6 @@ describe('layer-compose-bar', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',

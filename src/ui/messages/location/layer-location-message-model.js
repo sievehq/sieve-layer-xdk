@@ -50,7 +50,7 @@
  * @class Layer.UI.messages.LocationMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel, Root } from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Root } from '../../../core';
 
 
 class LocationModel extends MessageTypeModel {
@@ -253,6 +253,6 @@ LocationModel.messageRenderer = 'layer-location-message-view';
 Root.initClass.apply(LocationModel, [LocationModel, 'LocationModel']);
 
 // Register the Card Model Class with the Client
-Client.registerMessageTypeModelClass(LocationModel, 'LocationModel');
+Core.Client.registerMessageTypeModelClass(LocationModel, 'LocationModel');
 
 module.exports = LocationModel;

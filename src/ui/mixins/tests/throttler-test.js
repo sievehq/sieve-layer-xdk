@@ -14,7 +14,6 @@ describe("The Throttler Mixin", function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -34,7 +33,7 @@ describe("The Throttler Mixin", function() {
   afterEach(function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
     if (client) client.destroy();
   });
   it("Should call once within the timeout", function() {

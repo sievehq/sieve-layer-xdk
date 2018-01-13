@@ -9,7 +9,6 @@ describe('layer-channel-item', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -18,7 +17,6 @@ describe('layer-channel-item', function() {
     });
 
     user = new Layer.Core.Identity({
-      client: client,
       userId: 'GandalfTheGruesome',
       displayName: 'Gandalf the Gruesome',
       id: 'layer:///identities/GandalfTheGruesome',
@@ -43,7 +41,7 @@ describe('layer-channel-item', function() {
     if (client) client.destroy();
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   describe('The item property', function() {

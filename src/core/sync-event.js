@@ -15,6 +15,7 @@
  * @class  Layer.Core.SyncEvent
  * @extends Layer.Core.Root
  */
+import { client } from '../settings';
 import Util from '../utils';
 import Core from './namespace';
 
@@ -56,7 +57,7 @@ class SyncEvent {
    * @method _updateData
    * @private
    */
-  _updateData(client) {
+  _updateData() {
     if (!this.target) return;
     const target = client.getObject(this.target);
     if (target && this.operation === 'POST' && target._getSendData) {
@@ -214,16 +215,15 @@ class XHRSyncEvent extends SyncEvent {
    *
    * Actually it just returns the parameters needed to make the xhr call:
    *
-   *      Layer.Utils.xhr(event._getRequestData(client));
+   *      Layer.Utils.xhr(event._getRequestData());
    *
    * @method _getRequestData
-   * @param {Layer.Core.Client} client
    * @protected
    * @returns {Object}
    */
-  _getRequestData(client) {
-    this._updateUrl(client);
-    this._updateData(client);
+  _getRequestData() {
+    this._updateUrl();
+    this._updateData();
     return {
       url: this.url,
       method: this.method,
@@ -242,7 +242,7 @@ class XHRSyncEvent extends SyncEvent {
    * @method _updateUrl
    * @private
    */
-  _updateUrl(client) {
+  _updateUrl() {
     if (!this.target) return;
     const target = client.getObject(this.target);
     if (target && !this.url.match(/^http(s):\/\//)) {
@@ -311,11 +311,10 @@ class WebsocketSyncEvent extends SyncEvent {
    *
    * @method _getRequestData
    * @private
-   * @param {Layer.Core.Client} client
    * @return {Object}
    */
-  _getRequestData(client) {
-    this._updateData(client);
+  _getRequestData() {
+    this._updateData();
     return this.data;
   }
 

@@ -336,7 +336,6 @@ describe("The Util Library", function() {
             client = new Layer.Core.Client({appId: "fred"});
 
             client.user = new Layer.Core.Identity({
-                clientId: client.appId,
                 userId: "c",
                 id: "layer:///identities/c",
                 firstName: "first",
@@ -372,7 +371,6 @@ describe("The Util Library", function() {
             }).send();
             message = conversation.createMessage("hi").send();
             config = {
-                client: client,
                 object: conversation,
                 type: 'Conversation',
                 operations: [
@@ -426,7 +424,6 @@ describe("The Util Library", function() {
                 "layer:///identities/c": "read"
             };
             Layer.Utils.layerParse({
-                client: client,
                 object: message,
                 type: 'Message',
                 operations: [
@@ -451,7 +448,6 @@ describe("The Util Library", function() {
             };
             spyOn(message, "__updateRecipientStatus");
             Layer.Utils.layerParse({
-                client: client,
                 object: message,
                 type: 'Message',
                 operations: [
@@ -475,7 +471,6 @@ describe("The Util Library", function() {
         it("Should updated identity presence", function() {
             expect(client.user._presence.status).not.toEqual("crazed and dazed");
             Layer.Utils.layerParse({
-                client: client,
                 object: client.user,
                 type: "Identity",
                 operations: [

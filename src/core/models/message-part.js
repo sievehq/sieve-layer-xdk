@@ -64,10 +64,10 @@
  * @extends Layer.Core.Root
  * @author Michael Kantor
  */
+import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Content from './content';
-import ClientRegistry from '../client-registry';
 import LayerError, { ErrorDictionary } from '../layer-error';
 import Util, { logger, xhr } from '../../utils';
 
@@ -169,18 +169,6 @@ class MessagePart extends Root {
     super.destroy();
   }
 
-  /**
-   * Get the Layer.Core.Client associated with this Layer.Core.MessagePart.
-   *
-   * Uses the Layer.Core.MessagePart.clientId property.
-   *
-   * @method _getClient
-   * @private
-   * @return {Layer.Core.Client}
-   */
-  _getClient() {
-    return ClientRegistry.get(this.clientId);
-  }
 
   /**
    * Get the Layer.Core.Message associated with this Layer.Core.MessagePart.
@@ -192,8 +180,8 @@ class MessagePart extends Root {
   _getMessage() {
     if (this._message) {
       return this._message;
-    } else if (this._getClient()) {
-      return this._getClient().getMessage(this.id.replace(/\/parts.*$/, ''));
+    } else if (Client) {
+      return Client.getMessage(this.id.replace(/\/parts.*$/, ''));
     }
     return null;
   }
@@ -327,7 +315,7 @@ class MessagePart extends Root {
   fetchStream(callback) {
     if (!this._content) throw new Error(ErrorDictionary.contentRequired);
     if (this._content.isExpired()) {
-      this._content.refreshContent(this._getClient(), url => this._fetchStreamComplete(url, callback));
+      this._content.refreshContent(url => this._fetchStreamComplete(url, callback));
     } else {
       this._fetchStreamComplete(this._content.downloadUrl, callback);
     }
@@ -363,10 +351,9 @@ class MessagePart extends Root {
    *
    * @method _send
    * @protected
-   * @param  {Layer.Core.Client} client
    * @fires parts:send
    */
-  _send(client) {
+  _send() {
     // There is already a Content object, presumably the developer
     // already took care of this step for us.
     if (this._content) {
@@ -375,12 +362,12 @@ class MessagePart extends Root {
 
     // If the size is large, Create and upload the Content
     else if (this.size > 2048) {
-      this._generateContentAndSend(client);
+      this._generateContentAndSend();
     }
 
     // If the body is a blob, but is not YET Rich Content, do some custom analysis/processing:
     else if (Util.isBlob(this.body)) {
-      this._sendBlob(client);
+      this._sendBlob();
     }
 
     // Else the message part can be sent as is.
@@ -431,9 +418,8 @@ class MessagePart extends Root {
    *
    * @method _sendBlob
    * @private
-   * @param {Layer.Core.Client} client
    */
-  _sendBlob(client) {
+  _sendBlob() {
     /* istanbul ignore else */
     if (this.body.size < 2048) {
       Util.blobToBase64(this.body, (base64data) => {
@@ -447,7 +433,7 @@ class MessagePart extends Root {
         this.trigger('parts:send', obj);
       });
     } else {
-      this._generateContentAndSend(client);
+      this._generateContentAndSend(Client);
     }
   }
 
@@ -457,9 +443,8 @@ class MessagePart extends Root {
    *
    * @method _generateContentAndSend
    * @private
-   * @param  {Layer.Core.Client} client
    */
-  _generateContentAndSend(client) {
+  _generateContentAndSend() {
     this.hasContent = true;
     let body;
     if (!Util.isBlob(this.body)) {
@@ -467,7 +452,7 @@ class MessagePart extends Root {
     } else {
       body = this.body;
     }
-    client.xhr({
+    Client.xhr({
       url: '/content',
       method: 'POST',
       headers: {
@@ -476,7 +461,7 @@ class MessagePart extends Root {
         'Upload-Origin': typeof location !== 'undefined' ? location.origin : '',
       },
       sync: {},
-    }, result => this._processContentResponse(result.data, body, client));
+    }, result => this._processContentResponse(result.data, body));
   }
 
   /**
@@ -487,10 +472,9 @@ class MessagePart extends Root {
    * @private
    * @param  {Object} response
    * @param  {Blob} body
-   * @param  {Layer.Core.Client} client
    * @param {Number} [retryCount=0]
    */
-  _processContentResponse(response, body, client, retryCount = 0) {
+  _processContentResponse(response, body, retryCount = 0) {
     this._content = new Content(response.id);
     this.hasContent = true;
     xhr({
@@ -501,7 +485,7 @@ class MessagePart extends Root {
         'Upload-Content-Length': this.size,
         'Upload-Content-Type': this.mimeType,
       },
-    }, result => this._processContentUploadResponse(result, response, client, body, retryCount));
+    }, result => this._processContentUploadResponse(result, response, body, retryCount));
   }
 
   /**
@@ -517,16 +501,15 @@ class MessagePart extends Root {
    * @private
    * @param  {Object} uploadResult    Response from google cloud server; note that the xhr method assumes some layer-like behaviors and may replace non-json responses with js objects.
    * @param  {Object} contentResponse Response to `POST /content` from before
-   * @param  {Layer.Core.Client} client
    * @param  {Blob} body
    * @param  {Number} retryCount
    */
-  _processContentUploadResponse(uploadResult, contentResponse, client, body, retryCount) {
+  _processContentUploadResponse(uploadResult, contentResponse, body, retryCount) {
     if (!uploadResult.success) {
-      if (!client.onlineManager.isOnline) {
-        client.onlineManager.once('connected', this._processContentResponse.bind(this, contentResponse, client), this);
+      if (!Client.onlineManager.isOnline) {
+        Client.onlineManager.once('connected', this._processContentResponse.bind(this, contentResponse), this);
       } else if (retryCount < MessagePart.MaxRichContentRetryCount) {
-        this._processContentResponse(contentResponse, body, client, retryCount + 1);
+        this._processContentResponse(contentResponse, body, retryCount + 1);
       } else {
         logger.error('Failed to upload rich content; triggering message:sent-error event; status of ', uploadResult.status, this);
         this._getMessage().trigger('messages:sent-error', {
@@ -656,10 +639,9 @@ class MessagePart extends Root {
    */
   createModel() {
     if (!this._messageTypeModel) {
-      const client = this._getClient();
       const message = this._getMessage();
-      if (client && message) {
-        this._messageTypeModel = client.createMessageTypeModel(message, this);
+      if (message) {
+        this._messageTypeModel = Client.createMessageTypeModel(message, this);
       }
     }
     return this._messageTypeModel;
@@ -810,14 +792,6 @@ class MessagePart extends Root {
     });
   }
 }
-
-/**
- * Layer.Core.Client that the conversation belongs to.
- *
- * Actual value of this string matches the appId.
- * @property {string}
- */
-MessagePart.prototype.clientId = '';
 
 /**
  * Server generated identifier for the part

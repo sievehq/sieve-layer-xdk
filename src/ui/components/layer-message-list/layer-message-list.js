@@ -118,7 +118,7 @@
  */
 import { defer, generateUUID } from '../../../utils';
 import UI from '../../layer-ui';
-import Settings from '../../settings';
+import Settings from '../../../settings';
 import StatusMessageManager from '../../ui-utils/status-message-manager';
 import MessageHandlers from '../../handlers/message/message-handlers';
 import UIUtils from '../../ui-utils';

@@ -6,7 +6,7 @@ describe("The Content class", function() {
         requests;
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     beforeEach(function() {
@@ -19,7 +19,6 @@ describe("The Content class", function() {
         });
         client.userId = "999";
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -46,7 +45,7 @@ describe("The Content class", function() {
         client._clientReady();
         client.onlineManager.isOnline = true;
 
-        conversation = Layer.Core.Conversation._createFromServer(responses.conversation2, client).conversation;
+        conversation = Layer.Core.Conversation._createFromServer(responses.conversation2).conversation;
         requests.reset();
         client.syncManager.queue = [];
     });
@@ -164,13 +163,13 @@ describe("The Content class", function() {
       })
 
       it("Should call xhr", function() {
-          content.refreshContent(client);
+          content.refreshContent();
           expect(requests.mostRecent().url).toEqual("https://ho.com");
           expect(requests.mostRecent().method).toEqual("GET");
       });
 
       it("Should set expiration and downloadUrl", function() {
-        content.refreshContent(client);
+        content.refreshContent();
         requests.mostRecent().response({
           status: 200,
           responseText: JSON.stringify({
@@ -184,7 +183,7 @@ describe("The Content class", function() {
 
       it("Should call the callback", function() {
         var spy = jasmine.createSpy('callback');
-        content.refreshContent(client, spy);
+        content.refreshContent(spy);
         requests.mostRecent().response({
           status: 200,
           responseText: JSON.stringify({

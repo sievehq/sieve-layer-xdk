@@ -18,7 +18,6 @@ describe("The Announcement class", function() {
         client.userId = "999";
 
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -58,7 +57,7 @@ describe("The Announcement class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The send() method", function() {
@@ -114,7 +113,7 @@ describe("The Announcement class", function() {
 
           // Posttest
           expect(announcement.isDestroyed).toBe(true);
-          expect(Layer.Core.Syncable.load).toHaveBeenCalledWith(announcement.id, client);
+          expect(Layer.Core.Syncable.load).toHaveBeenCalledWith(announcement.id);
 
           // Cleanup
           Layer.Core.Syncable.load = tmp;

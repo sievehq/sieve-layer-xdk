@@ -12,6 +12,7 @@
  * @extends Layer.Core.Root
  * @private
  */
+import { client as Client } from '../settings';
 import Core from './namespace';
 import Root from './root';
 import Util, { xhr } from '../utils';
@@ -25,19 +26,17 @@ class TelemetryMonitor extends Root {
    *
    * @method constructor
    * @param {Object} options
-   * @param {Layer.Core.Client} options.client
    * @param {Boolean} [options.enabled=true]   Set to false to disable telemetry reporting
    * @param {Number} [options.reportingInterval=1000 * 3600]   Defaults to 1 hour, but can be set to other intervals
    */
   constructor(options) {
     super(options);
-    this.client = options.client;
     this.state = {
       id: this.id,
       records: [],
     };
     this.tempState = {};
-    this.storageKey = 'layer-telemetry-' + this.client.appId;
+    this.storageKey = 'layer-telemetry-' + Client.appId;
 
     if (!global.localStorage) {
       this.enabled = false;
@@ -54,7 +53,7 @@ class TelemetryMonitor extends Root {
       }
     }
 
-    this.client.on('state-change', this.trackEvent, this);
+    Client.on('state-change', this.trackEvent, this);
     xhr.addConnectionListener(this.trackRestPerformance.bind(this));
     this.setupReportingInterval();
   }
@@ -297,7 +296,7 @@ class TelemetryMonitor extends Root {
         },
         data: {
           id: Util.uuid(this.state.id),
-          layer_app_id: this.client.appId,
+          layer_app_id: Client.appId,
           records: records.map(record => this.convertRecord(record)),
         },
       }, (result) => {
@@ -343,6 +342,10 @@ class TelemetryMonitor extends Root {
       this._intervalId = 0;
     }
     if (this.enabled) this.setupReportingInterval();
+  }
+
+  toString() {
+    return '[object ' + this.constructor.name + ']';
   }
 }
 
@@ -431,7 +434,7 @@ TelemetryMonitor.prototype.client = null;
 TelemetryMonitor.prefixUUID = 'layer:///telemetry/';
 
 TelemetryMonitor._supportedEvents = Root._supportedEvents.concat([
-  'telemetry-environment'
+  'telemetry-environment',
 ]);
 
 Root.initClass.apply(TelemetryMonitor, [TelemetryMonitor, 'TelemetryMonitor', Core]);

@@ -39,7 +39,7 @@
  */
 
 
-import { Client, MessagePart, MessageTypeModel, Root } from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Root } from '../../../core';
 
 
 class FileModel extends MessageTypeModel {
@@ -228,6 +228,6 @@ FileModel.messageRenderer = 'layer-file-message-view';
 Root.initClass.apply(FileModel, [FileModel, 'FileModel']);
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(FileModel, 'FileModel');
+Core.Client.registerMessageTypeModelClass(FileModel, 'FileModel');
 
 module.exports = FileModel;

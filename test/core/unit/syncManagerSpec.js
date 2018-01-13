@@ -13,7 +13,6 @@ describe("The SyncManager Class", function() {
         });
         client.sessionToken = "sessionToken";
         client.user = new Layer.Core.Identity({
-            clientId: client.appId,
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
             firstName: "first",
@@ -45,7 +44,6 @@ describe("The SyncManager Class", function() {
         client.syncManager.queue = [];
         jasmine.clock().tick(1);
         syncManager = new Layer.Core.SyncManager({
-            client: client,
             onlineManager: client.onlineManager,
             socketManager: client.socketManager,
             requestManager: client.socketRequestManager
@@ -69,13 +67,12 @@ describe("The SyncManager Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         it("Should return a SyncManager instance", function() {
             var syncManager = new Layer.Core.SyncManager({
-                client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
                 requestManager: client.socketRequestManager
@@ -90,7 +87,6 @@ describe("The SyncManager Class", function() {
             spyOn(Layer.Core.SyncManager.prototype , "_loadPersistedQueue");
 
             var syncManager = new Layer.Core.SyncManager({
-                client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
                 requestManager: client.socketRequestManager
@@ -113,7 +109,6 @@ describe("The SyncManager Class", function() {
             var tmp = Layer.Core.SyncManager.prototype._onlineStateChange;
             spyOn(Layer.Core.SyncManager.prototype, "_onlineStateChange");
             var syncManager = new Layer.Core.SyncManager({
-                client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
             });
@@ -133,7 +128,6 @@ describe("The SyncManager Class", function() {
             var tmp = Layer.Core.SyncManager.prototype._onlineStateChange;
             spyOn(Layer.Core.SyncManager.prototype, "_onlineStateChange");
             var syncManager = new Layer.Core.SyncManager({
-                client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
             });
@@ -153,7 +147,6 @@ describe("The SyncManager Class", function() {
             var tmp = Layer.Core.SyncManager.prototype._onlineStateChange;
             spyOn(Layer.Core.SyncManager.prototype, "_onlineStateChange");
             var syncManager = new Layer.Core.SyncManager({
-                client: client,
                 onlineManager: client.onlineManager,
                 socketManager: client.socketManager,
             });

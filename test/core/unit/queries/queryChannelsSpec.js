@@ -21,7 +21,6 @@ describe("The ChannelsQuery Class", function() {
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -67,7 +66,7 @@ describe("The ChannelsQuery Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should be an ChannelsQuery", function() {
@@ -169,7 +168,6 @@ describe("The ChannelsQuery Class", function() {
             channel.createdAt = 5;
             channel2.createdAt = 10;
             query = client.createQuery({
-                client: client,
                 model: Layer.Core.Query.Channel,
                 paginationWindow: 15,
                 dataType: "object"
@@ -418,8 +416,7 @@ describe("The ChannelsQuery Class", function() {
             var query;
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
-                    model: Layer.Core.Query.Channel,
+                        model: Layer.Core.Query.Channel,
                     paginationWindow: 15,
                     dataType: "instance",
                     sortBy: [{'createdAt': 'desc'}]
@@ -537,7 +534,6 @@ describe("The ChannelsQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: Layer.Core.Query.Channel,
                 paginationWindow: 15,
                 dataType: "object"
@@ -705,7 +701,6 @@ describe("The ChannelsQuery Class", function() {
         var query, channel2;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: Layer.Core.Query.Channel,
                 paginationWindow: 15,
                 dataType: "object"

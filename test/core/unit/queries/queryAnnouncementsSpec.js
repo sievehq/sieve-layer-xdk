@@ -20,7 +20,6 @@ describe("The AnnouncementsQuery Class", function() {
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -65,7 +64,7 @@ describe("The AnnouncementsQuery Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should be an AnnouncementQuery", function() {
@@ -78,7 +77,6 @@ describe("The AnnouncementsQuery Class", function() {
             var tmp = Layer.Core.Query.prototype._run;
             Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
-                client: client,
                 model: Layer.Core.Query.Announcement,
                 paginationWindow: 15
             });

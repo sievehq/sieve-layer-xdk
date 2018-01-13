@@ -24,6 +24,7 @@
  * @class  Layer.Core.MembersQuery
  * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
@@ -86,7 +87,7 @@ class MembersQuery extends Query {
 
     const channelId = 'layer:///channels/' + predicateIds.uuid;
     if (!this._predicate) this._predicate = predicateIds.id;
-    const channel = this.client.getChannel(channelId);
+    const channel = client.getChannel(channelId);
 
     const newRequest = `channels/${predicateIds.uuid}/members?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -95,7 +96,7 @@ class MembersQuery extends Query {
     if ((!channel || channel.isSaved()) && newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'member_query_time',
         },

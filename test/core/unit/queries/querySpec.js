@@ -20,8 +20,7 @@ describe("The Query Class", function() {
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-              client.user = new Layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -66,44 +65,34 @@ describe("The Query Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         it("Should accept an object as input", function() {
             expect(new Layer.Core.Query({
-                client: client,
                 model: "Conversation"
             }).model).toEqual("Conversation");
 
             expect(new Layer.Core.Query({
-                client: client,
                 returnType: "count"
             }).returnType).toEqual("count");
 
             expect(new Layer.Core.Query({
-                client: client,
                 dataType: "object"
             }).dataType).toEqual("object");
         });
 
         it("Should accept a QueryBuilder input", function() {
             var builder = Layer.Core.QueryBuilder.conversations().paginationWindow(15);
-            var query = new Layer.Core.Query(client, builder);
+            var query = new Layer.Core.Query(builder);
             expect(query.paginationWindow).toEqual(15);
         });
 
         it("Should initialize data", function() {
             expect(new Layer.Core.Query({
-                client: client,
                 dataType: "object"
             }).data).toEqual([]);
-        });
-
-        it("Should require a client", function() {
-            expect(function() {
-                new Layer.Core.Query({});
-            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
         });
 
         it("Should call _run if isReady", function() {
@@ -113,7 +102,6 @@ describe("The Query Class", function() {
 
             // Run
             var query = client.createQuery({
-                client: client
             });
 
             // Posttest
@@ -131,7 +119,6 @@ describe("The Query Class", function() {
 
             // Run
             var query = client.createQuery({
-                client: client
             });
 
             // Midtest
@@ -165,7 +152,6 @@ describe("The Query Class", function() {
 
         it("Should force paginationWindow to acceptable value", function() {
           var query = client.createQuery({
-            client: client,
             paginationWindow: 12345
           });
           expect(query.paginationWindow).toEqual(Layer.Core.Query.MaxPageSize);
@@ -175,7 +161,6 @@ describe("The Query Class", function() {
     describe("The destroy() method", function() {
         it("Should notify any views that its data has been cleared", function() {
             var query = client.createQuery({
-                client: client
             });
             var changed = false;
             query.on('change', function() {
@@ -197,7 +182,6 @@ describe("The Query Class", function() {
 
         it("Should call _removeQuery", function() {
             var query = client.createQuery({
-                client: client
             });
             spyOn(client, "_removeQuery");
 
@@ -213,7 +197,6 @@ describe("The Query Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: Layer.Core.Query.Message,
                 paginationWindow: 15
             });
@@ -309,7 +292,6 @@ describe("The Query Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Conversation',
                 paginationWindow: 15
             });
@@ -466,7 +448,6 @@ describe("The Query Class", function() {
         var query, requestUrl;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 predicate: 'conversation.id = "' + conversation.id + '"'
@@ -637,7 +618,6 @@ describe("The Query Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 paginationWindow: 15
             });
         });
@@ -849,7 +829,6 @@ describe("The Query Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Conversation',
                 paginationWindow: 15
             });
@@ -876,7 +855,6 @@ describe("The Query Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Conversation',
                 paginationWindow: 15
             });
@@ -1014,7 +992,6 @@ describe("The Query Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Conversation',
                 paginationWindow: 15
             });
@@ -1044,7 +1021,6 @@ describe("The Query Class", function() {
         describe("For object type", function() {
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     paginationWindow: 15,
                     dataType: "object",
                 });
@@ -1126,7 +1102,6 @@ describe("The Query Class", function() {
         describe("For instance type", function() {
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     paginationWindow: 15,
                     dataType: "instance",
                 });
@@ -1211,7 +1186,6 @@ describe("The Query Class", function() {
       var query;
       beforeEach(function() {
           query = client.createQuery({
-              client: client,
               model: 'Message',
               paginationWindow: 15,
               dataType: "object",
@@ -1253,7 +1227,6 @@ describe("The Query Class", function() {
       var query;
       beforeEach(function() {
           query = client.createQuery({
-              client: client,
               model: 'Message',
               paginationWindow: 15,
               dataType: "object",

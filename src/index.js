@@ -8,13 +8,20 @@ import Core from './core';
 import Utils from './utils';
 import UI from './ui';
 import version from './version';
+import Settings from './settings';
 
+Settings.client = new Core.Client({});
 function init(options) {
-  const client = Core.Client.getClient(options.appId) || new Core.Client(options);
-  options.client = client;
-  UI.init(options);
+  let client = Settings.client;
+  if (!client || client.isDestroyed) client = Settings.client = new Core.Client({});
+  Object.keys(options).forEach((name) => {
+    Settings[name] = options[name];
+    if (client[name] !== undefined) client[name] = options[name];
+  });
+
+  UI.init();
   return client;
 }
 
-module.exports = { UI, Core, Utils, Constants, init, version };
+module.exports = { UI, Core, Utils, Constants, init, version, get client() { return Settings.client; }, Settings };
 if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;

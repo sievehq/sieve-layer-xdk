@@ -4,10 +4,10 @@
  * @class Layer.Core.Message.ConversationMessage
  * @extends Layer.Core.Message
  */
+import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Message from './message';
-import ClientRegistry from '../client-registry';
 import { ErrorDictionary } from '../layer-error';
 import Constants from '../../constants';
 import Util from '../../utils';
@@ -22,11 +22,10 @@ class ConversationMessage extends Message {
     else this.__updateRecipientStatus(this.recipientStatus);
     this._disableEvents = false;
 
-    const client = this.getClient();
     this.isInitializing = false;
     if (options && options.fromServer) {
-      client._addMessage(this);
-      const status = this.recipientStatus[client.user.id];
+      Client._addMessage(this);
+      const status = this.recipientStatus[Client.user.id];
       if (status && status !== Constants.RECEIPT_STATE.READ && status !== Constants.RECEIPT_STATE.DELIVERED) {
         Util.defer(() => this._sendReceipt('delivery'));
       }
@@ -44,7 +43,7 @@ class ConversationMessage extends Message {
    */
   getConversation(load) {
     if (this.conversationId) {
-      return ClientRegistry.get(this.clientId).getConversation(this.conversationId, load);
+      return Client.getConversation(this.conversationId, load);
     }
     return null;
   }
@@ -58,7 +57,7 @@ class ConversationMessage extends Message {
    */
   _loaded(data) {
     this.conversationId = data.conversation.id;
-    this.getClient()._addMessage(this);
+    Client._addMessage(this);
   }
 
   /**
@@ -73,18 +72,15 @@ class ConversationMessage extends Message {
    */
   __getRecipientStatus(pKey) {
     const value = this[pKey] || {};
-    const client = this.getClient();
-    if (client) {
-      const id = client.user.id;
-      const conversation = this.getConversation(false);
-      if (conversation) {
-        conversation.participants.forEach((participant) => {
-          if (!value[participant.id]) {
-            value[participant.id] = participant.id === id ?
-              Constants.RECEIPT_STATE.READ : Constants.RECEIPT_STATE.PENDING;
-          }
-        });
-      }
+    const id = Client.user.id;
+    const conversation = this.getConversation(false);
+    if (conversation) {
+      conversation.participants.forEach((participant) => {
+        if (!value[participant.id]) {
+          value[participant.id] = participant.id === id ?
+            Constants.RECEIPT_STATE.READ : Constants.RECEIPT_STATE.PENDING;
+        }
+      });
     }
     return value;
   }
@@ -106,11 +102,10 @@ class ConversationMessage extends Message {
    */
   __updateRecipientStatus(status, oldStatus) {
     const conversation = this.getConversation(false);
-    const client = this.getClient();
 
     if (!conversation || Util.doesObjectMatch(status, oldStatus)) return;
 
-    const id = client.user.id;
+    const id = Client.user.id;
     const isSender = this.sender.isMine;
     const userHasRead = status[id] === Constants.RECEIPT_STATE.READ;
 
@@ -351,13 +346,12 @@ class ConversationMessage extends Message {
     }
 
     const id = this.id;
-    const client = this.getClient();
     this._xhr({
       url: '?' + queryStr,
       method: 'DELETE',
     }, (result) => {
       if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
-        Message.load(id, client);
+        Message.load(id);
       }
     });
 
@@ -385,10 +379,9 @@ class ConversationMessage extends Message {
    * @protected
    * @static
    * @param  {Object} message - Server's representation of the message
-   * @param  {Layer.Core.Client} client
    * @return {Layer.Core.Message.ConversationMessage}
    */
-  static _createFromServer(message, client) {
+  static _createFromServer(message) {
     const fromWebsocket = message.fromWebsocket;
     let conversationId;
     if (message.conversation) {
@@ -400,9 +393,8 @@ class ConversationMessage extends Message {
     return new ConversationMessage({
       conversationId,
       fromServer: message,
-      clientId: client.appId,
       _fromDB: message._fromDB,
-      _notify: message.notification && fromWebsocket && message.is_unread && message.sender.user_id !== client.user.userId ? message.notification : null,
+      _notify: message.notification && fromWebsocket && message.is_unread && message.sender.user_id !== Client.user.userId ? message.notification : null,
     });
   }
 }

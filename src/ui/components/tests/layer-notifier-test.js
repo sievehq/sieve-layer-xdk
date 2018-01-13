@@ -11,7 +11,6 @@ if (window.Notification) {
         appId: 'Fred'
       });
       client.user = new Layer.Core.Identity({
-        client: client,
         userId: 'FrodoTheDodo',
         id: 'layer:///identities/FrodoTheDodo',
         isFullIdentity: true
@@ -34,7 +33,7 @@ if (window.Notification) {
       if (client) client.destroy();
       Layer.Utils.defer.reset();
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
     });
 
     describe('Event Handling', function() {

@@ -156,7 +156,7 @@ module.exports = {
       if (this._models.identities[id]) {
         result = this._models.identities[id];
       } else if (canLoad) {
-        result = Identity.load(id, this);
+        result = Identity.load(id);
       }
       if (canLoad) result._loadType = 'fetched';
       return result;
@@ -232,7 +232,6 @@ module.exports = {
       if (!identity) {
         identity = new Identity({
           id,
-          clientId: this.appId,
           userId: id.substring(20),
         });
       }
@@ -255,7 +254,6 @@ module.exports = {
       if (!identity) {
         identity = new Identity({
           id,
-          clientId: this.appId,
           userId: id.substring(20),
         });
       }
@@ -290,7 +288,7 @@ module.exports = {
     },
 
     _createIdentityFromServer(obj) {
-      return Identity._createFromServer(obj, this);
+      return Identity._createFromServer(obj);
     },
   },
 };

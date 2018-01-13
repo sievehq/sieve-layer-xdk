@@ -38,15 +38,12 @@ class TypingListener {
    *
    * @method constructor
    * @param  {Object} args
-   * @param {string} args.clientId - The ID of the client; used so that the TypingPublisher can access its websocket manager*
    * @param {HTMLElement} [args.input=null] - A Text editor dom node that will have typing indicators
    * @param {Object} [args.conversation=null] - The Conversation Object or Instance that the input will send messages to
    */
   constructor(args) {
-    this.clientId = args.clientId;
     this.conversation = args.conversation;
     this.publisher = new TypingPublisher({
-      clientId: this.clientId,
       conversation: this.conversation,
     });
 

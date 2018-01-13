@@ -23,7 +23,6 @@ describe("The Conversation Class", function() {
         client.sessionToken = "sessionToken";
 
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: "Frodo",
           id: "layer:///identities/" + "Frodo",
           firstName: "first",
@@ -39,38 +38,32 @@ describe("The Conversation Class", function() {
           isMine: true
         });
         userIdentity1 = new Layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/1",
+              id: "layer:///identities/1",
             displayName: "1",
             userId: "1"
         });
         userIdentity2 = new Layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/2",
+              id: "layer:///identities/2",
             displayName: "2",
             userId: "2"
         });
         userIdentity3 = new Layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/3",
+              id: "layer:///identities/3",
             displayName: "3",
             userId: "3"
         });
         userIdentity4 = new Layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/4",
+              id: "layer:///identities/4",
             displayName: "4",
             userId: "4"
         });
         userIdentity5 = new Layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/5",
+              id: "layer:///identities/5",
             displayName: "5",
             userId: "5"
         });
         userIdentity6 = new Layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/6",
+              id: "layer:///identities/6",
             displayName: "6",
             userId: "6"
         });
@@ -99,45 +92,41 @@ describe("The Conversation Class", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         it("Shoulds setup an empty participants array", function() {
-            expect(new Layer.Core.Conversation({client: client}).participants).toEqual([client.user]);
+            expect(new Layer.Core.Conversation({}).participants).toEqual([client.user]);
         });
 
         it("Should setup empty metadata", function() {
-            expect(new Layer.Core.Conversation({client: client}).metadata).toEqual({});
+            expect(new Layer.Core.Conversation({}).metadata).toEqual({});
         });
 
         it("Should default to distinct true", function() {
-           expect(new Layer.Core.Conversation({client: client}).distinct).toEqual(true);
-        });
-
-        it("Should setup the clientId", function() {
-            expect(new Layer.Core.Conversation({client: client}).clientId).toEqual(client.appId);
+           expect(new Layer.Core.Conversation({}).distinct).toEqual(true);
         });
 
         it("Should setup localCreatedAt", function() {
-            expect(new Layer.Core.Conversation({client: client}).localCreatedAt).toEqual(jasmine.any(Date));
+            expect(new Layer.Core.Conversation({}).localCreatedAt).toEqual(jasmine.any(Date));
         });
 
         it("Should setup createdAt", function() {
-            expect(new Layer.Core.Conversation({client: client}).createdAt).toEqual(jasmine.any(Date));
+            expect(new Layer.Core.Conversation({}).createdAt).toEqual(jasmine.any(Date));
         });
 
         it("Should copy in any input participants", function() {
-            expect(new Layer.Core.Conversation({client: client, participants: [userIdentity1, userIdentity2.userId]}).participants)
+            expect(new Layer.Core.Conversation({ participants: [userIdentity1, userIdentity2.userId]}).participants)
                 .toEqual([userIdentity1, userIdentity2, client.user]);
         });
 
         it("Should copy in any metadata", function() {
-            expect(new Layer.Core.Conversation({client: client, metadata: {a: "b"}}).metadata).toEqual({a: "b"});
+            expect(new Layer.Core.Conversation({ metadata: {a: "b"}}).metadata).toEqual({a: "b"});
         });
 
         it("Should copy in distinct", function() {
-            expect(new Layer.Core.Conversation({client: client, distinct: false}).distinct).toEqual(false);
+            expect(new Layer.Core.Conversation({ distinct: false}).distinct).toEqual(false);
         });
 
         it("Should call _addConversation", function() {
@@ -146,7 +135,7 @@ describe("The Conversation Class", function() {
 
             // Run
             var c = new Layer.Core.Conversation({
-                client: client
+
             });
 
             // Posttest
@@ -160,7 +149,7 @@ describe("The Conversation Class", function() {
                     participants: [],
                     metadata: {}
                 },
-                client: client
+
             }).id).toEqual("ccc");
         });
 
@@ -176,7 +165,7 @@ describe("The Conversation Class", function() {
                     participants: [],
                     metadata: {}
                 },
-                client: client
+
             });
 
             // Posttest
@@ -286,17 +275,8 @@ describe("The Conversation Class", function() {
       beforeEach(function() {
         conversation = new Layer.Core.Conversation({
             participants: [userIdentity1],
-            client: client
+
         });
-      });
-
-      it("Should fail without a client property", function() {
-        delete conversation.clientId;
-
-        // Run + Posttest
-        expect(function() {
-            conversation.send();
-        }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
       });
 
         it("Should update the lastMessage property", function() {
@@ -483,7 +463,7 @@ describe("The Conversation Class", function() {
       it("Should return the current state of the data in a create format", function() {
         var conversation = new Layer.Core.Conversation({
           participants: [userIdentity1, client.user],
-          client: client,
+
           metadata: {hey: "ho"}
         });
         expect(conversation._getSendData()).toEqual({
@@ -500,7 +480,7 @@ describe("The Conversation Class", function() {
       it("Should return null if no metadata", function() {
         var conversation = new Layer.Core.Conversation({
           participants: [userIdentity1, client.user],
-          client: client
+
         });
         expect(conversation._getSendData()).toEqual({
           method: 'Conversation.create',
@@ -758,7 +738,7 @@ describe("The Conversation Class", function() {
         var conversation, c;
         beforeEach(function() {
             c = JSON.parse(JSON.stringify(responses.conversation1));
-            conversation = new Layer.Core.Conversation({client: client});
+            conversation = new Layer.Core.Conversation({});
             jasmine.clock().tick(1);
         });
 
@@ -823,7 +803,7 @@ describe("The Conversation Class", function() {
             // Setup
             client._messagesHash = {};
             var message = new Layer.Core.Message({
-                client: client
+
             });
             conversation.lastMessage = message;
             c.last_message = null;
@@ -1361,7 +1341,7 @@ describe("The Conversation Class", function() {
 
           // Posttest
           expect(conversation.isDestroyed).toBe(true);
-          expect(Layer.Core.Conversation.load).toHaveBeenCalledWith(conversation.id, client);
+          expect(Layer.Core.Conversation.load).toHaveBeenCalledWith(conversation.id);
 
           // Cleanup
           Layer.Core.Conversation.load = tmp;
@@ -1502,9 +1482,6 @@ describe("The Conversation Class", function() {
             expect(conversation.createMessage("hi").conversationId).toBe(conversation.id);
         });
 
-        it("Should have its clientId property set", function() {
-            expect(conversation.createMessage("hi").clientId).toBe(client.appId);
-        });
     });
 
     describe("The _handlePatchEvent method", function() {
@@ -1639,7 +1616,7 @@ describe("The Conversation Class", function() {
                     {operation: "set", property: "metadata.a.b.c", value: "fred"},
                     {operation: "set", property: "metadata.a.d", value: "wilma"}
                 ],
-                client: client
+
             });
 
             // Cleanup
@@ -1764,7 +1741,7 @@ describe("The Conversation Class", function() {
                 operations: [
                     {operation: "delete", property: "metadata.a.b.c"}
                 ],
-                client: client
+
             });
 
             // Cleanup
@@ -1931,20 +1908,6 @@ describe("The Conversation Class", function() {
             expect(Layer.Core.LayerError.ErrorDictionary.isDestroyed).toEqual(jasmine.any(String));
         });
 
-        it("Should throw an error if the conversation does not have a client", function() {
-            // Setup
-            delete conversation.clientId;
-
-            // Run
-            expect(function() {
-                conversation._xhr({});
-            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
-            expect(Layer.Core.LayerError.ErrorDictionary.clientMissing).toEqual(jasmine.any(String));
-
-            // Recovery
-            conversation.clientId = client.appId;
-        });
-
         it("Should load the resource if no url or method", function() {
             conversation._xhr({});
             expect(requests.mostRecent().url).toEqual(conversation.url);
@@ -2089,22 +2052,16 @@ describe("The Conversation Class", function() {
     });
 
     describe("The create() method", function() {
-        it("Should throw error if no client", function() {
-            expect(function() {
-                var conversation = Layer.Core.Conversation.create({
-                    participants: ["a"]
-                });
-            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMissing);
-        });
+
 
         it("Should return a matching distinct conversation", function() {
             var conversation = Layer.Core.Conversation.create({
-                client: client,
+
                 participants: ["a"],
                 distinct: true
             });
             var conversation2 = Layer.Core.Conversation.create({
-                client: client,
+
                 participants: ["a"],
                 distinct: true
             });

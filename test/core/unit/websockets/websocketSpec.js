@@ -31,7 +31,6 @@ describe("The Websocket Socket Manager Class", function() {
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
-            clientId: client.appId,
             userId: client.userId,
             id: "layer:///identities/" + client.userId,
             firstName: "first",
@@ -78,20 +77,13 @@ describe("The Websocket Socket Manager Class", function() {
 
     afterAll(function() {
         window.WebSocket = nativeWebsocket;
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         it("Should return a WebsocketManager", function() {
             expect(new Layer.Core.Websockets.SocketManager({
-                client: client
             })).toEqual(jasmine.any(Layer.Core.Websockets.SocketManager));
-        });
-
-        it("Should throw an error if no client", function() {
-            expect(function() {
-                new Layer.Core.Websockets.SocketManager({});
-            }).toThrow();
         });
 
         it("Should call connect if client is authenticated", function() {
@@ -101,7 +93,6 @@ describe("The Websocket Socket Manager Class", function() {
 
             // Run
             new Layer.Core.Websockets.SocketManager({
-                client: client
             });
 
             // Posttest
@@ -118,7 +109,6 @@ describe("The Websocket Socket Manager Class", function() {
 
             // Run
             new Layer.Core.Websockets.SocketManager({
-                client: client
             });
 
             // Posttest
@@ -1092,7 +1082,7 @@ describe("The Websocket Socket Manager Class", function() {
 
     describe("The destroy() method", function() {
         afterEach(function() {
-          websocketManager = client.socketManager = new Layer.Core.Websockets.SocketManager({client: client});
+          websocketManager = client.socketManager = new Layer.Core.Websockets.SocketManager({});
         });
         it("Should call close", function() {
             spyOn(websocketManager, "close");

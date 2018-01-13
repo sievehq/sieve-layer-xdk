@@ -25,6 +25,7 @@
  * @extends Layer.Core.Root
  *
  */
+import { client } from '../settings';
 import Core from './namespace';
 import Root from './root';
 import Util, { logger, xhr } from '../utils';
@@ -187,7 +188,6 @@ class OnlineStateManager extends Root {
    */
   checkOnlineStatus(callback) {
     this._clearCheck();
-    const client = this.socketManager.client;
 
     logger.info('OnlineStateManager: Firing XHR for online check');
     this._lastCheckOnlineStatus = new Date();

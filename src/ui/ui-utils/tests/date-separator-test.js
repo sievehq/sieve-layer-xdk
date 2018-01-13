@@ -13,7 +13,6 @@ describe("Date Separator Utility", function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -45,7 +44,6 @@ describe("Date Separator Utility", function() {
     }
 
     user1 = new Layer.Core.Identity({
-      client: client,
       userId: 'SaurumanTheMildlyAged',
       displayName: 'Sauruman the Mildly Aged',
       id: 'layer:///identities/SaurumanTheMildlyAged',

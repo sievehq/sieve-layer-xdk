@@ -35,7 +35,6 @@ describe("The Client Authenticator Requests", function() {
             url: "https://duh.com"
         });
         client.user = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: userId,
           id: "layer:///identities/" + userId,
           firstName: "first",
@@ -68,7 +67,7 @@ describe("The Client Authenticator Requests", function() {
     });
 
     afterAll(function() {
-        Layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The sendSocketRequest() method", function() {

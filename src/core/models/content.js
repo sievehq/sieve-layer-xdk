@@ -17,6 +17,7 @@
  * @extends Layer.Core.Root
  * @author Michael Kantor
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { xhr } from '../../utils';
@@ -77,10 +78,9 @@ class Content extends Root {
    * Refreshes the URL, which updates the URL and resets the expiration time for the URL
    *
    * @method refreshContent
-   * @param {Layer.Core.Client} client
    * @param {Function} [callback]
    */
-  refreshContent(client, callback) {
+  refreshContent(callback) {
     client.xhr({
       url: this.refreshUrl,
       method: 'GET',

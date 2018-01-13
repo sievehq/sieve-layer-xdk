@@ -113,7 +113,7 @@ module.exports = {
       if (this._models.members[id]) {
         result = this._models.members[id];
       } else if (canLoad) {
-        result = Syncable.load(id, this);
+        result = Syncable.load(id);
       }
       if (canLoad) result._loadType = 'fetched';
       return result;
@@ -155,7 +155,7 @@ module.exports = {
     },
 
     _createMembershipFromServer(obj) {
-      return Membership._createFromServer(obj, this);
+      return Membership._createFromServer(obj);
     },
 
     _createMembersQuery(options) {

@@ -27,11 +27,10 @@ describe('Button Message Components', function() {
       };
     });
 
-    client = new Layer.init({
+    client = Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -62,7 +61,7 @@ describe('Button Message Components', function() {
     if (client) client.destroy();
     jasmine.clock().uninstall();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   describe("Model Tests", function() {
@@ -420,7 +419,7 @@ describe('Button Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     });
 
@@ -467,7 +466,7 @@ describe('Button Message Components', function() {
           {"type": "action", "text": "Give Holy Grail", "event": "grant-grail", "tooltip": "Grail", data: {who: "Lunchalot"}}
         ],
         contentModel: new TextModel({
-          text: "hello"
+          text: "hello2"
         })
       });
       model.generateMessage(conversation, function(m) {
@@ -478,7 +477,7 @@ describe('Button Message Components', function() {
       Layer.Utils.defer.flush();
 
       expect(el.nodes.ui.nodes.content.firstChild.tagName).toEqual('LAYER-MESSAGE-VIEWER');
-      expect(el.nodes.ui.nodes.content.firstChild.model.text).toEqual('hello');
+      expect(el.nodes.ui.nodes.content.firstChild.model.text).toEqual('hello2');
       expect(el.nodes.ui.nodes.content.firstChild.model).toEqual(jasmine.any(TextModel));
     });
 
@@ -489,7 +488,7 @@ describe('Button Message Components', function() {
           {"type": "action", "text": "Give Holy Grail", "event": "grant-grail", "tooltip": "Grail", data: {who: "Lunchalot"}}
         ],
         contentModel: new TextModel({
-          text: "hello"
+          text: "hello3"
         })
       });
       model.generateMessage(conversation, function(m) {

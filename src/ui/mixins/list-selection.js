@@ -8,7 +8,7 @@
  *
  * @class Layer.UI.mixins.ListSelection
  */
-
+import { client } from '../../settings';
 import Clickable from './clickable';
 
 module.exports = {
@@ -35,7 +35,7 @@ module.exports = {
      */
     selectedId: {
       set(newId, oldId) {
-        const newItem = this.client.getObject(newId);
+        const newItem = client.getObject(newId);
         if ((newItem || oldId) && !this.trigger(this._selectedItemEventName, { item: newItem })) {
           this.properties.selectedId = oldId;
         } else {

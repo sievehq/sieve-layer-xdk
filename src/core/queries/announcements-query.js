@@ -19,6 +19,7 @@
  * @class  Layer.Core.AnnouncementsQuery
  * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Query from './query';
@@ -31,8 +32,8 @@ class AnnouncementsQuery extends MessagesQuery {
 
   _fetchData(pageSize) {
     // Retrieve data from db cache in parallel with loading data from server
-    if (this.client.dbManager) {
-      this.client.dbManager.loadAnnouncements(this._nextDBFromId, pageSize, (messages) => {
+    if (client.dbManager) {
+      client.dbManager.loadAnnouncements(this._nextDBFromId, pageSize, (messages) => {
         if (messages.length) this._appendResults({ data: messages }, true);
       });
     }
@@ -44,7 +45,7 @@ class AnnouncementsQuery extends MessagesQuery {
     if (newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'announcement_query_time',
         },

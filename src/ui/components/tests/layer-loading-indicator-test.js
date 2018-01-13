@@ -13,7 +13,7 @@ describe('layer-loading-indicator', function() {
   });
 
   afterEach(function() {
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
   it("Should be so dumb it doesn't need tests", function() {
     expect(el.properties).toEqual(jasmine.objectContaining({

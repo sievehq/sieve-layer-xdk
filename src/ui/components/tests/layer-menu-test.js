@@ -5,7 +5,6 @@ describe('layer-menu', function() {
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true
@@ -23,7 +22,7 @@ describe('layer-menu', function() {
   afterEach(function() {
     if (client) client.destroy();
     document.body.removeChild(testRoot);
-    Layer.Core.Client.removeListenerForNewClient();
+
   });
 
   it("Should generate menus with suitable text", function() {

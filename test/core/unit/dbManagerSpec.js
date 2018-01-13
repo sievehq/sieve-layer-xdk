@@ -71,7 +71,6 @@ var dbIt = it;
           client.sessionToken = "sessionToken";
 
           identity = new Layer.Core.Identity({
-            clientId: client.appId,
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
             firstName: "first",
@@ -100,8 +99,7 @@ var dbIt = it;
             announcement = client._createObject(responses.announcement);
             userIdentity = client._createObject(responses.useridentity);
             basicIdentity = new Layer.Core.Identity({
-              clientId: client.appId,
-              userId: client.userId,
+                userId: client.userId,
               id: "layer:///identities/" + client.userId,
               isFullIdentity: false
             });
@@ -248,7 +246,6 @@ var dbIt = it;
           spyOn(Layer.Core.DbManager.prototype, "_open");
           var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {conversations: true}
           });
 
@@ -262,7 +259,6 @@ var dbIt = it;
         it("Should accept a tables property", function() {
           var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {
               conversations: true,
               channels: true,
@@ -280,7 +276,6 @@ var dbIt = it;
         it("Should set syncQueue to false if either conversations or messages are false", function() {
           var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {
               conversations: true,
               channels: true,
@@ -300,7 +295,6 @@ var dbIt = it;
       describe("The _open() method", function() {
         it("Should callback immediately if no tables enabled", function() {
           var dbManager = new Layer.Core.DbManager({
-            client: client,
             tables: {
               conversations: false,
               messages: false,
@@ -317,7 +311,6 @@ var dbIt = it;
         it("Should trigger open event", function(done) {
           var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {conversations: true}
           });
           dbManager.on('open', function() {
@@ -336,7 +329,6 @@ var dbIt = it;
         it("Should callback when open", function(done) {
           var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {conversations: true}
           });
           dbManager.onOpen(function() {
@@ -349,7 +341,6 @@ var dbIt = it;
           var spy = jasmine.createSpy('opOpen');
           var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {conversations: true}
           });
           dbManager.isOpen = true;
@@ -911,13 +902,11 @@ var dbIt = it;
 
       it("Should ignore anything flagged as _fromDB", function(){
         var i2 = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: "i2",
           id: "layer:///identities/" + "i2",
           isFullIdentity: true
         });
         var i3 = new Layer.Core.Identity({
-          clientId: client.appId,
           userId: "i3",
           id: "layer:///identities/" + "i3",
           isFullIdentity: true
@@ -1822,14 +1811,18 @@ var dbIt = it;
       var m1, m2, m3, m4;
       var writtenData;
       beforeEach(function(done) {
-        m1 = conversation.createMessage("m1").presend();
-        m2 = conversation.createMessage("m2").presend();
-        m3 = conversation.createMessage("m3").presend();
-        m4 = conversation.createMessage("m4").presend();
-        dbManager._getMessageData([message, m4, m2, m3, m1], function(result) {
-          writtenData = result;
-          dbManager._writeObjects('messages', result, done);
-        });
+        setTimeout(function() {
+          m1 = conversation.createMessage("m1").presend();
+          m2 = conversation.createMessage("m2").presend();
+          m3 = conversation.createMessage("m3").presend();
+          m4 = conversation.createMessage("m4").presend();
+          dbManager._getMessageData([message, m4, m2, m3, m1], function(result) {
+            writtenData = result;
+            dbManager._writeObjects('messages', result, function() {
+              setTimeout(done, 100);
+            });
+          });
+        }, 100);
       });
 
       it("Should load everything in the table", function(done) {
@@ -2010,7 +2003,6 @@ var dbIt = it;
 
       it("Should get the specified object with blob data and no encoding", function(done) {
         dbManager.getObject('messages', m1.id, function(result) {
-          debugger;
           expect(result.parts[1].encoding).toBe(null);
           expect(Layer.Utils.isBlob(result.parts[1].body)).toBe(true);
           done();

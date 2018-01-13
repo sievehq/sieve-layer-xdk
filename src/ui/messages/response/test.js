@@ -26,7 +26,6 @@ describe('Response Message Components', function() {
       appId: 'layer:///apps/staging/Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -56,7 +55,7 @@ describe('Response Message Components', function() {
 
 
   afterEach(function() {
-    Layer.Core.Client.removeListenerForNewClient();
+
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
   });
 
@@ -191,7 +190,7 @@ describe('Response Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      Layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     });
 

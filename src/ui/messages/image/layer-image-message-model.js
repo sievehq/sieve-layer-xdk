@@ -60,7 +60,7 @@ import 'blueimp-load-image/js/load-image-meta';
 import 'blueimp-load-image/js/load-image-exif';
 import { normalizeSize } from '../../ui-utils';
 
-import { Root, Client, MessagePart, MessageTypeModel } from '../../../core';
+import Core, { Root, MessagePart, MessageTypeModel } from '../../../core';
 import { xhr } from '../../../utils';
 
 class ImageModel extends MessageTypeModel {
@@ -514,6 +514,6 @@ ImageModel.messageRenderer = 'layer-image-message-view';
 Root.initClass.apply(ImageModel, [ImageModel, 'ImageModel']);
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(ImageModel, 'ImageModel');
+Core.Client.registerMessageTypeModelClass(ImageModel, 'ImageModel');
 
 module.exports = ImageModel;

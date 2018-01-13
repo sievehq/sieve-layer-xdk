@@ -42,7 +42,7 @@
  * ```
  * client.on('message-type-model:customization', function(evt) {
  *   if (evt.type === 'layer-choice-model-generate-response-message') {
- *     evt.returnValue(`${evt.nameOfChoice}: ${this.getClient().user.displayName} has ${evt.action} ${evt.choice.text}`);
+ *     evt.returnValue(`${evt.nameOfChoice}: ${Client.user.displayName} has ${evt.action} ${evt.choice.text}`);
  *   }
  * });
  * ```
@@ -59,7 +59,8 @@
  * @class Layer.UI.messages.ChoiceMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, Root, MessageTypeModel } from '../../../core';
+import { client as Client } from '../../../settings';
+import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
 import ResponseModel from '../response/layer-response-message-model';
 import TextModel from '../text/layer-text-message-model';
 import ChoiceItem from './layer-choice-message-model-item';
@@ -196,13 +197,13 @@ class ChoiceModel extends MessageTypeModel {
     if (!this.allowReselect && this.selectedAnswer) return false;
 
     // Disable selection if enabledFor is in use, but this user is not in the list
-    if (this.enabledFor.length > 0 && this.enabledFor.indexOf(this.getClient().user.id) === -1) return false;
+    if (this.enabledFor.length > 0 && this.enabledFor.indexOf(Client.user.id) === -1) return false;
 
     // Disable selection if this user is the sender, and other participants have made selections.
     // Rationale: This user was requesting feedback, this user's selections do not get priority
     const data = this.responses ? this.responses.participantData : {};
     const responseIdentityIds = Object.keys(data).filter(participantId => data[participantId][this.responseName]);
-    if (responseIdentityIds.length > 1 && this.message.sender === this.getClient().user) return false;
+    if (responseIdentityIds.length > 1 && this.message.sender === Client.user) return false;
 
     return true;
   }
@@ -345,7 +346,7 @@ class ChoiceModel extends MessageTypeModel {
     // Generate the Response Message
     const nameOfChoice = this._getNameOfChoice();
     const namePhrase = (nameOfChoice ? ` for "${nameOfChoice}"` : '');
-    let text = `${this.getClient().user.displayName} ${action} "${selectedText}"${namePhrase}`;
+    let text = `${Client.user.displayName} ${action} "${selectedText}"${namePhrase}`;
 
     /**
      * Whenever the Choice Model is about to send a Response Message, this event is triggered.
@@ -926,7 +927,7 @@ ChoiceModel._supportedEvents = [
 Root.initClass.apply(ChoiceModel, [ChoiceModel, 'ChoiceModel']);
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(ChoiceModel, 'ChoiceModel');
+Core.Client.registerMessageTypeModelClass(ChoiceModel, 'ChoiceModel');
 
 module.exports = ChoiceModel;
 
