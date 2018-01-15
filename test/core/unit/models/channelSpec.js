@@ -185,7 +185,7 @@ describe("The Channel Class", function() {
     describe("The _createResultConflict() method", function() {
       it("Should call _createSuccess if given a channel", function() {
         var returnedChannel = {};
-        channel = new Layer.Core.Channel({client: client});
+        channel = new Layer.Core.Channel({});
         spyOn(channel, "trigger");
         spyOn(channel, "_createSuccess");
         channel._createResultConflict({data: returnedChannel});
@@ -194,7 +194,7 @@ describe("The Channel Class", function() {
       });
 
       it("Should trigger sent-error and mark it as NEW if not given a channel", function() {
-        channel = new Layer.Core.Channel({client: client});
+        channel = new Layer.Core.Channel({});
         spyOn(channel, "trigger");
         spyOn(channel, "_createSuccess");
         channel._createResultConflict({data: null});
@@ -206,13 +206,13 @@ describe("The Channel Class", function() {
 
     describe("The name property", function() {
       it("Should be setable if new", function() {
-        channel = new Layer.Core.Channel({client: client});
+        channel = new Layer.Core.Channel({});
         channel.name = "fred";
         expect(channel.name).toEqual("fred");
       });
 
       it("Should throw error if setting it when not new", function() {
-        channel = new Layer.Core.Channel({client: client});
+        channel = new Layer.Core.Channel({});
         channel.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         expect(function() {
           channel.name = "fred";
@@ -222,7 +222,7 @@ describe("The Channel Class", function() {
       });
 
       it("Should trigger change events when set", function() {
-        channel = new Layer.Core.Channel({client: client});
+        channel = new Layer.Core.Channel({});
         spyOn(channel, "_triggerAsync");
 
         channel.name = "fred";
@@ -238,7 +238,7 @@ describe("The Channel Class", function() {
         var channel, c;
         beforeEach(function() {
             c = JSON.parse(JSON.stringify(responses.channel2));
-            channel = new Layer.Core.Channel({client: client});
+            channel = new Layer.Core.Channel({});
             jasmine.clock().tick(1);
         });
 

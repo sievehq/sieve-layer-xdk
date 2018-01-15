@@ -78,7 +78,6 @@ module.exports = {
       if (typeof options.build === 'function') {
         options = options.build();
       }
-      options.client = this;
       switch (options.model) {
         case Query.Identity:
           query = new IdentitiesQuery(options);

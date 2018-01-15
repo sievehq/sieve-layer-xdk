@@ -10,7 +10,6 @@ describe('layer-avatar', function() {
       appId: 'Fred'
     });
     client.user = new Layer.Core.Identity({
-      client: client,
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
@@ -94,13 +93,11 @@ describe('layer-avatar', function() {
   it("Should generate multiple spans for multiple users", function() {
     el.users = [
       new Layer.Core.Identity({
-          client: client,
           userId: 'AA',
           id: 'layer:///identities/AA',
           displayName: "Abby"
         }),
         new Layer.Core.Identity({
-          client: client,
           userId: 'BB',
           id: 'layer:///identities/BB',
           displayName: 'Normal'
@@ -121,13 +118,11 @@ describe('layer-avatar', function() {
   it("Should set cluster class if multiple users", function() {
     el.users = [
       new Layer.Core.Identity({
-          client: client,
           userId: 'AA',
           id: 'layer:///identities/AA',
           displayName: "Abby"
         }),
         new Layer.Core.Identity({
-          client: client,
           userId: 'BB',
           id: 'layer:///identities/BB',
           displayName: 'Normal'
@@ -208,30 +203,25 @@ describe('layer-avatar', function() {
       el.users = [
         client.user,
         new Layer.Core.Identity({
-          client: client,
           userId: 'A',
           id: 'layer:///identities/A',
         }),
         new Layer.Core.Identity({
-          client: client,
           userId: 'B',
           id: 'layer:///identities/B',
           displayName: "B"
         }),
         new Layer.Core.Identity({
-          client: client,
           userId: 'C',
           id: 'layer:///identities/C',
           avatarUrl: "C"
         }),
         new Layer.Core.Identity({
-          client: client,
           userId: 'bot',
           id: 'layer:///identities/bot',
           firstName: "bot"
         }),
         new Layer.Core.Identity({
-          client: client,
           userId: 'D',
           id: 'layer:///identities/D',
           lastName: "D"

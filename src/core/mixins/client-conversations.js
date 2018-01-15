@@ -400,7 +400,6 @@ module.exports = {
       // If we aren't authenticated, then we don't yet have a UserID, and won't create the correct Conversation
       if (!this.isAuthenticated) throw new Error(ErrorDictionary.clientMustBeReady);
       if (!('distinct' in options)) options.distinct = true;
-      options.client = this;
       options._loadType = 'websocket'; // treat this the same as a websocket loaded object
       return Conversation.create(options);
     },

@@ -267,12 +267,10 @@ describe("Websocket tests", function() {
                 var fred = new Layer.Core.Identity({
                     id: "layer:///identities/fred",
                     userId: "fred",
-                    client: client
                 });
                 var joe = new Layer.Core.Identity({
                     id: "layer:///identities/joe",
                     userId: "joe",
-                    client: client
                 });
 
                 // Pretest
@@ -765,7 +763,6 @@ describe("Websocket tests", function() {
                     id: c1.id,
                     participants: [{user_id: "a", id: "layer:///identities/a"}, {user_id: "b", id: "layer:///identities/b"}]
                 },
-                client: client
             });
 
             // Run
@@ -816,7 +813,6 @@ describe("Websocket tests", function() {
                     id: c1.id,
                     participants: [{user_id: "a", id: "layer:///identities/a"}, {user_id: "b", id: "layer:///identities/b"}]
                 },
-                client: client
             });
 
             // Run
@@ -870,7 +866,6 @@ describe("Websocket tests", function() {
                     id: c1.id,
                     participants: [{user_id: "a", id: "layer:///identities/a"}, {user_id: "b", id: "layer:///identities/b"}]
                 },
-                client: client
             });
 
             var m = client._createObject({

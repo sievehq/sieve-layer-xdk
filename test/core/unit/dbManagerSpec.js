@@ -633,7 +633,6 @@ var dbIt = it;
               display_name: 'Hey ho',
               avatar_url: null,
             },
-            client: client
           });
           var isDone = false;
 
@@ -1839,8 +1838,7 @@ var dbIt = it;
 
       it("Should load nothing if table is", function(done) {
         var dbManager = new Layer.Core.DbManager({
-          enabled: true,
-          client: client,
+          enabled: true,          ,
           tables: {conversations: true}
         });
         dbManager._loadAll('messages', function(result) {
@@ -1908,8 +1906,7 @@ var dbIt = it;
 
       it("Should get nothing if disabled", function(done) {
         var dbManager = new Layer.Core.DbManager({
-          enabled: true,
-          client: client,
+          enabled: true,          ,
           tables: {messages: false}
           });
         const query = window.IDBKeyRange.bound([conversation.id, 0], [conversation.id, MAX_SAFE_INTEGER]);

@@ -195,7 +195,7 @@ describe('layer-conversation-item', function() {
 
     it("Should update layer-conversation-unread-messages class", function() {
       el.item = conversation;
-      var message = new Layer.Core.Message({client: client});
+      var message = new Layer.Core.Message({});
       message.isRead = false;
       conversation.lastMessage = message;
       el.onRerender();

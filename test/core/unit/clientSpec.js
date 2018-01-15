@@ -253,7 +253,6 @@ describe("The Client class", function() {
                 conversation = client.createConversation({ participants: ["a"] });
                 message = conversation.createMessage("hey").send();
                 announcement = new Layer.Core.Announcement({
-                    client: client,
                     parts: "Hey Ho"
                 });
                 client._addMessage(announcement);
@@ -385,8 +384,7 @@ describe("The Client class", function() {
                 // Setup
                 var tmp = Layer.Core.Announcement._createFromServer;
                 var announcement = new Layer.Core.Announcement({
-                client: client,
-                fromServer: JSON.parse(JSON.stringify(responses.announcement))
+                    fromServer: JSON.parse(JSON.stringify(responses.announcement))
                 });
                 delete client._models.messages[announcement.id];
                 spyOn(Layer.Core.Announcement, "_createFromServer").and.returnValue(announcement);

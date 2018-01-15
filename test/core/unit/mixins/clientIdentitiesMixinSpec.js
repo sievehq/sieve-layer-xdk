@@ -176,7 +176,6 @@ describe("The Client Identities Mixin", function() {
           // Setup
           client._models.identities = {};
           userIdentity  = new Layer.Core.Identity({
-              client: client,
               fromServer: {
                   display_name: "Fred"
               }
@@ -191,7 +190,6 @@ describe("The Client Identities Mixin", function() {
 
       it("Should queue up the Identity in _loadPresenceIds", function() {
         userIdentity  = new Layer.Core.Identity({
-              client: client,
               fromServer: {
                   id: "layer:///identities/fred",
                   display_name: "Fred"
@@ -204,7 +202,6 @@ describe("The Client Identities Mixin", function() {
         spyOn(client, "_loadPresence");
         expect(client._loadPresenceIds).toEqual([]);
         userIdentity  = new Layer.Core.Identity({
-              client: client,
               fromServer: {
                   display_name: "Fred"
               }
@@ -219,21 +216,18 @@ describe("The Client Identities Mixin", function() {
         spyOn(client, "_loadPresence");
         expect(client._loadPresenceIds).toEqual([]);
         userIdentity  = new Layer.Core.Identity({
-            client: client,
             fromServer: {
                 display_name: "Fred"
             }
         });
         jasmine.clock().tick(10);
         var userIdentity2  = new Layer.Core.Identity({
-            client: client,
             fromServer: {
                 display_name: "Fred2"
             }
         });
         jasmine.clock().tick(10);
         var userIdentity2  = new Layer.Core.Identity({
-            client: client,
             fromServer: {
                 display_name: "Fred3"
             }

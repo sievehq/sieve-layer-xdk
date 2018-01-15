@@ -20,7 +20,6 @@ describe("List Mixin", function() {
         appId: 'layer:///apps/staging/Fred'
       });
       client.user = new Layer.Core.Identity({
-        client: client,
         userId: 'FrodoTheDodo',
         displayName: 'Frodo the Dodo',
         id: 'layer:///identities/FrodoTheDodo',
@@ -40,7 +39,6 @@ describe("List Mixin", function() {
       for (i = 0; i < 100; i++) {
         query.data.push(
           new Layer.Core.Identity({
-            client: client,
             userId: 'user' + i,
             id: 'layer:///identities/user' + i,
             displayName: 'User ' + i,
@@ -294,7 +292,6 @@ describe("List Mixin", function() {
 
       it("Should do nothing and return false", function() {
         var identity = new Layer.Core.Identity({
-          client: client,
           userId: 'user200',
           id: 'layer:///identities/user200',
           displayName: 'User 200',
@@ -584,7 +581,6 @@ describe("List Mixin", function() {
         query._handleAddEvent('identities', {
           identities: [
             new Layer.Core.Identity({
-              client: client,
               userId: 'user' + 10000,
               id: 'layer:///identities/user' + 10000,
               displayName: 'User ' + 10000,
@@ -599,7 +595,6 @@ describe("List Mixin", function() {
 
       it("Should insert a list item at the proper index", function() {
         var identity = new Layer.Core.Identity({
-          client: client,
           userId: 'user' + 10000,
           id: 'layer:///identities/user' + 10000,
           displayName: 'User ' + 10000,
@@ -622,7 +617,6 @@ describe("List Mixin", function() {
       it("Should call _gatherAndProcessAffectedItems on 3 items before and 3 items after the inserted item", function() {
         spyOn(el, "_gatherAndProcessAffectedItems");
         var identity = new Layer.Core.Identity({
-          client: client,
           userId: 'user' + 10000,
           id: 'layer:///identities/user' + 10000,
           displayName: 'User ' + 10000,
@@ -653,7 +647,6 @@ describe("List Mixin", function() {
       it("Should call _gatherAndProcessAffectedItems with isTopNewItem as false if index > 0", function() {
         spyOn(el, "_gatherAndProcessAffectedItems");
         var identity = new Layer.Core.Identity({
-          client: client,
           userId: 'user' + 10000,
           id: 'layer:///identities/user' + 10000,
           displayName: 'User ' + 10000,
@@ -684,7 +677,6 @@ describe("List Mixin", function() {
       it("Should call _gatherAndProcessAffectedItems with isTopNewItem as true if index === 0", function() {
         spyOn(el, "_gatherAndProcessAffectedItems");
         var identity = new Layer.Core.Identity({
-          client: client,
           userId: 'user' + 10000,
           id: 'layer:///identities/user' + 10000,
           displayName: 'User ' + 10000,
@@ -715,14 +707,12 @@ describe("List Mixin", function() {
         spyOn(el, "_renderPagedData").and.callThrough();
         var identities = [
           new Layer.Core.Identity({
-            client: client,
             userId: 'user' + 10000,
             id: 'layer:///identities/user' + 10000,
             displayName: 'User ' + 10000,
             isFullIdentity: true
           }),
           new Layer.Core.Identity({
-            client: client,
             userId: 'user' + 10001,
             id: 'layer:///identities/user' + 10001,
             displayName: 'User ' + 10001,
@@ -749,14 +739,12 @@ describe("List Mixin", function() {
       it("Should append all new items just before the listMeta", function() {
         var identities = [
           new Layer.Core.Identity({
-            client: client,
             userId: 'user' + 10000,
             id: 'layer:///identities/user' + 10000,
             displayName: 'User ' + 10000,
             isFullIdentity: true
           }),
           new Layer.Core.Identity({
-            client: client,
             userId: 'user' + 10001,
             id: 'layer:///identities/user' + 10001,
             displayName: 'User ' + 10001,
@@ -784,14 +772,12 @@ describe("List Mixin", function() {
         expect(last3Items.length).toEqual(3);
         var identities = [
           new Layer.Core.Identity({
-            client: client,
             userId: 'user' + 10000,
             id: 'layer:///identities/user' + 10000,
             displayName: 'User ' + 10000,
             isFullIdentity: true
           }),
           new Layer.Core.Identity({
-            client: client,
             userId: 'user' + 10001,
             id: 'layer:///identities/user' + 10001,
             displayName: 'User ' + 10001,
@@ -820,14 +806,12 @@ describe("List Mixin", function() {
         expect(last3Items.length).toEqual(3);
         var identities = [
           new Layer.Core.Identity({
-            client: client,
             userId: 'user' + 10000,
             id: 'layer:///identities/user' + 10000,
             displayName: 'User ' + 10000,
             isFullIdentity: true
           }),
           new Layer.Core.Identity({
-            client: client,
             userId: 'user' + 10001,
             id: 'layer:///identities/user' + 10001,
             displayName: 'User ' + 10001,

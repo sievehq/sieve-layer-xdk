@@ -87,7 +87,6 @@ describe("The Client Channel Mixin", function() {
         var channel;
         beforeEach(function() {
             channel = new Layer.Core.Channel({
-                client: client,
                 fromServer: {
                     id: "layer:///channels/" + Layer.Utils.generateUUID(),
                     membership: {
@@ -124,7 +123,6 @@ describe("The Client Channel Mixin", function() {
         it("Should register a channel in _models.channels", function() {
             client._models.channels = {};
             var c = new Layer.Core.Channel({
-                client: client
             });
 
             // Run
@@ -141,7 +139,6 @@ describe("The Client Channel Mixin", function() {
 
             // Run
             var c = new Layer.Core.Channel({
-                client: client,
             });
             client._addChannel(c);
 
@@ -153,7 +150,6 @@ describe("The Client Channel Mixin", function() {
         it("Should not do anything if the channel is already added", function() {
             // Setup
             var c = new Layer.Core.Channel({
-                client: client
             });
             client._addChannel(c);
             spyOn(client, "_triggerAsync");
@@ -162,7 +158,6 @@ describe("The Client Channel Mixin", function() {
             // Run
             var c2 = new Layer.Core.Channel({
                 id: c.id,
-                client: client
             });
             client._addChannel(c2);
 
@@ -176,7 +171,6 @@ describe("The Client Channel Mixin", function() {
 
             // Run
             var c = new Layer.Core.Channel({
-                client: client
             });
             client._addChannel(c);
 
@@ -207,7 +201,6 @@ describe("The Client Channel Mixin", function() {
         it("Should trigger event on removing channel", function() {
             // Setup
             var c1 = new Layer.Core.Channel({
-                client: client
             });
             client._addChannel(c1);
             spyOn(client, "_triggerAsync");
@@ -227,7 +220,6 @@ describe("The Client Channel Mixin", function() {
         it("Should do nothing if channel not registered", function() {
             // Setup
             var c1 = new Layer.Core.Channel({
-                client: client
             });
             client._models.channels = {};
             spyOn(client, "trigger");
@@ -267,7 +259,6 @@ describe("The Client Channel Mixin", function() {
         it("Should register the channel under the new id", function() {
             // Setup
             var c1 = new Layer.Core.Channel({
-                client: client
             });
             client._addChannel(c1);
             var c1id = c1.id;
@@ -283,7 +274,6 @@ describe("The Client Channel Mixin", function() {
         it("Should delete the old id", function() {
             // Setup
             var c1 = new Layer.Core.Channel({
-                client: client
             });
             client._addChannel(c1);
             var c1id = c1.id;
@@ -303,7 +293,6 @@ describe("The Client Channel Mixin", function() {
             // Setup
             var c1 = new Layer.Core.Channel({
                 members: ["a"],
-                client: client
             });
             client._addChannel(c1);
             var m1 = c1.createMessage("Hey").send();
@@ -412,7 +401,6 @@ describe("The Client Channel Mixin", function() {
             expect(Layer.Core.Channel.create).toHaveBeenCalledWith({
                 members: ["a", "z"],
                 private: false,
-                client: client,
                 _loadType: "websocket"
             });
         });
@@ -425,7 +413,6 @@ describe("The Client Channel Mixin", function() {
             expect(Layer.Core.Channel.create).toHaveBeenCalledWith({
                 members: [userIdentity, userIdentity2],
                 private: false,
-                client: client,
                 _loadType: "websocket"
             });
         });
@@ -441,7 +428,6 @@ describe("The Client Channel Mixin", function() {
             expect(Layer.Core.Channel.create).toHaveBeenCalledWith({
                 members: ["a", "z"],
                 private: true,
-                client: client,
                 _loadType: "websocket"
             });
         });

@@ -91,7 +91,6 @@ describe("The Client Conversation Mixin", function() {
         var conversation;
         beforeEach(function() {
             conversation = new Layer.Core.Conversation({
-                client: client,
                 fromServer: {
                     id: "layer:///conversations/" + Layer.Utils.generateUUID(),
                     participants: ["a"]
@@ -136,7 +135,6 @@ describe("The Client Conversation Mixin", function() {
         it("Should register a conversation in _models.conversations", function() {
             client._models.conversations = {};
             var c = new Layer.Core.Conversation({
-                client: client
             });
 
             // Run
@@ -153,7 +151,6 @@ describe("The Client Conversation Mixin", function() {
 
             // Run
             var c = new Layer.Core.Conversation({
-                client: client,
             });
             client._addConversation(c);
 
@@ -165,7 +162,6 @@ describe("The Client Conversation Mixin", function() {
         it("Should not do anything if the conversation is already added", function() {
             // Setup
             var c = new Layer.Core.Conversation({
-                client: client
             });
             client._addConversation(c);
             spyOn(client, "_triggerAsync");
@@ -174,7 +170,6 @@ describe("The Client Conversation Mixin", function() {
             // Run
             var c2 = new Layer.Core.Conversation({
                 id: c.id,
-                client: client
             });
             client._addConversation(c2);
 
@@ -188,7 +183,6 @@ describe("The Client Conversation Mixin", function() {
 
             // Run
             var c = new Layer.Core.Conversation({
-                client: client
             });
             client._addConversation(c);
 
@@ -219,7 +213,6 @@ describe("The Client Conversation Mixin", function() {
         it("Should trigger event on removing conversation", function() {
             // Setup
             var c1 = new Layer.Core.Conversation({
-                client: client
             });
             client._addConversation(c1);
             spyOn(client, "_triggerAsync");
@@ -239,7 +232,6 @@ describe("The Client Conversation Mixin", function() {
         it("Should do nothing if conversation not registered", function() {
             // Setup
             var c1 = new Layer.Core.Conversation({
-                client: client
             });
             client._models.conversations = {};
             spyOn(client, "trigger");
@@ -279,7 +271,6 @@ describe("The Client Conversation Mixin", function() {
         it("Should register the conversation under the new id", function() {
             // Setup
             var c1 = new Layer.Core.Conversation({
-                client: client
             });
             client._addConversation(c1);
             var c1id = c1.id;
@@ -295,7 +286,6 @@ describe("The Client Conversation Mixin", function() {
         it("Should delete the old id", function() {
             // Setup
             var c1 = new Layer.Core.Conversation({
-                client: client
             });
             client._addConversation(c1);
             var c1id = c1.id;
@@ -315,7 +305,6 @@ describe("The Client Conversation Mixin", function() {
             // Setup
             var c1 = new Layer.Core.Conversation({
                 participants: ["a"],
-                client: client
             });
             client._addConversation(c1);
             var m1 = c1.createMessage("Hey").send();
@@ -423,7 +412,6 @@ describe("The Client Conversation Mixin", function() {
             expect(Layer.Core.Conversation.create).toHaveBeenCalledWith({
                 participants: ["a", "z"],
                 distinct: true,
-                client: client,
                 _loadType: "websocket"
             });
         });
@@ -436,7 +424,6 @@ describe("The Client Conversation Mixin", function() {
             expect(Layer.Core.Conversation.create).toHaveBeenCalledWith({
                 participants: [userIdentity, userIdentity2],
                 distinct: true,
-                client: client,
                 _loadType: "websocket"
             });
         });
@@ -452,7 +439,6 @@ describe("The Client Conversation Mixin", function() {
             expect(Layer.Core.Conversation.create).toHaveBeenCalledWith({
                 participants: ["a", "z"],
                 distinct: false,
-                client: client,
                 _loadType: "websocket"
             });
         });

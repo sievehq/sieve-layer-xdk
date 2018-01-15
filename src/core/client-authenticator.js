@@ -84,16 +84,13 @@ class ClientAuthenticator extends Root {
   _initComponents() {
     // Setup the websocket manager; won't connect until we trigger an authenticated event
     this.socketManager = new SocketManager({
-      client: this,
     });
 
     this.socketChangeManager = new WebsocketChangeManager({
-      client: this,
       socketManager: this.socketManager,
     });
 
     this.socketRequestManager = new WebsocketRequestManager({
-      client: this,
       socketManager: this.socketManager,
     });
 
@@ -108,7 +105,6 @@ class ClientAuthenticator extends Root {
       onlineManager: this.onlineManager,
       socketManager: this.socketManager,
       requestManager: this.socketRequestManager,
-      client: this,
     });
   }
 
@@ -601,7 +597,6 @@ class ClientAuthenticator extends Root {
     // Setup the Database Manager
     if (!this.dbManager && DbManager) {
       this.dbManager = new DbManager({
-        client: this,
         tables: this.persistenceFeatures,
         enabled: this.isPersistenceEnabled,
       });
