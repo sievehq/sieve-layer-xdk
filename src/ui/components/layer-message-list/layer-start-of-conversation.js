@@ -41,6 +41,7 @@ registerComponent('layer-start-of-conversation', {
     conversation: {
       set(value) {
         if (this.nodes.startDate) {
+          if (value) value.on('conversations:change conversations:loaded', this._onConversationChange, this);
           this.nodes.startDate.date = value ? value.createdAt : null;
         }
       },
@@ -87,6 +88,11 @@ registerComponent('layer-start-of-conversation', {
           });
         }
       },
+    },
+  },
+  methods: {
+    _onConversationChange(evt) {
+      this.nodes.startDate.date = this.conversation.createdAt;
     },
   },
 });

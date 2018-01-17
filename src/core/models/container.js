@@ -406,6 +406,14 @@ class Container extends Syncable {
     return super.trigger(evtName, args);
   }
 
+  __updateCreatedAt(newValue, oldValue) {
+    /*this._triggerAsync(`${this.constructor.eventPrefix}:change`, {
+      property: 'createdAt',
+      newValue,
+      oldValue,
+    });*/
+  }
+
   /**
    * __ Methods are automatically called by property setters.
    *
