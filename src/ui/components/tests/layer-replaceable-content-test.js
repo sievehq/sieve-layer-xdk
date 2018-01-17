@@ -61,6 +61,40 @@ describe('layer-replaceable-content', function() {
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.classList.contains('layer-replaceable-inner')).toBe(true);
   });
 
+  it('Should accept a replaceableContent String', function() {
+    // Setup
+    var button = document.createElement("button");
+    el.nodes.composer.nodes.composerButtonPanelRight.replaceableContent = {
+      composerButtonPanelRight: '<layer-avatar></layer-avatar>',
+    };
+    CustomElements.takeRecords();
+    Layer.Utils.defer.flush();
+
+
+    // Test
+    expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild.tagName).toEqual('LAYER-AVATAR');
+    expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.tagName).toEqual("DIV");
+    expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.classList.contains('layer-replaceable-inner')).toBe(true);
+  });
+
+  it('Should accept a replaceableContent String generator', function() {
+    // Setup
+    var button = document.createElement("button");
+    el.nodes.composer.nodes.composerButtonPanelRight.replaceableContent = {
+      composerButtonPanelRight: function() {
+        return '<layer-avatar></layer-avatar>';
+      }
+    };
+    CustomElements.takeRecords();
+    Layer.Utils.defer.flush();
+
+
+    // Test
+    expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild.tagName).toEqual('LAYER-AVATAR');
+    expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.tagName).toEqual("DIV");
+    expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.classList.contains('layer-replaceable-inner')).toBe(true);
+  });
+
   it('Should ignore a replaceableContent DOM node with wrong name', function() {
     // Setup
     var button = document.createElement("button");

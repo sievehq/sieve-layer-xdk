@@ -7,7 +7,7 @@
  */
 import { client } from '../../settings';
 import Layer from '../../core';
-import Util from '../../utils';
+import Util, { defer } from '../../utils';
 import { animatedScrollTo } from '../ui-utils';
 import { registerComponent } from '../components/component';
 import HasQuery from './has-query';
@@ -464,6 +464,10 @@ module.exports = {
 
       // isTopItemNew is true if there wasn't any prior data... data length == event length
       this._gatherAndProcessAffectedItems(affectedItems, evt.data.length === this.properties.query.data.length);
+
+      CustomElements.takeRecords();
+      defer.flush();
+
       this.isDataLoading = this.properties.query.isFiring;
       if (!evt.inRender) this.onRerender();
       if (this._renderPagedDataDone) this._renderPagedDataDone();

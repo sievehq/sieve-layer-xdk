@@ -104,13 +104,15 @@ var dbIt = it;
               isFullIdentity: false
             });
 
+            // The above commands are going to write stuff to db
+            // if we deleteTables before then they will wind up in our result data
             setTimeout(function() {
               deleteTables(function() {
                 setTimeout(function() {
                   done();
                 }, 100);
               });
-            }, 250);
+            }, 400);
           });
 
           client._clientAuthenticated();
@@ -1838,7 +1840,7 @@ var dbIt = it;
 
       it("Should load nothing if table is", function(done) {
         var dbManager = new Layer.Core.DbManager({
-          enabled: true,          ,
+          enabled: true,
           tables: {conversations: true}
         });
         dbManager._loadAll('messages', function(result) {
@@ -1906,7 +1908,7 @@ var dbIt = it;
 
       it("Should get nothing if disabled", function(done) {
         var dbManager = new Layer.Core.DbManager({
-          enabled: true,          ,
+          enabled: true,
           tables: {messages: false}
           });
         const query = window.IDBKeyRange.bound([conversation.id, 0], [conversation.id, MAX_SAFE_INTEGER]);

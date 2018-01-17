@@ -213,6 +213,8 @@ registerComponent('layer-message-viewer', {
       if (this.nodes.cardContainer) this.nodes.cardContainer._onAfterCreate();
       if (cardUI._onAfterCreate) cardUI._onAfterCreate();
       if (this.nodes.cardContainer) cardUI._setupContainerClasses();
+      if (cardUI.hideMessageItemRightAndLeftContent && this.parentComponent) this.parentComponent.classList.add('layer-message-item-hide-replaceable-content');
+
     },
 
     /**

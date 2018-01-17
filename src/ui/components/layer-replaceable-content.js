@@ -19,6 +19,7 @@
  * @extends Layer.UI.Component
  */
 import { registerComponent } from './component';
+import { defer } from '../../utils';
 
 registerComponent('layer-replaceable-content', {
   template: '<div class="layer-replaceable-inner" layer-id="content"></div>',
@@ -244,10 +245,18 @@ registerComponent('layer-replaceable-content', {
      * @private
      */
     _getGeneratedNode(parent, nodeOrGenerator) {
+      let result = nodeOrGenerator;
       if (typeof nodeOrGenerator === 'function') {
-        return nodeOrGenerator.call(parent, this.parentComponent, this);
+        result = nodeOrGenerator.call(parent, this.parentComponent, this);
+      }
+
+      if (typeof result === 'string') {
+        const node = document.createElement('div');
+        node.classList.add('layer-replaceable-inner');
+        node.innerHTML = result;
+        return node;
       } else {
-        return nodeOrGenerator;
+        return result;
       }
     },
   },

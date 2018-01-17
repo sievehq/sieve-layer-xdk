@@ -1,5 +1,5 @@
 /**
- * This widget renders any status message sent within the Message List.
+ * This widget renders any status message  within the Message List.
  *
  * Status Messages are rendered as centered text without any "sender name", avatar, timestamp or status.
  *
@@ -77,6 +77,10 @@ registerComponent('layer-message-item-status', {
     }
     layer-message-item-status .layer-message-item-main {
       flex-grow: 1;
+    }
+    layer-message-item-status.layer-message-item-hide-replaceable-content .layer-message-right-side,
+    layer-message-item-status.layer-message-item-hide-replaceable-content .layer-message-left-side {
+      display: none;
     }
   `,
 });

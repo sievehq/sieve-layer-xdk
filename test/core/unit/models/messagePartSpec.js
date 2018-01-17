@@ -906,21 +906,17 @@ describe("The MessageParts class", function() {
 
     describe("The createModel() method", function() {
         it("Should create a new model", function() {
-            describe("The createModel() method", function() {
-                it("Should call rootPart.createModel()", function() {
-                    // Setup
-                    var part = new Layer.Core.MessagePart({
-                        mimeType: "application/vnd.layer.text+json",
-                        body: '{"text": "a"}'
-                    });
 
-                    // Run
-                    var TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
-                    expect(part.createModel()).toEqual(jasmine.any(TextModel));
-                });
+            // Setup
+            var part = new Layer.Core.MessagePart({
+                mimeType: "application/vnd.layer.text+json",
+                body: '{"text": "a"}'
             });
+            var message = new Layer.Core.Message.ConversationMessage({parts: [part]});
 
-
+            // Run
+            var TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+            expect(part.createModel()).toEqual(jasmine.any(TextModel));
         });
 
         it("Should return a cached model", function() {

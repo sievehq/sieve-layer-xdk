@@ -82,6 +82,10 @@ registerComponent('layer-carousel-message-view', {
     widthType: {
       value: Constants.WIDTH.FLEX,
     },
+
+    hideMessageItemRightAndLeftContent: {
+      value: true,
+    },
   },
   methods: {
 

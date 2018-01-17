@@ -1648,7 +1648,6 @@ getJasmineRequireObj().pp = function(j$) {
   };
 
   StringPrettyPrinter.prototype.emitObject = function(obj) {
-debugger;
     var self = this;
 
     //if (obj && typeof obj.toObject === 'function') obj = obj.toObject();
@@ -1672,7 +1671,7 @@ debugger;
         } else {
           self.append(', ');
         }
-        self.append('\n' + new Array(self.ppNestLevel_).join('  ') + (counter++) + ': ');
+        self.append('\n' + new Array(self.ppNestLevel_).join('  '));
         self.append(property);
         self.append(': ');
         if (isGetter) {
@@ -2365,8 +2364,8 @@ getJasmineRequireObj().matchersUtil = function(j$) {
       }*/
 
       var message = 'Expected ' +
-        j$.pp(actual) +
-        (isNot ? ' not ' : ' ') +
+        j$.pp(actual) + '\n' +
+        (isNot ? ' not ' : ' ') + '\n' +
         englishyPredicate;
 
       if (expected.length > 0) {
@@ -2789,7 +2788,7 @@ getJasmineRequireObj().toHaveBeenCalledWith = function(j$) {
           result.pass = true;
           result.message = function() { return 'Expected spy ' + actual.and.identity() + ' not to have been called with ' + j$.pp(expectedArgs) + ' but it was.'; };
         } else {
-          result.message = function() { return 'Expected spy ' + actual.and.identity() + ' to have been called with ' + j$.pp(expectedArgs) + ' but actual calls were ' + j$.pp(actual.calls.allArgs()).replace(/^\[ | \]$/g, '') + '.'; };
+          result.message = function() { return 'Expected spy ' + actual.and.identity() + ' to have been called with \n' + j$.pp(expectedArgs) + '\n but actual calls were \n' + j$.pp(actual.calls.allArgs()).replace(/^\[ | \]$/g, '') + '.'; };
         }
 
         return result;

@@ -15,6 +15,7 @@
  */
 import { registerComponent } from '../component';
 import MessageItemMixin from './layer-message-item-mixin';
+import RCUtils from '../../ui-utils/replaceable-content-utils';
 
 registerComponent('layer-message-item-sent', {
   mixins: [MessageItemMixin],
@@ -81,5 +82,17 @@ registerComponent('layer-message-item-sent', {
       flex-direction: row;
       align-items: center;
     }
+    layer-message-item-sent.layer-message-item-hide-replaceable-content .layer-message-right-side,
+    layer-message-item-sent.layer-message-item-hide-replaceable-content .layer-message-left-side {
+      display: none;
+    }
   `,
+  properties: {
+    replaceableContent: {
+      value: {
+        messageSentRightSide: RCUtils.avatarNode + RCUtils.menuNode,
+        messageSentFooter: RCUtils.statusNode + RCUtils.dateNode,
+      },
+    },
+  },
 });

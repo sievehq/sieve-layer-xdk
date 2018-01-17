@@ -21,6 +21,7 @@
         * `messageSentLeft`: Customize area to the left of the messages sent by the current user
         * `messageReceivedLeft`: Customize area to the left of the messages received by the current user
         * `messageStatusLeft`: Customize area to the left of the status messages
+    * Furthermore, Layer.UI.UIUtils.ReplacableSnippets has been added with simple strings that can be used as standard values for the above Replaceable Content fields
 * API Reference is now published at https://preview-docs.layer.com/xdk/webxdk/introduction
 * `<layer-status-message />` can now be configured with properties without having to completely rewrite the `onRender` method for each customization
 * UI Component Lifecycle Changes:

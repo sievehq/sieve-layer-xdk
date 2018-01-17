@@ -478,6 +478,10 @@ export default class ActiveConversation extends Component {
           />
         </div>);
       },
+      /*messageSentRightSide: "<div>Hello World</div>",
+      messageSentLeftSide: function() {
+        return "<div>Goodbye World</div>";
+      }*/
     };
 
     return (

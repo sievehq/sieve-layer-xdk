@@ -15,6 +15,7 @@
  */
 import { registerComponent } from '../component';
 import MessageItemMixin from './layer-message-item-mixin';
+import RCUtils from '../../ui-utils/replaceable-content-utils';
 
 registerComponent('layer-message-item-received', {
   mixins: [MessageItemMixin],
@@ -72,5 +73,19 @@ registerComponent('layer-message-item-received', {
     layer-message-item-received layer-message-text-plain {
       display: block;
     }
+    layer-message-item-received.layer-message-item-hide-replaceable-content .layer-message-right-side,
+    layer-message-item-received.layer-message-item-hide-replaceable-content .layer-message-left-side {
+      display: none;
+    }
   `,
+  properties: {
+    replaceableContent: {
+      value: {
+        messageReceivedLeftSide: RCUtils.avatarNode,
+        messageReceivedRightSide: RCUtils.menuNode,
+        messageReceivedFooter: RCUtils.dateNode,
+        messageReceivedHeader: RCUtils.senderNode,
+      },
+    },
+  },
 });

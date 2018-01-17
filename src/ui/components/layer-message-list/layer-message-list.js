@@ -116,8 +116,7 @@
  * @mixin Layer.UI.mixins.ListLoadIndicator
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
-import { defer, generateUUID } from '../../../utils';
-import UI from '../../layer-ui';
+import { defer, generateUUID, logger } from '../../../utils';
 import Settings from '../../../settings';
 import StatusMessageManager from '../../ui-utils/status-message-manager';
 import MessageHandlers from '../../handlers/message/message-handlers';
@@ -265,82 +264,6 @@ registerComponent('layer-message-list', {
      */
     screenFullsBeforePaging: {
       value: 2.0,
-    },
-
-    /**
-     * Note that we provide default definitions of replaceable content here rather than in the
-     * message item; this could move in the future.
-     *
-     * @property replaceableContent
-     */
-    replaceableContent: {
-      value: {
-        messageReceivedLeftSide: function messageReceivedLeftSide(widget) {
-          // const item = widget.item;
-          // const model = item.createModel();
-          // if (model && model.constructor.messageRenderer === 'layer-carousel-message-view') return null;
-
-          const div = document.createElement('div');
-          div.classList.add('layer-replaceable-inner');
-          const avatar = document.createElement('layer-avatar');
-          avatar.size = 'small';
-          avatar.showPresence = false;
-          avatar.setAttribute('layer-id', 'avatar');
-          div.appendChild(avatar);
-          return div;
-        },
-        messageReceivedRightSide: function messageReceivedRightSide(widget) {
-          const item = widget.item;
-          const model = item.createModel();
-          if (model && model.constructor.messageRenderer === 'layer-carousel-message-view') return null;
-
-          const menu = document.createElement('layer-menu-button');
-          menu.setAttribute('layer-id', 'menuButton');
-          return menu;
-        },
-        messageSentRightSide: function messageSentRightSide(widget) {
-          const item = widget.item;
-          const model = item.createModel();
-          if (model && model.constructor.messageRenderer === 'layer-carousel-message-view') return null;
-
-          const div = document.createElement('div');
-          if (item.sender.isMine) {
-            const avatar = document.createElement('layer-avatar');
-            avatar.size = 'small';
-            avatar.showPresence = false;
-            avatar.setAttribute('layer-id', 'avatar');
-            div.appendChild(avatar);
-          }
-          const menu = document.createElement('layer-menu-button');
-          menu.setAttribute('layer-id', 'menuButton');
-          div.appendChild(menu);
-          return div;
-        },
-        messageReceivedFooter: function messageReceivedFooter(widget) {
-          const date = document.createElement('layer-date');
-          date.setAttribute('layer-id', 'date');
-          date.dateFormat = this.dateFormat;
-          return date;
-        },
-        messageSentFooter: function messageRowFooter(widget) {
-          const div = document.createElement('div');
-          const status = document.createElement('layer-message-status');
-          status.setAttribute('layer-id', 'status');
-          div.appendChild(status);
-
-          const date = document.createElement('layer-date');
-          date.setAttribute('layer-id', 'date');
-          date.dateFormat = this.dateFormat;
-          div.appendChild(date);
-          return div;
-        },
-        messageReceivedHeader: function messageRowHeader(widget) {
-          const div = document.createElement('div');
-          div.setAttribute('layer-id', 'sender');
-          div.classList.add('layer-sender-name');
-          return div;
-        },
-      },
     },
   },
   methods: {
@@ -867,7 +790,7 @@ registerComponent('layer-message-list', {
           // When paging new data, top item should always be new
           this._processAffectedWidgets(affectedWidgets, true);
         } catch (e) {
-          console.error(e);
+          logger.error(e);
         }
       }
 
@@ -973,6 +896,8 @@ registerComponent('layer-message-list', {
      * @param {Boolean} isDoneSizingContent
      */
     onPagedDataDone(isDoneSizingContent) {
+      CustomElements.takeRecords();
+      defer.flush();
       if (this.properties.stuckToBottom) {
         this.scrollTo(this.scrollHeight - this.clientHeight);
       }

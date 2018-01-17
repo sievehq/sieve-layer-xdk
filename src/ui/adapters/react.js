@@ -94,21 +94,27 @@ function initReact(React, ReactDom) {
             if (typeof value === 'function' && !value.replaceableIsSetup) {
               this.replaceableContent[nodeName] = (widget, parent) => {
                 let result = value(widget);
-                if (result && !(result instanceof HTMLElement)) {
+                if (result) {
+                  if (typeof result === 'string') {
+                    return result;
+                  } else if (!(result instanceof HTMLElement)) {
 
-                  // React does bad stuff if you give it a component without children to ReactDom.render()
-                  if (!result.props.children) {
-                    result = React.createElement('div', null, result);
+                    // React does bad stuff if you give it a component without children to ReactDom.render()
+                    if (!result.props.children) {
+                      result = React.createElement('div', null, result);
+                    }
+
+                    // Render it
+                    const tmpNode = parent || document.createElement('div');
+                    widget.addEventListener('layer-widget-destroyed', () => ReactDom.unmountComponentAtNode(tmpNode));
+                    return ReactDom.render(result, tmpNode);
+                  } else {
+                    return result;
                   }
-
-                  // Render it
-                  const tmpNode = parent || document.createElement('div');
-                  widget.addEventListener('layer-widget-destroyed', () => ReactDom.unmountComponentAtNode(tmpNode));
-                  return ReactDom.render(result, tmpNode);
-                } else {
-                  return result;
                 }
               };
+            } else {
+              this.replaceableContent[nodeName] = value;
             }
           });
         }

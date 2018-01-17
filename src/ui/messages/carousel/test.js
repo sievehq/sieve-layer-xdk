@@ -190,6 +190,27 @@ describe('Carousel Message Components', function() {
       if (el) el.onDestroy();
     });
 
+    it("Should have hideMessageItemRightAndLeftContent of true", function() {
+      var model = new CarouselModel({
+        items: [
+          new TextModel({text: "a"}),
+          new TextModel({text: "b"}),
+          new TextModel({text: "c"}),
+        ]
+      });
+      model.generateMessage(conversation, function(m) {
+        message = m;
+      });
+      el.parentComponent = document.createElement('layer-message-item-sent');
+      el.message = message;
+
+      Layer.Utils.defer.flush();
+
+      // Message Viewer: gets the layer-card-width-any-width class
+      expect(el.nodes.ui.hideMessageItemRightAndLeftContent).toBe(true);
+      expect(el.parentComponent.classList.contains('layer-message-item-hide-replaceable-content')).toBe(true);
+    });
+
     it("Should render 3 carousel items", function() {
       var model = new CarouselModel({
         items: [

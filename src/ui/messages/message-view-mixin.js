@@ -112,6 +112,7 @@ module.exports = {
     cssClassList: {
       value: ['layer-message-type-view'],
     },
+    hideMessageItemRightAndLeftContent: {},
   },
   methods: {
 

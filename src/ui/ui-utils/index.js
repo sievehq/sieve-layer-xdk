@@ -5,6 +5,7 @@
 import { animatedScrollTo, animatedScrollLeftTo } from './animated-scroll';
 import StatusManager from './status-message-manager';
 import ListSeparatorManager from './list-separator-manager';
+import RCUtils from './replaceable-content-utils';
 
  /**
  * Utility returns whether or not the window is in the background.
@@ -63,5 +64,6 @@ module.exports.normalizeSize = (dimensions, maxSizes) => {
 
 module.exports.animatedScrollTo = animatedScrollTo;
 module.exports.animatedScrollLeftTo = animatedScrollLeftTo;
+module.exports.ReplaceableSnippets = RCUtils;
 Object.keys(StatusManager).forEach(keyName => (module.exports[keyName] = StatusManager[keyName]));
 Object.keys(ListSeparatorManager).forEach(keyName => (module.exports[keyName] = ListSeparatorManager[keyName]));

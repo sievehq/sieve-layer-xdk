@@ -11,6 +11,8 @@
  * @class Layer.UI.mixins.QueryEndIndicator
  */
 import Util from '../../utils';
+import { registerComponent } from '../components/component';
+
 module.exports = {
   properties: {
     /**
@@ -51,14 +53,17 @@ module.exports = {
      * @private
      * @param {Event} evt
      */
-    _renderPagedDataDone(evt = {}) {
-      if (this.query.isDestroyed) {
-        this.isEndOfResults = false;
-      } else {
-        Util.defer(() => {
-          this.isEndOfResults = this.query.pagedToEnd;
-        });
-      }
+    _renderPagedDataDone: {
+      mode: registerComponent.MODES.BEFORE,
+      value: function _renderPagedDataDone(evt = {}) {
+        if (this.query.isDestroyed) {
+          this.isEndOfResults = false;
+        } else {
+          Util.defer(() => {
+            this.isEndOfResults = this.query.pagedToEnd;
+          });
+        }
+      },
     },
   },
 };
