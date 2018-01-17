@@ -62,7 +62,7 @@
 import { client as Client } from '../../../settings';
 import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
 import ResponseModel from '../response/layer-response-message-model';
-import TextModel from '../text/layer-text-message-model';
+import StatusModel from '../status/layer-status-message-model';
 import ChoiceItem from './layer-choice-message-model-item';
 import { ErrorDictionary } from '../../../core/layer-error';
 
@@ -399,7 +399,7 @@ class ChoiceModel extends MessageTypeModel {
       participantData,
       responseTo: this.message.id,
       responseToNodeId: this.parentId || this.nodeId,
-      displayModel: text ? new TextModel({ text }) : null,
+      displayModel: text ? new StatusModel({ text }) : null,
     });
 
     // Technically, one shouldn't ever perform these actions on a message that hasn't yet been sent.

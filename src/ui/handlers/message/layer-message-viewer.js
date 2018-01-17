@@ -71,11 +71,12 @@ registerComponent('layer-message-viewer', {
       set(message) {
         const model = (message && !this.properties.model) ? message.createModel() : null;
         if (model) {
+          this.classList.remove('layer-model-not-supported');
           this.properties.model = model;
           if (this.properties._internalState.onAfterCreateCalled) {
             this._setupMessage();
           }
-        } else {
+        } else if (!this.model) {
           this.classList.add('layer-model-not-supported');
           this.innerHTML = this.modelNotSupported + (this.message.getRootPart() || this.message.findPart()).mimeType;
         }

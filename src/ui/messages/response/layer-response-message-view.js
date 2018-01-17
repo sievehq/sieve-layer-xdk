@@ -24,7 +24,16 @@ import './layer-response-message-model';
 
 registerComponent('layer-response-message-view', {
   mixins: [MessageViewMixin],
-  style: 'layer-message-viewer.layer-response-message-view {}',
+  style: `
+    layer-message-viewer.layer-response-message-view {
+      flex-grow: 1;
+    }
+    layer-response-message-view {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+  `,
   properties: {
 
     // widthType is derived from the Response's contentView if there is one

@@ -33,6 +33,7 @@
     * `findPart`: Finds a single part matching the callback
     * `getRootPart`: Returns the Root Message Part (main part)
     * `getPartsMatchingAttribute`: Searches parts for one with the specified MIME Type attributes
+* Response Messages now contain only a Status Message Type Model, and no longer can contain a Text Message Type Model
 
 ### Build Breaking Changes
 

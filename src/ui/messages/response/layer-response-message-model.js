@@ -55,7 +55,6 @@
  */
 import Core, { MessagePart, MessageTypeModel } from '../../../core';
 import { registerStatusModel } from '../../ui-utils';
-
 class ResponseModel extends MessageTypeModel {
 
   /**
@@ -79,7 +78,7 @@ class ResponseModel extends MessageTypeModel {
 
     // Add the displayModel's MessagePart, if there is one
     if (this.displayModel) {
-      this._addModel(this.displayModel, 'message', (moreParts) => {
+      this._addModel(this.displayModel, 'status', (moreParts) => {
         moreParts.forEach(p => parts.push(p));
         callback(parts);
       });
@@ -99,7 +98,16 @@ class ResponseModel extends MessageTypeModel {
     super._parseMessage(payload);
 
     // Find the displayModel in the MessageParts and create that Model.
-    this.displayModel = this.getModelsByRole('message')[0] || null;
+    this.displayModel = this.getModelsByRole('status')[0] || null;
+
+    // This code is for backwards compatability with Web XDK 1.0.0-pre1.X and will likely be removed by Web XDK 3.0.0
+    if (!this.displayModel) {
+      const part = this.message.getPartsMatchingAttribute({ role: 'message' })[0];
+      if (part) {
+        const StatusModel = Core.Client.getMessageTypeModelClass('StatusModel');
+        this.displayModel = new StatusModel({ text: JSON.parse(part.body).text });
+      }
+    }
   }
 
   // Used to render Last Message in the Conversation List

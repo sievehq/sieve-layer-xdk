@@ -94,12 +94,12 @@ class FeedbackModel extends MessageTypeModel {
       Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
     }
 
-    const TextModel = Core.Client.getMessageTypeModelClass('TextModel');
+    const StatusModel = Core.Client.getMessageTypeModelClass('StatusModel');
     const responseModel = new ResponseModel({
       participantData,
       responseTo: this.message.id,
       responseToNodeId: this.nodeId,
-      displayModel: new TextModel({
+      displayModel: new StatusModel({
         text: responseText,
       }),
     });
