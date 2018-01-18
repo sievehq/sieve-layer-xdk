@@ -1,12 +1,17 @@
 /*
  * The Menu Button widget
  */
-layer-menu-button span {
-  font-size: 20px;
-  color: @menu-button-color;
-  &:hover {
-    opacity: 1;
-    color: @menu-button-hover-color;
+layer-menu-button {
+  span {
+    top: -9px;
+    left: -9px;
+    padding: 0px 8px;
+    font-size: 20px;
+    color: @menu-button-color;
+    &:hover {
+      opacity: 1;
+      color: @menu-button-hover-color;
+    }
   }
 }
 .layer-list-item:hover layer-menu-button span {

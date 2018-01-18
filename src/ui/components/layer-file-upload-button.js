@@ -44,20 +44,6 @@ registerComponent('layer-file-upload-button', {
       flex-direction: column;
       justify-content: center;
     }
-    /* Inspired by http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
-    layer-file-upload-button input {
-      width: 0.1px;
-      height: 0.1px;
-      opacity: 0;
-      overflow: hidden;
-      position: absolute;
-      z-index: -1;
-    }
-    layer-file-upload-button label {
-      display: block;
-      pointer-events: none;
-      text-align: center;
-    }
   `,
   properties: {
     /**

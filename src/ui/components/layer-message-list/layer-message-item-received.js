@@ -51,24 +51,15 @@ registerComponent('layer-message-item-received', {
       flex-direction: column;
       align-content: stretch;
     }
-
     layer-message-item-received .layer-list-item {
       display: flex;
       flex-direction: column;
       align-content: stretch;
     }
-
-    layer-message-item-received .layer-message-row {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-end;
-    }
-
     layer-message-item-received  .layer-message-item-main {
       flex-grow: 1;
       overflow: hidden;
     }
-
     /* Insure that text, images, videos, etc... are all left aligned */
     layer-message-item-received layer-message-text-plain {
       display: block;

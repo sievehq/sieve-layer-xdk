@@ -57,12 +57,9 @@ registerComponent('layer-menu-button', {
       height: 14px;
     }
     layer-menu-button span {
-      padding: 0px 8px;
       user-select: none;
       -webkit-user-select: none;
       position: absolute;
-      top: -9px;
-      left: -9px;
     }
   `,
   properties: {

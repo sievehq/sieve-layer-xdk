@@ -47,28 +47,19 @@ registerComponent('layer-identity-item', {
       flex-direction: row;
       align-items: center;
     }
-
     layer-identity-item .layer-list-item label {
       flex-grow: 1;
       width: 100px; /* Flexbox bug */
     }
-    layer-identity-item.layer-item-filtered .layer-list-item {
-      display: none;
-    }
-    layer-identity-item.layer-identity-item-empty {
-      display: none;
-    }
-    layer-identity-item layer-presence.presence-without-avatar {
+    layer-identity-item.layer-item-filtered .layer-list-item,
+    layer-identity-item.layer-identity-item-empty,
+    layer-identity-item layer-presence.presence-without-avatar,
+    layer-identity-item.layer-size-tiny layer-avatar,
+    layer-identity-item.layer-size-tiny layer-age {
       display: none;
     }
     layer-identity-item.layer-size-tiny layer-presence {
       display: block;
-    }
-    layer-identity-item.layer-size-tiny layer-avatar {
-      display: none;
-    }
-    layer-identity-item.layer-size-tiny layer-age {
-      display: none;
     }
   `,
   properties: {

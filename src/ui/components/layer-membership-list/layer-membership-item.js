@@ -46,9 +46,7 @@ registerComponent('layer-membership-item', {
       flex-grow: 1;
       width: 100px; /* Flexbox bug */
     }
-    layer-membership-item.layer-item-filtered .layer-list-item {
-      display: none;
-    }
+    layer-membership-item.layer-item-filtered .layer-list-item,
     layer-membership-item.layer-membership-item-empty {
       display: none;
     }

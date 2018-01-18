@@ -61,12 +61,10 @@ registerComponent('layer-compose-bar', {
     layer-compose-bar textarea, layer-compose-bar .hidden-resizer, layer-compose-bar .hidden-lineheighter {
       min-height: 20px;
       overflow: hidden;
-      border-width: 1px;
-      border-color: transparent;
-      margin: 0px;
       width: 100%;
       white-space: pre-wrap;
       word-wrap: break-word;
+      max-height: 250px;
     }
     layer-compose-bar textarea {
       resize: none;
@@ -85,7 +83,6 @@ registerComponent('layer-compose-bar', {
       opacity: 0.1;
       white-space: pre-wrap;
       word-wrap: break-word;
-      max-height: 250px;
     }
     layer-compose-bar .layer-compose-edit-panel .hidden-lineheighter {
       top: 0px;
@@ -152,6 +149,8 @@ registerComponent('layer-compose-bar', {
      * @property {String} [placeholder='']
      */
     placeholder: {
+      value: 'Enter a message',
+      noGetterFromSetter: true,
       set(value) {
         this.nodes.input.placeholder = value;
         this.onRender();
@@ -202,6 +201,7 @@ registerComponent('layer-compose-bar', {
       set(value) {
         this.toggleClass('layer-is-disabled', value);
         this.nodes.input.disabled = value;
+        this.nodes.input.placeholder = value ? '' : this.properties.placeholder;
       },
     },
 
@@ -230,7 +230,7 @@ registerComponent('layer-compose-bar', {
       this.classList.add('layer-compose-bar-one-line-of-text');
 
       // Setting this in the template causes errors in IE 11.
-      this.nodes.input.placeholder = 'Enter a message';
+      this.nodes.input.placeholder = this.placeholder;
       this.nodes.input.addEventListener('keydown', this._onKeyDown.bind(this));
       this.nodes.input.addEventListener('input', this._onInput.bind(this));
 

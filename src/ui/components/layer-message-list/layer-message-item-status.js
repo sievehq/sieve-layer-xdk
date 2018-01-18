@@ -59,21 +59,14 @@ registerComponent('layer-message-item-status', {
       flex-direction: column;
       align-content: stretch;
     }
-
     layer-message-item-status .layer-list-item {
       display: flex;
       flex-direction: row;
       align-items: stretch;
     }
-
     layer-message-item-status  .layer-message-item-main {
       overflow: hidden;
       text-align: center;
-    }
-    layer-message-item-status .layer-message-row {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: row;
     }
     layer-message-item-status .layer-message-item-main {
       flex-grow: 1;

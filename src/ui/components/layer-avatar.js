@@ -65,7 +65,6 @@ registerComponent('layer-avatar', {
     layer-avatar {
       display: block;
     }
-
     layer-avatar layer-presence {
       position: absolute;
       bottom: 0px;

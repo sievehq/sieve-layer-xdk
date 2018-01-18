@@ -80,16 +80,12 @@ registerComponent('layer-notifier', {
       z-index: 1000;
       right: 10px;
       top: -10000px;
-      max-width: 40%;
       display: flex;
       opacity: 0;
       transition: opacity 500ms;
     }
-    layer-notifier.layer-notifier-toast-fade {
-      top: 10px;
-    }
+
     layer-notifier.layer-notifier-toast {
-      top: 10px;
       flex-direction: row;
       opacity: 1;
       transition: opacity 1s;

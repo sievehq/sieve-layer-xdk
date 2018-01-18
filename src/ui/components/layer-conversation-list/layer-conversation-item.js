@@ -69,25 +69,16 @@ registerComponent('layer-conversation-item', {
       flex-grow: 1;
       width: 100px; /* Flexbox bug */
     }
-    layer-conversation-item.layer-item-filtered .layer-list-item {
-      display: none;
-    }
-    layer-conversation-item layer-presence, layer-conversation-item .layer-group-counter {
-      display: none;
-    }
-    layer-conversation-item layer-avatar layer-presence {
-      display: block;
-    }
-
-    layer-conversation-item.layer-size-tiny.layer-group-conversation .layer-group-counter {
-      display: block;
-    }
-
-    layer-conversation-item.layer-size-tiny.layer-direct-message-conversation layer-presence {
-      display: block;
-    }
+    layer-conversation-item.layer-item-filtered .layer-list-item,
+    layer-conversation-item layer-presence,
+    layer-conversation-item .layer-group-counter,
     layer-conversation-item.layer-size-tiny layer-avatar {
       display: none;
+    }
+    layer-conversation-item layer-avatar layer-presence,
+    layer-conversation-item.layer-size-tiny.layer-group-conversation .layer-group-counter,
+    layer-conversation-item.layer-size-tiny.layer-direct-message-conversation layer-presence {
+      display: block;
     }
   `,
   properties: {

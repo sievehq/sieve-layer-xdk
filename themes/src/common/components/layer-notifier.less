@@ -1,11 +1,20 @@
 /* Styles for the Toast Popup that notifies users of new Messages */
 layer-notifier {
+  max-width: 40%;
   background-color: @toast-background-color;
   border-radius: @toast-border-radius;
   padding: 10px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 	border: solid 1px @toast-border-color;
   align-items: flex-start;
+
+  &.layer-notifier-toast-fade {
+    top: 10px;
+  }
+
+  &.layer-notifier-toast {
+    top: 10px;
+  }
 
   layer-avatar {
     margin-left: 0px;

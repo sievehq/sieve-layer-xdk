@@ -52,31 +52,22 @@ registerComponent('layer-message-item-sent', {
       flex-direction: column;
       align-content: stretch;
     }
-
     layer-message-item-sent .layer-list-item {
       display: flex;
       flex-direction: column;
       align-items: stretch;
     }
-
-    layer-message-item-sent .layer-message-row {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-end;
-      flex-grow: 1;
-    }
-
     layer-message-item-sent .layer-message-item-main {
       text-align: right;
       flex-grow: 1;
       overflow: hidden;
     }
+    /* For backwards compat message view node */
     layer-message-item-sent .layer-message-item-main .layer-message-item-content {
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
     }
-
     layer-message-item-sent .layer-message-right-side > div {
       display: flex;
       flex-direction: row;

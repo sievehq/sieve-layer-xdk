@@ -86,12 +86,10 @@ registerComponent('layer-conversation-view', {
       flex-direction: column;
       outline: none; /* Don't show focus on the widget; typing will refocus on textarea. */
     }
-
     layer-message-list {
       flex-grow: 1;
       height: 100px;
     }
-
     layer-compose-bar {
       min-height: 30px;
     }
