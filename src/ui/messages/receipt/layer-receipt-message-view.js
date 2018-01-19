@@ -28,7 +28,7 @@ registerComponent('layer-receipt-message-view', {
   <div class='layer-receipt-details'>
     <div class='layer-paid-with layer-receipt-detail-item'>
       <label>Paid with</label>
-      <div class="layer-receipt-paid-with layer-card-description" layer-id='paidWith'></div>
+      <div class="layer-receipt-paid-with layer-receipt-card-description" layer-id='paidWith'></div>
     </div>
     <div class='layer-address layer-receipt-detail-item'>
       <label>Ship to</label>

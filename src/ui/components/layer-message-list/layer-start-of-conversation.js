@@ -41,7 +41,7 @@ registerComponent('layer-start-of-conversation', {
     conversation: {
       set(value) {
         if (this.nodes.startDate) {
-          if (value) value.on('conversations:change conversations:loaded', this._onConversationChange, this);
+          if (value && value.isLoading) value.once(`${value.constructor.eventPrefix}:loaded`, this._onConversationChange, this);
           this.nodes.startDate.date = value ? value.createdAt : null;
         }
       },

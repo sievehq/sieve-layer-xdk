@@ -407,11 +407,11 @@ class Container extends Syncable {
   }
 
   __updateCreatedAt(newValue, oldValue) {
-    /*this._triggerAsync(`${this.constructor.eventPrefix}:change`, {
+    this._triggerAsync(`${this.constructor.eventPrefix}:change`, {
       property: 'createdAt',
       newValue,
       oldValue,
-    });*/
+    });
   }
 
   /**

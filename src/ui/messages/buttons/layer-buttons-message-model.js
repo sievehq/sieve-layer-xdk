@@ -91,7 +91,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, MessageTypeModel, Root, MessageTypeModels } from '../../../core';
-import { uuid } from '../../../utils';
+import { uuid, hyphenate, camelCase, clone } from '../../../utils';
 import ChoiceModel from '../choice/layer-choice-message-model';
 import ChoiceItem from '../choice/layer-choice-message-model-item';
 
@@ -118,7 +118,24 @@ class ButtonsModel extends MessageTypeModel {
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
   _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['buttons']);
+    const body = {
+      buttons: this.buttons.map((button) => {
+        if (button.type === 'choice') {
+          const obj = clone(button);
+          const data = obj.data;
+          if (data) {
+            obj.data = {};
+            Object.keys(data).forEach((dataKey) => {
+              obj.data[hyphenate(dataKey, '_')] = data[dataKey];
+            });
+          }
+          return obj;
+        } else {
+          return button;
+        }
+      }),
+    };
+
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
       body: JSON.stringify(body),
@@ -171,7 +188,12 @@ class ButtonsModel extends MessageTypeModel {
 
     // For Each Choice Button Set:
     choices.forEach((button, index) => {
-      if (!button.data) button.data = {};
+      const buttonData = button.data || {};
+      button.data = {};
+      Object.keys(buttonData).forEach((dataKey) => {
+        button.data[camelCase(dataKey)] = buttonData[dataKey];
+      });
+
       // We don't yet have support for updating a Choice Model if one were to change on the server.
       // Only generate the ChoiceModel if it doesn't already exist.
       // Otherwise just make sure its `responses` get updated

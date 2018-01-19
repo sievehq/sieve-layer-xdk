@@ -64,6 +64,12 @@ exports.camelCase = str =>
 /**
  * Turn a camel case name into a hyphenated name
  *
+ * To camel case, use:
+ *
+ * ```
+ * Utils.hyphenate("aCamelCalsedString", "_");
+ * ```
+ *
  * @method hyphenate
  * @static
  * @param {String} aCamelCasedString

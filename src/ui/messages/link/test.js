@@ -311,9 +311,9 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title, description and author are rendered
-      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('hello');
-      expect(el.querySelector('.layer-card-description').innerText.trim()).toEqual('there');
-      expect(el.querySelector('.layer-card-footer').innerText.trim()).toEqual('all');
+      expect(el.querySelector('.layer-standard-card-container-title').innerText.trim()).toEqual('hello');
+      expect(el.querySelector('.layer-standard-card-container-description').innerText.trim()).toEqual('there');
+      expect(el.querySelector('.layer-standard-card-container-footer').innerText.trim()).toEqual('all');
     });
 
     it("Should render url, title, description, author and image", function() {

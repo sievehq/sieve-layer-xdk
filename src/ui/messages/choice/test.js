@@ -525,11 +525,11 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === Layer.Constants.STANDARD_MIME_TYPES.TEXT);
+        var textPart = responseMessage.findPart(part => part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType);
 
-        expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
+        expect(textPart.mimeType).toEqual('application/vnd.layer.status+json');
         expect(textPart.parentId).toEqual(responsePart.nodeId);
-        expect(textPart.role).toEqual("message");
+        expect(textPart.role).toEqual("status");
         expect(JSON.parse(textPart.body)).toEqual({
           text: 'Frodo the Dodo selected "b" for "hello"'
         });
@@ -569,10 +569,10 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
 
         expect(textPart.parentId).toEqual(responsePart.nodeId);
-        expect(textPart.role).toEqual("message");
+        expect(textPart.role).toEqual("status");
         expect(JSON.parse(textPart.body)).toEqual({
           text: 'Frodo the Dodo deselected "b" for "hello"'
         });
@@ -673,10 +673,10 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
 
         expect(textPart.parentId).toEqual(responsePart.nodeId);
-        expect(textPart.role).toEqual("message");
+        expect(textPart.role).toEqual("status");
         expect(JSON.parse(textPart.body)).toEqual({
           text: 'Frodo the Dodo selected "b" for "hello"'
         });
@@ -716,11 +716,11 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
 
-        expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
+        expect(textPart.mimeType).toEqual('application/vnd.layer.status+json');
         expect(textPart.parentId).toEqual(responsePart.nodeId);
-        expect(textPart.role).toEqual("message");
+        expect(textPart.role).toEqual("status");
         expect(JSON.parse(textPart.body)).toEqual({
           text: 'Frodo the Dodo deselected "b" for "hello"'
         });
@@ -1174,9 +1174,9 @@ describe('Choice Message Components', function() {
         model.selectAnswer({id: "bb"});
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
 
-        expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
+        expect(textPart.mimeType).toEqual('application/vnd.layer.status+json');
         expect(JSON.parse(textPart.body)).toEqual({
           text: 'hey ho'
         });

@@ -846,6 +846,8 @@ registerComponent('layer-message-list', {
      */
     _pagedDataDone(firstVisibleItem, evt, initialOffset) {
       let needsPagedDataDone = true;
+      CustomElements.takeRecords();
+      defer.flush();
 
       if (this.properties.stuckToBottom) {
         // Get all Message Viewers that contain a ui node
@@ -896,8 +898,6 @@ registerComponent('layer-message-list', {
      * @param {Boolean} isDoneSizingContent
      */
     onPagedDataDone(isDoneSizingContent) {
-      CustomElements.takeRecords();
-      defer.flush();
       if (this.properties.stuckToBottom) {
         this.scrollTo(this.scrollHeight - this.clientHeight);
       }

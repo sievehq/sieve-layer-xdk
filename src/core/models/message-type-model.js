@@ -140,7 +140,7 @@ class MessageTypeModel extends Root {
     this._generateParts((parts) => {
       this.childParts = parts;
       this.part.mimeAttributes.role = 'root';
-      this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
+      //this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
       this.message = conversation.createMessage({
         id: Message.prefixUUID + this.id.replace(/\/parts\/.*$/, '').replace(/^.*MessageTypeModels\//, ''),
         parts: this.childParts,

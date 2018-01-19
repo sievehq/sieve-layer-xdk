@@ -157,7 +157,7 @@ describe('Feedback Message Components', function() {
         model.message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         model.rating = 2;
         model.comment = "howdy ho";
-        TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
+        StatusModel = Layer.Core.Client.getMessageTypeModelClass("StatusModel");
 
         // Run
         model.sendFeedback();
@@ -166,7 +166,7 @@ describe('Feedback Message Components', function() {
         var args = Layer.Core.Conversation.prototype.send.calls.allArgs()[0];
 
         var responsePart = args[0].getRootPart();
-        var textPart = args[0].findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+        var textPart = args[0].findPart(part => part.mimeType === 'application/vnd.layer.status+json');
 
         expect(responsePart.mimeType).toEqual(ResponseModel.MIMEType);
         expect(responsePart.mimeAttributes.role).toEqual("root");
@@ -179,8 +179,8 @@ describe('Feedback Message Components', function() {
             sent_at: jasmine.any(String)
           }
         }));
-        expect(textPart.mimeType).toEqual(TextModel.MIMEType);
-        expect(textPart.mimeAttributes.role).toEqual("message");
+        expect(textPart.mimeType).toEqual(StatusModel.MIMEType);
+        expect(textPart.mimeAttributes.role).toEqual("status");
         expect(textPart.mimeAttributes['parent-node-id']).toEqual(responsePart.nodeId);
         expect(JSON.parse(textPart.body)).toEqual(jasmine.objectContaining({
           text: client.user.displayName + " rated the experience 2 stars"

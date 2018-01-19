@@ -36,16 +36,16 @@ layer-receipt-message-product-view {
 layer-receipt-message-view {
   min-width: 192px;
   .layer-receipt-details {
-
-    .layer-card-description {
+    .layer-card-body-outer {
+      margin: 0px 0px !important;
+    }
+    .layer-standard-card-container-description {
+      padding: 0px !important;
       color: @color-black;
       font-size: @font-medium;
-      p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
-        margin-top: 0px;
-      }
     }
     label {
-      font-size: @font-medium;
+      font-size: @font-small;
       color: @color-g5;
       padding-bottom: 4px;
       display: block;
@@ -101,6 +101,9 @@ layer-receipt-message-view {
   .layer-receipt-price {
     flex-grow: 1;
     text-align: right;
-    font-size: @font-larger
+    font-size: @font-larger;
+  }
+  .layer-receipt-summary label {
+    font-size: @font-larger;
   }
 }

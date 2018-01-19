@@ -147,14 +147,32 @@ registerComponent('layer-choice-message-view', {
     },
 
     /**
-     * Select the specified Choice.
+     * MIXIN HOOK: Select the specified Choice.
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'layer-choice-message-view': {
+     *       methods: {
+     *         onChoiceSelect: {
+     *           // Conditional in a mixin prevents the method from being run if it returns false
+     *           conditional: function(data) {
+     *             if (data.id === 'frodo-the-dodo') return false;
+     *             return true;
+     *           }
+     *         }
+     *       }
+     *     }
+     *   }
+     * });
+     * ```
      *
      * @param {Object} data
      * @param {String} data.id   ID of the selected Choice
-     * @method _selectChoice
+     * @method onChoiceSelect
      * @private
      */
-    _selectChoice(data) {
+    onChoiceSelect(data) {
       this.model.selectAnswer(data);
     },
 
@@ -172,7 +190,7 @@ registerComponent('layer-choice-message-view', {
     runAction({ event, data }) {
       if (event === 'layer-choice-select') {
         if (!this.model.isSelectionEnabled()) return;
-        this._selectChoice(data);
+        this.onChoiceSelect(data);
 
         const rootPart = this.model.message.getPartsMatchingAttribute({ role: 'root' })[0];
         const rootModel = client.getMessageTypeModel(rootPart.id);

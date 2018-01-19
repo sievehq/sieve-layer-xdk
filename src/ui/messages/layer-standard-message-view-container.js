@@ -45,9 +45,9 @@ registerComponent('layer-standard-message-view-container', {
   <div layer-id='UIContainer' class='layer-card-top'></div>
   <div class="layer-card-body-outer">
     <div class="layer-card-body">
-      <div layer-id="title" class="layer-card-title"></div>
-      <div layer-id="description" class="layer-card-description"></div>
-      <div layer-id="footer" class="layer-card-footer"></div>
+      <div layer-id="title" class="layer-standard-card-container-title"></div>
+      <div layer-id="description" class="layer-standard-card-container-description"></div>
+      <div layer-id="footer" class="layer-standard-card-container-footer"></div>
     </div>
     <span class="layer-next-icon" ></span>
   </div>`,

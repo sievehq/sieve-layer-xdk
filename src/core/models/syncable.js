@@ -157,8 +157,12 @@ class Syncable extends Root {
 
     if (typeName) {
       if (!Client.dbManager) {
-        syncItem.syncState = SYNC_STATE.LOADING;
-        Client.once('ready', () => syncItem._load(), syncItem);
+        if (!Client.isReady) {
+          syncItem.syncState = SYNC_STATE.LOADING;
+          Client.once('ready', () => syncItem._load(), syncItem);
+        } else {
+          syncItem._load();
+        }
       } else {
         Client.dbManager.getObject(typeName, id, (item) => {
           if (syncItem.isDestroyed) return;

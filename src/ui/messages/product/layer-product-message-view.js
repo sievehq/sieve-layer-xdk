@@ -32,7 +32,7 @@ registerComponent('layer-product-message-view', {
     flex-direction: column;
     align-items: center;
   }
-  layer-product-message-view > .layer-card-top > img {
+  layer-product-message-view .layer-product-message-image {
     display: block;
   }
   layer-message-viewer.layer-product-message-view {
@@ -50,8 +50,8 @@ registerComponent('layer-product-message-view', {
   }
   `,
   template: `
-    <div layer-id='UIContainer' class='layer-card-top'>
-      <img layer-id="image" />
+    <div layer-id="UIContainer" class="layer-card-top">
+      <div class="layer-product-message-image" layer-id="image" ></div>
     </div>
     <div class="layer-card-body-outer">
         <div class="layer-card-product-header" layer-id="brand" ></div>
@@ -92,7 +92,7 @@ registerComponent('layer-product-message-view', {
 
       // Render the image (at some point we may want a way to see multiple images)
       // If no images, hide the image area
-      this.nodes.image.src = this.model.imageUrls[0];
+      this.nodes.image.style.backgroundImage = `url(${this.model.imageUrls[0]})`;
       this.toggleClass('layer-no-image', this.model.imageUrls.length === 0);
 
       const optionsParentNode = this.nodes.choices;

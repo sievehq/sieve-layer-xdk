@@ -212,7 +212,7 @@ describe('Product Message Components', function() {
       expect(el.nodes.ui.nodes.brand.innerText.trim()).toEqual("b");
       expect(el.nodes.ui.nodes.price.innerText.trim()).toEqual("€33.00");
       expect(el.nodes.ui.nodes.description.innerText.trim()).toEqual("e");
-      expect(el.nodes.ui.nodes.image.src).toEqual("https://layer.com/about/c");
+      expect(el.nodes.ui.nodes.image.style.backgroundImage).toMatch("https://layer.com/about/c");
 
       expect(el.nodes.ui.classList.contains("layer-no-image")).toBe(false);
     });

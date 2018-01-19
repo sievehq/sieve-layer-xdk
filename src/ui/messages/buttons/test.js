@@ -310,8 +310,8 @@ describe('Button Message Components', function() {
               {"text": "Dislike", "id": "d", "tooltip": "dislike"}
             ],
             data: {
-              responseName: "isliked",
-              allowReselect: true
+              response_name: "isliked",
+              allow_reselect: true
             }
           },
           {
@@ -320,8 +320,8 @@ describe('Button Message Components', function() {
               {"text": "Favorite", "id": "fav", "tooltip": "star"}
             ],
             data: {
-              responseName: "isstarred",
-              allowDeselect: true
+              response_name: "isstarred",
+              allow_deselect: true
             }
           }
         ]
@@ -685,12 +685,12 @@ describe('Button Message Components', function() {
 
       var responseMessage = model.choices.isstarred._sendResponse.calls.allArgs()[0][0];
       var responsePart = responseMessage.getRootPart();
-      var textPart = responseMessage.findPart(part => part.mimeType === Layer.Constants.STANDARD_MIME_TYPES.TEXT);
+      var statusPart = responseMessage.findPart(part => part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType);
 
-      expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
-      expect(textPart.parentId).toEqual(responsePart.nodeId);
-      expect(textPart.role).toEqual("message");
-      expect(JSON.parse(textPart.body)).toEqual({
+      expect(statusPart.mimeType).toEqual('application/vnd.layer.status+json');
+      expect(statusPart.parentId).toEqual(responsePart.nodeId);
+      expect(statusPart.role).toEqual("status");
+      expect(JSON.parse(statusPart.body)).toEqual({
         text: 'Frodo the Dodo selected "Favorite"'
       });
 
