@@ -689,7 +689,7 @@ class MessageTypeModel extends Root {
    */
   getParentModel() {
     const parentId = this.parentId;
-    const part = parentId ? this.message.getPartsMatchingAttribute({ 'node-id': parentId })[0] : null;
+    const part = parentId ? this.message.findPart(aPart => aPart.nodeId === parentId) : null;
     return part ? part.createModel() : null;
   }
 

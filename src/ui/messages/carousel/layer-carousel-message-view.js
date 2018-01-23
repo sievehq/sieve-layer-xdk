@@ -220,7 +220,10 @@ registerComponent('layer-carousel-message-view', {
      * @private
      */
     _onResize() {
-      this._throttler(() => this._adjustCarouselWidth());
+      this._throttler(() => {
+        this._adjustCarouselWidth();
+        this._updateScrollButtons();
+      });
     },
 
     /**

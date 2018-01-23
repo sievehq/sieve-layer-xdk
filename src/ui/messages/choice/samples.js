@@ -1,5 +1,10 @@
-// Basic Choice
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+
+
+new TextModel({text: "Basic Choice"}).send({ conversation: $("layer-conversation-view").conversation });
+
+
 model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
    choices: [
@@ -10,7 +15,8 @@ model = new ChoiceModel({
  });
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
- // Custom responseName
+ new TextModel({text: "Custom responseName"}).send({ conversation: $("layer-conversation-view").conversation });
+
  ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
     label: "What is the airspeed velocity of an unladen swallow?",
@@ -24,7 +30,8 @@ model = new ChoiceModel({
   model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
-// Preselected Choice
+new TextModel({text: "Preselected Choice"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
@@ -38,7 +45,8 @@ model = new ChoiceModel({
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
- // Enabled for you but not me
+ new TextModel({text: "Enabled for you but not me"}).send({ conversation: $("layer-conversation-view").conversation });
+
  ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
@@ -51,7 +59,8 @@ model = new ChoiceModel({
  });
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
- // Enabled for me but not you
+ new TextModel({text: "Enabled for me but not you"}).send({ conversation: $("layer-conversation-view").conversation });
+
  ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
@@ -65,7 +74,8 @@ model = new ChoiceModel({
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
- // Custom Response Data {"hey": "ho"}
+ new TextModel({text: "Custom Response Data {\"hey\": \"ho\"}"}).send({ conversation: $("layer-conversation-view").conversation });
+
  ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
@@ -80,7 +90,8 @@ model = new ChoiceModel({
  });
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
- // Custom Response Data per Choice (v2 feature)
+ new TextModel({text: "Custom Response Data per Choice (v2 feature)"}).send({ conversation: $("layer-conversation-view").conversation });
+
  ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "What is the airspeed velocity of an unladen swallow?",
@@ -115,7 +126,8 @@ model = new ChoiceModel({
  });
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Change text between selected/unselected states (v2 feature)
+new TextModel({text: "Change text between selected/unselected states (v2 feature)"}).send({ conversation: $("layer-conversation-view").conversation });
+
  ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "Pick a color",
@@ -146,7 +158,8 @@ model = new ChoiceModel({
  });
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Allow reselect
+new TextModel({text: "Allow reselect"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  model = new ChoiceModel({
    label: "Pick a color",
@@ -159,7 +172,8 @@ ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  });
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
- // Allow deselect
+ new TextModel({text: "Allow deselect"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 model = new ChoiceModel({
   label: "Pick a color",
@@ -172,7 +186,8 @@ model = new ChoiceModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Allow multiselect
+new TextModel({text: "Allow multiselect"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 model = new ChoiceModel({
   label: "Pick a color",

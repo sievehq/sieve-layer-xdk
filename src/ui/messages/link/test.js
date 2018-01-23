@@ -229,7 +229,7 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Message UI: contains image tag
-      expect(el.querySelector('img').src).toMatch(/^data\:image\/png/);
+      expect(el.nodes.ui.nodes.image.style.backgroundImage).toMatch(/data\:image\/png/);
     });
 
     it("Should render url and title", function() {
@@ -254,7 +254,7 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title is rendered
-      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('hello');
+      expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('hello');
     });
 
     it("Should render url, title and image", function() {
@@ -281,10 +281,10 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Message UI: contains image tag
-      expect(el.querySelector('img').src).toMatch(/^data\:image\/png/);
+      expect(el.nodes.ui.nodes.image.style.backgroundImage).toMatch(/data\:image\/png/);
 
       // Title is rendered
-      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('hello');
+      expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('hello');
     });
 
     it("Should render url, title, description and author", function() {
@@ -341,12 +341,12 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title, description and author are rendered
-      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('hello');
-      expect(el.querySelector('.layer-card-description').innerText.trim()).toEqual('there');
-      expect(el.querySelector('.layer-card-footer').innerText.trim()).toEqual('all');
+      expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('hello');
+      expect(el.querySelector(' .layer-standard-card-container-description').innerText.trim()).toEqual('there');
+      expect(el.querySelector(' .layer-standard-card-container-footer').innerText.trim()).toEqual('all');
 
       // Message UI: contains image tag
-      expect(el.querySelector('img').src).toMatch(/^data\:image\/png/);
+      expect(el.nodes.ui.nodes.image.style.backgroundImage).toMatch(/data\:image\/png/);
     });
 
     it("Should open the link using the url", function() {

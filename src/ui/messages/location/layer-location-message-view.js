@@ -36,7 +36,7 @@ registerComponent('layer-location-message-view', {
   layer-location-message-view img {
     display: block;
   }
-  layer-message-viewer.layer-location-message-view .layer-location-message-show-street-address .layer-card-description p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
+  layer-message-viewer.layer-location-message-view .layer-location-message-show-street-address  .layer-standard-card-container-description p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
     margin-top: 0px;
   }
   `,

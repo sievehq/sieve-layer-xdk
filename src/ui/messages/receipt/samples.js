@@ -1,9 +1,12 @@
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
 ReceiptModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.receipt+json')
 LocationModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.location+json')
 ListModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.list+json')
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+
+new TextModel({text: "Standard Receipt Message"}).send({ conversation: $("layer-conversation-view").conversation });
 
 new ReceiptModel({
   currency: 'USD',
@@ -121,6 +124,7 @@ new ReceiptModel({
   ]
 }).generateMessage($("layer-conversation-view").conversation, message => message.send());
 
+new TextModel({text: "External Content"}).send({ conversation: $("layer-conversation-view").conversation });
 
 
 ReceiptModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.receipt+json')

@@ -4,6 +4,7 @@
 
 ### Important Changes
 
+* The MIME Type Attribute `node-id` is no longer used in Message parts. As a result, all Message Response Integrations will need to be redeployed/updated.
 * Mixin Names for customizing `<layer-message-item-sent />` `<layer-message-item-received />` and `<layer-message-item-status />` have changed:
     * `messageRowHeader` has been replaced with
         * `messageSentHeader`: Header for messages sent by the current user

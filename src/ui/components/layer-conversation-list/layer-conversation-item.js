@@ -228,7 +228,9 @@ registerComponent('layer-conversation-item', {
       }
 
       // Setup the avatar and presence nodes
-      if (this.nodes.avatar) this.nodes.avatar.users = users;
+      if (this.nodes.avatar) {
+        this.nodes.avatar.users = users;
+      }
       if (this.nodes.presence) this.nodes.presence.item = users.length === 1 ? users[0] : null;
 
       // Setup the unread style

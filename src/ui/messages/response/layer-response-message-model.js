@@ -106,6 +106,7 @@ class ResponseModel extends MessageTypeModel {
       if (part) {
         const StatusModel = Core.Client.getMessageTypeModelClass('StatusModel');
         this.displayModel = new StatusModel({ text: JSON.parse(part.body).text });
+        this.displayModel.part = part;
       }
     }
   }

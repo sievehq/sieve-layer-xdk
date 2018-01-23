@@ -1538,7 +1538,7 @@ const standardClassMethods = {
    * @param {HTMLElement} node    Node whose subtree should be called with the callback
    * @param {Function} callback   Function to call on each node in the tree
    * @param {HTMLElement} callback.node   Node that the callback is called on
-   * @param {Boolean} isComponent         Is the node a Component from this framework
+   * @param {Boolean} callback.isComponent   Is the node a Component from this framework
    */
   _findNodesWithin: function _findNodesWithin(node, callback) {
     const children = node.childNodes;
@@ -1720,7 +1720,7 @@ const standardClassMethods = {
     if (properties.name) this.nodes[properties.name] = node;
 
     if (!properties.noCreate) {
-      CustomElements.takeRecords();
+      CustomElements.upgradeAll(node);
       if (node._onAfterCreate) node._onAfterCreate();
     }
     return node;

@@ -77,7 +77,11 @@ registerComponent('layer-avatar', {
         if (value instanceof Core.Message) {
           this.users = [value.sender];
         } else if (value instanceof Core.Conversation) {
-          this.users = value.participants;
+          // If conversation is being loaded via `getConversation()` then wait for the participant list
+          // to load before setting it
+          if (!value.isLoading) {
+            this.users = value.participants;
+          }
         } else {
           this.users = [];
         }
@@ -164,11 +168,13 @@ registerComponent('layer-avatar', {
       // No classList.toggle due to poor IE11 support
       this.toggleClass('layer-avatar-cluster', users.length > 1);
       if (users.length === 1 && this.showPresence && Client.isPresenceEnabled) {
-        this.nodes.presence = document.createElement('layer-presence');
-        this.nodes.presence.classList.add('layer-presence-within-avatar');
-        this.nodes.presence.item = users[0];
-        this.nodes.presence.size = this.size === 'larger' ? 'large' : this.size;
-        this.appendChild(this.nodes.presence);
+        this.createElement('layer-presence', {
+          size: this.size === 'larger' ? 'large' : this.size,
+          item: users[0],
+          name: 'presence',
+          parentNode: this,
+          classList: ['layer-presence-within-avatar'],
+        });
       }
     },
 

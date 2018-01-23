@@ -116,6 +116,19 @@ module.exports = {
   },
   methods: {
 
+    onAfterCreate() {
+      const part = this.model.part;
+      if (part) {
+        if (part.isFiring && !part.body) {
+          this.isHeightAllocated = false;
+          part.once('content-loaded', () => {
+            this.isHeightAllocated = true;
+            this.onRender();
+          });
+        }
+      }
+    },
+
     /**
      * Core part of the UI Lifecycle, called whenever the model changes, and after initialization.
      *

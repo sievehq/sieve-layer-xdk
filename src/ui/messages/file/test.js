@@ -311,7 +311,7 @@ describe('File Message Components', function() {
 
       // Container: show metadata
       expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(false);
-      expect(el.querySelector('.layer-card-title').innerText.trim()).toEqual('Picture here');
+      expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('Picture here');
 
       // Message UI: contains anchor tag
       expect(el.nodes.ui.classList.contains('layer-file-image-png')).toBe(true);

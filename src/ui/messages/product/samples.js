@@ -1,7 +1,9 @@
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 
-// Simple product, no image, description or options
+new TextModel({text: "Simple product, no image, description or options"}).send({ conversation: $("layer-conversation-view").conversation });
+
 model = new ProductModel({
   url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
   currency: 'USD',
@@ -12,7 +14,8 @@ model = new ProductModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-// Simple Product with image and customData
+new TextModel({text: "Simple Product with image and customData"}).send({ conversation: $("layer-conversation-view").conversation });
+
 model = new ProductModel({
   customData: {
     product_id: "Frodo-the-dodo",
@@ -28,7 +31,8 @@ model = new ProductModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-// Simple Product with description, image and customData
+new TextModel({text: "Simple Product with description, image and customData"}).send({ conversation: $("layer-conversation-view").conversation });
+
 model = new ProductModel({
   customData: {
     product_id: "Frodo-the-dodo",
@@ -45,7 +49,8 @@ model = new ProductModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-// Product with Options
+new TextModel({text: "Product with Options"}).send({ conversation: $("layer-conversation-view").conversation });
+
 model = new ProductModel({
    customData: {
      product_id: "Frodo-the-dodo",
@@ -85,7 +90,8 @@ model = new ProductModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-// Choices within Choices: A Button Message with Choice Buttons wrapping a Product Message with Options
+new TextModel({text: "Choices within Choices: A Button Message with Choice Buttons wrapping a Product Message with Options"}).send({ conversation: $("layer-conversation-view").conversation });
+
   ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
@@ -134,7 +140,8 @@ contentModel: new ProductModel({
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
 
-// Simple Product with no name
+new TextModel({text: "Simple Product with no name"}).send({ conversation: $("layer-conversation-view").conversation });
+
 model = new ProductModel({
   customData: {
     product_id: "Frodo-the-dodo",
@@ -150,7 +157,8 @@ model = new ProductModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-// Simple Product with no price
+new TextModel({text: "Simple Product with no price"}).send({ conversation: $("layer-conversation-view").conversation });
+
 model = new ProductModel({
   customData: {
     product_id: "Frodo-the-dodo",
@@ -166,7 +174,8 @@ model = new ProductModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
-// Simple Product with no price
+new TextModel({text: "Simple Product with no price"}).send({ conversation: $("layer-conversation-view").conversation });
+
 model = new ProductModel({
   customData: {
     product_id: "Frodo-the-dodo",
@@ -184,7 +193,8 @@ model = new ProductModel({
 model.generateMessage($("layer-conversation-view").conversation, message => message.send());
 
 
-// Simple Product with no brand
+new TextModel({text: "Simple Product with no brand"}).send({ conversation: $("layer-conversation-view").conversation });
+
 model = new ProductModel({
   customData: {
     product_id: "Frodo-the-dodo",

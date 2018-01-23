@@ -740,22 +740,17 @@ class MessagePart extends Root {
 
 
   __getNodeId() {
-    if (!this.mimeAttributes['node-id']) {
-      if (this.id) {
-        this.mimeAttributes['node-id'] = Util.uuid(this.id);
-      } else {
-        this.mimeAttributes['node-id'] = Util.generateUUID();
-      }
-      this._tmpUUID = this.mimeAttributes['node-id'];
-    }
-    return this.mimeAttributes['node-id'];
-    /* For use when we start using "part.id" instead of mimeAttributes.
-    if (this.id) {
+    // mime type node-id for backwards compat with `1.0.0-pre1.x`
+    if (this.mimeAttributes['node-id']) {
+      return this.mimeAttributes['node-id'];
+    } else if (this.id) {
       return Util.uuid(this.id);
-    } else if (!this._tmpUUID) {
+    } else if (this._tmpUUID) {
+      return this._tmpUUID;
+    } else {
       this._tmpUUID = Util.generateUUID();
+      return this._tmpUUID;
     }
-    return this._tmpUUID;*/
   }
 
   __getParentId() {
@@ -826,6 +821,13 @@ MessagePart.prototype._content = null;
  * @property {Boolean}
  */
 MessagePart.prototype.hasContent = false;
+
+/**
+ * The Message Part is currently loading its Rich Content from the server.
+ *
+ * @property {Boolean}
+ */
+MessagePart.prototype.isFiring = false;
 
 /**
  * URL to rich content object.
@@ -925,6 +927,7 @@ MessagePart.prototype.nodeId = '';
  * @property {String}
  */
 MessagePart.prototype.role = '';
+
 
 /**
  * Cache any model created for this Message Part.

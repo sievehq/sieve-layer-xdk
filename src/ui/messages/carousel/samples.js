@@ -1,5 +1,9 @@
-TextModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json')
 CarouselModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json')
+TextModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json')
+
+
+new TextModel({text: "Simple Text Messages"}).send({ conversation: $("layer-conversation-view").conversation });
+
 model = new CarouselModel({
   items: [
     new TextModel({text: "Carousel item 1", "title": "C 1"}),
@@ -9,6 +13,8 @@ model = new CarouselModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
+
+new TextModel({text: "Button and Choice Button Set Carousel"}).send({ conversation: $("layer-conversation-view").conversation });
 
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
@@ -52,7 +58,86 @@ items: [
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Product Carousel:
+new TextModel({text: "Simple Choice Button Set Carousel"}).send({ conversation: $("layer-conversation-view").conversation });
+
+ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
+ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
+CarouselModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json')
+   ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+   ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+model = new CarouselModel({
+  items: [
+    new ButtonsModel({
+      buttons:[{
+        "type":"choice",
+        "choices":[
+          {"text":"A","id":"a"},
+          {"text":"B","id":"b"}
+        ],
+        "data":{
+          "responseName":"q1",
+          "allowReselect":true
+        }
+      }]
+    }),
+    new ButtonsModel({
+      buttons:[{
+        "type":"choice",
+        "choices":[
+          {"text":"A","id":"a"},
+          {"text":"B","id":"b"}
+        ],
+        "data":{
+          "responseName":"q1",
+          "allowReselect":true
+        }
+      }]
+    }),
+    new ButtonsModel({
+      buttons:[{
+        "type":"choice",
+        "choices":[
+          {"text":"A","id":"a"},
+          {"text":"B","id":"b"}
+        ],
+        "data":{
+          "responseName":"q1",
+          "allowReselect":true
+        }
+      }]
+    }),
+    new ButtonsModel({
+      buttons:[{
+        "type":"choice",
+        "choices":[
+          {"text":"A","id":"a"},
+          {"text":"B","id":"b"}
+        ],
+        "data":{
+          "responseName":"q1",
+          "allowReselect":true
+        }
+      }]
+    }),
+    new ButtonsModel({
+      buttons:[{
+        "type":"choice",
+        "choices":[
+          {"text":"A","id":"a"},
+          {"text":"B","id":"b"}
+        ],
+        "data":{
+          "responseName":"q1",
+          "allowReselect":true
+        }
+      }]
+    })
+  ]
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
+
+new TextModel({text: "Product and Button Carousel:"}).send({ conversation: $("layer-conversation-view").conversation });
 
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
@@ -316,6 +401,8 @@ model = new CarouselModel({
   ]
 }).generateMessage($("layer-conversation-view").conversation, message => message.send())
 
+
+new TextModel({text: "External Content"}).send({ conversation: $("layer-conversation-view").conversation });
 
   TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
 CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');

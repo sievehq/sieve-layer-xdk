@@ -93,10 +93,10 @@ function handleAction(layerClient, state, action, next) {
       return;
 
     case TOGGLE_PRESENCE:
-      if (layerClient.user.status === layer.Identity.STATUS.BUSY) {
-        layerClient.user.setStatus(layer.Identity.STATUS.AVAILABLE);
+      if (layerClient.user.status === Layer.Core.Identity.STATUS.BUSY) {
+        layerClient.user.setStatus(Layer.Core.Identity.STATUS.AVAILABLE);
       } else {
-        layerClient.user.setStatus(layer.Identity.STATUS.BUSY);
+        layerClient.user.setStatus(Layer.Core.Identity.STATUS.BUSY);
       }
       return;
     default:

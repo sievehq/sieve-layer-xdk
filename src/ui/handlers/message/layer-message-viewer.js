@@ -153,6 +153,11 @@ registerComponent('layer-message-viewer', {
     modelNotSupported: {
       value: 'No model registered to handle MIME Type: ',
     },
+    isRootModel: {
+      set(value) {
+        if (value) this.classList.add('layer-root-viewer');
+      },
+    },
   },
   methods: {
     // Standard lifecycle event insures that _handleSelection will be called when clicked
@@ -177,7 +182,7 @@ registerComponent('layer-message-viewer', {
 
       // The rootPart is typically the Root Part of the message, but the Card View may be asked to render subcards
       // Clearly differentiate a top level Root Part from subparts using the layer-root-viewer css class
-      if (!this.message || this.model.part === this.message.getRootPart()) this.classList.add('layer-root-viewer');
+      if (!this.message || this.model.part === this.message.getRootPart()) this.isRootModel = true;
 
       const cardUIType = this.model.currentMessageRenderer;
       this.classList.add(cardUIType);
@@ -210,7 +215,7 @@ registerComponent('layer-message-viewer', {
         this.cardBorderStyle = this.properties.cardBorderStyle || cardUI.cardBorderStyle || 'standard';
       }
 
-      CustomElements.takeRecords();
+      CustomElements.upgradeAll(this);
       if (this.nodes.cardContainer) this.nodes.cardContainer._onAfterCreate();
       if (cardUI._onAfterCreate) cardUI._onAfterCreate();
       if (this.nodes.cardContainer) cardUI._setupContainerClasses();

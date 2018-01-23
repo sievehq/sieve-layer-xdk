@@ -246,18 +246,27 @@ registerComponent('layer-replaceable-content', {
      */
     _getGeneratedNode(parent, nodeOrGenerator) {
       let result = nodeOrGenerator;
+      let node;
       if (typeof nodeOrGenerator === 'function') {
         result = nodeOrGenerator.call(parent, this.parentComponent, this);
       }
 
       if (typeof result === 'string') {
-        const node = document.createElement('div');
+        node = document.createElement('div');
         node.classList.add('layer-replaceable-inner');
         node.innerHTML = result;
-        return node;
+        CustomElements.upgradeAll(node);
       } else {
-        return result;
+        node = result;
       }
+
+      this._findNodesWithin(node, (currentNode, isComponent) => {
+        if (isComponent) {
+          currentNode.properties.parentComponent = this.parentComponent;
+          currentNode._onAfterCreate();
+        }
+      });
+      return node;
     },
   },
 });

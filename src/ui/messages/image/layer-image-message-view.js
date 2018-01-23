@@ -74,7 +74,7 @@ registerComponent('layer-image-message-view', {
   },
   methods: {
     // See parent component for definition
-    onCreate() {
+    onAfterCreate() {
       // Image Message heights aren't known until the metadata has been parsed; default to false.
       this.isHeightAllocated = false;
     },

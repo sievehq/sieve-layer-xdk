@@ -1,4 +1,9 @@
-// One Button
+TextModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json')
+
+
+
+new TextModel({text: "One Button"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -7,7 +12,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Two Buttons
+new TextModel({text: "Two Buttons"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -17,7 +23,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Custom Event Data
+new TextModel({text: "Custom Event Data"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -27,7 +34,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// One Button and Text Model
+new TextModel({text: "One Button and Text Model"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
 model = new ButtonModel({
@@ -41,7 +49,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Two Buttons and Text Model
+new TextModel({text: "Two Buttons and Text Model"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
 model = new ButtonModel({
@@ -56,7 +65,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// open-url, open-file buttons with a Link Message
+new TextModel({text: "open-url, open-file buttons with a Link Message"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel')
 model = new ButtonModel({
@@ -73,7 +83,8 @@ model = new ButtonModel({
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
-// One Choice Button set and one Regular Button
+new TextModel({text: "One Choice Button set and one Regular Button"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -86,7 +97,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// 3 button choice set with emoji characters
+new TextModel({text: "3 button choice set with emoji characters"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [{
@@ -102,7 +114,8 @@ model = new ButtonModel({
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
-// Choice Button custom responseName
+new TextModel({text: "Choice Button custom responseName"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -115,7 +128,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Choice Buttons with allowReselect
+new TextModel({text: "Choice Buttons with allowReselect"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -128,7 +142,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Choice Buttons with allowReselect with preselectedChoice
+new TextModel({text: "Choice Buttons with allowReselect with preselectedChoice"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -141,7 +156,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Choice Buttons with allowDeselect
+new TextModel({text: "Choice Buttons with allowDeselect"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -154,7 +170,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Choice Buttons with allowMultiselect
+new TextModel({text: "Choice Buttons with allowMultiselect"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -167,7 +184,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
-// Multiple Choice Sets
+new TextModel({text: "Multiple Choice Sets"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -186,7 +204,8 @@ model.generateMessage($("layer-conversation-view").conversation, message => mess
 
 
 
-// Product Demo
+new TextModel({text: "Product Demo"}).send({ conversation: $("layer-conversation-view").conversation });
+
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')

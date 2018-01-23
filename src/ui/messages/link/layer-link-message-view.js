@@ -27,24 +27,27 @@ registerComponent('layer-link-message-view', {
     cursor: pointer;
     display: block;
   }
-  layer-link-message-view img[src=''] {
+  layer-message-viewer.layer-link-message-view .layer-card-top {
+    align-items: stretch
+  }
+  layer-link-message-view.layer-link-message-no-image .layer-link-message-view-image  {
     display: none;
   }
-  layer-link-message-view img {
+  layer-link-message-view .layer-link-message-view-image {
     width: 100%;
     display: block;
   }
   .layer-card-width-flex-width layer-link-message-view a {
     display: none;
   }
-  layer-message-viewer.layer-link-message-view .layer-card-footer a,
-  layer-message-viewer.layer-link-message-view .layer-card-footer a:visited,
-  layer-message-viewer.layer-link-message-view .layer-card-footer a:hover {
+  layer-message-viewer.layer-link-message-view  .layer-standard-card-container-footer a,
+  layer-message-viewer.layer-link-message-view  .layer-standard-card-container-footer a:visited,
+  layer-message-viewer.layer-link-message-view  .layer-standard-card-container-footer a:hover {
     color: inherit;
     text-decoration: none;
   `,
 
-  template: '<img layer-id="image" class="layer-link-message-view-image" /><a target="_blank" layer-id="link"></a>',
+  template: '<div layer-id="image" class="layer-link-message-view-image"></div><a target="_blank" layer-id="link"></a>',
   properties: {
     widthType: {
       get() {
@@ -64,32 +67,6 @@ registerComponent('layer-link-message-view', {
     },
   },
   methods: {
-    // See parent component for definition
-    onCreate() {
-      // Image Message heights aren't known until the metadata has been parsed; default to false.
-      this.isHeightAllocated = false;
-
-      this.nodes.image.addEventListener('load', () => (this.isHeightAllocated = true));
-      this.nodes.image.addEventListener('error', () => {
-        if (this.model.imageUrl) this.isHeightAllocated = true;
-      });
-    },
-
-    onAfterCreate() {
-      // If the part doesn't have a body, its got external content that is still loading and not yet ready
-      if (!this.model.imageUrl && this.model.part.body) {
-        this.isHeightAllocated = true;
-      } else if (!this.model.part.body) {
-        // Once the external content has loaded, update isHeightAllocated
-        this.model.on('message-type-model:change', () => {
-          // If there is an imageUrl, then the image load event handler above will update isHeightAllocated later.
-          if (this.model.part.body && !this.model.imageUrl) {
-            this.isHeightAllocated = true;
-          }
-        });
-      }
-    },
-
 
     /**
      * Whenever a the model changes or is created, rerender basic properties.
@@ -97,7 +74,8 @@ registerComponent('layer-link-message-view', {
      * @method onRerender
      */
     onRerender() {
-      this.nodes.image.src = this.model.imageUrl || '';
+      this.nodes.image.style.backgroundImage = this.model.imageUrl ? `url(${this.model.imageUrl})` : '';
+      this.toggleClass('layer-link-message-no-image', !Boolean(this.model.imageUrl));
       this.nodes.link.src = this.model.url;
       this.nodes.link.innerHTML = this.model.url;
     },
