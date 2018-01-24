@@ -380,8 +380,8 @@ describe('Image Message Components', function() {
               // Container: hide metadata
               expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(true);
 
-              // Message UI: contains canvas tag
-              expect(el.nodes.ui.firstChild.tagName).toEqual('CANVAS');
+              // Message UI: contains IMG tag
+              expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
               done();
             } catch(e) {
               done(e);
@@ -446,7 +446,7 @@ describe('Image Message Components', function() {
                 expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('Picture here');
 
                 // Message UI: contains anchor tag
-                expect(el.nodes.ui.firstChild.tagName).toEqual('CANVAS');
+                expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
                 done();
               } catch (e) {
                 done(e);
