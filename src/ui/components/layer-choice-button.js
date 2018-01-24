@@ -109,6 +109,9 @@ registerComponent('layer-choice-button', {
       }
     },
 
+    onChoiceSelect(data) {
+      this.model.selectAnswer(data);
+    },
 
     /**
      * When clicked, find the associated Layer.UI.messages.MessageViewer and call its `_runAction` method.
@@ -122,7 +125,7 @@ registerComponent('layer-choice-button', {
       evt.stopPropagation();
 
       // Select the answer
-      this.model.selectAnswer(choice);
+      this.onChoiceSelect(choice);
 
       // Trigger any other customized events as though this were an action button
       let node = this;

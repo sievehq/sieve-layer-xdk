@@ -845,6 +845,7 @@ registerComponent('layer-message-list', {
      * @param {Number} initialOffset    How far from the top of the Message List is that first fully visible item (so we can maintain that offset)
      */
     _pagedDataDone(firstVisibleItem, evt, initialOffset) {
+      this.properties.inPagedData = false;
       let needsPagedDataDone = true;
       // CustomElements.takeRecords();
       // defer.flush();

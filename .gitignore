@@ -42,7 +42,7 @@ docs
 samples/build.js
 samples/react/bundle.js*
 
-samples/react/common/LayerConfiguration.json
+**/LayerConfiguration.json
 test/coverage-build.js
 
 # !npmignored: Everything after this line is left out of the .npmignore file

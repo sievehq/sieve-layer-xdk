@@ -199,34 +199,6 @@ registerComponent('layer-standard-message-view-container', {
       return 350;
     },
 
-    /**
-     * For Message Types like Image that can easily resize to fill as much space as available,
-     * how much space/how little space should they _really_ be using?
-     *
-     * TODO: This should be replaced with something that examines the available width and width rules
-     * and returns a value derived from it.
-     *
-     * @method getPreferredMaxHeight
-     * @returns {Number}
-     * @protected until we get this cleaned up
-     */
-    getPreferredMaxHeight() {
-      return 400;
-    },
 
-    /**
-     * For Message Types like Image that can easily resize to fill as much space as available,
-     * how much space/how little space should they _really_ be using?
-     *
-     * TODO: This should be replaced with something that examines the available width and width rules
-     * and returns a value derived from it.
-     *
-     * @method getPreferredMinHeight
-     * @returns {Number}
-     * @protected until we get this cleaned up
-     */
-    getPreferredMinHeight() {
-      return 192;
-    },
   },
 });

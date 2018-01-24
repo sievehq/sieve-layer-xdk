@@ -10,6 +10,12 @@ import { showFullScreen } from '../ui-utils';
 
 const openUrlHandler = ({ data, model }) => {
   const url = data.url || model.url;
-  showFullScreen(url);
+  if (!url && model.fetchUrl) {
+    // This fails; opening window async is a security violation.
+    // Suggested fixes? None yet.
+    model.fetchUrl(url => showFullScreen(url));
+  } else {
+    showFullScreen(url);
+  }
 };
 register('open-url', openUrlHandler);

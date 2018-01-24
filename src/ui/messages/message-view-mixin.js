@@ -109,6 +109,19 @@ module.exports = {
       },
     },
 
+    /**
+     * Height of the View in pixels; leave unset to let it adjust its size to its content.
+     *
+     * Should be set during initialization; and not changed after.
+     *
+     * @property {Number} [type=]
+     */
+    height: {
+      set(value) {
+        this.style.height = value + 'px';
+      },
+    },
+
     cssClassList: {
       value: ['layer-message-type-view'],
     },

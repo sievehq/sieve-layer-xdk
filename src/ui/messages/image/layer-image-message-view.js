@@ -27,22 +27,20 @@ registerComponent('layer-image-message-view', {
   style: `layer-image-message-view {
       display: block;
       overflow: hidden;
+      width: 100%;
     }
-    layer-image-message-view canvas, layer-image-message-view img {
+    layer-image-message-view img {
       display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     layer-message-viewer.layer-image-message-view > * {
       cursor: pointer;
     }
  `,
+  template: '<img layer-id="image" />',
   properties: {
-
-    // definied in component.js; any time this is changed, rerender as sizing information may have changed.
-    parentComponent: {
-      set() {
-        this.onRerender();
-      },
-    },
 
     // See parent class; uses an any-width style width if there is no metadata.
     widthType: {
@@ -52,14 +50,27 @@ registerComponent('layer-image-message-view', {
     },
 
     /**
-     * Fix the maximum image height.
+     * Fix the image height if image is sent as an image with metadata displaying below it.
      *
      * This can be changed, but needs to be changed at intiialization time, not runtime.
      *
-     * @property {Number} [maxHeight=300]
+     * @property {Number} [heightWithMetadata=250]
      */
-    maxHeight: {
-      value: 300,
+    heightWithMetadata: {
+      value: 250,
+    },
+
+    /**
+     * If showing only the image, and no metadata below it, use a maximum height of 400px.
+     *
+     * @property {Number} [maxHeightWithoutMetadata=400]
+     */
+    maxHeightWithoutMetadata: {
+      value: 400,
+    },
+
+    maxWidth: {
+      value: 450,
     },
 
     /**
@@ -73,10 +84,59 @@ registerComponent('layer-image-message-view', {
     },
   },
   methods: {
+    onCreate() {
+      this.nodes.image.addEventListener('load', evt => this._imageLoaded(evt.target));
+    },
+
     // See parent component for definition
     onAfterCreate() {
       // Image Message heights aren't known until the metadata has been parsed; default to false.
-      this.isHeightAllocated = false;
+      if (this.model.part.body) {
+        this._initializeHeight();
+      } else {
+        this.model.once('message-type-model:change', () => {
+          this._initializeHeight();
+          this.onRender();
+        });
+      }
+    },
+
+    _initializeHeight() {
+      this.properties.sizes = this._getBestDimensions({});
+      if (this.properties.sizes.height) {
+        this.height = this.properties.sizes.height;
+      } else {
+        this.isHeightAllocated = false;
+      }
+    },
+
+    // TODO: Allow this to be recalculated using the available width on the screen. For now this simplifies things greatly.
+    _getBestDimensions({ height = this.model.height, width = this.model.width }) {
+
+      let ratio;
+      let newWidth;
+      let newHeight;
+
+      if (width && height) {
+        ratio = width / height;
+      } else if (this.model.previewWidth && this.model.previewHeight) {
+        ratio = this.model.previewWidth / this.model.previewHeight;
+      }
+
+      if (this.parentComponent.isShowingMetadata) {
+        newHeight = this.heightWithMetadata;
+        if (ratio) newWidth = newHeight * ratio;
+      } else if (this.model.previewHeight) {
+        newHeight = Math.min(this.maxHeightWithoutMetadata, this.model.previewHeight);
+        width = newHeight * ratio;
+      }
+
+      if (newWidth && newWidth > this.maxWidth) {
+        newWidth = this.maxWidth;
+        newHeight = newWidth / ratio;
+      }
+
+      return { width: newWidth, height: newHeight };
     },
 
     // See parent component for definition
@@ -96,28 +156,35 @@ registerComponent('layer-image-message-view', {
      *
      * @method onRerender
      */
-    onRerender() {
+    onRender() {
       // wait until the parentComponent is a Message Display Container
-      if (!this.properties._internalState.onAttachCalled) return;
-
-      // Determine the maximum width for this Image in its current space.
-      const maxCardWidth = this._getMaxMessageWidth();
+      //if (!this.properties._internalState.onAttachCalled) return;
 
       // Get the blob and render as a canvas
       if (this.model.source || this.model.preview) {
-        this.model.getPreviewBlob(blob => this._renderCanvas(blob, maxCardWidth));
+        this.model.getPreviewBlob(blob => this._renderCanvas(blob));
       } else {
 
         // Else get the imageUrl/previewUrl and stick it in the image src property.
-        // TODO: Re-assess if we should just use Canvas for consistency.
-        while (this.firstChild) this.removeChild(this.firstChild);
-        const img = this.createElement('img', {
-          parentNode: this,
-        });
-        img.addEventListener('load', evt => this._imageLoaded(evt.target));
+        const img = this.nodes.image;
         img.src = this.model.previewUrl || this.model.sourceUrl;
-        img.style.maxWidth = maxCardWidth + 'px';
-        img.style.maxHeight = this.maxHeight + 'px';
+        if (this.properties.sizes) {
+          if (this.properties.sizes.height) {
+            this.height = this.properties.sizes.height;
+          } else {
+            img.style.display = 'none';
+          }
+          if (this.properties.sizes.width) img.style.width = this.properties.sizes.width + 'px';
+        }
+      }
+    },
+
+    onRerender() {
+      if (this.nodes.image.naturalWidth && this.model.part.body && this.parentComponent.isShowingMetadata) {
+        // 10 margin for error in case custom stylesheets add margins borders and padding to skew results
+        if (this.nodes.image.naturalWidth + 10 < this.parentComponent.clientWidth) {
+          this.nodes.image.style.width = 'inherit';
+        }
       }
     },
 
@@ -130,11 +197,22 @@ registerComponent('layer-image-message-view', {
      *
      * @param {HTMLElement} img
      */
-    _imageLoaded(img) {
-      this.isHeightAllocated = true;
+    _imageLoaded() {
+      const img = this.nodes.image;
+      if (!this.properties.sizes.height) {
+        this.properties.sizes = this._getBestDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+        if (this.properties.sizes.height) {
+          this.height = this.properties.sizes.height;
+          img.style.display = '';
+          this.isHeightAllocated = true;
+        }
+      }
+
       const minWidth = this.parentComponent.getPreferredMinWidth();
+      const width = this.properties.sizes.width;
       // maxWidth has already been used to constrain img.width and can be ignored for this calculation
-      if (img.width > minWidth) this.messageViewer.style.width = (img.width + 2) + 'px';
+      if (width > minWidth) this.messageViewer.style.width = (width + 2) + 'px';
+      this.onRerender();
     },
 
     /**
@@ -150,8 +228,9 @@ registerComponent('layer-image-message-view', {
      *
      * method _getMaxMessageWidth
      * @private
+     * @removed
      */
-    _getMaxMessageWidth() {
+    /*_getMaxMessageWidth() {
       if (this.messageViewer.classList.contains('layer-root-viewer')) {
         const parent = this.messageViewer.parentNode;
         if (!parent || !parent.clientWidth) return 0;
@@ -165,7 +244,7 @@ registerComponent('layer-image-message-view', {
       } else {
         return this.messageViewer.parentNode.clientWidth;
       }
-    },
+    },*/
 
 
     /**
@@ -183,12 +262,7 @@ registerComponent('layer-image-message-view', {
      * @private
      * @param {Blob} blob
      */
-    _renderCanvas(blob, maxCardWidth) {
-      let width = this.model.previewWidth || this.model.width || maxCardWidth;
-      let height = this.model.previewHeight || this.model.height || this.maxHeight;
-      const minWidth = this.parentComponent.getPreferredMinWidth();
-      const minHeight = this.parentComponent.getPreferredMinHeight();
-      const maxHeight = this.parentComponent.getPreferredMaxHeight();
+    _renderCanvas(blob) {
 
       // Read the EXIF data
       ImageManager.parseMetaData(
@@ -201,8 +275,8 @@ registerComponent('layer-image-message-view', {
           if (data.imageHead && data.exif) {
             options.orientation = data.exif.get('Orientation') || 1;
           }
-          options.maxWidth = maxCardWidth;
-          options.maxHeight = maxHeight;
+          options.maxWidth = this.maxWidth;
+          options.maxHeight = this.properties.sizes.height || this.maxHeightWithoutMetadata;
 
           // Write the image to a canvas with the specified orientation
           ImageManager(blob, (canvas) => {
@@ -215,9 +289,9 @@ registerComponent('layer-image-message-view', {
                 }
               }
 */
-              while (this.firstChild) this.removeChild(this.firstChild);
-              this.appendChild(canvas);
-              if (canvas.width >= minWidth) this.parentComponent.style.width = canvas.width + 'px';
+
+              this.nodes.image.src = canvas.toDataURL();
+              //if (canvas.width >= this.minWidth) this.parentComponent.style.width = canvas.width + 'px';
               this.isHeightAllocated = true;
             } else {
               console.error(canvas);

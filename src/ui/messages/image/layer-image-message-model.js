@@ -265,7 +265,6 @@ class ImageModel extends MessageTypeModel {
   _generatePreview(file, callback) {
     const options = {
       canvas: true,
-      orientation: this.orientation || 0,
     };
 
     ImageManager(file, (srcCanvas) => {
@@ -321,6 +320,12 @@ class ImageModel extends MessageTypeModel {
   getDescription() { return this.subtitle; }
   getFooter() { return this.artist; }
 
+  fetchUrl(callback) {
+    if (this.source && this.source.url) callback(this.source.url);
+    else if (this.source) this.source.fetchStream(callback);
+    else if (this.preview && this.preview.url) callback(this.preview.url);
+    else if (this.preview) this.preview.fetchStream(callback);
+  }
 
   // See the url property definition below
   __getUrl() {

@@ -41,16 +41,8 @@ registerComponent('layer-location-message-view', {
   }
   `,
   properties: {
-
-    /**
-     * Height of the map in pixels.
-     *
-     * Should be set during initialization; not used to modify the map after rendering.
-     *
-     * @property {Number} [type=300]
-     */
-    mapHeight: {
-      value: 300,
+    height: {
+      value: 250,
     },
 
     /**
@@ -100,7 +92,7 @@ registerComponent('layer-location-message-view', {
       if (this.parentNode && this.parentNode.clientWidth) {
         const marker = this.model.latitude ? this.model.latitude + ',' + this.model.longitude : escape(this.model.street1 + (this.model.street2 ? ' ' + this.model.street2 : '') + ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
 
-        this.nodes.img.src = `${location.protocol}//maps.googleapis.com/maps/api/staticmap?size=${this.parentNode.clientWidth}x${this.mapHeight}&language=${navigator.language}&key=${window.googleMapsAPIKey}&zoom=${this.model.zoom}&markers=${marker}`;
+        this.nodes.img.src = `${location.protocol}//maps.googleapis.com/maps/api/staticmap?size=${this.parentNode.clientWidth}x${this.height}&language=${navigator.language}&key=${window.googleMapsAPIKey}&zoom=${this.model.zoom}&markers=${marker}`;
       }
     },
 
