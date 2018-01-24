@@ -35,6 +35,8 @@
     * `getRootPart`: Returns the Root Message Part (main part)
     * `getPartsMatchingAttribute`: Searches parts for one with the specified MIME Type attributes
 * Response Messages now contain only a Status Message Type Model, and no longer can contain a Text Message Type Model
+* Image Message sizing is tweaked
+* Image Messages now use `<img />` not `<canvas />`
 
 ### Build Breaking Changes
 
@@ -104,6 +106,7 @@
 * `Layer.Core.MessageTypeModel` now has a `getModelsByRole` method, and no longer `getModelsForPart` and `getModelForPart` methods
 * `Layer.Core.MessageTypeModel` now has a `childModels` property with all Child Models initialized automatically.
 * `Layer.Core.Identity.sessionOwner` has been renamed to `Layer.Core.Identity.isMine`. Most common use of this: `message.sender.isMine` tells you if the sender of the message is the user of this client.
+* `<layer-choice-button />` and `<layer-choice-message-view />` both provide `onChoiceSelect` which lets Mixins customize selection behavior
 
 ## 1.0.0-pre1.15
 
