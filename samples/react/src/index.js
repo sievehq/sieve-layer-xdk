@@ -42,9 +42,7 @@ render(
 
 if (navigator.userAgent.match(/android/i) || navigator.platform === 'iPhone' || navigator.platform === 'iPad') {
   function onResize() {
-    console.log("Inner Height: " + window.innerHeight);
     document.body.style.height = window.innerHeight + 'px';
-    console.log("Height set to " + document.body.style.height);
   }
   window.addEventListener('resize', onResize);
   setTimeout(onResize, 10);

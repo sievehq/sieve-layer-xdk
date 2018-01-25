@@ -58,6 +58,9 @@ registerComponent('layer-carousel-message-view', {
     content: "";
     flex: 0 0 5px;
   }
+  layer-carousel-view.layer-is-mobile .layer-next-icon {
+    display: none;
+  }
   `,
 
   mixins: [MessageViewMixin, Throttler, Clickable],
@@ -88,6 +91,9 @@ registerComponent('layer-carousel-message-view', {
     },
   },
   methods: {
+    onCreate() {
+      if (userAgent.match(/(mobile|android|phone)/i)) this.classList.add('layer-is-mobile');
+    },
 
     /**
      * @experimental

@@ -86,7 +86,7 @@ export default class Messenger extends Component {
    */
   onConversationSelected = (event) => {
     const { actions } = this.props;
-    actions.selectConversation(event.detail.item.toObject());
+    actions.selectConversation(event.detail.item ? event.detail.item.toObject() : null);
   }
 
   /**
@@ -123,8 +123,13 @@ export default class Messenger extends Component {
       actions,
       appId,
     } = this.props;
+
+    if (navigator.userAgent.match(/android/i) || navigator.platform === 'iPhone' || navigator.platform === 'iPad') {
+      document.body.classList.toggle('layer-show-conversation-list', !activeConversationId);
+      document.body.classList.toggle('layer-show-conversation-view', activeConversationId);
+    }
     return (
-      <div className='left-panel'>
+      <div className='left-panel' >
         <Notifier
           appId={appId}
           notifyInForeground="toast"
@@ -194,7 +199,7 @@ export default class Messenger extends Component {
       showAnnouncements,
       participantState,
       conversations,
-      announcements
+      announcements,
     } = this.props;
     const { showParticipants } = participantState;
 

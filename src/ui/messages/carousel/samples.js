@@ -23,7 +23,7 @@ model = new CarouselModel({
 items: [
   new ButtonModel({
     buttons: [
-      {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", selectedAnswer: 'dislike', allowReselect: true}},
+      {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
       {"type": "choice", "choices": [{"text": "Buy Me", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}},
     ],
     contentModel: new TextModel({
@@ -34,7 +34,7 @@ items: [
   }),
   new ButtonModel({
     buttons: [
-      {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", selectedAnswer: 'dislike', allowReselect: true}},
+      {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
       {"type": "choice", "choices": [{"text": "Buy Me", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}},
     ],
     contentModel: new TextModel({
@@ -45,7 +45,7 @@ items: [
   }),
   new ButtonModel({
     buttons: [
-      {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", selectedAnswer: 'dislike', allowReselect: true}},
+      {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
       {"type": "choice", "choices": [{"text": "Buy Me", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}},
     ],
     contentModel: new TextModel({
@@ -166,9 +166,9 @@ model = new CarouselModel({
         imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
         options: [
           new ChoiceModel({
-            question: 'Size',
+            label: 'Size',
             type: 'Label',
-            selectedAnswer: 'small',
+            preselectedChoice: 'small',
             choices: [
               {text:  "Small", id: "small"},
               {text:  "Medium", id: "medium"},
@@ -176,9 +176,9 @@ model = new CarouselModel({
             ]
           }),
           new ChoiceModel({
-            question: 'Color',
+            label: 'Color',
             type: 'Label',
-            selectedAnswer: 'white',
+            preselectedChoice: 'white',
             choices: [
               {text:  "White", id: "white"},
               {text:  "Black", id: "black"},
@@ -208,9 +208,9 @@ model = new CarouselModel({
         imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
         options: [
           new ChoiceModel({
-            question: 'Size',
+            label: 'Size',
             type: 'Label',
-            selectedAnswer: 'small',
+            preselectedChoice: 'small',
             choices: [
               {text:  "Small", id: "small"},
               {text:  "Medium", id: "medium"},
@@ -218,9 +218,9 @@ model = new CarouselModel({
             ]
           }),
           new ChoiceModel({
-            question: 'Color',
+            label: 'Color',
             type: 'Label',
-            selectedAnswer: 'white',
+            preselectedChoice: 'white',
             choices: [
               {text:  "White", id: "white"},
               {text:  "Black", id: "black"},
@@ -250,9 +250,9 @@ model = new CarouselModel({
         imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
         options: [
           new ChoiceModel({
-            question: 'Size',
+            label: 'Size',
             type: 'Label',
-            selectedAnswer: 'small',
+            preselectedChoice: 'small',
             choices: [
               {text:  "Small", id: "small"},
               {text:  "Medium", id: "medium"},
@@ -260,9 +260,9 @@ model = new CarouselModel({
             ]
           }),
           new ChoiceModel({
-            question: 'Color',
+            label: 'Color',
             type: 'Label',
-            selectedAnswer: 'white',
+            preselectedChoice: 'white',
             choices: [
               {text:  "White", id: "white"},
               {text:  "Black", id: "black"},
@@ -292,9 +292,9 @@ model = new CarouselModel({
         imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
         options: [
           new ChoiceModel({
-            question: 'Size',
+            label: 'Size',
             type: 'Label',
-            selectedAnswer: 'small',
+            preselectedChoice: 'small',
             choices: [
               {text:  "Small", id: "small"},
               {text:  "Medium", id: "medium"},
@@ -302,9 +302,9 @@ model = new CarouselModel({
             ]
           }),
           new ChoiceModel({
-            question: 'Color',
+            label: 'Color',
             type: 'Label',
-            selectedAnswer: 'white',
+            preselectedChoice: 'white',
             choices: [
               {text:  "White", id: "white"},
               {text:  "Black", id: "black"},
@@ -334,9 +334,9 @@ model = new CarouselModel({
         imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
         options: [
           new ChoiceModel({
-            question: 'Size',
+            label: 'Size',
             type: 'Label',
-            selectedAnswer: 'small',
+            preselectedChoice: 'small',
             choices: [
               {text:  "Small", id: "small"},
               {text:  "Medium", id: "medium"},
@@ -344,9 +344,9 @@ model = new CarouselModel({
             ]
           }),
           new ChoiceModel({
-            question: 'Color',
+            label: 'Color',
             type: 'Label',
-            selectedAnswer: 'white',
+            preselectedChoice: 'white',
             choices: [
               {text:  "White", id: "white"},
               {text:  "Black", id: "black"},
@@ -376,9 +376,9 @@ model = new CarouselModel({
         imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
         options: [
           new ChoiceModel({
-            question: 'Size',
+            label: 'Size',
             type: 'Label',
-            selectedAnswer: 'small',
+            preselectedChoice: 'small',
             choices: [
               {text:  "Small", id: "small"},
               {text:  "Medium", id: "medium"},
@@ -386,9 +386,9 @@ model = new CarouselModel({
             ]
           }),
           new ChoiceModel({
-            question: 'Color',
+            label: 'Color',
             type: 'Label',
-            selectedAnswer: 'white',
+            preselectedChoice: 'white',
             choices: [
               {text:  "White", id: "white"},
               {text:  "Black", id: "black"},

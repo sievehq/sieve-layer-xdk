@@ -233,6 +233,7 @@ registerComponent('layer-compose-bar', {
       this.nodes.input.placeholder = this.placeholder;
       this.nodes.input.addEventListener('keydown', this._onKeyDown.bind(this));
       this.nodes.input.addEventListener('input', this._onInput.bind(this));
+      this.nodes.input.addEventListener('touchend', this._onFocus.bind(this)); // focus event doesn't refire after keyboard closes and you try to reopen it
 
       // Event handlers
       this.addEventListener('layer-models-generated', this._handleAttachments.bind(this));
@@ -282,6 +283,11 @@ registerComponent('layer-compose-bar', {
      */
     focus() {
       this.nodes.input.focus();
+    },
+
+    // Sometimes focus on mobile device will open a keyboard and message list fails to stay stuck to bottom
+    _onFocus() {
+      this.trigger('layer-compose-bar-focus');
     },
 
     /**

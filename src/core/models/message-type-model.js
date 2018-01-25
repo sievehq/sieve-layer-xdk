@@ -586,6 +586,13 @@ class MessageTypeModel extends Root {
   __updateResponses(newResponse, oldResponse) {
     if (!this.responses) this.__responses = {};
     this._processNewResponses();
+    if (!this.part) {
+      this._triggerAsync('message-type-model:change', {
+        propertyName: 'responses',
+        oldValue: oldResponse,
+        newValue: newResponse,
+      });
+    }
   }
 
   /**

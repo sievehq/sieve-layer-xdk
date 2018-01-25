@@ -52,6 +52,8 @@ const layerSample = {
     });
   },
   getIdentityToken: function(Layer, nonce, callback) {
+    localStorage.setItem('layer-sample-app-user', layerSample.email);
+    localStorage.setItem('layer-sample-app-pass', layerSample.password);
     Layer.Utils.xhr({
       url: layerSample.identityProviderUrl,
       headers: {
@@ -105,6 +107,9 @@ window.document && document.addEventListener('DOMContentLoaded', function() {
   container.setAttribute('id', 'identity');
   container.appendChild(form);
   document.body.insertBefore(container, document.querySelectorAll('.main-app')[0]);
+
+  if (localStorage.getItem('layer-sample-app-user')) document.getElementById('email').value = localStorage.getItem('layer-sample-app-user');
+  if (localStorage.getItem('layer-sample-app-pass')) document.getElementById('password').value = localStorage.getItem('layer-sample-app-pass');
 
   function submit() {
     layerSample.email = document.getElementById('email').value;

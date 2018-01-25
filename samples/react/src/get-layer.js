@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDom from 'react-dom';
 
+// To get ALL of Web XDK use:
+// import Layer from '@layerhq/web-xdk/lib/index-all';
 import Layer from '@layerhq/web-xdk';
 
 import { appId } from '../common/identityServices';
@@ -24,8 +26,9 @@ import '@layerhq/web-xdk/lib/ui/components/layer-identity-list';
 // initialize lauerUI with your appID and layer sdk
 const layerClient = Layer.init({
   appId,
-  useEmojiImages: false,
-  textHandlers: ['autolinker', 'emoji', 'newline'],
+  isTrustedDevice: true,
+  //useEmojiImages: false,
+  //textHandlers: ['autolinker', 'emoji', 'newline'],
   mixins: {
 
   }

@@ -20,12 +20,14 @@ function internalSelectConversation(layerClient, state, payload, next) {
     if (conversation) conversation.off(null, null, selectConversation);
   }
 
-  if (payload.conversation.id) {
+  if (payload.conversation && payload.conversation.id) {
     layerClient.getConversation(payload.conversation.id).on('conversations:change', function(evt) {
       next(selectConversation(evt.target.toObject()));
     }, selectConversation);
+    return next(push(`/conversations/${uuid(payload.conversation.id)}`));
+  } else {
+    return next(push('/'));
   }
-  return next(push(`/conversations/${uuid(payload.conversation.id)}`));
 }
 
 function handleAction(layerClient, state, action, next) {

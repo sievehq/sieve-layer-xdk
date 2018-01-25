@@ -452,6 +452,12 @@ export default class ActiveConversation extends Component {
     return true;
   }
 
+  onClearConversation() {
+    const { actions } = this.props;
+    actions.selectConversation(null);
+  }
+
+
   /**
    * Render the Right Panel which contains the Header, and the Conversation Panel
    */
@@ -490,6 +496,7 @@ export default class ActiveConversation extends Component {
           title={title}
           activeConversation={activeConversation}
           editingTitle={editingTitle}
+          onClearConversation={this.onClearConversation.bind(this)}
           onEditConversationTitle={actions.editConversationTitle}
           onChangeConversationTitle={actions.changeConversationTitle}
           onSaveConversationTitle={actions.saveConversationTitle}

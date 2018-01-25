@@ -339,8 +339,8 @@ registerComponent('layer-message-list', {
           }
         }
 
-        // If we have scrolled to the bottom/away from bottom, update stuckToBottom.
-        const stuckToBottom = this.scrollHeight - 10 <= this.clientHeight + this.scrollTop;
+        // If we have scrolled to the bottom/away from bottom (or are approximately at the bottom), update stuckToBottom.
+        const stuckToBottom = this.scrollHeight - 50 <= this.clientHeight + this.scrollTop;
         if (stuckToBottom !== this.properties.stuckToBottom && !this.properties.inPagedData) {
           this.properties.stuckToBottom = stuckToBottom;
         }
@@ -900,8 +900,30 @@ registerComponent('layer-message-list', {
      */
     onPagedDataDone(isDoneSizingContent) {
       if (this.properties.stuckToBottom) {
-        this.scrollTo(this.scrollHeight - this.clientHeight);
+        this.scrollToBottom();
       }
+    },
+
+    /**
+     * Scroll the Message List to the bottom / most recent message.
+     *
+     * Sometimes things shift while animating so keep retrying until
+     * we Really reach the bottom.
+     *
+     * @method scrollToBottom
+     */
+    scrollToBottom(animateSpeed = 0) {
+      this.properties.stuckToBottom = true;
+      const bottom = this.scrollHeight - this.clientHeight;
+      if (!animateSpeed) {
+        this.scrollTo(bottom);
+      } else {
+        this.animatedScrollTo(bottom, animateSpeed);
+      }
+      setTimeout(() => {
+        const newBottom = this.scrollHeight - this.clientHeight;
+        if (bottom !== newBottom) this.scrollToBottom(animateSpeed);
+      }, animateSpeed + 10 || 250);
     },
   },
 });

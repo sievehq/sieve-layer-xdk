@@ -767,6 +767,7 @@ registerComponent('layer-conversation-view', {
     onCreate() {
       this.properties._handleResize = this._handleResize.bind(this);
       window.addEventListener('resize', this.properties._handleResize);
+      this.addEventListener('layer-compose-bar-focus', this._adjustForSoftKeyboard.bind(this));
     },
 
     // onAfterCreate() {
@@ -781,6 +782,14 @@ registerComponent('layer-conversation-view', {
     // Cleanup any global event handlers
     onDestroy() {
       window.removeEventListener('resize', this.properties._handleResize);
+    },
+
+    _adjustForSoftKeyboard() {
+      setTimeout(() => {
+        if (this.nodes.list.properties.stuckToBottom) {
+          this.nodes.list.scrollToBottom(200);
+        }
+      }, 250);
     },
 
     /**

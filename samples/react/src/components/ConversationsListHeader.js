@@ -42,6 +42,7 @@ export default class ConversationListHeader extends Component {
           item={user}
           appId={appId}
           onPresenceClick={this.togglePresence} />
+
         <div className='title'>{user.displayName}'s Conversations</div>
         <a className={announcementClasses.join(' ')} onClick={this.showAnnouncements}>
           <i className="icon fa fa-bullhorn"></i>

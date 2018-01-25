@@ -301,3 +301,11 @@ layer-compose-bar layer-menu-button span {
 layer-compose-bar .layer-button-panel .layer-replaceable-inner > layer-menu-button {
   margin: 4px 16px 0px 8px;
 }
+
+.layer-show-conversation-list .right-panel {
+  display: none;
+}
+
+.layer-show-conversation-view .left-panel {
+  display: none;
+}

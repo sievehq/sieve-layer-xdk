@@ -77,6 +77,7 @@ export default class ConversationHeader extends Component {
 
     return (
       <div className='conversation-header panel-header'>
+      <div onClick={this.props.onClearConversation}>X</div>
         <div className='title'>
           {title + ' '}
           {!disableEdit && // Hide the pencil icon if disableEdit is true (Used in the DefaultPanel).
