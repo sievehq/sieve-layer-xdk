@@ -19,7 +19,7 @@ function replaceEmojis (string, expr) {
 register({
   base: location.protocol + '://twemoji.maxcdn.com/',
   name: 'emoji',
-  order: 300,
+  order: 400,
   requiresEnable: true,
   handler(textData) {
     // Bug in RemarkableParser requires extra spacing around html tags to keep them away from the emoticon.

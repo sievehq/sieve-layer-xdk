@@ -23,7 +23,7 @@ const testExpr = IsUrl();
  */
 register({
   name: 'autolinker',
-  order: 400,
+  order: 300,
   requiresEnable: true,
   handler(textData) {
     textData.text = textData.text.replace(testExpr, (url) => {
