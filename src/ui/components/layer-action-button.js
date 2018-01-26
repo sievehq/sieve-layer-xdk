@@ -146,7 +146,7 @@ registerComponent('layer-action-button', {
      * @private
      */
     _onClick(evt) {
-      if (!this.event) return;
+      if (!this.event || this.disabled) return;
       if (evt) {
         evt.preventDefault();
         evt.stopPropagation();
