@@ -47,7 +47,7 @@ model = new ButtonsModel({
   contentModel: new LocationModel({
     latitude: 37.7734858,
     longitude: -122.3916087,
-    heading: "North",
+    heading: 23.45,
     altitude: 35,
     title: "Here I am.  Right there on the dot. I'm stuck on the dot.  Please free me.",
     description: "Dot prisoner 455 has attempted to escape.  Send in the puncutation and make a very strong point about dot prisoner escapes",

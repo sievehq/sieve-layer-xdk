@@ -432,21 +432,37 @@ registerComponent('layer-message-list', {
     _checkVisibility() {
       if (UIUtils.isInBackground() || this.disable) return;
 
-      // The top that we can see is marked by how far we have scrolled.
-      const visibleTop = this.scrollTop;
-
-      // The bottom that we can see is marked by how far we have scrolled plus the height of the panel.
-      const visibleBottom = this.scrollTop + this.clientHeight;
       const children = Array.prototype.slice.call(this.childNodes);
       children.forEach((child) => {
-        const childOffset = child.offsetTop - this.offsetTop;
-        if (childOffset >= visibleTop && childOffset + child.clientHeight <= visibleBottom) {
-          if (child.properties && child.properties.item && !child.properties.item.isRead) {
-            // TODO: Use a scheduler rather than many setTimeout calls
-            setTimeout(() => this._markAsRead(child), Settings.markReadDelay);
-          }
+        if (child.properties && child.properties.item && !child.properties.item.isRead && this._shouldMarkAsRead(child)) {
+          // TODO: Use a scheduler rather than many setTimeout calls
+          setTimeout(() => this._markAsRead(child), Settings.markReadDelay);
         }
       }, this);
+    },
+
+    /**
+     * Tests to see if the specified Message Item be marked as read
+     *
+     * @method _shouldMarkAsRead
+     * @private
+     * @param {Layer.UI.components.MessageListPanel.Item} child
+     * @returns {Boolean}
+     */
+    _shouldMarkAsRead(child) {
+      if (UIUtils.isInBackground() || this.disable) return;
+
+      const errorMargin = 10;
+      const topVisiblePixel = this.scrollTop;
+      const bottomVisiblePixel = this.scrollTop + this.clientHeight;
+      const childTopVisiblePixel = child.offsetTop - this.offsetTop;
+      const childBottomVisiblePixel = childTopVisiblePixel + child.clientHeight;
+      const isTooBig = child.clientHeight + 50 > this.clientHeight;
+
+      const isChildTopVisible = childTopVisiblePixel + errorMargin >= topVisiblePixel && childTopVisiblePixel < bottomVisiblePixel;
+      const isChildBottomVisible = childBottomVisiblePixel <= bottomVisiblePixel + errorMargin && childTopVisiblePixel < bottomVisiblePixel;
+
+      return (isChildTopVisible && isChildBottomVisible || isTooBig && (isChildBottomVisible || isChildTopVisible));
     },
 
     /**
@@ -460,12 +476,7 @@ registerComponent('layer-message-list', {
      * @param {Layer.UI.components.MessageListPanel.Item} child
      */
     _markAsRead(child) {
-      if (UIUtils.isInBackground() || this.disable) return;
-
-      const visibleTop = this.scrollTop;
-      const visibleBottom = this.scrollTop + this.clientHeight;
-      const childOffset = child.offsetTop - this.offsetTop;
-      if (childOffset >= visibleTop && childOffset + child.clientHeight <= visibleBottom) {
+      if (this._shouldMarkAsRead(child)) {
         child.properties.item.isRead = true;
       }
     },

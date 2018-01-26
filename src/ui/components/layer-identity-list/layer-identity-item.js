@@ -74,7 +74,6 @@ registerComponent('layer-identity-item', {
      */
     isSelected: {
       type: Boolean,
-      noGetterFromSetter: true,
       set(value) {
         if (this.nodes.checkbox) this.nodes.checkbox.checked = value;
         this.innerNode.classList[value ? 'add' : 'remove']('layer-identity-item-selected');

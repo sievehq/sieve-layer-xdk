@@ -892,16 +892,12 @@ ChoiceModel.prototype._pauseUpdateTimeout = 0;
 ChoiceModel.Label = 'Choice';
 
 /**
- * The default action when selecting this Message is to trigger an `layer-choice-select`
- * and select a Choice.
- *
- * NOTE: This may fire even if a choice is not actually selected, which is not really desirable,
- * so we may need to review this setting.
+ * There is no default action when clicking on a Choice Message; only clicking on the Choice Buttons should cause an action.
  *
  * @static
- * @property {String} [defaultAction=layer-choice-select]
+ * @property {String} [defaultAction=]
  */
-ChoiceModel.defaultAction = 'layer-choice-select';
+ChoiceModel.defaultAction = '';
 
 /**
  * The MIME Type recognized by and used by the Choice Model.
