@@ -251,6 +251,8 @@ registerComponent('layer-message-viewer', {
       if (this.nodes.ui.runAction && this.nodes.ui.runAction(action)) return;
 
       const event = action && action.event ? action.event : this.model.actionEvent;
+      if (!event) return;
+
       const actionData = action && action.data ? action.data : this.model.actionData; // TODO: perhaps merge action.data with actionData?
       const rootModel = this.message ? this.message.getRootPart().createModel() : null;
 

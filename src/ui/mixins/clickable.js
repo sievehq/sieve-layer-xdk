@@ -10,8 +10,18 @@
  * @class Layer.UI.mixins.Clickable
  * @protected
  */
+
+import { isIOS } from '../../utils';
+import { registerComponent } from '../components/component';
+
 module.exports = {
   methods: {
+    onCreate: {
+      mode: registerComponent.MODES.BEFORE,
+      value() {
+        this.properties._clickableState = {};
+      },
+    },
 
     /**
      * Remove a Click Handler from the target.
@@ -28,9 +38,12 @@ module.exports = {
      * @param {HTMLElement} target  Node that is being watched
      */
     removeClickHandler(name, target) {
-      if (this.properties.onClickFn && this.properties.onClickFn[name]) {
-        target.removeEventListener('click', this.properties.onClickFn[name]);
-        target.removeEventListener('tap', this.properties.onClickFn[name]);
+      const state = this.properties._clickableState[name];
+      if (state) {
+        target.removeEventListener('click', state.onFire);
+        target.removeEventListener('touchstart', state.onTouchStart);
+        target.removeEventListener('touchmove', state.onTouchMove);
+        target.removeEventListener('touchend', state.onTouchEnd);
       }
     },
 
@@ -57,21 +70,60 @@ module.exports = {
      * @param {Function} fn         Handler to call when the event occurs
      */
     addClickHandler(name, target, fn) {
-      if (!this.properties.onClickFn) this.properties.onClickFn = {};
-      this.properties.onClickFn[name] = function onClickFn(evt) {
+      if (!this.properties._clickableState[name]) this.properties._clickableState[name] = {};
+      const state = this.properties._clickableState[name];
+      state.fn = fn;
+      state.onTouchStart = this._onTouchStart.bind(this, name);
+      state.onTouchMove = this._onTouchMove.bind(this, name);
+      state.onTouchEnd = this._onTouchEnd.bind(this, name);
+      state.onFire = this._fireClickHandler.bind(this, name);
 
-        // Without this test, we block links from opening and probably buttons from clicking and inputs from focusing
-        // This is frankly kind of hazardous and we will either need to have a way to add more nodes here or we'll
-        // need to rip this out entirely (or allow customers to)
-        const clickableTargets = ['A', 'INPUT', 'BUTTON', 'TEXTAREA', 'SELECT'];
-        if (clickableTargets.indexOf(evt.target.tagName) === -1) {
-          // if tap event, prevent the click handler from firing causing a double event occurance
-          evt.preventDefault();
-        }
-        fn(evt);
-      };
-      target.addEventListener('tap', this.properties.onClickFn[name]);
-      target.addEventListener('click', this.properties.onClickFn[name]);
+      target.addEventListener('touchstart', state.onTouchStart);
+      target.addEventListener('touchmove', state.onTouchMove);
+      target.addEventListener('touchend', state.onTouchEnd);
+      if (!isIOS) target.addEventListener('click', state.onFire);
+    },
+
+    _fireClickHandler(name, evt) {
+      const state = this.properties._clickableState[name];
+
+      // Without this test, we block links from opening and probably buttons from clicking and inputs from focusing
+      // This is frankly kind of hazardous and we will either need to have a way to add more nodes here or we'll
+      // need to rip this out entirely (or allow customers to)
+      const clickableTargets = ['A', 'INPUT', 'BUTTON', 'TEXTAREA', 'SELECT'];
+      if (clickableTargets.indexOf(evt.target.tagName) === -1) {
+        // if tap event, prevent the click handler from firing causing a double event occurance
+        evt.preventDefault();
+      }
+      state.fn(evt);
+    },
+
+    _onTouchStart(name, evt) {
+
+      const state = this.properties._clickableState[name];
+      state.moved = 0;
+      state.start = Date.now();
+      state.x = evt.touches[0].screenX;
+      state.y = evt.touches[0].screenY;
+    },
+
+    _onTouchMove(name, evt) {
+      const state = this.properties._clickableState[name];
+      const distance = Math.abs(evt.touches[0].screenX - state.x) + Math.abs(evt.touches[0].screenY - state.y);
+      state.moved = state.moved + distance;
+      state.x = evt.touches[0].screenX;
+      state.y = evt.touches[0].screenY;
+
+    },
+
+    _onTouchEnd(name, evt) {
+      const state = this.properties._clickableState[name];
+      // Tap must take less than 3 seconds or its not really a selection event.
+      if (state.moved < 15 && Date.now() - state.start < 3000) this._fireClickHandler(name, evt);
+      delete state.moved;
+      delete state.x;
+      delete state.y;
+      delete state.start;
     },
   },
 };
