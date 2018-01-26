@@ -67,6 +67,7 @@ import HasQuery from '../mixins/has-query';
 import FocusOnKeydown from '../mixins/focus-on-keydown';
 import FileDropTarget from '../mixins/file-drop-target';
 import Throttler from '../mixins/throttler';
+import { isMobile } from '../../utils';
 
 import './layer-message-list';
 import './layer-compose-bar';
@@ -935,7 +936,7 @@ registerComponent('layer-conversation-view', {
           return true;
         case UIConstants.FOCUS.DESKTOP_ONLY:
           if (maxTouchPoints !== undefined && maxTouchPoints > 0) return false;
-          return !(userAgent.match(/(mobile|android|phone)/i));
+          return !isMobile;
         case UIConstants.FOCUS.NEVER:
           return false;
       }

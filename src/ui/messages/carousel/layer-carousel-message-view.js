@@ -19,6 +19,7 @@ import Constants from '../../constants';
 import MessageViewMixin from '../message-view-mixin';
 import Throttler from '../../mixins/throttler';
 import Clickable from '../../mixins/clickable';
+import { isMobile } from '../../../utils';
 import './layer-carousel-message-model';
 
 registerComponent('layer-carousel-message-view', {
@@ -58,7 +59,7 @@ registerComponent('layer-carousel-message-view', {
     content: "";
     flex: 0 0 5px;
   }
-  layer-carousel-view.layer-is-mobile .layer-next-icon {
+  layer-carousel-message-view.layer-is-mobile .layer-next-icon {
     display: none;
   }
   `,
@@ -91,9 +92,6 @@ registerComponent('layer-carousel-message-view', {
     },
   },
   methods: {
-    onCreate() {
-      if (userAgent.match(/(mobile|android|phone)/i)) this.classList.add('layer-is-mobile');
-    },
 
     /**
      * @experimental
@@ -139,6 +137,8 @@ registerComponent('layer-carousel-message-view', {
 
       this.properties.onResize = this._onResize.bind(this);
       window.addEventListener('resize', this.properties.onResize);
+
+      if (global.navigator && isMobile) this.classList.add('layer-is-mobile');
     },
 
 

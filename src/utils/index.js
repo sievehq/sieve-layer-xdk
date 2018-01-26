@@ -382,6 +382,9 @@ exports.doesObjectMatch = (requestedData, actualData) => {
   return true;
 };
 
+exports.isMobile = global.navigator ? global.navigator.userAgent.match(/(mobile|android|phone)/i) : false;
+exports.isIOS = global.navigator ? global.navigator.userAgent.match(/(iPhone|iPad)/i) : false;
+
 /**
  * Simple array inclusion test
  * @method includes
@@ -409,7 +412,7 @@ exports.asciiInit = (version) => {
   hMMy+/////////////////omMN-
   MMN                    oMMo
   MMN        Layer       oMMo
-  MMN       Web SDK      oMMo
+  MMN       Web XDK      oMMo
   MMM-                   oMMo
   MMMy      v${line1}oMMo
   MMMMo     ${line2}oMMo
