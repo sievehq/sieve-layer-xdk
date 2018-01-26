@@ -23,6 +23,8 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
+
+
 new TextModel({text: "Custom Event Data"}).send({ conversation: $("layer-conversation-view").conversation });
 
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
@@ -113,6 +115,25 @@ model = new ButtonModel({
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
+new TextModel({text: "3 button choice with a name for a customized Response Message"}).send({ conversation: $("layer-conversation-view").conversation });
+
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+model = new ButtonModel({
+ buttons: [{
+   "type": "choice",
+   "choices": [
+     {"text": "\uD83D\uDC4D", "id": "like"},
+     {"text": "\uD83D\uDC4E", "id": "dislike"},
+     {"text": "\ud83d\udc4c", "id": "ok"},
+    ],
+    data: {
+      name: "Judgement Message"
+    },
+  }
+ ]
+});
+model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
 
 new TextModel({text: "Choice Button custom responseName"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -137,7 +158,7 @@ model = new ButtonModel({
    {"type": "choice", "choices": [
      {"text": "like", "id": "like", "tooltip": "like"},
      {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
-    ], "data": {allowReselect: true}}
+    ], "data": {allowReselect: true, responseMessageDescription: 'Liking Layer'}}
  ]
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())

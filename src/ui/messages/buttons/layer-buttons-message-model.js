@@ -243,7 +243,16 @@ class ButtonsModel extends MessageTypeModel {
       return super.getOneLineSummary();
     }
   }
+
+  getChoiceModelResponseTopic() {
+    if (this.contentModel && this.contentModel.getChoiceModelResponseTopic) {
+      return this.contentModel.getChoiceModelResponseTopic();
+    }
+    return '';
+  }
 }
+
+
 
 /**
  * Array of button descriptions that will be rendered for this Message.

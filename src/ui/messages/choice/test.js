@@ -1118,7 +1118,7 @@ describe('Choice Message Components', function() {
               choice: jasmine.objectContaining({ id: 'bb' }),
               model: model,
               text: 'Frodo the Dodo selected "b" for "hello"',
-              nameOfChoice: "hello",
+              name: "hello",
               action: 'selected'
             }));
           }
@@ -1137,7 +1137,7 @@ describe('Choice Message Components', function() {
               choice: jasmine.objectContaining({ id: 'bb' }),
               model: this,
               text: 'Frodo the Dodo deselected "b" for "hello"',
-              nameOfChoice: "hello",
+              name: "hello",
               action: 'deselected'
             }));
           }

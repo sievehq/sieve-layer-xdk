@@ -42,7 +42,7 @@
  * ```
  * client.on('message-type-model:customization', function(evt) {
  *   if (evt.type === 'layer-choice-model-generate-response-message') {
- *     evt.returnValue(`${evt.nameOfChoice}: ${Client.user.displayName} has ${evt.action} ${evt.choice.text}`);
+ *     evt.returnValue(`${evt.name}: ${Client.user.displayName} has ${evt.action} ${evt.choice.text}`);
  *   }
  * });
  * ```
@@ -344,9 +344,7 @@ class ChoiceModel extends MessageTypeModel {
    */
   _generateResponseMessage({ action, selectedText, choiceItem, participantData }) {
     // Generate the Response Message
-    const nameOfChoice = this._getNameOfChoice();
-    const namePhrase = (nameOfChoice ? ` for "${nameOfChoice}"` : '');
-    let text = `${Client.user.displayName} ${action} "${selectedText}"${namePhrase}`;
+    let text = `${Client.user.displayName} ${action} "${selectedText}"` + (this.name ? ` for "${this.name}"` : '');
 
     /**
      * Whenever the Choice Model is about to send a Response Message, this event is triggered.
@@ -375,7 +373,7 @@ class ChoiceModel extends MessageTypeModel {
      * @param {Object} evt.detail.choice        This is the Choice Object that the user selected
      * @param {String} evt.detail.action        Either "selected" or "deselected"
      * @param {Layer.UI.messages.ChoiceMessageModel} evt.detail.model  This Choice Model
-     * @param {String} evt.detail.nameOfChoice  Suggested name to describe the choice message the use is responding to; can be used to help your `evt.returnValue()` call.
+     * @param {String} evt.detail.name          Suggested name to describe the choice message the use is responding to; can be used to help your `evt.returnValue()` call.
      */
 
     // UI will trigger evt.type (choice-model-generate-response-message)
@@ -386,7 +384,7 @@ class ChoiceModel extends MessageTypeModel {
       model: this,
       text,
       action,
-      nameOfChoice,
+      name: this.name,
     });
 
     // If evt.cancel() was called (or from the UI event: evt.preventDefault()) do not send the Response Message
@@ -407,27 +405,6 @@ class ChoiceModel extends MessageTypeModel {
     // for a Message that is shared among the participants.
     if (!this.message.isNew()) {
       responseModel.generateMessage(this.message.getConversation(), message => this._sendResponse(message));
-    }
-  }
-
-  /**
-   * Get a displayable name to label responses to this Choice Model with.
-   *
-   * Example: "User XXX did YYY for ZZZ" where the name of the Choice Model is ZZZ.
-   * @method _getNameOfChoice
-   * @private
-   * @returns {String}
-   */
-  _getNameOfChoice() {
-    if (this.parentId) {
-      const model = this.getParentModel();
-      if (model && model.getChoiceModelResponseTopic && model.getChoiceModelResponseTopic()) {
-        return model.getChoiceModelResponseTopic();
-      }
-    }
-
-    if (this.label) {
-      return this.label;
     }
   }
 
@@ -873,6 +850,18 @@ ChoiceModel.prototype.preselectedChoice = '';
  * @property {Object} customResponseData
  */
 ChoiceModel.prototype.customResponseData = null;
+
+/**
+ * The name property is used for a concise description of this Message.
+ *
+ * The concise description is used to describe it from outside of the message; most commonly within a Response Message.
+ *
+ * If the name is "Bad Hobbit Moves", then the user's Response Message will say `Frodo-the-dodo has selected "swallow the ring" for "Bad Hobbit Moves"`.
+ * However if there is no name property, then the user's Response Message will just say `Frodo-the-dodo has selected "swallow the ring"`.
+ *
+ * @property {String} [name=]
+ */
+ChoiceModel.prototype.name = '';
 
 /**
  * setTimeout id used to insure that changes made to the UI and changes generated from the server

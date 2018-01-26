@@ -44,6 +44,7 @@ registerComponent('layer-status-message-view', {
   },
   methods: {
     onRerender() {
+      debugger;
       this.innerHTML = processText(this.model.text);
     },
   },

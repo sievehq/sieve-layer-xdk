@@ -29,7 +29,7 @@
  *
  * ```
  * document.body.addEventListener('layer-choice-model-generate-response-message', evt) {
- *  evt.detail.returnValue(`${evt.detail.nameOfChoice}: ${client.user.displayName} has ${evt.detail.action} ${evt.detail.choice.text}`);
+ *  evt.detail.returnValue(`${evt.detail.name}: ${client.user.displayName} has ${evt.detail.action} ${evt.detail.choice.text}`);
  * });
  * ```
  *
@@ -40,7 +40,7 @@
  * @property {Layer.UI.messages.ChoiceMessageModel} evt.detail.model   The Choice Model that is reporting on the newly selected answer
  * @property {String} evt.detail.text             The proposed text to send as the renderable part of the Response Message
  * @property {String} evt.detail.action           One of "selected" or "deselected" indicating whether the user action selected or deselected a Choice
- * @property {String} evt.detail.nameOfChoice     Proposed name for the Choice Model in order to describe what the user was answering. May be empty string.
+ * @property {String} evt.detail.name             Proposed name for the Choice Model in order to describe what the user was answering. May be empty string.
  */
 import { client } from '../../../settings';
 import { registerComponent } from '../../components/component';

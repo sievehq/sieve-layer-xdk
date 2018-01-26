@@ -15,6 +15,20 @@ model = new ChoiceModel({
  });
  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
+ new TextModel({text: "Name property for a custom response message"}).send({ conversation: $("layer-conversation-view").conversation });
+
+
+model = new ChoiceModel({
+   label: "What is the airspeed velocity of an unladen swallow?",
+   choices: [
+      {text:  "Zero, it can not get off the ground!", id: "zero"},
+      {text:  "Are we using Imperial or Metric units?", id: "clever bastard"},
+      {text:  "What do you mean? African or European swallow?", id: "just a smart ass"},
+    ],
+    name: "Airspeed Question",
+ });
+ model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+
  new TextModel({text: "Custom responseName"}).send({ conversation: $("layer-conversation-view").conversation });
 
  ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
