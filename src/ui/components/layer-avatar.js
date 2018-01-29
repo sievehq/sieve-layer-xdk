@@ -72,6 +72,14 @@ registerComponent('layer-avatar', {
     }
   `,
   properties: {
+
+    /**
+     * User to represent with this Avatar.
+     *
+     * Short cut to {@link #users} for when there is only a single user.
+     *
+     * @property {Layer.Core.Identity} [item=null]
+     */
     item: {
       set(value) {
         if (value instanceof Core.Message) {
@@ -92,6 +100,8 @@ registerComponent('layer-avatar', {
      * Array of users to be represented by this Avatar.
      *
      * Typically this only has one user represented with a Layer.Core.Identity.
+     *
+     * Can use {@link #item} to set this instead.
      *
      * @property {Layer.Core.Identity[]} [users=[]}
      */
@@ -127,6 +137,11 @@ registerComponent('layer-avatar', {
       },
     },
 
+    /**
+     * Set whether to show or hide the Presence of the user when rendering this Avatar.
+     *
+     * @property {Boolean} [showPresence=true]
+     */
     showPresence: {
       value: true,
       type: Boolean,
@@ -201,6 +216,14 @@ registerComponent('layer-avatar', {
       this.appendChild(span);
     },
 
+    /**
+     * Setup a single avatar (this may be a multi-avatar widget that gets called multiple times).
+     *
+     * @private
+     * @method _setupTextAvatar
+     * @param {HTMLElement} node    The HTML Element that will get the identity's intials
+     * @param {Layer.Core.Identity} user   The Identity to represent with this node
+     */
     _setupTextAvatar(node, user) {
       const text = this.onGenerateInitials(user);
       node.innerHTML = text;

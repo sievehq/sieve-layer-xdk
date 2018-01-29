@@ -228,7 +228,7 @@ registerComponent('layer-conversation-view', {
    * By calling `evt.preventDefault()` on the event you can provide your own custom typing indicator text to this widget:
    *
    * ```javascript
-   * conversationPanel.onTypingIndicator = function(evt) {
+   * conversationPanel.onTypingIndicatorChange = function(evt) {
    *    evt.preventDefault();
    *    var widget = evt.target;
    *    var typingUsers = evt.detail.typing;

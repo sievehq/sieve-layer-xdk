@@ -31,22 +31,26 @@ import { addListItemSeparator } from './list-separator-manager';
 const dateClassName = 'layer-list-item-separator-date';
 
 module.exports = (widget, messages, index) => {
-  if (index > messages.length) return;
-  const message = widget.item;
-  const needsBoundary = index === 0 || message.sentAt.toDateString() !== messages[index - 1].sentAt.toDateString();
+  try {
+    if (index > messages.length) return;
+    const message = widget.item;
+    const needsBoundary = index === 0 || message.sentAt.toDateString() !== messages[index - 1].sentAt.toDateString();
 
-  if (needsBoundary) {
-    const dateWidget = document.createElement('layer-date');
-    dateWidget.weekFormat = { weekday: 'long' };
-    dateWidget.defaultFormat = { month: 'long', day: 'numeric' };
-    dateWidget.olderFormat = { month: 'long', day: 'numeric', year: 'numeric' };
-    dateWidget.date = messages[index].sentAt;
-    const parent = document.createElement('div');
-    parent.appendChild(dateWidget);
-    parent.classList.add(dateClassName + '-inner');
-    addListItemSeparator(widget, parent, dateClassName, true);
-  } else {
-    addListItemSeparator(widget, '', dateClassName, true);
+    if (needsBoundary) {
+      const dateWidget = document.createElement('layer-date');
+      dateWidget.weekFormat = { weekday: 'long' };
+      dateWidget.defaultFormat = { month: 'long', day: 'numeric' };
+      dateWidget.olderFormat = { month: 'long', day: 'numeric', year: 'numeric' };
+      dateWidget.date = messages[index].sentAt;
+      const parent = document.createElement('div');
+      parent.appendChild(dateWidget);
+      parent.classList.add(dateClassName + '-inner');
+      addListItemSeparator(widget, parent, dateClassName, true);
+    } else {
+      addListItemSeparator(widget, '', dateClassName, true);
+    }
+  } catch (e) {
+    // no-op
   }
 };
 

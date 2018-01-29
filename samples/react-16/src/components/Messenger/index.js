@@ -2,14 +2,14 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 
 import Login from '../Login'
-import layer, { layerClient, LayerReactUI, Layer } from '../../get-layer';
+import layer, { layerClient, LayerReactComponents, Layer } from '../../get-layer';
 import config from '../../common/LayerConfiguration.json'
 import '../../common/ui_web_style.css'
 
 const LayerUIUtil = Layer.UI.UIUtils;
 const utils = Layer.Utils;
 
-const { Notifier, ConversationList, ConversationView, SendButton, FileUploadButton, MenuButton } = LayerReactUI;
+const { Notifier, ConversationList, ConversationView, SendButton, FileUploadButton, MenuButton } = LayerReactComponents;
 
 class Messenger extends Component {
   constructor (props) {

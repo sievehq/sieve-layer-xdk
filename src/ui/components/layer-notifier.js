@@ -240,7 +240,7 @@ registerComponent('layer-notifier', {
      *
      * See Layer.UI.components.Notifier.notifyCharacterForTitlebar for more controls.
      *
-     * @property {String} notifyInTitleBar
+     * @property {String} [notifyInTitleBar=true]
      */
     notifyInTitlebar: {
       type: Boolean,

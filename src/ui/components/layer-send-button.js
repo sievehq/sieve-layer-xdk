@@ -61,7 +61,7 @@ registerComponent('layer-send-button', {
      * button.text = "Send it";
      * ```
      *
-     * @property {String} text
+     * @property {String} [text=SEND]
      */
     text: {
       value: 'SEND',

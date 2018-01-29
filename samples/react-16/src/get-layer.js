@@ -32,5 +32,5 @@ const layerClient = Layer.init({
 })
 
 
-const LayerReactUI = Layer.UI.adapters.react(React, ReactDom)
-export default { LayerReactUI, Layer, layerClient }
+const LayerReactComponents = Layer.UI.adapters.react(React, ReactDom)
+export default { LayerReactComponents, Layer, layerClient }

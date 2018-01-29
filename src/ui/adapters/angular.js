@@ -15,12 +15,12 @@ import { register } from './index';
  *    <layer-file-upload-button></layer-file-upload-button>
  * ```
  *
- * Call this function to initialize angular 1.x Directives which will be part of the "layerUIControllers" controller:
+ * Call this function to initialize angular 1.x Directives which will be part of the "layerXDKControllers" controller:
  *
  * ```
  * import '@layerhq/web-xdk/lib/ui/adapters/angular';
- * Layer.UI.adapters.angular(angular); // Creates the layerUIControllers controller
- * angular.module('MyApp', ['layerUIControllers']);
+ * Layer.UI.adapters.angular(angular); // Creates the layerXDKControllers controller
+ * angular.module('MyApp', ['layerXDKControllers']);
  * ```
  *
  *   Now you can put `<layer-conversation-view>` and other widgets into angular templates and expect them to work.
@@ -41,8 +41,8 @@ import { register } from './index';
 
 function initAngular(angular) {
 
-  // Define the layerUIController
-  const controllers = angular.module('layerUIControllers', []);
+  // Define the layerXDKController
+  const controllers = angular.module('layerXDKControllers', []);
 
   // Setup the properties for the given widget that is being generated
   function setupProps(scope, elem, attrs, props) {

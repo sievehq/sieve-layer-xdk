@@ -934,6 +934,9 @@ function _registerComponent(tagName) {
 
 
       // TODO: Test if this should be built into <layer-replaceable-content /> and moved out of the root class of all Components.
+      // NOTE: This is setup prior to property getters and setters because those getters/setters may need access to the `layer-id` defined nodes added via replaceable content
+      // HOWEVER: This means that functions for generating dom structures cannot access properties
+      // reliably
       this._onProcessReplaceableContent();
 
       // Before we start initializing all of our properties, enable setters and getters
