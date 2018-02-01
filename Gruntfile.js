@@ -126,7 +126,7 @@ module.exports = function (grunt) {
       themes: {
         files: [
           {src: ['themes/src/layer-basic-blue/theme.less'], dest: 'themes/build/layer-basic-blue.css'},
-          {src: ['themes/src/layer-groups/theme.less'], dest: 'themes/build/layer-groups.css'}
+          //{src: ['themes/src/layer-groups/theme.less'], dest: 'themes/build/layer-groups.css'}
         ]
       }
     },
@@ -161,7 +161,7 @@ module.exports = function (grunt) {
       build: {
         files: [
           {src: ['themes/build/layer-basic-blue.css'], dest: 'themes/build/layer-basic-blue.min.css'},
-          {src: ['themes/build/layer-groups.css'], dest: 'themes/build/layer-groups.min.css'}
+          //{src: ['themes/build/layer-groups.css'], dest: 'themes/build/layer-groups.min.css'}
         ]
       }
     },
@@ -701,7 +701,7 @@ module.exports = function (grunt) {
   grunt.registerTask("test", ["generate-tests", "connect:saucelabs", "saucelabs-jasmine"]);
 
 
-  grunt.registerTask('docs', ['debug', 'jsducktemplates', 'jsduck', 'jsduckfixes']);
+  grunt.registerTask('docs', ['debug', /*'jsducktemplates',*/ 'jsduck', 'jsduckfixes']);
 
   // Basic Code/theme building
   // We are not going to publish lib-es6 as this risks importing of files from both lib and lib-es6 by accident and getting multiple definitions of classes

@@ -48,7 +48,6 @@ layer-message-viewer:not(.layer-card-width-any-width) {
 layer-message-item-received .layer-root-viewer.layer-card-width-any-width > layer-standard-message-view-container > .layer-card-top {
   background-color: @message-item-bubble-received-background-color;
   color: @message-item-bubble-received-color;
-  font-size: @font-medium;
   flex-grow: 1;
 
   a, a:visited {
@@ -60,7 +59,6 @@ layer-message-item-received .layer-root-viewer.layer-card-width-any-width > laye
 layer-message-item-sent .layer-root-viewer.layer-card-width-any-width > layer-standard-message-view-container > .layer-card-top {
   background-color: @message-item-bubble-sent-background-color;
   color: @message-item-bubble-text-sent-color;
-  font-size: @font-medium;
   flex-grow: 1;
 
   a, a:visited {
@@ -75,6 +73,8 @@ layer-message-item-sent .layer-root-viewer.layer-card-width-any-width > layer-st
 
 
 layer-message-viewer {
+  font-size: @message-viewer-font-size;
+  text-align: left;
 
   &.layer-model-not-supported {
     justify-content: center;
@@ -107,7 +107,6 @@ layer-message-viewer {
     border-radius: 0px 0px 18px 18px;
   }
 
-  text-align: left;
 
   & > layer-standard-message-view-container, & > layer-titled-message-view-container {
     max-width: 100%;

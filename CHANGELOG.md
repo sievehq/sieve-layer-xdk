@@ -1,6 +1,6 @@
 # Web XDK Change Log
 
-## 1.0.0-pre2.0 (unreleased)
+## 1.0.0-pre2.0
 
 ### Important Changes
 

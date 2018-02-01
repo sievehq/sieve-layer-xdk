@@ -1,12 +1,13 @@
 [
   {
-    "name": "WebSDK Components",
+    "name": "WebXDK-Core",
     "groups": [
       {
         "name": "Core Classes",
         "classes": [
           "Layer.Core.Client",
           "Layer.Core.Conversation",
+          "Layer.Core.MessageTypeModel",
           "Layer.Core.Message",
           "Layer.Core.MessagePart",
           "Layer.Core.Query"
@@ -15,9 +16,6 @@
       {
         "name": "Utilities",
         "classes": [
-          "Layer.Core.QueryBuilder.ConversationsQuery",
-          "Layer.Core.QueryBuilder.MessagesQuery",
-          "Layer.Core.LayerEvent",
           "Layer.Core.LayerEvent",
           "Layer.Core.Root",
           "Layer.utils",
@@ -36,7 +34,7 @@
     ]
   },
   {
-    "name": "WebUI Components",
+    "name": "WebXDK-UI",
     "groups": [
       {
         "name": "Main Components",
@@ -61,6 +59,7 @@
         "name": "Messages",
         "classes": [
           "Layer.UI.messages.TextMessageModel",
+          "Layer.UI.messages.LinkMessageModel",
           "Layer.UI.messages.ImageMessageModel",
           "Layer.UI.messages.FileMessageModel",
           "Layer.UI.messages.LocationMessageModel",
@@ -69,10 +68,10 @@
           "Layer.UI.messages.ChoiceMessageModel",
           "Layer.UI.messages.FeedbackMessageModel",
           "Layer.UI.messages.ReceiptMessageModel",
-          "Layer.UI.messages.StatusMessageModel"
+          "Layer.UI.messages.StatusMessageModel",
+          "Layer.UI.messages.ResponseMessageModel"
         ]
       }
     ]
   }
 ]
-
