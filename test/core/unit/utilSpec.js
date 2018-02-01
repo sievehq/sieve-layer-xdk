@@ -539,7 +539,7 @@ describe("The Util Library", function() {
         '\n  hMMy+/////////////////omMN-' +
         '\n  MMN                    oMMo' +
         '\n  MMN        Layer       oMMo' +
-        '\n  MMN       Web SDK      oMMo' +
+        '\n  MMN       Web XDK      oMMo' +
         '\n  MMM-                   oMMo' +
         '\n  MMMy      v1.0.0       oMMo' +
         '\n  MMMMo                  oMMo' +
@@ -556,7 +556,7 @@ describe("The Util Library", function() {
         '\n  hMMy+/////////////////omMN-' +
         '\n  MMN                    oMMo' +
         '\n  MMN        Layer       oMMo' +
-        '\n  MMN       Web SDK      oMMo' +
+        '\n  MMN       Web XDK      oMMo' +
         '\n  MMM-                   oMMo' +
         '\n  MMMy      v2.10.37     oMMo' +
         '\n  MMMMo                  oMMo' +
@@ -573,7 +573,7 @@ describe("The Util Library", function() {
         '\n  hMMy+/////////////////omMN-' +
         '\n  MMN                    oMMo' +
         '\n  MMN        Layer       oMMo' +
-        '\n  MMN       Web SDK      oMMo' +
+        '\n  MMN       Web XDK      oMMo' +
         '\n  MMM-                   oMMo' +
         '\n  MMMy      v2.0.0       oMMo' +
         '\n  MMMMo     beta.3       oMMo' +

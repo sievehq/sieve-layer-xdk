@@ -157,7 +157,10 @@ registerComponent('layer-action-button', {
         node = node.parentComponent;
       }
       if (node.messageViewer) {
-        node.messageViewer._runAction({ event: this.event, data: this.data });
+        node.messageViewer._runAction({
+          event: this.event,
+          data: this.data,
+        });
       } else if (this.event) {
         this.trigger(this.event, this.data);
       }

@@ -36,25 +36,33 @@ describe("The Throttler Mixin", function() {
 
     if (client) client.destroy();
   });
-  it("Should call once within the timeout", function() {
+  it("Should call once to start and once more after the timeout", function() {
     el._throttlerTimeout = 1000;
     var spy = jasmine.createSpy('callme');
 
     // Run
     el._throttler(spy);
     jasmine.clock().tick(100);
+    expect(spy.calls.count()).toEqual(1);
+
     el._throttler(spy);
     jasmine.clock().tick(100);
+    expect(spy.calls.count()).toEqual(1);
+
     el._throttler(spy);
     jasmine.clock().tick(100);
+    expect(spy.calls.count()).toEqual(1);
+
     el._throttler(spy);
     jasmine.clock().tick(100);
+    expect(spy.calls.count()).toEqual(1);
+
     el._throttler(spy);
     jasmine.clock().tick(1000);
-    expect(spy.calls.count()).toEqual(1);
+    expect(spy.calls.count()).toEqual(2);
   });
 
-  it("Should call once per timeout", function() {
+  it("Should call once per timeout plus once at the start", function() {
     el._throttlerTimeout = 1000;
     var spy = jasmine.createSpy('callme');
 
@@ -77,6 +85,6 @@ describe("The Throttler Mixin", function() {
     jasmine.clock().tick(1);
     el._throttler(spy);
     jasmine.clock().tick(1);
-    expect(spy.calls.count()).toEqual(4);
+    expect(spy.calls.count()).toEqual(5);
   });
 });

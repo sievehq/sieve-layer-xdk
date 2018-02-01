@@ -34,6 +34,7 @@ import './handlers/message/layer-message-viewer';
 import './messages/layer-message-viewer-expanded';
 
 // Load standard cards
+import './messages/status/layer-status-message-view';
 import './messages/response/layer-response-message-view';
 import './messages/text/layer-text-message-view';
 import './messages/image/layer-image-message-view';

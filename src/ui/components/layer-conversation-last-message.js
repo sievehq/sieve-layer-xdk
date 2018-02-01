@@ -104,7 +104,10 @@ registerComponent('layer-conversation-last-message', {
      * @private
      */
     _handleChangeEvent(evt) {
-      if (evt.hasProperty('lastMessage')) this.onRerender();
+      if (evt.hasProperty('lastMessage')) {
+        this.model = this.item.lastMessage ? this.item.lastMessage.createModel() : null;
+        this.onRerender();
+      }
     },
   },
 });

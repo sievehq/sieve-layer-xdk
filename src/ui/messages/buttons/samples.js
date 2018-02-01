@@ -158,7 +158,7 @@ model = new ButtonModel({
    {"type": "choice", "choices": [
      {"text": "like", "id": "like", "tooltip": "like"},
      {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
-    ], "data": {allowReselect: true, responseMessageDescription: 'Liking Layer'}}
+    ], "data": {allowReselect: true, name: 'Liking Layer'}}
  ]
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())

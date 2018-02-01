@@ -9,14 +9,14 @@
  * @param {String[]} extensions    Specific file extensions our URL must match against
  * @returns {RegExp}               Regular Expression that can test if something is a string
  */
-module.exports = function isURL(extensions) {
+module.exports = function isURL(extensions, urlOnly) {
   let resource = '?';
 
   /* istanbul ignore else */
   if (extensions) resource = '.(' + extensions.join('|') + ')';
 
   // Taken from https://gist.github.com/dperini/729294
-  return new RegExp(
+  let expr =
     // protocol identifier
     '(?:(?:https?|ftp)://)' +
     // user:pass authentication
@@ -48,6 +48,8 @@ module.exports = function isURL(extensions) {
     // port number
     '(?::\\d{2,5})?' +
     // resource path
-    '(?:[/?#]\\S*)' + resource, 'igm',
-  );
+    '(?:[/?#]\\S*)' + resource;
+
+  if (urlOnly) expr = '^' + expr + '$';
+  return new RegExp(expr, 'igm');
 };

@@ -101,7 +101,7 @@ class ChoiceModel extends MessageTypeModel {
    */
   _generateParts(callback) {
     const body = this._initBodyWithMetadata([
-      'label', 'type', 'responseName',
+      'label', 'type', 'responseName', 'name',
       'allowReselect', 'allowDeselect', 'allowMultiselect',
       'title', 'customResponseData', 'preselectedChoice',
     ]);

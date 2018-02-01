@@ -37,7 +37,8 @@ describe('layer-conversation-item', function() {
     });
     el.item = conversation;
 
-    el.replaceableContent = Layer.UI.components['layer-conversation-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
+    el.replaceableContent = Layer.UI.components['layer-conversation-list'].properties
+      .filter(function(prop) { return prop.propertyName === 'replaceableContent'; })[0].value;
 
     Layer.Utils.defer.flush();
   });

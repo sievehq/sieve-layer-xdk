@@ -63,11 +63,11 @@ registerComponent('layer-menu', {
         menu.classList.add('layer-menu-button-menu-list');
 
         // Generate the menu items
-        value.forEach((option) => {
+        value.forEach((option, index) => {
           const menuItem = document.createElement('div');
           menuItem.classList.add('layer-menu-button-menu-item');
           menuItem.innerHTML = option.text;
-          this.addClickHandler('menu-item-click', menuItem, () => option.method());
+          this.addClickHandler('menu-item-click-' + index, menuItem, () => option.method());
           menu.appendChild(menuItem);
         });
 

@@ -28,6 +28,7 @@ import Core from '../../core';
 import { registerComponent } from './component';
 import Settings, { client } from '../../settings';
 import { logger } from '../../utils';
+import IsUrl from '../ui-utils/is-url';
 
 const ErrorDictionary = Core.LayerError.ErrorDictionary;
 const ENTER = 13;
@@ -333,9 +334,14 @@ registerComponent('layer-compose-bar', {
     send() {
       if (this.nodes.input.value) {
         const TextModel = Core.Client.getMessageTypeModelClass('TextModel');
-        const model = new TextModel({
-          text: this.nodes.input.value,
-        });
+        const LinkModel = Core.Client.getMessageTypeModelClass('LinkModel');
+        const text = this.nodes.input.value;
+        let model;
+        if (IsUrl(null, true).test(text)) {
+          model = new LinkModel({ url: text });
+        } else {
+          model = new TextModel({ text });
+        }
         if (this.conversation) {
           model.generateMessage(this.conversation, message => this._send(model));
         } else {

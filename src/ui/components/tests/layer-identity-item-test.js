@@ -24,7 +24,10 @@ describe('layer-identity-item', function() {
     testRoot.appendChild(el);
     el.item = client.user;
 
-    el.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
+    el.replaceableContent = Layer.UI.components['layer-identity-list'].properties
+      .filter(function(prop) {
+        return prop.propertyName === 'replaceableContent';
+      })[0].value;
 
     Layer.Utils.defer.flush();
     jasmine.clock().tick(1000);
@@ -98,7 +101,7 @@ describe('layer-identity-item', function() {
   describe("The create() method", function() {
     it("Should initialize selected to true from innerHTML", function() {
       testRoot.innerHTML = '<layer-identity-item is-selected="true"></layer-identity-item>';
-      testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
+      testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(function(prop) {return prop.propertyName === 'replaceableContent';})[0].value;
 
       CustomElements.takeRecords();
       expect(testRoot.firstChild.isSelected).toBe(true);
@@ -108,7 +111,7 @@ describe('layer-identity-item', function() {
 
     it("Should initialize selected to false from innerHTML", function() {
       testRoot.innerHTML = '<layer-identity-item is-selected="false"></layer-identity-item>';
-      testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
+      testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(function(prop) {return prop.propertyName === 'replaceableContent';})[0].value;
       CustomElements.takeRecords();
       Layer.Utils.defer.flush();
 
@@ -118,7 +121,7 @@ describe('layer-identity-item', function() {
 
     it("Should initialize selected with default of false from innerHTML", function() {
       testRoot.innerHTML = '<layer-identity-item></layer-identity-item>';
-      testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(prop => prop.propertyName === 'replaceableContent')[0].value;
+      testRoot.firstChild.replaceableContent = Layer.UI.components['layer-identity-list'].properties.filter(function(prop) {return prop.propertyName === 'replaceableContent';})[0].value;
       CustomElements.takeRecords();
       Layer.Utils.defer.flush();
 

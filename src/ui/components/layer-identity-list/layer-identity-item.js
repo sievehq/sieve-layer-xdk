@@ -123,20 +123,24 @@ registerComponent('layer-identity-item', {
      */
     _onClick(evt) {
       evt.stopPropagation();
-      const checked = evt.target === this.nodes.checkbox ? this.isSelected : !this.isSelected; // toggle
+      const checkboxHit = evt.target === this.nodes.checkbox;
+      const checked = checkboxHit ? this.nodes.checkbox.checked : !this.isSelected; // toggle
+
       const identity = this.item;
 
       // Trigger the event and see if evt.preventDefault() was called
-      const customEventResult = this.trigger(`layer-identity-item-${checked ? 'selected' : 'deselected'}`, {
+      const allowResult = this.trigger(`layer-identity-item-${checked ? 'selected' : 'deselected'}`, {
         item: identity,
         originalTarget: evt.target,
       });
 
-      if (customEventResult) {
+      if (allowResult) {
         this.isSelected = checked;
+        if (checkboxHit) this.innerNode.classList[checked ? 'add' : 'remove']('layer-identity-item-selected');
         this.onSelection(evt);
       } else {
         evt.preventDefault();
+        if (checkboxHit) this.nodes.checkbox.checked = !checked;
       }
 
     },

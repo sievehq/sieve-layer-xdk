@@ -36,12 +36,21 @@ module.exports = {
     selectedId: {
       set(newId, oldId) {
         const newItem = client.getObject(newId);
-        if ((newItem || oldId) && !this.trigger(this._selectedItemEventName, { item: newItem })) {
+        let isAllowed = true;
+        if (newItem || oldId) {
+          try {
+            isAllowed = this.trigger(this._selectedItemEventName, { item: newItem });
+          } catch (e) {
+            // No-op
+          }
+        }
+        if (!isAllowed) {
           this.properties.selectedId = oldId;
         } else {
           if (oldId) {
-            const node = this.querySelector('#' + this._getItemId(oldId));
-            if (node) node.isSelected = false;
+            this.querySelectorAllArray('.layer-selected-item').forEach((node) => {
+              node.isSelected = false;
+            });
           }
 
           if (newId) {

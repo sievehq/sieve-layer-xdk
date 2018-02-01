@@ -51,7 +51,9 @@ describe("The Clickable Mixin", function() {
     el.addEventListener('test-click', function() { called = true });
 
     // Run
-    var e = new Event('tap');
+    var e = new Event('touchstart');
+    el.dispatchEvent(e);
+    e = new Event('touchend');
     el.dispatchEvent(e);
 
     // Posttest
@@ -74,7 +76,9 @@ describe("The Clickable Mixin", function() {
     el.addEventListener('test-click', function() { called = true });
 
     // Run
-    var e = new Event('tap');
+    var e = new Event('touchstart');
+    el.dispatchEvent(e);
+    e = new Event('touchend');
     el.dispatchEvent(e);
 
     // Posttest

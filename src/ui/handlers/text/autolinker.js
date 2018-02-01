@@ -33,7 +33,7 @@ register({
         const lastSlash = url.lastIndexOf('/');
         shortUrl = url.substring(0, firstSlash) + '...' + url.substring(lastSlash);
       }
-      return `<a href='${url}' class='layer-parsed-url'>${shortUrl}</a>`;
+      return `<a href='${url}' target='_blank' class='layer-parsed-url'>${shortUrl}</a>`;
     });
   },
 });

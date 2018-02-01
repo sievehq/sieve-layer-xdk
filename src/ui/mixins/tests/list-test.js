@@ -2,6 +2,10 @@ describe("List Mixin", function() {
 
     var el, testRoot, client, query, timeoutId, restoreAnimatedScrollTo;
 
+    function isCloseEnough(scrollTop, desiredScrollTop) {
+      return Math.abs(scrollTop - desiredScrollTop) < 1;
+    }
+
     beforeEach(function() {
       jasmine.clock().install();
 
@@ -214,34 +218,31 @@ describe("List Mixin", function() {
     });
 
     describe("The throttle() method", function() {
-      it("Should schedule a call to perform an action", function() {
+      it("Should promptly act on the first call to perform an action", function() {
         var spy = jasmine.createSpy("hello");
         el._throttler(spy);
         jasmine.clock().tick(10);
-        expect(spy).not.toHaveBeenCalled();
-        jasmine.clock().tick(100);
         expect(spy).toHaveBeenCalled();
       });
 
-      it("Should do nothing if its already scheduled", function() {
-        var el = document.createElement('layer-identity-list');
-        el.query = query;
+      it("Should schedule additional calls to perform an action", function() {
         var spy = jasmine.createSpy("hello");
         el._throttler(spy);
-        jasmine.clock().tick(50);
-        expect(spy).not.toHaveBeenCalled();
+        jasmine.clock().tick(10);
+        spy.calls.reset();
+
         el._throttler(spy);
         el._throttler(spy);
         el._throttler(spy);
         expect(spy).not.toHaveBeenCalled();
 
-        jasmine.clock().tick(50);
+        jasmine.clock().tick(160);
+        expect(spy).toHaveBeenCalled();
         expect(spy.calls.count()).toEqual(1);
         jasmine.clock().tick(5000);
         expect(spy.calls.count()).toEqual(1);
       });
     });
-
     describe("The _handleScroll() method", function() {
       it("Should page the query if near the bottom of the list", function() {
         el.pageSize = 31;
@@ -286,8 +287,8 @@ describe("List Mixin", function() {
         var identity = client.getIdentity("layer:///identities/user40");
         var identityWidget = document.getElementById(el._getItemId(identity.id));
         expect(el.scrollToItem(identity)).toEqual(true);
-        expect(el.scrollTop).toEqual(identityWidget.offsetTop - el.offsetTop);
-        expect(el.scrollTop).not.toEqual(0);
+        expect(isCloseEnough(el.scrollTop, identityWidget.offsetTop - el.offsetTop)).toBe(true);
+        expect(isCloseEnough(el.scrollTop, 0)).toBe(false)
       });
 
       it("Should do nothing and return false", function() {
@@ -298,7 +299,7 @@ describe("List Mixin", function() {
           isFullIdentity: true
         });
         expect(el.scrollToItem(identity)).toEqual(false);
-        expect(el.scrollTop).toEqual(0);
+        expect(isCloseEnough(el.scrollTop, 0)).toBe(true);
       });
 
       it("Should return true and animate scrolling", function() {
@@ -308,8 +309,8 @@ describe("List Mixin", function() {
         expect(el.scrollToItem(identity, 200)).toEqual(true);
         jasmine.clock().tick(200);
 
-        expect(el.scrollTop).toEqual(identityWidget.offsetTop - el.offsetTop);
-        expect(el.scrollTop).not.toEqual(0);
+        expect(isCloseEnough(el.scrollTop, identityWidget.offsetTop - el.offsetTop)).toBe(true);
+        expect(isCloseEnough(el.scrollTop, 0)).toBe(false);
       });
 
       it("Should call the animateScrolling callback", function() {
@@ -331,15 +332,15 @@ describe("List Mixin", function() {
         var count = 0;
         var spy = function() {
           count++;
-          position = el.scrollTop;
+          position = Math.round(el.scrollTop);
         };
         el.scrollToItem(identity, 200, spy);
         jasmine.clock().tick(50);
         el.scrollToItem(identity2, 200, spy);
         jasmine.clock().tick(200);
         expect(count).toEqual(1);
-        expect(position).toEqual(identityWidget.offsetTop - el.offsetTop);
-        expect(position).toEqual(el.scrollTop);
+        expect(isCloseEnough(position, identityWidget.offsetTop - el.offsetTop)).toBe(true);
+        expect(isCloseEnough(position, el.scrollTop)).toBe(true);
       });
     });
 
@@ -512,9 +513,9 @@ describe("List Mixin", function() {
         el.style.height = "100px";
         el.style.overflow = "auto";
         el.scrollTop = 100;
-        expect(el.scrollTop > 0).toBe(true);
+        expect(el.scrollTop > 1).toBe(true);
         query.reset();
-        expect(el.scrollTop > 0).toBe(false);
+        expect(el.scrollTop > 1).toBe(false);
       });
 
       it("Should empty the list of items, but still contain the listMeta node", function() {

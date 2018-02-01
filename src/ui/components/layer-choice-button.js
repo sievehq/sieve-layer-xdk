@@ -80,7 +80,7 @@ registerComponent('layer-choice-button', {
         const def = { widget, choice };
         this.properties.buttons.push(def);
         widget.removeClickHandler('button-click', widget);
-        this.addClickHandler('button-click', widget, this._onClick.bind(this, def));
+        this.addClickHandler('button-click-' + choice.id, widget, this._onClick.bind(this, def));
 
       });
     },
@@ -133,7 +133,11 @@ registerComponent('layer-choice-button', {
         node = node.parentComponent;
       }
       if (node.messageViewer) {
-        node.messageViewer._runAction({ event: this.model.responseName, data: this.model });
+        node.messageViewer._runAction({
+          event: this.model.responseName,
+          data: this.model,
+          choice,
+        });
       }
       if (evt) evt.target.blur();
     },

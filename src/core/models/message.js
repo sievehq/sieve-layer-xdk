@@ -855,7 +855,7 @@ class Message extends Syncable {
    */
   getModelName() {
     const model = this.createModel();
-    return model.constructor.name;
+    return model.getModelName();
   }
 
   /**

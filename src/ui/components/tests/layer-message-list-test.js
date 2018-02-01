@@ -273,7 +273,7 @@ describe('layer-message-list', function() {
   describe("The scrollTo() method", function() {
     it("Should scroll to the specified position", function() {
       el.scrollTo(55);
-      expect(el.scrollTop).toEqual(55);
+      expect(Math.round(el.scrollTop)).toEqual(55);
     });
 
     it("Should check for visibility", function() {
@@ -295,7 +295,7 @@ describe('layer-message-list', function() {
     it("Should scroll to the specified position", function() {
       el.animatedScrollTo(55);
       jasmine.clock().tick(350);
-      expect(el.scrollTop).toEqual(55);
+      expect(Math.round(el.scrollTop)).toEqual(55);
     });
 
     it("Should check for visibility", function() {
@@ -315,6 +315,7 @@ describe('layer-message-list', function() {
 
   describe("The _checkVisibility() method", function() {
     var restoreFunc = window.Layer.UI.UIUtils.isInBackground;
+    var errorMargin = 10;
     beforeEach(function() {
       query.data.forEach(function(message) {
         message.isRead = false;
@@ -340,20 +341,46 @@ describe('layer-message-list', function() {
       });
     });
 
-    it("Should mark visible messages as read part 2", function() {
-      el.scrollTo(100);
-      jasmine.clock().tick(10000);
-      var items = el.querySelectorAllArray('layer-message-item-sent');
-      expect(items.length > 0).toBe(true);
-      items.forEach(function(messageRow) {
-        if (messageRow.offsetTop - el.offsetTop < el.scrollTop) {
-          expect(messageRow.item.isRead).toBe(false);
-        } else if (messageRow.offsetTop + messageRow.clientHeight < el.clientHeight + el.offsetTop + el.scrollTop) {
-          expect(messageRow.item.isRead).toBe(true);
-        } else {
-          expect(messageRow.item.isRead).toBe(false);
+    it("Should mark visible messages as read part 2", function(done) {
+      jasmine.clock().uninstall();
+      setTimeout(function() {
+        try  {
+          var items = el.querySelectorAllArray('layer-message-item-sent');
+          expect(items.length > 0).toBe(true);
+          el.scrollTo(100);
+          setTimeout(function() {
+            try {
+              expect(el._shouldMarkAsRead(items[0])).toBe(false);
+              expect(el._shouldMarkAsRead(items[1])).toBe(true);
+              expect(el._shouldMarkAsRead(items[2])).toBe(true);
+              expect(el._shouldMarkAsRead(items[3])).toBe(true);
+              expect(el._shouldMarkAsRead(items[4])).toBe(false);
+              expect(el._shouldMarkAsRead(items[5])).toBe(false);
+              spyOn(el, "_shouldMarkAsRead").and.callThrough();
+              setTimeout(function() {
+                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[0]);
+                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[1]);
+                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[2]);
+                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[3]);
+                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[4]);
+                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[5]);
+
+                expect(items[0].item.isRead).toBe(false);
+                expect(items[1].item.isRead).toBe(true);
+                expect(items[2].item.isRead).toBe(true);
+                expect(items[3].item.isRead).toBe(true);
+                expect(items[4].item.isRead).toBe(false);
+                expect(items[5].item.isRead).toBe(false);
+                done();
+              } catch (e) {
+                done(e);
+              }
+            }, 3000);
+          }, 10);
+        } catch(e) {
+          done(e);
         }
-      });
+      }, 500);
     });
 
 
@@ -363,9 +390,9 @@ describe('layer-message-list', function() {
       var items = el.querySelectorAllArray('layer-message-item-sent');
       expect(items.length > 0).toBe(true);
       items.forEach(function(messageRow) {
-        if (messageRow.offsetTop - el.offsetTop < el.scrollTop) {
+        if (messageRow.offsetTop - el.offsetTop < el.scrollTop + errorMargin) {
           expect(messageRow.item.isRead).toBe(false);
-        } else if (messageRow.offsetTop + messageRow.clientHeight <= el.clientHeight + el.offsetTop + el.scrollTop) {
+        } else if (messageRow.offsetTop + messageRow.clientHeight <= el.clientHeight + el.offsetTop + el.scrollTop + errorMargin) {
           expect(messageRow.item.isRead).toBe(true);
         } else {
           expect(messageRow.item.isRead).toBe(false);
@@ -1015,7 +1042,8 @@ describe('layer-message-list', function() {
       Layer.Utils.defer.flush();
 
       // What was the 11th item is now the 13th item
-      expect(el.scrollTo).toHaveBeenCalledWith(el.childNodes[13].offsetTop - el.firstChild.offsetTop);
+      var args = el.scrollTo.calls.mostRecent().args;
+      expect(Math.round(args[0])).toEqual(el.childNodes[13].offsetTop - el.firstChild.offsetTop);
     });
   });
 });

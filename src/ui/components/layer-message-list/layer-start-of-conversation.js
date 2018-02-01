@@ -26,6 +26,10 @@ registerComponent('layer-start-of-conversation', {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
+      visibility: hidden;
+    }
+    layer-start-of-conversation.layer-has-conversation {
+      visibility: visible;
     }
     layer-start-of-conversation layer-date {
       display: inline;
@@ -40,6 +44,7 @@ registerComponent('layer-start-of-conversation', {
      */
     conversation: {
       set(value) {
+        this.toggleClass('layer-has-conversation', value);
         if (this.nodes.startDate) {
           if (value && value.isLoading) value.once(`${value.constructor.eventPrefix}:loaded`, this._onConversationChange, this);
           this.nodes.startDate.date = value ? value.createdAt : null;

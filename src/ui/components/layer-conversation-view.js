@@ -67,7 +67,7 @@ import HasQuery from '../mixins/has-query';
 import FocusOnKeydown from '../mixins/focus-on-keydown';
 import FileDropTarget from '../mixins/file-drop-target';
 import Throttler from '../mixins/throttler';
-import { isMobile } from '../../utils';
+import Utils from '../../utils';
 
 import './layer-message-list';
 import './layer-compose-bar';
@@ -926,17 +926,16 @@ registerComponent('layer-conversation-view', {
      *
      * @method shouldAutoFocusConversation
      * @param {Object} options
-     * @param {String} options.userAgent
      * @param {Number} options.maxTouchPoints
      * @returns {Boolean}
      */
-    shouldAutoFocusConversation({ userAgent = '', maxTouchPoints }) {
+    shouldAutoFocusConversation({ maxTouchPoints }) {
       switch (this.autoFocusConversation) {
         case UIConstants.FOCUS.ALWAYS:
           return true;
         case UIConstants.FOCUS.DESKTOP_ONLY:
           if (maxTouchPoints !== undefined && maxTouchPoints > 0) return false;
-          return !isMobile;
+          return !Utils.isMobile;
         case UIConstants.FOCUS.NEVER:
           return false;
       }
@@ -951,9 +950,12 @@ registerComponent('layer-conversation-view', {
      */
     _setupQuery() {
       const conversation = this.properties.conversation;
-      if (!conversation) return;
       if (this.hasGeneratedQuery) {
-        if (conversation instanceof Core.Conversation) {
+        if (!conversation) {
+          this.query.update({
+            predicate: '',
+          });
+        } else if (conversation instanceof Core.Conversation) {
           this.query.update({
             predicate: `conversation.id = "${conversation.id}"`,
           });

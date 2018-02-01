@@ -1,8 +1,8 @@
+import Events from 'backbone-events-standalone/backbone-events-standalone';
 import Core from './namespace';
 import Util, { logger } from '../utils';
 import LayerEvent from './layer-event';
 import { ErrorDictionary } from './layer-error';
-import Events from 'backbone-events-standalone/backbone-events-standalone';
 
 /*
  * Provides a system bus that can be accessed by all components of the system.
@@ -141,7 +141,7 @@ class Root extends EventClass {
     this._events = {};
 
     // Generate an internalId
-    const name = this.constructor.name;
+    const name = this.constructor.altName || this.constructor.name;
     if (!uniqueIds[name]) uniqueIds[name] = 0;
     this.internalId = name + uniqueIds[name]++;
 
@@ -646,9 +646,11 @@ function defineProperty(newClass, propertyName) {
 
 function initClass(newClass, className, namespace) {
   // Make sure our new class has a name property
+  // Throws errors when run in production
   try {
-    if (newClass.name !== className) newClass.name = className;
-  } catch (e) { }
+    if (newClass.name !== className) newClass.altName = className;
+  } catch (e) {
+  }
 
   // Make sure our new class has a _supportedEvents, _ignoredEvents, _inObjectIgnore and EVENTS properties
   if (!newClass._supportedEvents) newClass._supportedEvents = Root._supportedEvents;
@@ -657,7 +659,8 @@ function initClass(newClass, className, namespace) {
   if (newClass.mixins) {
     newClass.mixins.forEach((mixin) => {
       if (mixin.events) newClass._supportedEvents = newClass._supportedEvents.concat(mixin.events);
-      Object.keys(mixin.staticMethods || {}).forEach(methodName => (newClass[methodName] = mixin.staticMethods[methodName]));
+      Object.keys(mixin.staticMethods || {})
+        .forEach(methodName => (newClass[methodName] = mixin.staticMethods[methodName]));
 
       if (mixin.properties) {
         Object.keys(mixin.properties).forEach((key) => {

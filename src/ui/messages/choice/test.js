@@ -490,20 +490,8 @@ describe('Choice Message Components', function() {
         expect(model.getChoiceIndexById(model.selectedAnswer)).toBe(2);
       });
 
-      it("Will depend upon _getNameOfChoice()", function() {
-        var model = new ChoiceModel({
-          label: "hello",
-          choices: [
-            {text: "a", id: "aa"},
-            {text: "b", id: "bb"},
-            {text: "c", id: "cc"},
-          ],
-          preselectedChoice: "bb"
-        });
-        expect(model._getNameOfChoice()).toEqual("hello");
-      });
 
-      it("Will handle standard selection", function() {
+      it("Will handle standard selection without a name", function() {
         var model = new ChoiceModel({
           label: "hello",
           choices: [
@@ -531,7 +519,7 @@ describe('Choice Message Components', function() {
         expect(textPart.parentId).toEqual(responsePart.nodeId);
         expect(textPart.role).toEqual("status");
         expect(JSON.parse(textPart.body)).toEqual({
-          text: 'Frodo the Dodo selected "b" for "hello"'
+          text: 'Frodo the Dodo selected "b"'
         });
 
         expect(responsePart.nodeId.length > 0).toBe(true);
@@ -545,7 +533,50 @@ describe('Choice Message Components', function() {
         expect(model.trigger).toHaveBeenCalled();
       });
 
-      it("Will handle standard deselection", function() {
+      it("Will handle standard selection with a name", function() {
+        var model = new ChoiceModel({
+          label: "hello",
+          choices: [
+            {text: "a", id: "aa"},
+            {text: "b", id: "bb"},
+            {text: "c", id: "cc"},
+          ],
+          name: "Ardvark!"
+        });
+        model.generateMessage(conversation, function(m) {
+          message = m;
+          message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
+        });
+        spyOn(model, "_sendResponse");
+        spyOn(model, "trigger").and.callThrough();
+
+        expect(model.selectedAnswer).toBe('');
+        model.selectAnswer({id: "bb"});
+        expect(model.selectedAnswer).toBe("bb");
+
+        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
+        var responsePart = responseMessage.getRootPart();
+        var textPart = responseMessage.findPart(part => part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType);
+
+        expect(textPart.mimeType).toEqual('application/vnd.layer.status+json');
+        expect(textPart.parentId).toEqual(responsePart.nodeId);
+        expect(textPart.role).toEqual("status");
+        expect(JSON.parse(textPart.body)).toEqual({
+          text: 'Frodo the Dodo selected "b" for "Ardvark!"'
+        });
+
+        expect(responsePart.nodeId.length > 0).toBe(true);
+        expect(responsePart.mimeType).toEqual('application/vnd.layer.response+json');
+        expect(JSON.parse(responsePart.body)).toEqual({
+          participant_data: {selection: "bb"},
+          response_to: message.id,
+          response_to_node_id: model.part.nodeId
+        });
+
+        expect(model.trigger).toHaveBeenCalled();
+      });
+
+      it("Will handle standard deselection without a name", function() {
         var model = new ChoiceModel({
           label: "hello",
           choices: [
@@ -574,7 +605,51 @@ describe('Choice Message Components', function() {
         expect(textPart.parentId).toEqual(responsePart.nodeId);
         expect(textPart.role).toEqual("status");
         expect(JSON.parse(textPart.body)).toEqual({
-          text: 'Frodo the Dodo deselected "b" for "hello"'
+          text: 'Frodo the Dodo deselected "b"'
+        });
+
+        expect(responsePart.nodeId.length > 0).toBe(true);
+        expect(responsePart.mimeType).toEqual('application/vnd.layer.response+json');
+        expect(JSON.parse(responsePart.body)).toEqual({
+          participant_data: {selection: ''},
+          response_to: message.id,
+          response_to_node_id: model.part.nodeId
+        });
+
+        expect(model.trigger).toHaveBeenCalled();
+      });
+
+      it("Will handle standard deselection with a name", function() {
+        var model = new ChoiceModel({
+          label: "hello",
+          choices: [
+            {text: "a", id: "aa"},
+            {text: "b", id: "bb"},
+            {text: "c", id: "cc"},
+          ],
+          name: "Ardvark!",
+          allowDeselect: true,
+          preselectedChoice: "bb",
+        });
+        model.generateMessage(conversation, function(m) {
+          message = m;
+          message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
+        });
+        spyOn(model, "_sendResponse");
+        spyOn(model, "trigger").and.callThrough();
+
+        expect(model.selectedAnswer).toBe("bb");
+        model.selectAnswer({id: "bb"});
+        expect(model.selectedAnswer).toBe('');
+
+        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
+        var responsePart = responseMessage.getRootPart();
+        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
+
+        expect(textPart.parentId).toEqual(responsePart.nodeId);
+        expect(textPart.role).toEqual("status");
+        expect(JSON.parse(textPart.body)).toEqual({
+          text: 'Frodo the Dodo deselected "b" for "Ardvark!"'
         });
 
         expect(responsePart.nodeId.length > 0).toBe(true);
@@ -678,7 +753,7 @@ describe('Choice Message Components', function() {
         expect(textPart.parentId).toEqual(responsePart.nodeId);
         expect(textPart.role).toEqual("status");
         expect(JSON.parse(textPart.body)).toEqual({
-          text: 'Frodo the Dodo selected "b" for "hello"'
+          text: 'Frodo the Dodo selected "b"'
         });
 
         expect(responsePart.nodeId.length > 0).toBe(true);
@@ -722,7 +797,7 @@ describe('Choice Message Components', function() {
         expect(textPart.parentId).toEqual(responsePart.nodeId);
         expect(textPart.role).toEqual("status");
         expect(JSON.parse(textPart.body)).toEqual({
-          text: 'Frodo the Dodo deselected "b" for "hello"'
+          text: 'Frodo the Dodo deselected "b"'
         });
 
         expect(responsePart.nodeId.length > 0).toBe(true);
@@ -1092,6 +1167,7 @@ describe('Choice Message Components', function() {
       it("Should use the message-type-model:customization event", function() {
         var model = new ChoiceModel({
           label: "hello",
+          name: "Ardvark!",
           allowMultiselect: true,
           choices: [
             {text: "a", id: "aa", customResponseData: {hey: "ho5", a: "aaa"}},
@@ -1117,8 +1193,8 @@ describe('Choice Message Components', function() {
             expect(evt).toEqual(jasmine.objectContaining({
               choice: jasmine.objectContaining({ id: 'bb' }),
               model: model,
-              text: 'Frodo the Dodo selected "b" for "hello"',
-              name: "hello",
+              text: 'Frodo the Dodo selected "b" for "Ardvark!"',
+              name: "Ardvark!",
               action: 'selected'
             }));
           }
@@ -1136,8 +1212,8 @@ describe('Choice Message Components', function() {
             expect(evt).toEqual(jasmine.objectContaining({
               choice: jasmine.objectContaining({ id: 'bb' }),
               model: this,
-              text: 'Frodo the Dodo deselected "b" for "hello"',
-              name: "hello",
+              text: 'Frodo the Dodo deselected "b" for "Ardvark!"',
+              name: "Ardvark!",
               action: 'deselected'
             }));
           }

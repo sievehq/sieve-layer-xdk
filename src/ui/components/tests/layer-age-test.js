@@ -10,7 +10,8 @@ describe('layer-age', function() {
     el = document.createElement('layer-age');
     Layer.Utils.defer.flush();
     d = new Date();
-    d.setDate(0);
+    d.setDate(0); // first date of month
+    d.setHours(0,0,0,0);
     var d2 = new Date(d);
     jasmine.clock().mockDate(d2);
   });

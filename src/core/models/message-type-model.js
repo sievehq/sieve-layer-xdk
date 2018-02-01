@@ -647,7 +647,7 @@ class MessageTypeModel extends Root {
    * @returns {String}
    */
   getModelName() {
-    return this.constructor.name;
+    return this.constructor.altName || this.constructor.name;
   }
 
   // see role property docs below

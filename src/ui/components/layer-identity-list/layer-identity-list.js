@@ -175,7 +175,35 @@ registerComponent('layer-identity-list', {
    * @param {Layer.Core.Identity} evt.detail.item
    */
 
-  events: ['layer-identity-selected', 'layer-identity-deselected'],
+
+  /**
+   * The user has clicked to deselect a identity in the identities list, and your app wants to immediately see
+   * the complete list of selected identities.
+   *
+   * @{link #event#layer-identity-selected} asks you to confirm before the selection changes, thus you do not
+   * have the complete list of selected identities. Therefore use this event to get the complete list:
+   *
+   *    identityList.onIdentitySelectionComplete = function(evt) {
+   *      var selectedIdentities = evt.target.selectedIdentities;
+   *    };
+   *
+   *  OR
+   *
+   *    document.body.addEventListener('layer-identity-selection-complete', function(evt) {
+   *      var selectedIdentities = evt.target.selectedIdentities;
+   *    });
+   *
+   * @event layer-identity-selection-complete
+   * @param {Event} evt
+   */
+
+  /**
+   * @inheritdoc #layer-identity-selection-complete
+   *
+   * @property {Function} onIdentityDeselected
+   * @param {Event} evt
+   */
+  events: ['layer-identity-selected', 'layer-identity-deselected', 'layer-identity-selection-complete'],
   properties: {
 
     /**
@@ -210,12 +238,15 @@ registerComponent('layer-identity-list', {
       set(value) {
         if (!value) value = [];
         if (!Array.isArray(value)) return;
-        if (!value) value = [];
+
         this.properties.selectedIdentities = value.map((identity) => {
           if (!(identity instanceof Core.Identity)) return client.getIdentity(identity.id);
           return identity;
         });
         this._renderSelection();
+      },
+      get() {
+        if (!Array.isArray(this.properties.selectedIdentities)) this.properties.selectedIdentities = [];return this.properties.selectedIdentities;
       },
     },
 
@@ -288,7 +319,6 @@ registerComponent('layer-identity-list', {
     // Lifecycle method
     onCreate() {
       if (!this.id) this.id = Util.generateUUID();
-      this.properties.selectedIdentities = [];
 
       this.addEventListener('layer-identity-item-selected', this._handleIdentitySelect.bind(this));
       this.addEventListener('layer-identity-item-deselected', this._handleIdentityDeselect.bind(this));
@@ -313,6 +343,7 @@ registerComponent('layer-identity-list', {
         // If app calls prevent default, then don't add the identity to our selectedIdentities list, just call preventDefault on the original event.
         if (this.trigger('layer-identity-selected', { item: identity })) {
           this.selectedIdentities.push(identity);
+          this.trigger('layer-identity-selection-complete');
         } else {
           evt.preventDefault();
         }
@@ -339,6 +370,7 @@ registerComponent('layer-identity-list', {
         // If app calls prevent default, then don't remove the identity, just call preventDefault on the original event.
         if (this.trigger('layer-identity-deselected', { item: identity })) {
           this.selectedIdentities.splice(index, 1);
+          this.trigger('layer-identity-selection-complete');
         } else {
           evt.preventDefault();
         }

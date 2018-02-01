@@ -15,7 +15,7 @@ describe("The Root Class", function() {
       A.prototype.constructor = A;
 
       Layer.Core.Root.initClass(A, "A");
-      expect(A.name).toEqual("A");
+      expect(A.name || A.altName).toEqual("A");
     });
 
     it("Should define a getter and setter if there is an adjuster", function() {

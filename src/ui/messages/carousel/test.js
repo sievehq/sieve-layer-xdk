@@ -52,6 +52,7 @@ describe('Carousel Message Components', function() {
     TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
 
     Layer.Utils.defer.flush();
+    CustomElements.takeRecords();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
@@ -205,6 +206,7 @@ describe('Carousel Message Components', function() {
       el.message = message;
 
       Layer.Utils.defer.flush();
+      CustomElements.takeRecords();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.nodes.ui.hideMessageItemRightAndLeftContent).toBe(true);
@@ -225,6 +227,7 @@ describe('Carousel Message Components', function() {
       el.message = message;
 
       Layer.Utils.defer.flush();
+      CustomElements.takeRecords();
 
       // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
@@ -256,6 +259,7 @@ describe('Carousel Message Components', function() {
       el.message = message;
 
       Layer.Utils.defer.flush();
+      CustomElements.takeRecords();
       jasmine.clock().tick(100);
       jasmine.clock().uninstall();
 

@@ -701,7 +701,7 @@ describe('Components', function() {
       Layer.UI.registerComponent('mixin-last-method-test1', {
         mixins: [{
           methods: {
-            doIt() {results.push('mixin1')}
+            doIt: function() {results.push('mixin1')}
           }
         },
         {
@@ -739,7 +739,7 @@ describe('Components', function() {
           methods: {
             doIt: {
               mode: Layer.UI.registerComponent.MODES.OVERWRITE,
-              value() {results.push('mixin1');}
+              value: function() {results.push('mixin1');}
             }
           }
         },
@@ -777,12 +777,12 @@ describe('Components', function() {
           methods: {
             onRender: {
               mode: Layer.UI.registerComponent.MODES.OVERWRITE,
-              value() {}
+              value: function() {}
             }
           }
         }],
         methods: {
-          onRerender() {
+          onRerender: function() {
             called = true;
           },
         }
