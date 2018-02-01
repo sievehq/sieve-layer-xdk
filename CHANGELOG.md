@@ -108,6 +108,10 @@
 * `Layer.Core.Identity.sessionOwner` has been renamed to `Layer.Core.Identity.isMine`. Most common use of this: `message.sender.isMine` tells you if the sender of the message is the user of this client.
 * `<layer-choice-button />` and `<layer-choice-message-view />` both provide `onChoiceSelect` which lets Mixins customize selection behavior
 
+## 1.0.0-pre1.16
+
+* Fixes handling of react adaptor on receiving empty values
+
 ## 1.0.0-pre1.15
 
 1. Adds a Feedback Message Type
