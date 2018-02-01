@@ -18,7 +18,7 @@ import { register } from './index';
  * Call this function to initialize angular 1.x Directives which will be part of the "layerXDKControllers" controller:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/adapters/angular';
+ * import '@layerhq/web-xdk/ui/adapters/angular';
  * Layer.UI.adapters.angular(angular); // Creates the layerXDKControllers controller
  * angular.module('MyApp', ['layerXDKControllers']);
  * ```
@@ -31,7 +31,7 @@ import { register } from './index';
  * Not included with the standard build. To import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/adapters/angular';
+ * import '@layerhq/web-xdk/ui/adapters/angular';
  * ```
  *
  * @class Layer.UI.adapters.angular

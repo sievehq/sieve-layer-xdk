@@ -44,8 +44,8 @@
  * Not included with the standard build. To import pick one:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-conversation-list';
- * import '@layerhq/web-xdk/lib/ui/components/layer-conversation-list/layer-conversation-list';
+ * import '@layerhq/web-xdk/ui/components/layer-conversation-list';
+ * import '@layerhq/web-xdk/ui/components/layer-conversation-list/layer-conversation-list';
  * ```
  *
  * @class Layer.UI.components.ConversationListPanel.List

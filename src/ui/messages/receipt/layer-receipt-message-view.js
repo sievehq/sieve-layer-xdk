@@ -9,7 +9,7 @@
  * Not included with the standard build. Import with:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/receipt/layer-receipt-message-view';
+ * import '@layerhq/web-xdk/ui/messages/receipt/layer-receipt-message-view';
  * ```
  *
  * @class Layer.UI.messages.ReceiptMessageView

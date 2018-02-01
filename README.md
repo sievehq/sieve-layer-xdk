@@ -44,16 +44,14 @@ It is implemented using the [Webcomponents Polyfill](https://github.com/WebCompo
 ### CDN
 
 ```html
-<script src='https://cdn.layer.com/xdk/0.9/layer-xdk.min.js'></script>
-<link rel='stylesheet' href='https://cdn.layer.com/xdk/0.9/themes/layer-basic-blue.css' />
+<script src='https://cdn.layer.com/xdk/1.0.0-pre2/layer-xdk.min.js'></script>
+<link rel='stylesheet' href='https://cdn.layer.com/xdk/1.0.0-pre2/themes/layer-basic-blue.css' />
 <script>
-var client = window.layer.init({
+var client = window.Layer.init({
   appId: 'layer:///apps/staging/UUID'
 });
 </script>
 ```
-
-Alternatively, a separate theme and templates can be loaded using:
 
 ### NPM
 
@@ -72,6 +70,14 @@ const client = Layer.init({
 <link rel='stylesheet' href='node_modules/xdk/themes/build/layer-basic-blue.css' />
 ```
 
+If using `npm link`, note that after cloning this repo, run:
+
+1. `npm install`
+1. `grunt prepublish`
+1. `cd npm`
+1. `npm link .`
+
+
 ## Build Commands
 
 * `grunt develop`: Starts a webserver for running tests or sample apps, and watches for changes, rebuilding source and theme on any change
@@ -80,11 +86,6 @@ const client = Layer.init({
 * `grunt debug`: Generate all lib folders and basic build files.
 * `grunt build`: Run's `grunt debug` and `grunt theme` and then generates all minified files
 * `grunt coverage`: Generate a coverage test build; additional steps shown below for running a coverage test
-
-## Running Sample
-
-1. `grunt develop` will start a local webserver
-1. `open samples/cards.html` will start a simple sample app; you may need to customize identity providers.  This simple example does not yet have UIs for creating new conversations; from the console you can `client.createConversation({participants: ["user_a"]}).send()`
 
 ## Coverage Tests
 

@@ -23,7 +23,7 @@
  * Any of the following will import this component
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-menu';
+ * import '@layerhq/web-xdk/ui/components/layer-menu';
  * ```
  *
  * @class Layer.UI.components.Menu

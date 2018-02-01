@@ -6,7 +6,7 @@
  * Not included with the standard build. Import with:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/link/layer-link-message-view';
+ * import '@layerhq/web-xdk/ui/messages/link/layer-link-message-view';
  * ```
  *
  * @class Layer.UI.messages.LinkMessageView

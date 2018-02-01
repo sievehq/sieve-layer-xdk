@@ -12,7 +12,7 @@
  * This is imported by default. If creating a custom build use:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-replaceable-content';
+ * import '@layerhq/web-xdk/ui/components/layer-replaceable-content';
  * ```
  *
  * @class Layer.UI.components.ReplaceableContent

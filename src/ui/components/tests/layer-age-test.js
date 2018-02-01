@@ -9,8 +9,7 @@ describe('layer-age', function() {
     });
     el = document.createElement('layer-age');
     Layer.Utils.defer.flush();
-    d = new Date();
-    d.setDate(0); // first date of month
+    d = new Date('2010-10-10');
     d.setHours(0,0,0,0);
     var d2 = new Date(d);
     jasmine.clock().mockDate(d2);
@@ -96,13 +95,13 @@ describe('layer-age', function() {
     el.onRender();
     expect(el.innerHTML).toEqual("12 days ago");
 
-    d.setDate(d.getDate() - 30);
+    d.setDate(d.getDate() - 25);
     el.onRender();
-    expect(el.innerHTML).toEqual("42 days ago");
+    expect(el.innerHTML).toEqual("37 days ago");
 
     d.setDate(d.getDate() - 30);
     el.onRender();
-    expect(el.innerHTML).not.toEqual("72 days ago");
+    expect(el.innerHTML).toEqual("2 months ago");
   });
 
   it('Should handle months ago', function() {

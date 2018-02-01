@@ -6,7 +6,7 @@
  * Included with the standard build. If creating a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-message-list/layer-message-item-sent';
+ * import '@layerhq/web-xdk/ui/components/layer-message-list/layer-message-item-sent';
  * ```
  *
  * @class Layer.UI.components.MessageListPanel.SentItem

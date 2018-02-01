@@ -11,7 +11,7 @@ import { register } from './index';
  * ```
  * import React from 'react';
  * import ReactDom from 'react-dom';
- * import '@layerhq/web-xdk/lib/ui/adapters/react';
+ * import '@layerhq/web-xdk/ui/adapters/react';
  * const { ConversationView, ConversationList, UserList, Notifier } = Layer.UI.adapters.react(React, ReactDom);
  * ```
  *
@@ -40,7 +40,7 @@ import { register } from './index';
  * ```
  * import React, { Component, PropTypes } from 'react';
  * import ReactDom from 'react-dom';
- * import '@layerhq/web-xdk/lib/ui/adapters/react';
+ * import '@layerhq/web-xdk/ui/adapters/react';
  * import Layer from '@layerhq/web-xdk';
  *
  * Layer.init({
@@ -58,7 +58,7 @@ import { register } from './index';
  * Not included with the standard build. To import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/adapters/react';
+ * import '@layerhq/web-xdk/ui/adapters/react';
  * ```
  *
  * @class Layer.UI.adapters.react

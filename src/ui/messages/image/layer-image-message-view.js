@@ -6,7 +6,7 @@
  * Included with the standard build. For custom build, import with:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/image/layer-image-message-view';
+ * import '@layerhq/web-xdk/ui/messages/image/layer-image-message-view';
  * ```
  *
  * @class Layer.UI.messages.ImageMessageView

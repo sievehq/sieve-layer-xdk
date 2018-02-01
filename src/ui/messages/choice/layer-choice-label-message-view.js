@@ -8,8 +8,8 @@
  * Not included with the standard build. Import using either:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/choice/layer-choice-message-view';
- * import '@layerhq/web-xdk/lib/ui/messages/choice/layer-choice-label-message-view';
+ * import '@layerhq/web-xdk/ui/messages/choice/layer-choice-message-view';
+ * import '@layerhq/web-xdk/ui/messages/choice/layer-choice-label-message-view';
  * ```
  *
  * @class Layer.UI.messages.ChoiceLabelMessageView

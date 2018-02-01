@@ -8,7 +8,7 @@
  * Included with the standard build. If creating a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-message-list/layer-start-of-conversation';
+ * import '@layerhq/web-xdk/ui/components/layer-message-list/layer-start-of-conversation';
  * ```
  *
  * @class Layer.UI.components.MessageListPanel.StartOfConversation

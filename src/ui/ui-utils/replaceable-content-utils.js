@@ -4,7 +4,7 @@
  * To use this, you should import it:
  *
  * ```
- * import RCUtils from '@layerhq/web-xdk/lib/ui/ui-utils/replaceable-content-utils';
+ * import RCUtils from '@layerhq/web-xdk/ui/ui-utils/replaceable-content-utils';
  *
  * Layer.init({
  *   mixins: {

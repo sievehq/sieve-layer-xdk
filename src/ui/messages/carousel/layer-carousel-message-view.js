@@ -6,7 +6,7 @@
  * Not included with the standard build. Import using:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/carousel/layer-carousel-message-view';
+ * import '@layerhq/web-xdk/ui/messages/carousel/layer-carousel-message-view';
  * ```
  *
  * @class Layer.UI.messages.CarouselView

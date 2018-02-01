@@ -46,8 +46,8 @@
  * Included with the standard build. For custom build, Import with either:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/response/layer-response-message-view';
- * import '@layerhq/web-xdk/lib/ui/messages/response/layer-response-message-model';
+ * import '@layerhq/web-xdk/ui/messages/response/layer-response-message-view';
+ * import '@layerhq/web-xdk/ui/messages/response/layer-response-message-model';
  * ```
  *
  * @class Layer.UI.messages.ResponseMessageModel

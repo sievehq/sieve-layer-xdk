@@ -33,7 +33,7 @@
  * Any of the following will import this component
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-menu-button';
+ * import '@layerhq/web-xdk/ui/components/layer-menu-button';
  * ```
  *
  *

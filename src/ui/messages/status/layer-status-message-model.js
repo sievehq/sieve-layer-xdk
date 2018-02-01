@@ -16,8 +16,8 @@
  * Not included with the standard build. Import with either:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/status/layer-status-message-view';
- * import '@layerhq/web-xdk/lib/ui/messages/status/layer-status-message-model';
+ * import '@layerhq/web-xdk/ui/messages/status/layer-status-message-view';
+ * import '@layerhq/web-xdk/ui/messages/status/layer-status-message-model';
  * ```
  *
  * @class Layer.UI.messages.StatusMessageModel

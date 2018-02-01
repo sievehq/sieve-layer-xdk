@@ -62,7 +62,7 @@
  * This is imported by default. If using a custom build, then import one of:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-message-status';
+ * import '@layerhq/web-xdk/ui/components/layer-message-status';
  * ```
  *
  * @class Layer.UI.components.MessageStatus

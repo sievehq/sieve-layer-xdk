@@ -28,7 +28,7 @@
  * Import this using
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-conversation-last-message';
+ * import '@layerhq/web-xdk/ui/components/layer-conversation-last-message';
  * ```
  *
  * @class Layer.UI.components.ConversationLastMessage

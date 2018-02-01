@@ -37,7 +37,7 @@
  * Any of the following will import this component
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-presence';
+ * import '@layerhq/web-xdk/ui/components/layer-presence';
  * ```
  *
  * @class Layer.UI.components.Presence

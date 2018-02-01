@@ -6,7 +6,7 @@
  * Included with the standard build. For custom build, Import with:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/text/layer-text-message-view';
+ * import '@layerhq/web-xdk/ui/messages/text/layer-text-message-view';
  * ```
  *
  * @class Layer.UI.messages.TextMessageView

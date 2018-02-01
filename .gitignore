@@ -45,9 +45,8 @@ samples/react/bundle.js*
 **/LayerConfiguration.json
 test/coverage-build.js
 
-# !npmignored: Everything after this line is left out of the .npmignore file
 /lib
 /lib-es6
 /lib-es5
 build
-
+/npm

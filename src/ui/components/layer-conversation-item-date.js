@@ -28,7 +28,7 @@
  * Import this using
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-conversation-item-date';
+ * import '@layerhq/web-xdk/ui/components/layer-conversation-item-date';
  * ```
  *
  * @class Layer.UI.components.ConversationItemDate

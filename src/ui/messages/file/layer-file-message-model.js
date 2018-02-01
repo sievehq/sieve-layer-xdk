@@ -30,8 +30,8 @@
  * Not included with the standard build. Import using either:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/file/layer-file-message-view';
- * import '@layerhq/web-xdk/lib/ui/messages/file/layer-file-message-model';
+ * import '@layerhq/web-xdk/ui/messages/file/layer-file-message-view';
+ * import '@layerhq/web-xdk/ui/messages/file/layer-file-message-model';
  * ```
  *
  * @class Layer.UI.messages.FileMessageModel

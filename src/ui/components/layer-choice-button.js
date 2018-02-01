@@ -8,7 +8,7 @@
  * Included directly by any Message Type View that requires it. If creating a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-choice-button';
+ * import '@layerhq/web-xdk/ui/components/layer-choice-button';
  * ```
  *
  * @class Layer.UI.components.ChoiceButton

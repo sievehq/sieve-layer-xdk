@@ -8,7 +8,7 @@
  * Not included with the standard build. Import with:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/location/layer-location-message-view';
+ * import '@layerhq/web-xdk/ui/messages/location/layer-location-message-view';
  * ```
  *
  * @class Layer.UI.messages.LocationMessageView
@@ -92,7 +92,7 @@ registerComponent('layer-location-message-view', {
       if (this.parentNode && this.parentNode.clientWidth) {
         const marker = this.model.latitude ? this.model.latitude + ',' + this.model.longitude : escape(this.model.street1 + (this.model.street2 ? ' ' + this.model.street2 : '') + ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
 
-        this.nodes.img.src = `${location.protocol}//maps.googleapis.com/maps/api/staticmap?size=${this.parentNode.clientWidth}x${this.height}&language=${navigator.language}&key=${window.googleMapsAPIKey}&zoom=${this.model.zoom}&markers=${marker}`;
+        this.nodes.img.src = `${location.protocol}//maps.googleapis.com/maps/api/staticmap?size=${this.parentNode.clientWidth}x${this.height}&language=${navigator.language.toLowerCase()}&key=${window.googleMapsAPIKey}&zoom=${this.model.zoom}&markers=${marker}`;
       }
     },
 

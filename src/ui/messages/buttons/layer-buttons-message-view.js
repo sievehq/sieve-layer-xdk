@@ -6,7 +6,7 @@
  * Included with the standard build. For a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/buttons/layer-buttons-message-view';
+ * import '@layerhq/web-xdk/ui/messages/buttons/layer-buttons-message-view';
  * ```
  *
  * @class Layer.UI.messages.ButtonsView

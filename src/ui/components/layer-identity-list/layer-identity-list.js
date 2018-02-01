@@ -41,8 +41,8 @@
  * Not included with the standard build. To import pick one:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-identity-list';
- * import '@layerhq/web-xdk/lib/ui/components/layer-identity-list/layer-identity-list';
+ * import '@layerhq/web-xdk/ui/components/layer-identity-list';
+ * import '@layerhq/web-xdk/ui/components/layer-identity-list/layer-identity-list';
  * ```
  *
  * @class Layer.UI.components.IdentityListPanel.List

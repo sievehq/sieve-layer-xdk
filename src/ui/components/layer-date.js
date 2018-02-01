@@ -30,7 +30,7 @@
  * Included in the default build. If creating a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-date';
+ * import '@layerhq/web-xdk/ui/components/layer-date';
  * ```
  *
  * @class Layer.UI.components.Date

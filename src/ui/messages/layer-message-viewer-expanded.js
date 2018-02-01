@@ -6,7 +6,7 @@
  * Included with the standard build. For custom build,  import with:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/layer-message-viewer-expanded
+ * import '@layerhq/web-xdk/ui/messages/layer-message-viewer-expanded
  * ```
  *
  * @class Layer.UI.messages.MessageViewerExpanded

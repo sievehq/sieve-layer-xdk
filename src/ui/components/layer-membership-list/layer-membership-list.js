@@ -19,8 +19,8 @@
  * Not included with the standard build. To import pick one:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-membership-list';
- * import '@layerhq/web-xdk/lib/ui/components/layer-membership-list/layer-membership-list';
+ * import '@layerhq/web-xdk/ui/components/layer-membership-list';
+ * import '@layerhq/web-xdk/ui/components/layer-membership-list/layer-membership-list';
  * ```
  *
  * @class Layer.UI.components.MembershipListPanel.List

@@ -6,7 +6,7 @@
  * Included with the standard build. If using a custom build then import one of:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-loading-indicator';
+ * import '@layerhq/web-xdk/ui/components/layer-loading-indicator';
  * ```
  *
  * @class Layer.UI.components.LoadingIndicator

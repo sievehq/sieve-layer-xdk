@@ -50,7 +50,7 @@
  * Included in the default build. If creating a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-conversation-view';
+ * import '@layerhq/web-xdk/ui/components/layer-conversation-view';
  * ```
  *
  * @class Layer.UI.components.ConversationView

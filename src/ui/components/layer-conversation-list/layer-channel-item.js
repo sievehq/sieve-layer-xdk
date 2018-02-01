@@ -15,8 +15,8 @@
  * Not included with the standard build. To import pick one:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-conversation-list';
- * import '@layerhq/web-xdk/lib/ui/components/layer-conversation-list/layer-channel-item';
+ * import '@layerhq/web-xdk/ui/components/layer-conversation-list';
+ * import '@layerhq/web-xdk/ui/components/layer-conversation-list/layer-channel-item';
  * ```
  *
  * @class Layer.UI.components.ConversationListPanel.Item.Channel

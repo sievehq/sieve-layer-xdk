@@ -26,7 +26,7 @@
  * Import this with:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-conversation-title';
+ * import '@layerhq/web-xdk/ui/components/layer-conversation-title';
  * ```
  *
  * @class Layer.UI.components.ConversationTitle

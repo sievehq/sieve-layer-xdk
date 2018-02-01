@@ -43,8 +43,8 @@
  * Not included with the standard build. Import with either:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/location/layer-location-message-view';
- * import '@layerhq/web-xdk/lib/ui/messages/location/layer-location-message-model';
+ * import '@layerhq/web-xdk/ui/messages/location/layer-location-message-view';
+ * import '@layerhq/web-xdk/ui/messages/location/layer-location-message-model';
  * ```
  *
  * @class Layer.UI.messages.LocationMessageModel

@@ -29,8 +29,8 @@
  * Included with the standard build. For custom build, Import with either:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/text/layer-text-message-view';
- * import '@layerhq/web-xdk/lib/ui/messages/text/layer-text-message-model';
+ * import '@layerhq/web-xdk/ui/messages/text/layer-text-message-view';
+ * import '@layerhq/web-xdk/ui/messages/text/layer-text-message-model';
  * ```
  *
  * @class Layer.UI.messages.TextMessageModel

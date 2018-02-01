@@ -28,7 +28,7 @@
  * Any of the following will import this component
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-send-button';
+ * import '@layerhq/web-xdk/ui/components/layer-send-button';
  * ```
  *
  * @class Layer.UI.components.SendButton

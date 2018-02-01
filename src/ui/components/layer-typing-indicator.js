@@ -10,7 +10,7 @@
  * This is imported as part of the default build. If creating a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-typing-indicator';
+ * import '@layerhq/web-xdk/ui/components/layer-typing-indicator';
  * ```
  *
  * @class Layer.UI.components.TypingIndicator

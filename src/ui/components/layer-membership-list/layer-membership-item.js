@@ -6,8 +6,8 @@
  * Not included with the standard build. To import pick one:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-membership-list';
- * import '@layerhq/web-xdk/lib/ui/components/layer-membership-list/layer-membership-item';
+ * import '@layerhq/web-xdk/ui/components/layer-membership-list';
+ * import '@layerhq/web-xdk/ui/components/layer-membership-list/layer-membership-item';
  * ```
  *
  * @class Layer.UI.components.MembershipListPanel.Item

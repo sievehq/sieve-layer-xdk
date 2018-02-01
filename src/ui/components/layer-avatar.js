@@ -45,7 +45,7 @@
  * Included in the default build. If creating a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-avatar';
+ * import '@layerhq/web-xdk/ui/components/layer-avatar';
  * ```
  *
  * @class Layer.UI.components.Avatar

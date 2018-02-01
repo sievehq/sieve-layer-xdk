@@ -9,7 +9,7 @@
  * Not included with the standard build. Import with:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/product/layer-product-message-view';
+ * import '@layerhq/web-xdk/ui/messages/product/layer-product-message-view';
  * ```
  *
  * @class Layer.UI.messages.ProductMessageView

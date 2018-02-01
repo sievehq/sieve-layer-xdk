@@ -10,7 +10,7 @@
  * Included with the standard build. For custom build, Import with:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/response/layer-response-message-view';
+ * import '@layerhq/web-xdk/ui/messages/response/layer-response-message-view';
  * ```
  *
  * @class Layer.UI.messages.ResponseMessageView

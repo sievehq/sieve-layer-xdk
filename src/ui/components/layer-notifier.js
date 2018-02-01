@@ -46,7 +46,7 @@
  * Any of the following will import this component
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-notifier';
+ * import '@layerhq/web-xdk/ui/components/layer-notifier';
  * ```
  *
  * @class Layer.UI.components.Notifier

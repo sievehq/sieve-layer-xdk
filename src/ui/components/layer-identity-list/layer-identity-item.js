@@ -10,8 +10,8 @@
  * Not included with the standard build. To import pick one:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-identity-list';
- * import '@layerhq/web-xdk/lib/ui/components/layer-identity-list/layer-identity-item';
+ * import '@layerhq/web-xdk/ui/components/layer-identity-list';
+ * import '@layerhq/web-xdk/ui/components/layer-identity-list/layer-identity-item';
  * ```
  *
  * @class Layer.UI.components.IdentityListPanel.Item

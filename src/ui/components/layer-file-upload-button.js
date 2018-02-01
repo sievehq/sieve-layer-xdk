@@ -22,7 +22,7 @@
  * Any of the following will import this component
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-file-upload-button';
+ * import '@layerhq/web-xdk/ui/components/layer-file-upload-button';
  * ```
  *
  * @class Layer.UI.components.FileUploadButton

@@ -83,8 +83,8 @@
  * Included with the standard build. For a custom build, import either of these:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/messages/buttons/layer-buttons-message-view';
- * import '@layerhq/web-xdk/lib/ui/messages/buttons/layer-buttons-message-model';
+ * import '@layerhq/web-xdk/ui/messages/buttons/layer-buttons-message-view';
+ * import '@layerhq/web-xdk/ui/messages/buttons/layer-buttons-message-model';
  * ```
  *
  * @class Layer.UI.messages.ButtonsMessageModel

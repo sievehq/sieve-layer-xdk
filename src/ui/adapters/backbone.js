@@ -9,7 +9,7 @@ import { register } from './index';
  *
  * ```javascript
  * import Backbone from 'backbone';
- * import '@layerhq/web-xdk/lib/ui/adapters/backbone';
+ * import '@layerhq/web-xdk/ui/adapters/backbone';
  * var LayerUIViews = Layer.UI.adapters.backbone(Backbone);
  * var conversationPanelView = new LayerUIViews.ConversationPanel({conversationId: 'layer:///conversations/UUID'});
  * var conversationsListView = new LayerUIViews.ConversationsList();
@@ -46,7 +46,7 @@ import { register } from './index';
  * Not included with the standard build. To import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/adapters/backbone';
+ * import '@layerhq/web-xdk/ui/adapters/backbone';
  * ```
  *
  * @class Layer.UI.adapters.backbone

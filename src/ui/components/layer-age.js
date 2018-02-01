@@ -10,7 +10,7 @@
  * Included if loading the Layer.UI.components.IdentityListPanel.List. If creating a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-age';
+ * import '@layerhq/web-xdk/ui/components/layer-age';
  * ```
  *
  * @class Layer.UI.components.Age

@@ -18,7 +18,7 @@
  * Included in the default build. If creating a custom build, import:
  *
  * ```
- * import '@layerhq/web-xdk/lib/ui/components/layer-compose-bar';
+ * import '@layerhq/web-xdk/ui/components/layer-compose-bar';
  * ```
  *
  * @class Layer.UI.components.ComposeBar

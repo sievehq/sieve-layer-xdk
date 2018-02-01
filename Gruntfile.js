@@ -137,6 +137,14 @@ module.exports = function (grunt) {
       },
     },
     copy: {
+      npm: {
+        files: [
+          {src: ['**'], cwd: 'themes/build/', dest: 'npm/themes/', expand: true},
+          {src: ['**'], cwd: 'lib/', dest: 'npm/', expand: true},
+          {src: 'package.json', dest: 'npm/package.json'}
+        ]
+      },
+
       themes: {
         src: ["themes/src/*/**.html", "themes/src/*/**.js"],
         dest: "themes/build/",
@@ -268,10 +276,6 @@ module.exports = function (grunt) {
         options: {
           interrupt: true
         }
-      },
-      ignore: {
-        files: ['npmignore-source', '.gitignore'],
-        tasks: ['generate-npmignore']
       }
     },
     notify: {
@@ -654,13 +658,6 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('generate-npmignore', 'Building .npmignore', function() {
-    var gitIgnore = grunt.file.read('./.gitignore') || '';
-    gitIgnore = gitIgnore.replace(/#\s*\!npmignored[\s\S]*$/m, '');
-    var npmIgnoreSource = grunt.file.read('./npmignore-source');
-    grunt.file.write('.npmignore', (npmIgnoreSource ? '\n\n' + npmIgnoreSource : '') + (gitIgnore ? '\n\n' + gitIgnore : ''));
-  });
-
   grunt.registerTask('wait', 'Waiting for files to appear', function() {
     console.log('Waiting...');
     var done = this.async();
@@ -677,6 +674,17 @@ module.exports = function (grunt) {
         }, 1500);
       }, 1500);
     }, 1500);
+  });
+
+  grunt.registerTask('fix-npm-package', function() {
+    var contents = JSON.parse(grunt.file.read('npm/package.json'));
+    contents.main = 'index.js'
+    delete contents.scripts.prepare;
+    grunt.file.write('npm/package.json', JSON.stringify(contents, null, 4));
+  });
+
+  grunt.registerTask('refuse-to-publish', function() {
+    throw new Error('cd into the npm folder to complete publishing');
   });
 
 
@@ -707,8 +715,9 @@ module.exports = function (grunt) {
   // We are not going to publish lib-es6 as this risks importing of files from both lib and lib-es6 by accident and getting multiple definitions of classes
   grunt.registerTask('debug', ['version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5', 'custom_babel', 'remove:lib', 'move:lib', 'browserify:build', 'generate-tests', 'remove:libes6']);
 
-  grunt.registerTask('build', ['generate-npmignore', 'remove:build', 'debug', 'uglify', 'theme', 'cssmin']);
-  grunt.registerTask('prepublish', ['build', 'wait']);
+  grunt.registerTask('build', ['remove:build', 'debug', 'uglify', 'theme', 'cssmin']);
+  grunt.registerTask('prepublish', ['build', 'copy:npm', 'fix-npm-package', 'refuse-to-publish']);
+
   grunt.registerTask('samples', ['debug', 'browserify:samples']);
   grunt.registerTask('theme', ['remove:theme', 'less', 'copy:themes']),
   grunt.registerTask('default', ['build']);

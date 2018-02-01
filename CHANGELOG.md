@@ -1,5 +1,10 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.1
+
+* Marks npm repo as public rather than private
+* Restructures npm repo for more direct access to components and themes
+
 ## 1.0.0-pre2.0
 
 ### Important Changes
@@ -41,11 +46,11 @@
 ### Build Breaking Changes
 
 * Using `npm` to `import` no longer imports all Message Type Models, nor all UI Components. Import only those UI Components you require (they will import their dependencies).  Example:
-    * `import '@layerhq/web-xdk/lib/ui/adapters/react';`
-    * `import '@layerhq/web-xdk/lib/ui/messages/status/layer-status-message-view';`
-    * `import '@layerhq/web-xdk/lib/ui/messages/receipt/layer-receipt-message-view';`
-    * `import '@layerhq/web-xdk/lib/ui/components/layer-avatar';`
-* Using Persistence requires you to import the db-manager: `import '@layerhq/web-xdk/lib/core/db-manager';`
+    * `import '@layerhq/web-xdk/ui/adapters/react';`
+    * `import '@layerhq/web-xdk/ui/messages/status/layer-status-message-view';`
+    * `import '@layerhq/web-xdk/ui/messages/receipt/layer-receipt-message-view';`
+    * `import '@layerhq/web-xdk/ui/components/layer-avatar';`
+* Using Persistence requires you to import the db-manager: `import '@layerhq/web-xdk/core/db-manager';`
 
 ### New Features and utilities
 
