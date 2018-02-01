@@ -6,20 +6,19 @@ describe("The Content class", function() {
         requests;
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     beforeEach(function() {
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://doh.com"
         });
         client.userId = "999";
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -30,9 +29,9 @@ describe("The Content class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
 
@@ -46,7 +45,7 @@ describe("The Content class", function() {
         client._clientReady();
         client.onlineManager.isOnline = true;
 
-        conversation = layer.Core.Conversation._createFromServer(responses.conversation2, client).conversation;
+        conversation = Layer.Core.Conversation._createFromServer(responses.conversation2).conversation;
         requests.reset();
         client.syncManager.queue = [];
     });
@@ -58,20 +57,20 @@ describe("The Content class", function() {
 
     describe("The constructor() method", function() {
         it("Should initialize with an object", function() {
-            expect(new layer.Core.Content({downloadUrl: "hey"}).downloadUrl).toEqual("hey");
-            expect(new layer.Core.Content({expiration: 100000}).expiration).toEqual(100000);
-            expect(new layer.Core.Content({refreshUrl: "hey"}).refreshUrl).toEqual("hey");
-            expect(new layer.Core.Content({id: "content"}).id).toEqual("content");
+            expect(new Layer.Core.Content({downloadUrl: "hey"}).downloadUrl).toEqual("hey");
+            expect(new Layer.Core.Content({expiration: 100000}).expiration).toEqual(100000);
+            expect(new Layer.Core.Content({refreshUrl: "hey"}).refreshUrl).toEqual("hey");
+            expect(new Layer.Core.Content({id: "content"}).id).toEqual("content");
         });
 
         it("Should initialize by id", function() {
-            expect(new layer.Core.Content("content").id).toEqual("content");
+            expect(new Layer.Core.Content("content").id).toEqual("content");
         });
     });
 
     describe("The loadContent() method", function() {
         it("Should send a request to the server", function() {
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 downloadUrl: "http://hey.com"
             });
 
@@ -86,7 +85,7 @@ describe("The Content class", function() {
 
         it("Should call the callback", function() {
 
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 downloadUrl: "http://hey.com"
             });
             var spy = jasmine.createSpy('spy');
@@ -107,7 +106,7 @@ describe("The Content class", function() {
             var tmp = window.Blob;
             window.Blob = undefined;
 
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 downloadUrl: "http://hey.com"
             });
             var spy = jasmine.createSpy('spy');
@@ -131,7 +130,7 @@ describe("The Content class", function() {
             var tmp = window.Blob;
             window.Blob = undefined;
 
-            var content = new layer.Core.Content({
+            var content = new Layer.Core.Content({
                 downloadUrl: "http://hey.com"
             });
             var spy = jasmine.createSpy('spy');
@@ -155,7 +154,7 @@ describe("The Content class", function() {
     describe("The refreshContent() method", function() {
       var content;
       beforeEach(function() {
-        content = new layer.Core.Content({
+        content = new Layer.Core.Content({
             downloadUrl: "http://hey.com",
             refreshUrl: "https://ho.com",
             expiration: 100000,
@@ -164,13 +163,13 @@ describe("The Content class", function() {
       })
 
       it("Should call xhr", function() {
-          content.refreshContent(client);
+          content.refreshContent();
           expect(requests.mostRecent().url).toEqual("https://ho.com");
           expect(requests.mostRecent().method).toEqual("GET");
       });
 
       it("Should set expiration and downloadUrl", function() {
-        content.refreshContent(client);
+        content.refreshContent();
         requests.mostRecent().response({
           status: 200,
           responseText: JSON.stringify({
@@ -184,7 +183,7 @@ describe("The Content class", function() {
 
       it("Should call the callback", function() {
         var spy = jasmine.createSpy('callback');
-        content.refreshContent(client, spy);
+        content.refreshContent(spy);
         requests.mostRecent().response({
           status: 200,
           responseText: JSON.stringify({
@@ -200,10 +199,10 @@ describe("The Content class", function() {
 
     describe("The static _createFromServer() method", function() {
         it("Should initialize with an object", function() {
-            expect(layer.Content._createFromServer({download_url: "hey1"}).downloadUrl).toEqual("hey1");
-            expect(layer.Content._createFromServer({expiration: 100000}).expiration).toEqual(new Date(100000));
-            expect(layer.Content._createFromServer({refresh_url: "hey2"}).refreshUrl).toEqual("hey2");
-            expect(layer.Content._createFromServer({id: "content"}).id).toEqual("content");
+            expect(Layer.Core.Content._createFromServer({download_url: "hey1"}).downloadUrl).toEqual("hey1");
+            expect(Layer.Core.Content._createFromServer({expiration: 100000}).expiration).toEqual(new Date(100000));
+            expect(Layer.Core.Content._createFromServer({refresh_url: "hey2"}).refreshUrl).toEqual("hey2");
+            expect(Layer.Core.Content._createFromServer({id: "content"}).id).toEqual("content");
         });
     });
 });

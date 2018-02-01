@@ -7,14 +7,13 @@ describe("SyncManager Integration Tests", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com",
             isTrustedDevice: false
         });
         client.sessionToken = "sessionToken";
-        client.user = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = new Layer.Core.Identity({
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
             firstName: "first",
@@ -25,9 +24,9 @@ describe("SyncManager Integration Tests", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
-            sessionOwner: true
+            isMine: true
         });
 
         client._clientAuthenticated();
@@ -35,8 +34,7 @@ describe("SyncManager Integration Tests", function() {
         requests.reset();
         client.syncManager.queue = [];
         jasmine.clock().tick(1);
-        syncManager = new layer.Core.SyncManager({
-            client: client,
+        syncManager = new Layer.Core.SyncManager({
             onlineManager: client.onlineManager,
             socketManager: client.socketManager,
             requestManager: client.socketRequestManager
@@ -49,7 +47,7 @@ describe("SyncManager Integration Tests", function() {
             close: function() {},
             readyState: WebSocket.OPEN
         };
-        request = new layer.Core.XHRSyncEvent({
+        request = new Layer.Core.XHRSyncEvent({
             method: "POST",
             data: {hey: "ho"},
             target: "fred",
@@ -60,12 +58,12 @@ describe("SyncManager Integration Tests", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should schedule a retry after a service unavailable error", function() {
-        var tmp = layer.Util.getExponentialBackoffSeconds;
-        spyOn(layer.Util, "getExponentialBackoffSeconds").and.returnValue(5);
+        var tmp = Layer.Utils.getExponentialBackoffSeconds;
+        spyOn(layer.Utils, "getExponentialBackoffSeconds").and.returnValue(5);
         spyOn(syncManager, "_processNextRequest");
         syncManager._xhrError({
             success: false,
@@ -83,7 +81,7 @@ describe("SyncManager Integration Tests", function() {
         expect(request.retryCount).toEqual(1);
         expect(syncManager.queue).toEqual([request]);
 
-        while(request.retryCount < layer.SyncManager.MAX_RETRIES) {
+        while(request.retryCount < Layer.Core.SyncManager.MAX_RETRIES) {
             syncManager._xhrError({
                 success: false,
                 status: 503,
@@ -104,7 +102,7 @@ describe("SyncManager Integration Tests", function() {
         expect(syncManager.queue).toEqual([]);
 
         // Restore
-        layer.Util.getExponentialBackoffSeconds = tmp;
+        Layer.Utils.getExponentialBackoffSeconds = tmp;
     });
 
 

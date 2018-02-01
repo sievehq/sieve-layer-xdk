@@ -3,21 +3,22 @@
  * This is currently used for Messages and Conversations.
  * It represents the state of the object's sync, as one of:
  *
- *  * layer.Constants.SYNC_STATE.NEW: Newly created; local only.
- *  * layer.Constants.SYNC_STATE.SAVING: Newly created; being sent to the server
- *  * layer.Constants.SYNC_STATE.SYNCING: Exists on both client and server, but changes are being sent to server.
- *  * layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
- *  * layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
+ *  * Layer.Constants.SYNC_STATE.NEW: Newly created; local only.
+ *  * Layer.Constants.SYNC_STATE.SAVING: Newly created; being sent to the server
+ *  * Layer.Constants.SYNC_STATE.SYNCING: Exists on both client and server, but changes are being sent to server.
+ *  * Layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
+ *  * Layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
  *
- * @class layer.Syncable
- * @extends layer.Root
+ * @class Layer.Core.Syncable
+ * @extends Layer.Core.Root
  * @abstract
  */
 
+import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import ClientRegistry from '../client-registry';
 import { SYNC_STATE } from '../../constants';
+import { client as Client } from '../../settings';
 
 class Syncable extends Root {
   constructor(options = {}) {
@@ -26,33 +27,21 @@ class Syncable extends Root {
   }
 
   /**
-   * Get the client associated with this Object.
-   *
-   * @method getClient
-   * @return {layer.Client}
-   */
-  getClient() {
-    return ClientRegistry.get(this.clientId);
-  }
-
-  /**
    * Fire an XHR request using the URL for this resource.
    *
-   * For more info on xhr method parameters see {@link layer.Core.ClientAuthenticator#xhr}
+   * For more info on xhr method parameters see {@link Layer.Core.Client#xhr}
    *
    * @method _xhr
    * @protected
-   * @return {layer.Syncable} this
+   * @return {Layer.Core.Syncable} this
    */
   _xhr(options, callback) {
     // initialize
     if (!options.url) options.url = '';
     if (!options.method) options.method = 'GET';
-    const client = this.getClient();
 
     // Validatation
     if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
-    if (!client) throw new Error(ErrorDictionary.clientMissing);
     if (!this.constructor.enableOpsIfNew &&
       options.method !== 'POST' && options.method !== 'GET' &&
       this.syncState === SYNC_STATE.NEW) return this;
@@ -69,13 +58,17 @@ class Syncable extends Root {
       this._setSyncing();
     }
 
-    client.xhr(options, (result) => {
+    Client.xhr(options, (result) => {
       if (result.success && options.method !== 'GET' && !this.isDestroyed) {
         this._setSynced();
       }
       if (callback) callback(result);
     });
     return this;
+  }
+
+  _getBubbleEventsTo() {
+    return Client;
   }
 
   /**
@@ -129,7 +122,7 @@ class Syncable extends Root {
    * the `conversations:loaded`, `messages:loaded`, etc... event has fired.
    *
    * ```
-   * var message = layer.Message.load(messageId, client);
+   * var message = Layer.Core.Message.load(messageId);
    * message.once('messages:loaded', function(evt) {
    *    alert("Message loaded");
    * });
@@ -138,16 +131,13 @@ class Syncable extends Root {
    * @method load
    * @static
    * @param {string} id - `layer:///messages/UUID`
-   * @param {layer.Client} client
-   * @return {layer.Syncable} - Returns an empty object that will be populated once data is loaded.
+   * @return {Layer.Core.Syncable} - Returns an empty object that will be populated once data is loaded.
    */
-  static load(id, client) {
-    if (!client || !(client instanceof Root)) throw new Error(ErrorDictionary.clientMissing);
+  static load(id) {
 
     const obj = {
       id,
-      url: client.url + id.substring(8),
-      clientId: client.appId,
+      url: Client.url + id.substring(8),
     };
 
     if (!Syncable.sortedSubclasses) {
@@ -166,18 +156,22 @@ class Syncable extends Root {
     const typeName = ConstructorClass.eventPrefix;
 
     if (typeName) {
-      if (!client.dbManager) {
-        syncItem.syncState = SYNC_STATE.LOADING;
-        client.once('ready', () => syncItem._load());
+      if (!Client.dbManager) {
+        if (!Client.isReady) {
+          syncItem.syncState = SYNC_STATE.LOADING;
+          Client.once('ready', () => syncItem._load(), syncItem);
+        } else {
+          syncItem._load();
+        }
       } else {
-        client.dbManager.getObject(typeName, id, (item) => {
+        Client.dbManager.getObject(typeName, id, (item) => {
           if (syncItem.isDestroyed) return;
           if (item) {
             syncItem._populateFromServer(item);
             syncItem.trigger(typeName + ':loaded');
-          } else if (!client.isReady) {
+          } else if (!Client.isReady) {
             syncItem.syncState = SYNC_STATE.LOADING;
-            client.once('ready', () => syncItem._load());
+            Client.once('ready', () => syncItem._load(), syncItem);
           } else {
             syncItem._load();
           }
@@ -194,7 +188,7 @@ class Syncable extends Root {
   /**
    * Load this resource from the server.
    *
-   * Called from the static layer.Syncable.load() method
+   * Called from the static Layer.Core.Syncable.load() method
    *
    * @method _load
    * @private
@@ -283,6 +277,20 @@ class Syncable extends Root {
     this._toObject = null;
   }
 
+  // Any time there is an event triggered, assume that its state has changed and clear its cached object.
+  // See parent class for docs
+  _triggerAsync(evtName, args) {
+    this._clearObject();
+    super._triggerAsync(evtName, args);
+  }
+
+  // Any time there is an event triggered, assume that its state has changed and clear its cached object.
+  // See parent class for docs
+  trigger(evtName, args) {
+    this._clearObject();
+    super.trigger(evtName, args);
+  }
+
   /**
    * Returns a plain object.
    *
@@ -302,6 +310,21 @@ class Syncable extends Root {
       this._toObject.isSynced = this.isSynced();
     }
     return this._toObject;
+  }
+
+  /**
+   * Convert array of Syncable instances into an array of objects that can be inserted into indexedDB.
+   *
+   * Values should look a lot like they would look when coming from the server.
+   *
+   * @method toDbObjects
+   * @private
+   * @param {Layer.Core.Syncable[]} items
+   * @param {Function} callback
+   * @return {Object[]} items
+   */
+  static toDbObjects(items, callback) {
+    return items.map(item => item.toObject());
   }
 
   /**
@@ -350,14 +373,14 @@ class Syncable extends Root {
 /**
  * Unique identifier.
  *
- * @type {string}
+ * @property {string}
  */
 Syncable.prototype.id = '';
 
 /**
  * URL to access the object on the server.
  *
- * @type {string}
+ * @property {string}
  * @readonly
  * @protected
  */
@@ -369,25 +392,14 @@ Syncable.prototype.url = '';
  * This value is not tied to when it was first created on the server.  Creating a new instance
  * based on server data will result in a new `localCreateAt` value.
  *
- * @type {Date}
+ * @property {Date}
  */
 Syncable.prototype.localCreatedAt = null;
-
-
-/**
- * layer.Client that the object belongs to.
- *
- * Actual value of this string matches the appId.
- * @type {string}
- * @protected
- * @readonly
- */
-Syncable.prototype.clientId = '';
 
 /**
  * Temporary property indicating that the instance was loaded from local database rather than server.
  *
- * @type {boolean}
+ * @property {boolean}
  * @private
  */
 Syncable.prototype._fromDB = false;
@@ -397,13 +409,13 @@ Syncable.prototype._fromDB = false;
  *
  * Possible values are:
  *
- *  * layer.Constants.SYNC_STATE.NEW: Newly created; local only.
- *  * layer.Constants.SYNC_STATE.SAVING: Newly created; being sent to the server
- *  * layer.Constants.SYNC_STATE.SYNCING: Exists on both client and server, but changes are being sent to server.
- *  * layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
- *  * layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
+ *  * Layer.Constants.SYNC_STATE.NEW: Newly created; local only.
+ *  * Layer.Constants.SYNC_STATE.SAVING: Newly created; being sent to the server
+ *  * Layer.Constants.SYNC_STATE.SYNCING: Exists on both client and server, but changes are being sent to server.
+ *  * Layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
+ *  * Layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
  *
- * @type {string}
+ * @property {string}
  */
 Syncable.prototype.syncState = SYNC_STATE.NEW;
 
@@ -413,7 +425,7 @@ Syncable.prototype.syncState = SYNC_STATE.NEW;
  * Counts down to zero; once it reaches zero, all sync
  * requests have been completed.
  *
- * @type {Number}
+ * @property {Number}
  * @private
  */
 Syncable.prototype._syncCounter = 0;
@@ -437,7 +449,7 @@ Syncable.prototype._syncCounter = 0;
  * Locally created objects are treated as websocket created objects since
  * once created we get a websocket create event for them.
  *
- * @type {String} [_loadType=queried]
+ * @property {String} [_loadType=queried]
  * @private
  */
 Syncable.prototype._loadType = 'queried';
@@ -454,7 +466,7 @@ Syncable.enableOpsIfNew = false;
 /**
  * Is the object loading from the server?
  *
- * @type {boolean}
+ * @property {boolean}
  */
 Object.defineProperty(Syncable.prototype, 'isLoading', {
   enumerable: true,
@@ -474,3 +486,4 @@ Syncable.subclasses = [];
 Syncable._supportedEvents = [].concat(Root._supportedEvents);
 Syncable.inObjectIgnore = Root.inObjectIgnore;
 module.exports = Syncable;
+Core.Syncable = Syncable;

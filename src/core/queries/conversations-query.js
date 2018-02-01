@@ -2,8 +2,8 @@
  * Query class for running a Query on Conversations.
  *
  *
- *      var conversationQuery = client.createQuery({
- *        model: layer.Core.Query.Conversation,
+ *      var conversationsQuery = client.createQuery({
+ *        model: Layer.Core.Query.Conversation,
  *        sortBy: [{'createdAt': 'desc'}]
  *      });
  *
@@ -28,11 +28,13 @@
  *      });
  *
  *
- * @class  layer.ConversationsQuery
- * @extends layer.Core.Query
+ * @class  Layer.Core.ConversationsQuery
+ * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
-import Util from '../../util';
+import Util from '../../utils';
 import { SYNC_STATE } from '../../constants';
 import Query from './query';
 
@@ -41,9 +43,11 @@ class ConversationsQuery extends Query {
   _fetchData(pageSize) {
     const sortBy = this._getSortField();
 
-    this.client.dbManager.loadConversations(sortBy, this._nextDBFromId, pageSize, (conversations) => {
-      if (conversations.length) this._appendResults({ data: conversations }, true);
-    });
+    if (client.dbManager) {
+      client.dbManager.loadConversations(sortBy, this._nextDBFromId, pageSize, (conversations) => {
+        if (conversations.length) this._appendResults({ data: conversations }, true);
+      });
+    }
 
     const newRequest = `conversations?sort_by=${sortBy}&page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -51,7 +55,7 @@ class ConversationsQuery extends Query {
     if (newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'conversation_query_time',
         },
@@ -281,6 +285,6 @@ ConversationsQuery.MaxPageSize = 100;
 
 ConversationsQuery.prototype.model = Query.Conversation;
 
-Root.initClass.apply(ConversationsQuery, [ConversationsQuery, 'ConversationsQuery']);
+Root.initClass.apply(ConversationsQuery, [ConversationsQuery, 'ConversationsQuery', Core.Query]);
 
 module.exports = ConversationsQuery;

@@ -1,10 +1,10 @@
 describe("Has Query Mixin", function() {
   beforeAll(function() {
-    layerUI.registerComponent('has-query-test', {
-      mixins: [layerUI.mixins.HasQuery, layerUI.mixins.MainComponent],
+    Layer.UI.registerComponent('has-query-test', {
+      mixins: [Layer.UI.mixins.HasQuery],
       properties: {
         _queryModel: {
-          value: layer.Core.Query.Identity
+          value: Layer.Core.Query.Identity
         },
         sortBy: {
           order: 10,
@@ -18,11 +18,10 @@ describe("Has Query Mixin", function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -30,21 +29,19 @@ describe("Has Query Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('has-query-test');
     testRoot.appendChild(el);
     query = client.createQuery({
-      model: layer.Core.Query.Identity
+      model: Layer.Core.Query.Identity
     });
     query.isFiring = false;
     query.data = [client.user];
     for (i = 0; i < 100; i++) {
       query.data.push(
-        new layer.Core.Identity({
-          client: client,
-          userId: 'user' + i,
+        new Layer.Core.Identity({
+              userId: 'user' + i,
           id: 'layer:///identities/user' + i,
           displayName: 'User ' + i,
           isFullIdentity: true
@@ -54,66 +51,23 @@ describe("Has Query Mixin", function() {
 
     el.query = query;
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {
     jasmine.clock().uninstall();
     client.destroy();
     document.body.removeChild(testRoot);
-    layer.Core.Client.removeListenerForNewClient();
+
   });
 
 
-  describe("The client property", function() {
-    it("Should setup the query if there is a queryId", function() {
-      testRoot.innerHTML = '<has-query-test use-generated-query="false" query-id="' + query.id + '"></has-query-test>';
-      CustomElements.takeRecords();
-      layer.Util.defer.flush();
 
-      el = testRoot.firstChild;
-      expect(el.query).toBe(null);
-      el.client = client;
-      expect(el.query).toBe(query);
-
-      // Inverse test
-      testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
-      CustomElements.takeRecords();
-      layer.Util.defer.flush();
-
-      el = testRoot.firstChild;
-      expect(el.query).toBe(null);
-      el.client = client;
-      expect(el.query).toBe(null);
-    });
-
-
-    it("Should call _setupGeneratedQuery once the client is set", function() {
-        testRoot.innerHTML = '<has-query-test></has-query-test>';
-        CustomElements.takeRecords();
-        var el = testRoot.firstChild;
-        layer.Util.defer.flush();
-        spyOn(el, "_setupGeneratedQuery");
-        el.client = client;
-        expect(el._setupGeneratedQuery).toHaveBeenCalledWith();
-      });
-
-      it("Should not call _setupGeneratedQuery once the client is set if useGeneratedQuery is false", function() {
-        testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
-        CustomElements.takeRecords();
-        var el = testRoot.firstChild;
-        layer.Util.defer.flush();
-        spyOn(el, "_setupGeneratedQuery");
-        el.client = client;
-        expect(el.useGeneratedQuery).toBe(false);
-        expect(el._setupGeneratedQuery).not.toHaveBeenCalledWith();
-      });
-  });
 
   describe("The query property", function() {
     it("Should disconnect from old query but not destroy it", function() {
       var query = client.createQuery({
-        model: layer.Core.Query.Conversation
+        model: Layer.Core.Query.Conversation
       });
       var oldQuery = el.query;
       expect(oldQuery.isDestroyed).toBe(false);
@@ -129,7 +83,7 @@ describe("Has Query Mixin", function() {
 
     it("Should destroy old query if generated and set generated to false", function() {
       var query = client.createQuery({
-        model: layer.Core.Query.Conversation
+        model: Layer.Core.Query.Conversation
       });
       var oldQuery = el.query;
       expect(oldQuery.isDestroyed).toBe(false);
@@ -144,7 +98,7 @@ describe("Has Query Mixin", function() {
 
     it("Should call _updateQuery", function() {
       var query = client.createQuery({
-        model: layer.Core.Query.Conversation
+        model: Layer.Core.Query.Conversation
       });
       spyOn(el, "_updateQuery");
 
@@ -181,14 +135,6 @@ describe("Has Query Mixin", function() {
       expect(el.query).toBe(query);
     });
 
-    it("Should not set the query if there is not a client", function() {
-      el.client = null;
-      el.query = null;
-      expect(el.query).toBe(null);
-      el.queryId = query.id;
-      expect(el.query).toBe(null);
-    });
-
     it("Should clear the query if there is not a Query ID", function() {
       expect(el.query).not.toBe(null);
       el.queryId = "fred";
@@ -201,41 +147,41 @@ describe("Has Query Mixin", function() {
         // Main test
         testRoot.innerHTML = '<has-query-test app-id="' + client.appId + '"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
-        expect(el.query).toEqual(jasmine.any(layer.Core.Query));
-        expect(el.query.model).toEqual(layer.Core.Query.Identity);
+        expect(el.query).toEqual(jasmine.any(Layer.Core.Query));
+        expect(el.query.model).toEqual(Layer.Core.Query.Identity);
 
-        // Alt test 1
-        testRoot.innerHTML = '<has-query-test app-id="' + client.appId + '"></has-query-test>';
+        // Alt test 1: Given no _queryModel should generate nothing
+        testRoot.innerHTML = '<has-query-test></has-query-test>';
         var el = testRoot.firstChild;
         el._queryModel = '';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
         el._setupGeneratedQuery();
         expect(el.query).toBe(null);
 
-        // Alt test 2
-        var tmp = layerUI.appId;
-        layerUI.appId = '';
+        // Alt test 2: Given no client, should generate nothing
+        var tmp = Layer.UI.appId;
+        Layer.UI.settings.client = null;
         testRoot.innerHTML = '<has-query-test></has-query-test>';
         var el = testRoot.firstChild;
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
         el._setupGeneratedQuery();
         expect(el.query).toBe(null);
 
         // Restore
-        layerUI.appId = tmp;
+        Layer.UI.settings.client = client;
 
-        // Alt test 3
-        testRoot.innerHTML = '<has-query-test app-id="' + client.appId + '"></has-query-test>';
+        // Alt test 3, it should not generate a query if one is present
+        testRoot.innerHTML = '<has-query-test></has-query-test>';
         var el = testRoot.firstChild;
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
         el.query = query;
         el._setupGeneratedQuery();
@@ -246,35 +192,35 @@ describe("Has Query Mixin", function() {
         // Main test
         testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
         expect(el.hasGeneratedQuery).toBe(true);
 
         // Alt test 1; no _queryModel
-        testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';
+        testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
         el = testRoot.firstChild;
         el._queryModel = '';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         el._setupGeneratedQuery();
         expect(el.hasGeneratedQuery).toBe(false);
 
-        // Alt test 2, no appId
-        var tmp = layerUI.appId;
-        layerUI.appId = '';
+        // Alt test 2, no client
+        Layer.UI.settings.client = null;
+        Layer.UI.appId = '';
         testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
         expect(el.hasGeneratedQuery).toBe(false);
-        layerUI.appId = tmp;
+        Layer.UI.settings.client = client;
 
         // Alt test 3, set a query
         testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el.query = query;
         el._setupGeneratedQuery();
@@ -284,7 +230,7 @@ describe("Has Query Mixin", function() {
       it("Should respect any sortBy property", function() {
         testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
         expect(el.query.sortBy).toEqual([{ 'ardvarks': 'desc' }]);
@@ -292,14 +238,6 @@ describe("Has Query Mixin", function() {
     });
 
     describe("The _updateQuery() method", function() {
-      it("Should update the client if its unset", function() {
-        el.client = null;
-        el.query = null;
-        el.properties.query = query;
-        el._updateQuery();
-        expect(el.client).toBe(client);
-      });
-
       it("Should call onRender", function() {
         spyOn(el, "onRender");
         el._updateQuery();
@@ -311,6 +249,14 @@ describe("Has Query Mixin", function() {
         el._updateQuery();
         el.query.trigger("change");
         expect(el.onRerender).toHaveBeenCalled();
+      });
+    });
+
+    describe("The queryFilter property", function() {
+      it("Should prevent data from entering the query data list", function() {
+        var f = function() {};
+        el.queryFilter = f;
+        expect(query.filter).toBe(f);
       });
     });
 });

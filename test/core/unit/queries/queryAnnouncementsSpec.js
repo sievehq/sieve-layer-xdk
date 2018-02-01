@@ -13,14 +13,13 @@ describe("The AnnouncementsQuery Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -31,9 +30,9 @@ describe("The AnnouncementsQuery Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
 
@@ -48,7 +47,7 @@ describe("The AnnouncementsQuery Class", function() {
         client.onlineManager.isOnline = true;
 
         query = client.createQuery({
-          model: layer.Core.Query.Announcement
+          model: Layer.Core.Query.Announcement
         });
         conversation = client._createObject(responses.conversation1);
         announcement = client._createObject(responses.announcement);
@@ -65,24 +64,23 @@ describe("The AnnouncementsQuery Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should be an AnnouncementQuery", function() {
-      expect(query.constructor.prototype.model).toEqual(layer.Core.Query.Announcement);
+      expect(query.constructor.prototype.model).toEqual(Layer.Core.Query.Announcement);
     });
 
     describe("The _fetchData() method", function() {
         var query;
         beforeEach(function() {
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
-                client: client,
-                model: layer.Core.Query.Announcement,
+                model: Layer.Core.Query.Announcement,
                 paginationWindow: 15
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {

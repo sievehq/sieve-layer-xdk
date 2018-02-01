@@ -8,10 +8,11 @@
  * delivered via `messages:add` events when an Announcement is provided via
  * websocket to the client, and `change` events on an Announcements Query.
  *
- * @class  layer.Announcement
- * @extends layer.Message.ConversationMessage
+ * @class  Layer.Core.Announcement
+ * @extends Layer.Core.Message.ConversationMessage
  */
-
+import { client as Client } from '../../settings';
+import Core from '../namespace';
 import ConversationMessage from './conversation-message';
 import Syncable from './syncable';
 import Root from '../root';
@@ -39,7 +40,7 @@ class Announcement extends ConversationMessage {
   getConversation() {}
 
   _loaded(data) {
-    this.getClient()._addMessage(this);
+    Client._addMessage(this);
   }
 
   /**
@@ -51,13 +52,12 @@ class Announcement extends ConversationMessage {
     if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
 
     const id = this.id;
-    const client = this.getClient();
     this._xhr({
       url: '',
       method: 'DELETE',
     }, (result) => {
       if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
-        Syncable.load(id, client);
+        Syncable.load(id);
       }
     });
 
@@ -76,13 +76,12 @@ class Announcement extends ConversationMessage {
    * @protected
    * @static
    * @param  {Object} message - Server's representation of the announcement
-   * @return {layer.Announcement}
+   * @return {Layer.Core.Announcement}
    */
-  static _createFromServer(message, client) {
+  static _createFromServer(message) {
     const fromWebsocket = message.fromWebsocket;
     return new Announcement({
       fromServer: message,
-      clientId: client.appId,
       _notify: fromWebsocket && message.is_unread,
     });
   }
@@ -130,11 +129,9 @@ class Announcement extends ConversationMessage {
 
 Announcement.prefixUUID = 'layer:///announcements/';
 
-Announcement.bubbleEventParent = 'getClient';
-
 Announcement._supportedEvents = [].concat(ConversationMessage._supportedEvents);
 
 Announcement.inObjectIgnore = ConversationMessage.inObjectIgnore;
-Root.initClass.apply(Announcement, [Announcement, 'Announcement']);
+Root.initClass.apply(Announcement, [Announcement, 'Announcement', Core]);
 Syncable.subclasses.push(Announcement);
 module.exports = Announcement;

@@ -8,14 +8,13 @@ describe("Conversation Integration Tests", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com",
             isTrustedDevice: false
         });
         client.sessionToken = "sessionToken";
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: "Frodo",
           id: "layer:///identities/" + "Frodo",
           firstName: "first",
@@ -26,15 +25,14 @@ describe("Conversation Integration Tests", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true
         });
 
         client._clientAuthenticated();
         conversation = client._createObject(JSON.parse(JSON.stringify(responses.conversation1)));
 
-        syncManager = new layer.Core.SyncManager({
-            client: client,
+        syncManager = new Layer.Core.SyncManager({
             onlineManager: client.onlineManager,
             socketManager: client.socketManager,
             requestManager: client.socketRequestManager
@@ -48,13 +46,12 @@ describe("Conversation Integration Tests", function() {
             readyState: WebSocket.OPEN
         };
 
-        userIdentity = new layer.Core.Identity({
-            clientId: client.appId,
+        userIdentity = new Layer.Core.Identity({
             id: "layer:///identities/6",
             displayName: "6",
             userId: "6"
         });
-        request = new layer.Core.XHRSyncEvent({
+        request = new Layer.Core.XHRSyncEvent({
             method: "POST",
             data: {hey: "ho"},
             target: "fred",
@@ -69,7 +66,7 @@ describe("Conversation Integration Tests", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
 

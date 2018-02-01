@@ -1,3 +1,5 @@
+// TODO: Not updated to work with XDK yet
+
 import { NetInfo } from 'react-native';
 import base64JS from 'base64-js';
 import Layer from './index';

@@ -12,12 +12,12 @@
  *        }
  *      });
  *
- * @class layer.TypingIndicators.TypingIndicatorListener
- * @extends {layer.Root}
+ * @class Layer.Core.TypingIndicators.TypingIndicatorListener
+ * @extends {Layer.Core.Root}
  */
-
+import Core from '../namespace';
 import Root from '../root';
-import ClientRegistry from '../client-registry';
+import { client as Client } from '../../settings';
 import { STARTED, PAUSED, FINISHED } from './typing-indicators';
 
 class TypingIndicatorListener extends Root {
@@ -28,7 +28,6 @@ class TypingIndicatorListener extends Root {
    * @method constructor
    * @protected
    * @param  {Object} args
-   * @param {string} args.clientId - ID of the client this belongs to
    */
   constructor(args) {
     super(args);
@@ -41,8 +40,7 @@ class TypingIndicatorListener extends Root {
      */
     this.state = {};
     this._pollId = 0;
-    const client = this._getClient();
-    client.on('ready', () => this._clientReady());
+    Client.on('ready', () => this._clientReady());
   }
 
   /**
@@ -52,9 +50,8 @@ class TypingIndicatorListener extends Root {
    * @private
    */
   _clientReady() {
-    const client = this._getClient();
-    this.user = client.user;
-    const ws = client.socketManager;
+    this.user = Client.user;
+    const ws = Client.socketManager;
     ws.on('message', this._handleSocketEvent, this);
     this._startPolling();
   }
@@ -81,7 +78,7 @@ class TypingIndicatorListener extends Root {
    *
    * @method _handleSocketEvent
    * @private
-   * @param {layer.Core.LayerEvent} evtIn - All websocket events
+   * @param {Layer.Core.LayerEvent} evtIn - All websocket events
    */
   _handleSocketEvent(evtIn) {
     const evt = evtIn.data;
@@ -89,8 +86,8 @@ class TypingIndicatorListener extends Root {
     if (this._isRelevantEvent(evt)) {
       // Could just do _createObject() but for ephemeral events, going through _createObject and updating
       // objects for every typing indicator seems a bit much.  Try getIdentity and only create if needed.
-      const identity = this._getClient().getIdentity(evt.body.data.sender.id) ||
-        this._getClient()._createObject(evt.body.data.sender);
+      const identity = Client.getIdentity(evt.body.data.sender.id) ||
+        Client._createObject(evt.body.data.sender);
       const state = evt.body.data.action;
       const conversationId = evt.body.object.id;
       let stateEntry = this.state[conversationId];
@@ -222,46 +219,30 @@ class TypingIndicatorListener extends Root {
     });
   }
 
-  /**
-   * Get the Client associated with this class.  Uses the clientId
-   * property.
-   *
-   * @method _getClient
-   * @protected
-   * @return {layer.Client}
-   */
-  _getClient() {
-    return ClientRegistry.get(this.clientId);
+  _getBubbleEventsTo() {
+    return Client;
   }
 }
 
 /**
  * setTimeout ID for polling for states to transition
- * @type {Number}
+ * @property {Number}
  * @private
  */
 TypingIndicatorListener.prototype._pollId = 0;
-
-/**
- * ID of the client this instance is associated with
- * @type {String}
- */
-TypingIndicatorListener.prototype.clientId = '';
-
-TypingIndicatorListener.bubbleEventParent = '_getClient';
-
 
 TypingIndicatorListener._supportedEvents = [
   /**
    * There has been a change in typing indicator state of other users.
    * @event change
-   * @param {layer.Core.LayerEvent} evt
-   * @param {layer.Core.Identity[]} evt.typing - Array of Identities of people who are typing
-   * @param {layer.Core.Identity[]} evt.paused - Array of Identities of people who are paused
+   * @param {Layer.Core.LayerEvent} evt
+   * @param {Layer.Core.Identity[]} evt.typing - Array of Identities of people who are typing
+   * @param {Layer.Core.Identity[]} evt.paused - Array of Identities of people who are paused
    * @param {string} evt.conversationId - ID of the Conversation that has changed typing indicator state
    */
   'typing-indicator-change',
 ].concat(Root._supportedEvents);
 
-Root.initClass.apply(TypingIndicatorListener, [TypingIndicatorListener, 'TypingIndicatorListener']);
+Root.initClass.apply(TypingIndicatorListener,
+  [TypingIndicatorListener, 'TypingIndicatorListener', Core.TypingIndicators]);
 module.exports = TypingIndicatorListener;

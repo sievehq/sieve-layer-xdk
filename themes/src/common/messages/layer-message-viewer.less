@@ -1,53 +1,53 @@
-layer-message-item-status layer-message-viewer:not(.layer-card-width-chat-bubble) {
+layer-message-item-status layer-message-viewer:not(.layer-card-width-any-width) {
   max-width: 100%;
 }
 
-layer-message-viewer:not(.layer-card-width-chat-bubble) {
+layer-message-viewer:not(.layer-card-width-any-width) {
   min-width: 192px;
 }
 
 .layer-conversation-view-width-medium, .layer-conversation-view-width-small {
-  layer-message-viewer.layer-root-card.layer-card-width-full-width {
+  layer-message-viewer.layer-root-viewer.layer-card-width-full-width {
     width: 90%;
   }
 }
 .layer-conversation-view-width-large {
-  layer-message-viewer.layer-root-card.layer-card-width-full-width {
+  layer-message-viewer.layer-root-viewer.layer-card-width-full-width {
     width: 60%;
+    max-width: 450px;
   }
 }
 
 .layer-conversation-view-width-medium, .layer-conversation-view-width-small {
-  layer-message-viewer.layer-root-card.layer-card-width-flex-width {
+  layer-message-viewer.layer-root-viewer.layer-card-width-flex-width {
     max-width: 90%;
   }
 }
 .layer-conversation-view-width-large {
-  layer-message-viewer.layer-root-card.layer-card-width-flex-width {
+  layer-message-viewer.layer-root-viewer.layer-card-width-flex-width {
     max-width: 60%;
   }
 }
 
 .layer-conversation-view-width-medium, .layer-conversation-view-width-small {
-  layer-message-viewer.layer-root-card.layer-card-width-chat-bubble {
+  layer-message-viewer.layer-root-viewer.layer-card-width-any-width {
     max-width: 90%;
   }
 }
 .layer-conversation-view-width-large {
-  layer-message-viewer.layer-root-card.layer-card-width-chat-bubble {
+  layer-message-viewer.layer-root-viewer.layer-card-width-any-width {
     max-width: 60%;
   }
 }
 
 
-.layer-root-card.layer-card-width-chat-bubble > layer-standard-display-container {
+.layer-root-viewer.layer-card-width-any-width > layer-standard-message-view-container {
   padding-bottom: 0px;
 }
 
-layer-message-item-received .layer-root-card.layer-card-width-chat-bubble > layer-standard-display-container > .layer-card-top {
+layer-message-item-received .layer-root-viewer.layer-card-width-any-width > layer-standard-message-view-container > .layer-card-top {
   background-color: @message-item-bubble-received-background-color;
   color: @message-item-bubble-received-color;
-  font-size: @font-medium;
   flex-grow: 1;
 
   a, a:visited {
@@ -56,10 +56,9 @@ layer-message-item-received .layer-root-card.layer-card-width-chat-bubble > laye
   }
 }
 
-layer-message-item-sent .layer-root-card.layer-card-width-chat-bubble > layer-standard-display-container > .layer-card-top {
+layer-message-item-sent .layer-root-viewer.layer-card-width-any-width > layer-standard-message-view-container > .layer-card-top {
   background-color: @message-item-bubble-sent-background-color;
   color: @message-item-bubble-text-sent-color;
-  font-size: @font-medium;
   flex-grow: 1;
 
   a, a:visited {
@@ -68,28 +67,36 @@ layer-message-item-sent .layer-root-card.layer-card-width-chat-bubble > layer-st
   }
 }
 
-.layer-root-card.layer-card-width-chat-bubble {
+.layer-root-viewer.layer-card-width-any-width {
   border-width: 0px;
 }
 
 
 layer-message-viewer {
+  font-size: @message-viewer-font-size;
+  text-align: left;
+
+  &.layer-model-not-supported {
+    justify-content: center;
+    font-style: italic;
+  }
+
   &.layer-card-border-standard,
   &.layer-card-border-rounded-top,
   &.layer-card-border-rounded-bottom {
     border-style: solid;
     border-width: 1px;
-    border-color: @card-outer-border-color;
+    border-color: @message-type-outer-border-color;
     overflow: hidden;
   }
   &.layer-card-border-standard {
-    border-radius: 18px;
+    border-radius: 16px;
   }
 
   &.layer-card-border-list {
     border-top-style: solid;
     border-top-width: 1px;
-    border-top-color: @card-outer-border-color;
+    border-top-color: @message-type-outer-border-color;
   }
 
   &.layer-card-border-rounded-top {
@@ -100,38 +107,25 @@ layer-message-viewer {
     border-radius: 0px 0px 18px 18px;
   }
 
-  text-align: left;
 
-  & > * {
+  & > layer-standard-message-view-container, & > layer-titled-message-view-container {
     max-width: 100%;
     width: 100%;
   }
 
-  &:not(.layer-root-card) {
+  & > .layer-message-type-view {
+    max-width: 100%;
+    flex-grow: 1;
+  }
+
+  &:not(.layer-root-viewer) {
     width: 100%;
   }
-}
-/*
-.layer-conversation-view-width-small .layer-message-item layer-message-viewer.layer-root-card {
-  max-width: 90%;
-}
 
-.layer-conversation-view-width-medium .layer-message-item layer-message-viewer.layer-root-card {
-  max-width: 90%;
-}
-
-.layer-conversation-view-width-large .layer-message-item layer-message-viewer.layer-root-card {
-  max-width: 60%;
-}
-
-.layer-message-item layer-message-viewer.layer-root-card.layer-carousel-card {
-  max-width: 90%;
-}
-*/
-layer-conversation-last-message {
-  &.layer-has-left-icon {
-    background-size: 1rem;
-    background-position-y: 2px;
-    margin-right: 20px;
+  p.layer-line-wrapping-paragraphs {
+    margin: 0px;
+  }
+  p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
+    margin-top: 1rem;
   }
 }

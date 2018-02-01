@@ -1,18 +1,21 @@
-import Clickable from './clickable';
-
 /**
  * A List Mixin that add a `selectedId` property to a List.
  *
- * Also listens for `click` events to update the `selectedId` property,
+ * Also listens for `click` and `tap` events to update the `selectedId` property,
  * and triggers selection events.
  *
- * @class layer.UI.mixins.ListSelection
+ * The selection event is controled by the {@link #_selectedItemEventName} provided by each user of this Mixin.
+ *
+ * @class Layer.UI.mixins.ListSelection
  */
+import { client } from '../../settings';
+import Clickable from './clickable';
+
 module.exports = {
   mixins: [Clickable],
   properties: {
     /**
-     * Get/Set the selected Conversation by ID.
+     * Get/Set the item shown as selected in the List, selected by Item ID (Conversation ID for example).
      *
      * ```javascript
      * list.selectedId = myConversation.id;
@@ -32,13 +35,22 @@ module.exports = {
      */
     selectedId: {
       set(newId, oldId) {
-        const newItem = this.client.getObject(newId);
-        if ((newItem || oldId) && !this.trigger(this._selectedItemEventName, { item: newItem })) {
+        const newItem = client.getObject(newId);
+        let isAllowed = true;
+        if (newItem || oldId) {
+          try {
+            isAllowed = this.trigger(this._selectedItemEventName, { item: newItem });
+          } catch (e) {
+            // No-op
+          }
+        }
+        if (!isAllowed) {
           this.properties.selectedId = oldId;
         } else {
           if (oldId) {
-            const node = this.querySelector('#' + this._getItemId(oldId));
-            if (node) node.isSelected = false;
+            this.querySelectorAllArray('.layer-selected-item').forEach((node) => {
+              node.isSelected = false;
+            });
           }
 
           if (newId) {
@@ -48,23 +60,34 @@ module.exports = {
         }
       },
     },
+
+    /**
+     * The event name to trigger on selecting an item.
+     *
+     * @readonly
+     * @private
+     * @property {String} _selectedItemEventName
+     */
+    _selectedItemEventName: {},
   },
   methods: {
+
+    // Setup event handlers
     onCreate() {
       this.addClickHandler('selection-click', this, this._onClick.bind(this));
     },
+
+    // Setup a default selection event name
     onAfterCreate() {
       if (!this.properties._selectedItemEventName) this.properties._selectedItemEventName = 'layer-item-selected';
     },
 
     /**
-     * User has selected something in the Conversation List that didn't handle that click event.
+     * User has selected something in the List that didn't handle that click event itself and then prevent bubbling up.
      *
-     * Find the Conversation Item selected and generate a `layer-conversation-selected` event.
-     * Click events do NOT bubble up; they must either be handled by the layer.UI.components.ConversationsListPanel.Item.Conversation or
-     * they are treated as a selection event.
+     * Find the Item selected and generate a selection event.
      *
-     * Listening to `layer-conversation-selected` you will still receive the original click event
+     * Listening to the selection event (e.g. `layer-conversation-selected`) you will still receive the original click event
      * in case you wish to process that futher; see `originalEvent` below.
      *
      * Calling `evt.preventDefault()` will prevent selection from occuring.
@@ -88,9 +111,27 @@ module.exports = {
     },
 
     /**
-     * MIXIN HOOK: Each time a Conversation is Clicked, you can hook into that by providing an onClick method.
+     * MIXIN HOOK: Each time an item is Clicked, you can hook into that by providing an onClick method.
      *
-     * Note that prior to this call, `evt.preventDefault()` and `evt.stopPropagation()` were already called.
+     * > *Note*
+     * >
+     * > prior to this call, `evt.preventDefault()` and `evt.stopPropagation()` have already been called.
+     *
+     * This event is not cancelable; see {@link #_selectedItemEventName} for the cancelable event.
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'my-list': {
+     *       methods: {
+     *         onClick(evt) {
+     *           console.log("User selected ", this.item);
+     *         }
+     *       }
+     *     }
+     *   }
+     * });
+     * ```
      *
      * @method onClick
      * @param {Event} evt

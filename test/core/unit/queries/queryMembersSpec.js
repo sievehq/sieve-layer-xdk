@@ -14,14 +14,13 @@ describe("The IdentitiesQuery Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -32,9 +31,9 @@ describe("The IdentitiesQuery Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
 
@@ -51,7 +50,7 @@ describe("The IdentitiesQuery Class", function() {
         identity = client._createObject(responses.useridentity);
         membership = client._createObject(responses.membership1);
         query = client.createQuery({
-          model: layer.Core.Query.Membership,
+          model: Layer.Core.Query.Membership,
           predicate: 'channel.id= "' + channel.id + '"'
         });
 
@@ -67,25 +66,25 @@ describe("The IdentitiesQuery Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should be an MembershipQuery", function() {
-      expect(query.constructor.prototype.model).toEqual(layer.Core.Query.Membership);
+      expect(query.constructor.prototype.model).toEqual(Layer.Core.Query.Membership);
     });
 
 
     describe("The _fetchData() method", function() {
         var query;
         beforeEach(function() {
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
-                model: layer.Core.Query.Membership,
+                model: Layer.Core.Query.Membership,
                 paginationWindow: 15,
                 predicate: 'channel.id= "' + channel.id + '"'
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {
@@ -135,7 +134,7 @@ describe("The IdentitiesQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Membership,
+                model: Layer.Core.Query.Membership,
                 paginationWindow: 15,
                 predicate: 'channel.id= "' + channel.id + '"'
             });
@@ -177,7 +176,7 @@ describe("The IdentitiesQuery Class", function() {
 
           query.data = [m1.toObject(), m2.toObject()];
           query.dataType = "object";
-          query.model = layer.Core.Query.Membership;
+          query.model = Layer.Core.Query.Membership;
 
           // Run
           query._appendResults({
@@ -198,7 +197,7 @@ describe("The IdentitiesQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Membership,
+                model: Layer.Core.Query.Membership,
                 paginationWindow: 15,
                 predicate: 'channel.id= "' + channel.id + '"'
             });
@@ -239,7 +238,7 @@ describe("The IdentitiesQuery Class", function() {
         var query, membership2;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Membership,
+                model: Layer.Core.Query.Membership,
                 paginationWindow: 15,
                 dataType: "object"
             });
@@ -252,7 +251,7 @@ describe("The IdentitiesQuery Class", function() {
         });
 
         it("Should not touch data array if dataType is object but item not in the data", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',
@@ -272,7 +271,7 @@ describe("The IdentitiesQuery Class", function() {
             // Setup
             query.dataType = "instance";
             var data = query.data = [membership];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',
@@ -287,7 +286,7 @@ describe("The IdentitiesQuery Class", function() {
         });
 
         it("Should change data array if dataType is object and item is in the data", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',
@@ -304,7 +303,7 @@ describe("The IdentitiesQuery Class", function() {
 
         it("Should trigger change event if the Member is in the data", function() {
             var data = query.data = [membership.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',
@@ -331,7 +330,7 @@ describe("The IdentitiesQuery Class", function() {
 
         it("Should not trigger change event if Member is NOT in the data", function() {
             var data = query.data = [membership.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "role",
                 oldValue: 'admin',
                 newValue: 'user',
@@ -358,7 +357,7 @@ describe("The IdentitiesQuery Class", function() {
                 channel: channel
             });
             query = client.createQuery({
-                model: layer.Core.Query.Membership,
+                model: Layer.Core.Query.Membership,
                 paginationWindow: 15,
                 dataType: "object",
             });
@@ -471,7 +470,7 @@ describe("The IdentitiesQuery Class", function() {
                 channel: channel
             });
             query = client.createQuery({
-                model: layer.Core.Query.Membership,
+                model: Layer.Core.Query.Membership,
                 paginationWindow: 15,
                 dataType: "object",
             });

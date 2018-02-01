@@ -10,15 +10,14 @@ describe("The Announcement class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://doh.com"
         });
         client.userId = "999";
 
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -29,9 +28,9 @@ describe("The Announcement class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
 
@@ -58,7 +57,7 @@ describe("The Announcement class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The send() method", function() {
@@ -79,12 +78,12 @@ describe("The Announcement class", function() {
     describe("The delete() method", function() {
         it("Should fail if already deleting", function() {
             // Setup
-            announcement.delete(layer.Constants.DELETION_MODE.ALL);
+            announcement.delete(Layer.Constants.DELETION_MODE.ALL);
 
             // Run
             expect(function() {
                 announcement.delete();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.isDestroyed);
         });
 
         it("Should call _xhr", function() {
@@ -102,41 +101,41 @@ describe("The Announcement class", function() {
         });
 
         it("Should load a new copy if deletion fails from something other than not_found", function() {
-          var tmp = layer.Syncable.load;
-          spyOn(layer.Syncable, "load");
+          var tmp = Layer.Core.Syncable.load;
+          spyOn(Layer.Core.Syncable, "load");
           spyOn(announcement, "_xhr").and.callFake(function(args, callback) {
             callback({success: false});
           });
 
 
           // Run
-          announcement.delete(layer.Constants.DELETION_MODE.ALL);
+          announcement.delete(Layer.Constants.DELETION_MODE.ALL);
 
           // Posttest
           expect(announcement.isDestroyed).toBe(true);
-          expect(layer.Syncable.load).toHaveBeenCalledWith(announcement.id, client);
+          expect(Layer.Core.Syncable.load).toHaveBeenCalledWith(announcement.id);
 
           // Cleanup
-          layer.Syncable.load = tmp;
+          Layer.Core.Syncable.load = tmp;
         })
 
         it("Should NOT load a new copy if deletion fails from not_found", function() {
-          var tmp = layer.Announcement.load;
-          spyOn(layer.Announcement, "load");
+          var tmp = Layer.Core.Announcement.load;
+          spyOn(Layer.Core.Announcement, "load");
           spyOn(announcement, "_xhr").and.callFake(function(args, callback) {
             callback({success: false, data: {id: 'not_found'}});
           });
 
 
           // Run
-          announcement.delete(layer.Constants.DELETION_MODE.ALL);
+          announcement.delete(Layer.Constants.DELETION_MODE.ALL);
 
           // Posttest
           expect(announcement.isDestroyed).toBe(true);
-          expect(layer.Announcement.load).not.toHaveBeenCalled();
+          expect(Layer.Core.Announcement.load).not.toHaveBeenCalled();
 
           // Cleanup
-          layer.Announcement.load = tmp;
+          Layer.Core.Announcement.load = tmp;
         })
     });
 });

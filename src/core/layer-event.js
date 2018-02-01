@@ -29,21 +29,22 @@
  *          });
  *      });
  *
- * The `layer.Core.LayerEvent.getChangesFor()` and `layer.Core.LayerEvent.hasProperty()` methods
+ * The `Layer.Core.LayerEvent.getChangesFor()` and `Layer.Core.LayerEvent.hasProperty()` methods
  * simplify working with xxx:change events so you don't need
  * to iterate over the `changes` array.
  *
- * @class layer.Core.LayerEvent
+ * @class Layer.Core.LayerEvent
  */
+import Core from './namespace';
 
 class LayerEvent {
   /**
    * Constructor for LayerEvent.
    *
-   * @method
+   * @method constructor
    * @param  {Object} args - Properties to mixin to the event
    * @param  {string} eventName - Name of the event that generated this LayerEvent.
-   * @return {layer.Core.LayerEvent}
+   * @return {Layer.Core.LayerEvent}
    */
   constructor(args, eventName) {
     let ptr = this;
@@ -70,6 +71,27 @@ class LayerEvent {
       }
     });
     this.eventName = eventName;
+  }
+
+  /**
+   * Call `cancel` on any event that is {@link #cancelable} to prevent its default behavior.
+   *
+   * @method cancel
+   */
+  cancel() {
+    if (this.cancelable) {
+      this.canceled = true;
+    }
+  }
+
+  /**
+   * Call `returnValue` on any event that expects a value from the event listeners.
+   *
+   * @method returnValue
+   * @param {Mixed} value
+   */
+  returnValue(value) {
+    this.returnedValue = value;
   }
 
   /**
@@ -120,7 +142,7 @@ class LayerEvent {
    *
    * @method _mergeChanges
    * @protected
-   * @param  {layer.Core.LayerEvent} evt
+   * @param  {Layer.Core.LayerEvent} evt
    */
   _mergeChanges(evt) {
     this.changes = this.changes.concat(evt.changes);
@@ -132,8 +154,8 @@ class LayerEvent {
  *
  * If the event name ends with ':change' then
  * it is treated as a change event;  such
- * events are assumed to come with `newValue`, `oldValue` and `property` in the layer.Core.LayerEvent.changes property.
- * @type {Boolean}
+ * events are assumed to come with `newValue`, `oldValue` and `property` in the Layer.Core.LayerEvent.changes property.
+ * @property {Boolean}
  */
 LayerEvent.prototype.isChange = false;
 
@@ -147,7 +169,7 @@ LayerEvent.prototype.isChange = false;
  * * newValue
  * * property
  *
- * @type {Object[]}
+ * @property {Object[]}
  */
 LayerEvent.prototype.changes = null;
 
@@ -159,7 +181,7 @@ LayerEvent.prototype.changes = null;
  *      obj.trigger('event');
  *
  * then obj will be the target.
- * @type {layer.Root}
+ * @property {Layer.Core.Root}
  */
 LayerEvent.prototype.target = null;
 
@@ -172,8 +194,31 @@ LayerEvent.prototype.target = null;
  *
  * then eventName = 'myevent'
  *
- * @type {String}
+ * @property {String}
  */
 LayerEvent.prototype.eventName = '';
 
-module.exports = LayerEvent;
+/**
+ * If the event is cancelable, then call Layer.Core.LayerEvent.cancel to update this value.
+ *
+ * @property {Boolean} [canceled=false]
+ * @readonly
+ */
+LayerEvent.prototype.canceled = false;
+
+/**
+ * Is the event cancelable; if so then one could call Layer.Core.LayerEvent.cancel on it
+ *
+ * @property {Boolean} [cancelable=false]
+ * @readonly
+ */
+LayerEvent.prototype.cancelable = false;
+
+/**
+ * Value provided to this event by an event listener
+ *
+ * @property {Mixed} returnedValue
+ */
+LayerEvent.prototype.returnedValue = null;
+
+module.exports = Core.LayerEvent = LayerEvent;

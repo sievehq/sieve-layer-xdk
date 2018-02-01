@@ -8,14 +8,12 @@
  *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
  *   events get processed, not knowing minute details of the objects.
  *
- * @class layer.mixins.WebsocketOperations
+ * @class Layer.Core.mixins.WebsocketOperations
  */
 
-import { ErrorDictionary } from '../layer-error';
-import Identity from '../models/identity';
-import Util from '../../util';
+import Util from '../../utils';
 import { RECEIPT_STATE } from '../../constants';
-import { WebsocketSyncEvent } from '../sync-event';
+import Core from '../namespace';
 
 module.exports = {
   lifecycle: {
@@ -90,3 +88,5 @@ module.exports = {
     },
   },
 };
+
+Core.mixins.Client.push(module.exports);

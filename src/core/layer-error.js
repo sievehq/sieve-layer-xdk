@@ -5,7 +5,7 @@
  * It may be extended to report on internal errors... but typically internal errors
  * are reported via `throw new Error(...);`
  *
- * Layer Error is passed as part of the layer.Core.LayerEvent's data property.
+ * Layer Error is passed as part of the Layer.Core.LayerEvent's data property.
  *
  * Throw an error:
  *
@@ -20,9 +20,10 @@
  *        console.error(error.message);
  *     });
  *
- * @class layer.Core.LayerEvent
+ * @class Layer.Core.LayerEvent
  */
-import { logger } from '../util';
+import Core from './namespace';
+import { logger } from '../utils';
 
 class LayerError {
   constructor(options) {
@@ -86,7 +87,7 @@ class LayerError {
  * A string name for the event; these names are paired with codes.
  *
  * Codes can be looked up at https://docs.layer.com/reference/client_api/errors
- * @type {String}
+ * @property {String}
  */
 LayerError.prototype.errType = '';
 
@@ -94,25 +95,25 @@ LayerError.prototype.errType = '';
  * Numerical error code.
  *
  * https://docs.layer.com/reference/client_api/errors
- * @type {Number}
+ * @property {Number}
  */
 LayerError.prototype.code = 0;
 
 /**
  * URL to go to for more information on this error.
- * @type {String}
+ * @property {String}
  */
 LayerError.prototype.url = '';
 
 /**
  * Detailed description of the error.
- * @type {String}
+ * @property {String}
  */
 LayerError.prototype.message = '';
 
 /**
  * Http error code; no value if its a websocket response.
- * @type {Number}
+ * @property {Number}
  */
 LayerError.prototype.httpStatus = 0;
 
@@ -123,19 +124,19 @@ LayerError.prototype.httpStatus = 0;
  *  * data: xhr.data,
  *  * xhr: XMLHttpRequest object
  *
- * @type {Object}
+ * @property {Object}
  */
 LayerError.prototype.request = null;
 
 /**
  * Any additional details about the error sent as additional properties.
- * @type {Object}
+ * @property {Object}
  */
 LayerError.prototype.data = null;
 
 /**
  * Pointer to the xhr object that fired the actual request and contains the response.
- * @type {XMLHttpRequest}
+ * @property {XMLHttpRequest}
  */
 LayerError.prototype.xhr = null;
 
@@ -147,7 +148,6 @@ LayerError.ErrorDictionary = {
   appIdMissing: 'Property missing: appId is required',
   identityTokenMissing: 'Identity Token missing: answerAuthenticationChallenge requires an identity token',
   sessionTokenMissing: 'Session Token missing: _authComplete requires a {session_token: value} input',
-  clientMissing: 'Property missing: client is required',
   conversationMissing: 'Property missing: conversation is required',
   partsMissing: 'Property missing: parts is required',
   messageMissing: 'Property missing: message is required',
@@ -157,6 +157,7 @@ LayerError.ErrorDictionary = {
   invalidUrl: 'URL is invalid',
   invalidId: 'Identifier is invalid',
   idParamRequired: 'The ID Parameter is required',
+  modelParamRequired: 'The Model Parameter is required',
   wrongClass: 'Parameter class error; should be: ',
   inProgress: 'Operation already in progress',
   cantChangeIfConnected: 'You can not change value after connecting',
@@ -174,6 +175,7 @@ LayerError.ErrorDictionary = {
   modelImmutable: 'The model property cannot be changed',
   valueNotSupported: 'The value provided is not a supported value',
   permissionDenied: 'Operation not allowed on that object',
+  adapterError: 'You must call Layer.init() before you can use an adapter',
 };
 
-module.exports = LayerError;
+module.exports = Core.LayerError = LayerError;

@@ -1,10 +1,11 @@
 /**
  *
  * @class
- * @extends layer.UI.components.Component
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
+import Constants from '../../constants';
 
 registerComponent('layer-message-type-list-view', {
   template: '',
@@ -27,16 +28,13 @@ registerComponent('layer-message-type-list-view', {
       value: null,
     },
     widthType: {
-      value: 'flex-width',
+      value: Constants.WIDTH.FLEX,
     },
     cardBorderStyle: {
       value: 'none',
     },
   },
   methods: {
-    onRender() {
-      this.onRerender();
-    },
     onRerender() {
       if (!this.properties._internalState.onAttachCalled) return;
 
@@ -51,7 +49,7 @@ registerComponent('layer-message-type-list-view', {
           model: item,
           parentNode: this,
         });
-        ui.classList.add('layer-root-card');
+        ui.classList.add('layer-root-viewer');
       });
     },
   },

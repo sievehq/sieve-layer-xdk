@@ -1,72 +1,77 @@
 [
   {
-    "name": "WebSDK Components",
+    "name": "WebXDK-Core",
     "groups": [
       {
         "name": "Core Classes",
         "classes": [
-          "layer.Client",
-          "layer.Conversation",
-          "layer.Message",
-          "layer.MessagePart",
-          "layer.Core.Query"
+          "Layer.Core.Client",
+          "Layer.Core.Conversation",
+          "Layer.Core.MessageTypeModel",
+          "Layer.Core.Message",
+          "Layer.Core.MessagePart",
+          "Layer.Core.Query"
         ]
       },
       {
         "name": "Utilities",
         "classes": [
-          "layer.Core.QueryBuilder.ConversationsQuery",
-          "layer.Core.QueryBuilder.MessagesQuery",
-          "layer.Core.LayerEvent",
-          "layer.Core.LayerEvent",
-          "layer.ClientUtils",
-          "layer.Root",
-          "layer.Constants"
+          "Layer.Core.LayerEvent",
+          "Layer.Core.Root",
+          "Layer.utils",
+          "Layer.Constants"
         ]
       },
       {
         "name": "Services",
         "classes": [
-          "layer.TypingIndicators.TypingPublisher",
-          "layer.TypingIndicators.TypingListener",
-          "layer.TypingIndicators.TypingIndicatorListener",
-          "layer.SyncManager"
+          "Layer.Core.TypingIndicators.TypingPublisher",
+          "Layer.Core.TypingIndicators.TypingListener",
+          "Layer.Core.TypingIndicators.TypingIndicatorListener",
+          "Layer.Core.SyncManager"
         ]
       }
     ]
   },
   {
-    "name": "WebUI Components",
+    "name": "WebXDK-UI",
     "groups": [
       {
         "name": "Main Components",
         "classes": [
-          "layer.UI.components.ConversationPanel",
-          "layer.UI.components.ConversationsListPanel.List",
-          "layer.UI.components.IdentitiesListPanel.List",
-          "layer.UI.components.Notifier"
+          "Layer.UI.components.ConversationView",
+          "Layer.UI.components.ConversationListPanel.List",
+          "Layer.UI.components.IdentityListPanel.List",
+          "Layer.UI.components.Notifier"
         ]
       },
       {
         "name": "Utilities",
         "classes": [
-          "layer.UI",
-          "layer.UI.components.Component",
-          "layer.UI.adapters.react",
-          "layer.UI.adapters.angular",
-          "layer.UI.adapters.backbone"
+          "Layer.UI",
+          "Layer.UI.Component",
+          "Layer.UI.adapters.react",
+          "Layer.UI.adapters.angular",
+          "Layer.UI.adapters.backbone"
         ]
       },
       {
-        "name": "Message Handlers",
+        "name": "Messages",
         "classes": [
-          "layer.UI.handlers.message.TextPlain",
-          "layer.UI.handlers.message.Image",
-          "layer.UI.handlers.message.Video",
-          "layer.UI.handlers.message.Unknown"
+          "Layer.UI.messages.TextMessageModel",
+          "Layer.UI.messages.LinkMessageModel",
+          "Layer.UI.messages.ImageMessageModel",
+          "Layer.UI.messages.FileMessageModel",
+          "Layer.UI.messages.LocationMessageModel",
+          "Layer.UI.messages.ProductMessageModel",
+          "Layer.UI.messages.ButtonsMessageModel",
+          "Layer.UI.messages.ChoiceMessageModel",
+          "Layer.UI.messages.FeedbackMessageModel",
+          "Layer.UI.messages.ReceiptMessageModel",
+          "Layer.UI.messages.StatusMessageModel",
+          "Layer.UI.messages.ResponseMessageModel"
         ]
       }
     ]
   }
 ]
-

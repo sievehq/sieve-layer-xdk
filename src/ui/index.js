@@ -18,118 +18,70 @@
 
 import LayerUI from './layer-ui';
 
-// Load Adapters
-import './adapters/angular';
-import './adapters/backbone';
-import './adapters/react';
+// Load Required Components
+import Component from './components/component';
+import './components/layer-replaceable-content';
+import './components/layer-conversation-view';
 
-// Load Main Components
-import './components/conversation-list/layer-conversation-list/layer-conversation-list';
-import './components/identity-list/layer-identity-list/layer-identity-list';
-import './components/membership-list-panel/layer-membership-list/layer-membership-list';
-import './components/layer-conversation-view/layer-conversation-view';
-import './components/layer-notifier/layer-notifier';
-import './components/layer-presence/layer-presence';
-
-
-// Load standard utilities
-import './components/layer-file-upload-button/layer-file-upload-button';
-import './components/layer-send-button/layer-send-button';
-import './handlers/message/layer-message-viewer';
-import './messages/layer-message-viewer-expanded.js';
 
 import './handlers/text/autolinker';
-import './handlers/text/code-blocks';
 import './handlers/text/emoji';
 import './handlers/text/newline';
-import './utils/date-separator';
+import dateSeparator from './ui-utils/date-separator';
+
+// Card Viewers
+import './handlers/message/layer-message-viewer';
+import './messages/layer-message-viewer-expanded';
 
 // Load standard cards
-import './messages/text/layer-text-model';
-import './messages/text/layer-text-view';
+import './messages/status/layer-status-message-view';
+import './messages/response/layer-response-message-view';
+import './messages/text/layer-text-message-view';
+import './messages/image/layer-image-message-view';
+import './messages/buttons/layer-buttons-message-view';
 
-import './messages/status/layer-status-model';
-import './messages/status/layer-status-view';
+// Load standard card containers
+import './messages/layer-standard-message-view-container';
+import './messages/layer-titled-message-view-container';
+import './messages/layer-dialog-message-view-container';
 
-import './messages/response/layer-response-model';
-import './messages/response/layer-response-view';
+// Load standard card actions
+import './message-actions/open-expanded-view-action';
+import './message-actions/open-url-action';
+import './message-actions/open-file-action';
+import './message-actions/open-map-action';
 
-import './messages/receipt/layer-receipt-model';
-import './messages/receipt/layer-receipt-view';
-
-import './messages/choice/layer-choice-model';
-import './messages/choice/layer-choice-view';
-import './messages/choice/layer-choice-tiles-view';
-import './messages/choice/layer-choice-label-view';
-
-
-import './messages/layer-standard-display-container';
-import './messages/layer-titled-display-container';
-import './messages/layer-dialog-display-container';
-//import './messages/layer-list-item-container';
-import './messages/text/layer-text-view';
-import './messages/text/layer-text-model';
-
-import './messages/image/layer-image-model';
-import './messages/image/layer-image-view';
-
-// import './messages/list/list-model';
-// import './messages/list/layer-list-view';
-
-import './messages/carousel/layer-carousel-model';
-import './messages/carousel/layer-carousel-view';
-
-import './messages/buttons/layer-buttons-model';
-import './messages/buttons/layer-buttons-view';
-
-import './messages/file/layer-file-model';
-import './messages/file/layer-file-view';
-
-import './messages/link/layer-link-model';
-import './messages/link/layer-link-view';
-
-import './messages/location/layer-location-model';
-import './messages/location/layer-location-view';
-
-// import './messages/address/address-model';
-// import './messages/address/layer-address-view';
-
-import './messages/product/layer-product-model';
-import './messages/product/layer-product-view';
-
-import './messages/models/layer-person-model';
-import './messages/models/layer-organization-model';
-
-import './messages/feedback/layer-feedback-view';
-import './messages/feedback/layer-feedback-expanded-view';
-import './messages/feedback/layer-feedback-model';
-
-import { animatedScrollTo, animatedScrollLeftTo } from './utils/animated-scroll';
+import Clickable from './mixins/clickable';
+import FileDropTarget from './mixins/file-drop-target';
 import MessageHandler from './mixins/message-handler';
 import HasQuery from './mixins/has-query';
-import MainComponent from './mixins/main-component';
 import List from './mixins/list';
 import ListItem from './mixins/list-item';
 import ListSelection from './mixins/list-selection';
 import ListItemSelection from './mixins/list-item-selection';
 import FocusOnKeydown from './mixins/focus-on-keydown';
 import MessageViewMixin from './messages/message-view-mixin';
-
-
-LayerUI.animatedScrollTo = animatedScrollTo;
-LayerUI.animatedScrollLeftTo = animatedScrollLeftTo;
+import QueryEndIndicator from './mixins/query-end-indicator';
+import SizeProperty from './mixins/size-property';
+import Throttler from './mixins/throttler';
 
 LayerUI.mixins = {
+  Clickable,
+  FileDropTarget,
   MessageHandler,
   HasQuery,
-  MainComponent,
   List,
   ListItem,
   ListSelection,
   ListItemSelection,
   FocusOnKeydown,
   MessageViewMixin,
+  QueryEndIndicator,
+  SizeProperty,
+  Throttler,
+  Component,
 };
+LayerUI.UIUtils.dateSeparator = dateSeparator;
 
-// If we don't expose global.layerUI then custom templates can not load and call window.layer.UI.registerTemplate()
+// If we don't expose global.layerUI then custom templates can not load and call window.Layer.UI.registerTemplate()
 module.exports = LayerUI;

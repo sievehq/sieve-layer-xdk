@@ -19,14 +19,13 @@ describe("The Client Message Mixin", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = userIdentity = new Layer.Core.Identity({
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
@@ -51,7 +50,7 @@ describe("The Client Message Mixin", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -105,7 +104,7 @@ describe("The Client Message Mixin", function() {
             var m1 = client.getMessage(newId, true);
 
             // Posttest
-            expect(m1 instanceof layer.Core.Message).toBe(true);
+            expect(m1 instanceof Layer.Core.Message).toBe(true);
             expect(m1.id).toEqual(newId);
             expect(requests.mostRecent().url).toEqual(client.url + newId.replace(/layer\:\/\//, ""));
         });
@@ -115,7 +114,7 @@ describe("The Client Message Mixin", function() {
             var m1 = client.getMessage(newId, true);
 
             // Posttest
-            expect(m1 instanceof layer.Announcement).toBe(true);
+            expect(m1 instanceof Layer.Core.Announcement).toBe(true);
             expect(m1.id).toEqual(newId);
             expect(requests.mostRecent().url).toEqual(client.url + newId.replace(/layer\:\/\//, ""));
         });
@@ -123,8 +122,8 @@ describe("The Client Message Mixin", function() {
         it("Should fail without id", function() {
             expect(function() {
                 client.getMessage(5);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
-            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(Layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
         });
 
         it("Should not load if not ready", function() {

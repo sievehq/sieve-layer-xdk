@@ -1,13 +1,15 @@
 describe("State property", function() {
-  var testRoot;
+  var testRoot, client;
 
   beforeAll(function(done) {
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     setTimeout(done, 1000);
   });
 
   beforeEach(function() {
     jasmine.clock().install();
+    client = Layer.init({
+      appId: 'layer:///apps/staging/Fred'
+    });
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
   });
@@ -16,18 +18,19 @@ describe("State property", function() {
     try {
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+
+      client.destroy();
     } catch(e) {}
   });
 
   it("Should trigger onRenderState", function() {
-    layerUI.registerComponent('state-test1', {
+    Layer.UI.registerComponent('state-test1', {
       methods: {
         onRenderState: jasmine.createSpy('spy')
       }
     });
     var el = document.createElement('state-test1');
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     expect(el.onRenderState).not.toHaveBeenCalled();
 
     el.state = {hey: "ho"};
@@ -35,7 +38,7 @@ describe("State property", function() {
   });
 
   it("Should not call onRenderState if no state is set", function() {
-    layerUI.registerComponent('state-test3', {
+    Layer.UI.registerComponent('state-test3', {
       methods: {
         onRenderState: jasmine.createSpy('spy')
       }
@@ -44,7 +47,7 @@ describe("State property", function() {
     var el = document.createElement('state-test3');
     elParent.appendChild(el);
     testRoot.appendChild(elParent);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     expect(el.state).toEqual(null);
     expect(el.onRenderState).not.toHaveBeenCalled();
   });

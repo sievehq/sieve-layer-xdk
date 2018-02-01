@@ -8,9 +8,11 @@
  *
  * This mixin requires "layer-id=endOfResultsNode" to exist in the template for any component using this mixin.
  *
- * @class layer.UI.mixins.QueryEndIndicator
+ * @class Layer.UI.mixins.QueryEndIndicator
  */
-import Util from '../../util';
+import Util from '../../utils';
+import { registerComponent } from '../components/component';
+
 module.exports = {
   properties: {
     /**
@@ -22,7 +24,7 @@ module.exports = {
     isEndOfResults: {
       value: false,
       set(value) {
-        this.classList[value && !this.isEmptyList ? 'add' : 'remove']('layer-end-of-results');
+        this.toggleClass('layer-end-of-results', value && !this.isEmptyList);
       },
     },
 
@@ -40,7 +42,7 @@ module.exports = {
   },
   methods: {
     onRender() {
-      if (!this.query || !this.query.data) this.isEndOfResults = true;
+      if (this.query && this.query.data && this.query.data.length === 0) this.isEndOfResults = true;
     },
 
 
@@ -51,14 +53,17 @@ module.exports = {
      * @private
      * @param {Event} evt
      */
-    _renderPagedDataDone(evt = {}) {
-      if (this.query.isDestroyed) {
-        this.isEndOfResults = false;
-      } else {
-        Util.defer(() => {
-          this.isEndOfResults = this.query.pagedToEnd;
-        });
-      }
+    _renderPagedDataDone: {
+      mode: registerComponent.MODES.BEFORE,
+      value: function _renderPagedDataDone(evt = {}) {
+        if (this.query.isDestroyed) {
+          this.isEndOfResults = false;
+        } else {
+          Util.defer(() => {
+            this.isEndOfResults = this.query.pagedToEnd;
+          });
+        }
+      },
     },
   },
 };

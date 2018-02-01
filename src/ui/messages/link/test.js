@@ -2,11 +2,12 @@ describe('Link Message Components', function() {
   var LinkModel;
   var conversation;
   var testRoot;
+  var client;
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -16,23 +17,20 @@ describe('Link Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
     client._clientAuthenticated();
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -40,16 +38,17 @@ describe('Link Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    LinkModel = layer.Core.Client.getMessageTypeModelClass("LinkModel");
+    LinkModel = Layer.Core.Client.getMessageTypeModelClass("LinkModel");
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    if (client) client.destroy();
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
+
   });
 
   describe("Model Tests", function() {
@@ -62,9 +61,10 @@ describe('Link Message Components', function() {
         imageUrl: "https://layer.com/invalidimage.png"
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LinkModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(LinkModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           url: "http://layer.com/about",
           title: "b",
           author: "c",
@@ -79,9 +79,10 @@ describe('Link Message Components', function() {
         url: "http://layer.com/about"
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LinkModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(LinkModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           url: "http://layer.com/about"
         });
       });
@@ -102,7 +103,7 @@ describe('Link Message Components', function() {
       });
       var m = new LinkModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.url).toEqual("http://layer.com/about");
       expect(m.title).toEqual("b");
@@ -122,7 +123,7 @@ describe('Link Message Components', function() {
       });
       var m = new LinkModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.url).toEqual("http://layer.com/about");
       expect(m.title).toEqual("");
@@ -176,7 +177,7 @@ describe('Link Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     });
 
@@ -190,7 +191,7 @@ describe('Link Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is shown as it contains the link
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -199,7 +200,7 @@ describe('Link Message Components', function() {
       expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(false);
 
       // Message Viewer: Render as a chat bubble
-      expect(el.classList.contains('layer-card-width-chat-bubble')).toEqual(true);
+      expect(el.classList.contains('layer-card-width-any-width')).toEqual(true);
 
       // Message UI: contains anchor tag
       expect(el.querySelector('a').src).toEqual("http://layer.com/about");
@@ -216,7 +217,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is shown as it contains the image
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -228,7 +229,7 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Message UI: contains image tag
-      expect(el.querySelector('img').src).toMatch(/^data\:image\/png/);
+      expect(el.nodes.ui.nodes.image.style.backgroundImage).toMatch(/data\:image\/png/);
     });
 
     it("Should render url and title", function() {
@@ -241,7 +242,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is hidden as only the title will be shown
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
@@ -253,7 +254,7 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title is rendered
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('hello');
+      expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('hello');
     });
 
     it("Should render url, title and image", function() {
@@ -268,7 +269,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is shown with an image
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -280,10 +281,10 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Message UI: contains image tag
-      expect(el.querySelector('img').src).toMatch(/^data\:image\/png/);
+      expect(el.nodes.ui.nodes.image.style.backgroundImage).toMatch(/data\:image\/png/);
 
       // Title is rendered
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('hello');
+      expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('hello');
     });
 
     it("Should render url, title, description and author", function() {
@@ -298,7 +299,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is hidden, no image to show
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
@@ -310,9 +311,9 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title, description and author are rendered
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('hello');
-      expect(el.querySelector('.layer-card-description').innerHTML).toEqual('there');
-      expect(el.querySelector('.layer-card-footer').innerHTML).toEqual('all');
+      expect(el.querySelector('.layer-standard-card-container-title').innerText.trim()).toEqual('hello');
+      expect(el.querySelector('.layer-standard-card-container-description').innerText.trim()).toEqual('there');
+      expect(el.querySelector('.layer-standard-card-container-footer').innerText.trim()).toEqual('all');
     });
 
     it("Should render url, title, description, author and image", function() {
@@ -328,7 +329,7 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       // Container: Core UI is showing an image
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -340,16 +341,18 @@ describe('Link Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title, description and author are rendered
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('hello');
-      expect(el.querySelector('.layer-card-description').innerHTML).toEqual('there');
-      expect(el.querySelector('.layer-card-footer').innerHTML).toEqual('all');
+      expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('hello');
+      expect(el.querySelector(' .layer-standard-card-container-description').innerText.trim()).toEqual('there');
+      expect(el.querySelector(' .layer-standard-card-container-footer').innerText.trim()).toEqual('all');
 
       // Message UI: contains image tag
-      expect(el.querySelector('img').src).toMatch(/^data\:image\/png/);
+      expect(el.nodes.ui.nodes.image.style.backgroundImage).toMatch(/data\:image\/png/);
     });
 
     it("Should open the link using the url", function() {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
+
       var model = new LinkModel({
         url: "http://layer.com/about",
       });
@@ -358,15 +361,19 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-url');
-      el.runAction({});
-      expect(el.showFullScreen).toHaveBeenCalledWith("http://layer.com/about");
+      el._runAction({});
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith("http://layer.com/about");
+
+      // Restore
+      Layer.UI.UIUtils.showFullScreen = tmp;
     });
 
     it("Should open the link using action data url", function() {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
 
       var model = new LinkModel({
         url: "http://layer.com/about",
@@ -381,11 +388,14 @@ describe('Link Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-url');
-      el.runAction({});
-      expect(el.showFullScreen).toHaveBeenCalledWith("https://layer.com/aboutface");
+      el._runAction({});
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith("https://layer.com/aboutface");
+
+      // Restore
+      Layer.UI.UIUtils.showFullScreen = tmp;
     });
   });
 });

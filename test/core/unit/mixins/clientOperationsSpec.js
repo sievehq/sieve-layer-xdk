@@ -19,21 +19,19 @@ describe("The Client Operations Mixin", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = userIdentity = new Layer.Core.Identity({
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
 
-        userIdentity2 = new layer.Core.Identity({
-            clientId: client.appId,
+        userIdentity2 = new Layer.Core.Identity({
             id: "layer:///identities/1",
             displayName: "UserIdentity",
             userId: '1'
@@ -58,7 +56,7 @@ describe("The Client Operations Mixin", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The _handleMarkAllReadOperation() method", function() {

@@ -10,97 +10,97 @@ describe("The Root Class", function() {
 
   describe("The initClass() static method", function() {
     it("Should return a class with a name", function() {
-      function A() { layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A() { Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
-      layer.Core.Root.initClass(A, "A");
-      expect(A.name).toEqual("A");
+      Layer.Core.Root.initClass(A, "A");
+      expect(A.name || A.altName).toEqual("A");
     });
 
     it("Should define a getter and setter if there is an adjuster", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__adjustX = function(newValue) {};
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x").get).toEqual(jasmine.any(Function));
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x").set).toEqual(jasmine.any(Function));
     });
 
     it("Should define a getter and setter if there is an updater", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__updateX = function(newValue, oldValue) {};
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x").get).toEqual(jasmine.any(Function));
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x").set).toEqual(jasmine.any(Function));
     });
 
     it("Should define a getter and setter if there is a getter", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__getX = function(pkey) {};
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x").get).toEqual(jasmine.any(Function));
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x").set).toEqual(jasmine.any(Function));
     });
 
     it("Should define an enumerable property if there is an adjuster", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__adjustX = function(newValue) {};
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x").enumerable).toBe(true);
     });
 
     it("Should not define a getter and setter if there is no adjuster or updater", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x").get).toBe(undefined);
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x").set).toBe(undefined);
     });
 
     it("Should not define a getter and setter for private properties", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__adjustX = function(newValue) {};
       A.prototype.___adjustX = function(newValue) {};
       A.prototype._x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       expect(Object.getOwnPropertyDescriptor(A.prototype, "x")).toBe(undefined);
     });
 
     it("Should not define a getter and setter for Root properties", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__adjustInternalId = jasmine.createSpy('adjuster');
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       var a = new A();
       a.internalId = "fred";
@@ -108,13 +108,13 @@ describe("The Root Class", function() {
     });
 
     it("Should call the adjuster with a correct inValue", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__adjustX = function(newValue) {};
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       var a = new A();
       spyOn(a, "__adjustX");
@@ -123,15 +123,15 @@ describe("The Root Class", function() {
     });
 
     it("Should call the adjuster and use its value", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__adjustX = function(newValue) {
         return 20;
       };
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       var a = new A();
       a.x = 10;
@@ -140,15 +140,15 @@ describe("The Root Class", function() {
 
 
     it("Should call the adjuster and ignore undefined", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__adjustX = function(newValue) {
         return undefined;
       }
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       var a = new A();
       a.x = 10;
@@ -156,13 +156,13 @@ describe("The Root Class", function() {
     });
 
     it("Should not call adjuster or updater while initializing", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__updateX = jasmine.createSpy('updater');
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       var a = new A({
         x: 10
@@ -171,26 +171,26 @@ describe("The Root Class", function() {
     });
 
     it("Should call the updater with oldValue and newValue", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__getX = function(pKey) {return "howdy" + this[pKey];}
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       var a = new A({x: 10});
       expect(a.x).toEqual("howdy10");
     });
 
     it("Should use the getter if provided to retrieve values", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.__updateX = function(newValue) {}
       A.prototype.x = 5;
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
       var a = new A();
       spyOn(a, "__updateX");
@@ -199,41 +199,41 @@ describe("The Root Class", function() {
     });
 
     it("Should get default _supportedEvents", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
-      expect(A._supportedEvents).toEqual(layer.Core.Root._supportedEvents);
+      expect(A._supportedEvents).toEqual(Layer.Core.Root._supportedEvents);
     })
 
     it("Should get default _ignoredEvents", function() {
-      function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
-      layer.Core.Root.initClass(A, "A");
+      Layer.Core.Root.initClass(A, "A");
 
-      expect(A._ignoredEvents).toEqual(layer.Core.Root._ignoredEvents);
+      expect(A._ignoredEvents).toEqual(Layer.Core.Root._ignoredEvents);
     })
   });
 
   describe("Root instances", function() {
     var A;
     beforeEach(function() {
-      A = function A(){ layer.Core.Root.call(this, arguments[0]); };
-      A.prototype = Object.create(layer.Core.Root.prototype);
+      A = function A(){ Layer.Core.Root.call(this, arguments[0]); };
+      A.prototype = Object.create(Layer.Core.Root.prototype);
       A.prototype.constructor = A;
 
       A.prototype.id = "";
       A.prototype.x = 5;
-      A._supportedEvents = ["doh", "ray", "me", "fah"].concat(layer.Core.Root._supportedEvents);
-      A._ignoredEvents = ["lah"].concat(layer.Core.Root._supportedEvents);
+      A._supportedEvents = ["doh", "ray", "me", "fah"].concat(Layer.Core.Root._supportedEvents);
+      A._ignoredEvents = ["lah"].concat(Layer.Core.Root._supportedEvents);
     });
     describe("The constructor() method", function() {
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
       });
 
       it("Should initialize _layerEventSubscriptions", function() {
@@ -270,7 +270,7 @@ describe("The Root Class", function() {
           doh: spy
         });
         a.trigger('doh');
-        expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
       });
 
       it("Should copy in properties", function() {
@@ -300,7 +300,7 @@ describe("The Root Class", function() {
 
     describe("The destroy() method", function() {
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
       });
 
       it("Should trigger destroy", function() {
@@ -309,7 +309,7 @@ describe("The Root Class", function() {
           destroy: spy
         });
         a.destroy();
-        expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
       });
 
       it("Should not fire twice", function() {
@@ -320,8 +320,8 @@ describe("The Root Class", function() {
         a.destroy();
         expect(function() {
           a.destroy();
-        }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadyDestroyed);
-        expect(layer.Core.LayerError.ErrorDictionary.alreadyDestroyed.length > 0).toBe(true);
+        }).toThrowError(Layer.Core.LayerError.ErrorDictionary.alreadyDestroyed);
+        expect(Layer.Core.LayerError.ErrorDictionary.alreadyDestroyed.length > 0).toBe(true);
       });
 
       it("Should unsubscribe from all events", function() {
@@ -360,7 +360,7 @@ describe("The Root Class", function() {
         A.prototype.nextA = null;
         A.prototype.childAs = null;
 
-        layer.Core.Root.initClass(A);
+        Layer.Core.Root.initClass(A);
       });
 
       it("Should output all properties", function() {
@@ -474,7 +474,7 @@ describe("The Root Class", function() {
     describe("The _prepareOn() method", function() {
       var a;
       beforeEach(function() {
-        layer.Core.Root.initClass(A);
+        Layer.Core.Root.initClass(A);
         a = new A();
       });
 
@@ -483,8 +483,8 @@ describe("The Root Class", function() {
         b.destroy();
         expect(function() {
           a._prepareOn("destroy", function() {}, b);
-        }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
-        expect(layer.Core.LayerError.ErrorDictionary.isDestroyed.length > 0).toBe(true);
+        }).toThrowError(Layer.Core.LayerError.ErrorDictionary.isDestroyed);
+        expect(Layer.Core.LayerError.ErrorDictionary.isDestroyed.length > 0).toBe(true);
       });
 
       it("Should throw an error if a single name isn't supported", function() {
@@ -525,7 +525,7 @@ describe("The Root Class", function() {
     describe("The on() method", function() {
       var a, spy;
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         spy = jasmine.createSpy('test');
         a = new A();
       });
@@ -539,7 +539,7 @@ describe("The Root Class", function() {
       it("Should accept a single string event name", function() {
         a.on("ray", spy);
         a.trigger("ray");
-        expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
       });
 
       it("Should accept a list of strings as event names", function() {
@@ -572,7 +572,7 @@ describe("The Root Class", function() {
     describe("The once() method", function() {
       var a, spy;
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         spy = jasmine.createSpy('test');
         a = new A();
       });
@@ -597,7 +597,7 @@ describe("The Root Class", function() {
     describe("The trigger() method", function() {
       var a, spy;
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         spy = jasmine.createSpy('test');
         a = new A();
       });
@@ -623,7 +623,7 @@ describe("The Root Class", function() {
       });
 
       it("Should trigger the event with args from _getTriggerArgs", function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         a = new A();
         spyOn(a, "_getTriggerArgs").and.returnValue(["doh", "Ardvark!"]);
         a.on("doh", spy);
@@ -637,7 +637,7 @@ describe("The Root Class", function() {
       });
 
       it("Should not trigger unsupported events", function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         a = new A();
         spyOn(a, "_getTriggerArgs")
 
@@ -648,28 +648,12 @@ describe("The Root Class", function() {
         expect(a._getTriggerArgs).not.toHaveBeenCalled();
       });
 
-      it("Should bubble up events via parent property", function() {
-        A.bubbleEventParent = "myParent";
+      it("Should bubble up events via _getBubbleEventsTo", function() {
         A.prototype.myParent = null;
-        layer.Core.Root.initClass(A, "A");
+        A.prototype._getBubbleEventsTo = function() {return this.myParent;}
+        Layer.Core.Root.initClass(A, "A");
         var b = new A();
         a = new A({myParent: b});
-        b.on("doh", spy);
-
-        // Run
-        a._trigger("doh");  // Calls b.trigger("doh")
-
-        // Posttest
-        expect(spy).toHaveBeenCalled();
-      });
-
-      it("Should bubble up events via parent function", function() {
-        A.bubbleEventParent = "getMyParent";
-        A.prototype.getMyParent = function() {return b;};
-        layer.Core.Root.initClass(A, "A");
-        var b = new A();
-        b.getMyParent = null;
-        a = new A();
         b.on("doh", spy);
 
         // Run
@@ -683,7 +667,7 @@ describe("The Root Class", function() {
     describe("The _getTriggerArgs() method", function() {
       var a, spy;
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         spy = jasmine.createSpy('test');
         a = new A();
       });
@@ -691,17 +675,17 @@ describe("The Root Class", function() {
       it("Should handle one argument by creating a LayerEvent with no extra properties", function() {
         var args = a._getTriggerArgs("doh");
         expect(args[0]).toEqual("doh");
-        expect(args[1]).toEqual(jasmine.any(layer.Core.LayerEvent));
+        expect(args[1]).toEqual(jasmine.any(Layer.Core.LayerEvent));
         expect(args[1].target).toBe(a);
         expect(args[1].changes).toBe(null);
         expect(args[1].isChange).toBe(false);
         for (var key in args[1]) {
-          expect(["target", "changes", "isChange", "eventName"].indexOf(key)).not.toEqual(-1);
+          expect(["target", "changes", "isChange", "eventName", "canceled", "cancelable", "returnedValue"].indexOf(key)).not.toEqual(-1);
         }
       });
 
       it("Should return LayerEvent arguments as-is", function() {
-        var evt = new layer.Core.LayerEvent({}, "doh");
+        var evt = new Layer.Core.LayerEvent({}, "doh");
         var args = a._getTriggerArgs("doh", evt);
         expect(args[0]).toEqual("doh");
         expect(args[1]).toBe(evt);
@@ -710,7 +694,7 @@ describe("The Root Class", function() {
       it("Should pass literal arguments into data property", function() {
         var args = a._getTriggerArgs("doh", 555);
         expect(args[0]).toEqual("doh");
-        expect(args[1]).toEqual(jasmine.any(layer.Core.LayerEvent));
+        expect(args[1]).toEqual(jasmine.any(Layer.Core.LayerEvent));
         expect(args[1].data).toEqual(555);
         expect(args[1].target).toBe(a);
       });
@@ -722,7 +706,7 @@ describe("The Root Class", function() {
           y: 20
         });
         expect(args[0]).toEqual("doh");
-        expect(args[1]).toEqual(jasmine.any(layer.Core.LayerEvent));
+        expect(args[1]).toEqual(jasmine.any(Layer.Core.LayerEvent));
         expect(args[1].target).toEqual("fred");
         expect(args[1].x).toEqual(5);
         expect(args[1].y).toEqual(20);
@@ -732,7 +716,7 @@ describe("The Root Class", function() {
     describe("The _triggerAsync() method", function() {
       var a, spy;
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         spy = jasmine.createSpy('test');
         a = new A();
       });
@@ -800,14 +784,14 @@ describe("The Root Class", function() {
     describe("The _foldEvents() method", function() {
       var a, spy, events;
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         spy = jasmine.createSpy('test');
         a = new A();
         events = [
-          ["doh", new layer.Core.LayerEvent({hey: ["ho"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["hum"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["ardvark"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["Doh!"]}, "doh")]
+          ["doh", new Layer.Core.LayerEvent({hey: ["ho"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["hum"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["ardvark"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["Doh!"]}, "doh")]
         ];
       });
 
@@ -834,26 +818,26 @@ describe("The Root Class", function() {
     describe("The _foldChangeEvents() method", function() {
       var a, spy, events;
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         spy = jasmine.createSpy('test');
         a = new A();
         events = [
-          ["A:change", new layer.Core.LayerEvent({
+          ["A:change", new Layer.Core.LayerEvent({
             property: "a",
             oldValue: "b",
             newValue: "c"
           }, "A:change")],
-          ["A:change", new layer.Core.LayerEvent({
+          ["A:change", new Layer.Core.LayerEvent({
             property: "a",
             oldValue: "c",
             newValue: "d"
           }, "A:change")],
-          ["A:change", new layer.Core.LayerEvent({
+          ["A:change", new Layer.Core.LayerEvent({
             property: "b",
             oldValue: "x",
             newValue: "y"
           }, "A:change")],
-          ["A:change", new layer.Core.LayerEvent({
+          ["A:change", new Layer.Core.LayerEvent({
             property: "c",
             oldValue: "m",
             newValue: "n"
@@ -897,7 +881,7 @@ describe("The Root Class", function() {
       });
 
       it("Should filter out non-change events", function() {
-        var moreEvents = events.concat([["doh", new layer.Core.LayerEvent({}, "doh")]]);
+        var moreEvents = events.concat([["doh", new Layer.Core.LayerEvent({}, "doh")]]);
          moreEvents.forEach(function(evt) {
           a._triggerAsync(evt[0], evt[1]);
         });
@@ -914,14 +898,14 @@ describe("The Root Class", function() {
     describe("The _processDelayedTriggers() method", function() {
       var a, spy, events;
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
         spy = jasmine.createSpy('test');
         a = new A();
         events = [
-          ["doh", new layer.Core.LayerEvent({hey: ["ho"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["hum"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["ardvark"]}, "doh")],
-          ["doh", new layer.Core.LayerEvent({hey: ["Doh!"]}, "doh")]
+          ["doh", new Layer.Core.LayerEvent({hey: ["ho"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["hum"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["ardvark"]}, "doh")],
+          ["doh", new Layer.Core.LayerEvent({hey: ["Doh!"]}, "doh")]
         ];
 
         events.forEach(function(evt) {
@@ -960,11 +944,11 @@ describe("The Root Class", function() {
 
     describe("The toString() method", function() {
       beforeEach(function() {
-        layer.Core.Root.initClass(A, "A");
+        Layer.Core.Root.initClass(A, "A");
       });
       it("Should return internal id", function() {
         var a = new A();
-        expect(a.toString()).toEqual(a.internalId);
+        expect(a.toString()).toEqual("[" + a.internalId + "]");
       });
     });
   });

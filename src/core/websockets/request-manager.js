@@ -1,12 +1,14 @@
 /**
- * @class  layer.Websockets.RequestManager
+ * @class  Layer.Core.Websockets.RequestManager
  * @private
  *
  * This class allows one to send requests to the websocket server, and provide a callback,
  * And have that callback either called by the correct websocket server response, or
  * be called with a timeout.
  */
-import Util, { logger } from '../../util';
+import { client as Client } from '../../settings';
+import Core from '../namespace';
+import Util, { logger } from '../../utils';
 import LayerError from '../layer-error';
 
 // Wait 15 seconds for a response and then give up
@@ -16,19 +18,16 @@ class WebsocketRequestManager {
   /**
    * Create a new websocket change manager
    *
-   *      var websocketRequestManager = new layer.Websockets.RequestManager({
-   *          client: client,
+   *      var websocketRequestManager = new Layer.Core.RequestManager({
    *          socketManager: client.Websockets.SocketManager
    *      });
    *
    * @method
    * @param  {Object} options
-   * @param {layer.Client} client
-   * @param {layer.Websockets.SocketManager} socketManager
-   * @returns {layer.Websockets.RequestManager}
+   * @param {Layer.Core.Websockets.SocketManager} socketManager
+   * @returns {Layer.Core.Websockets.RequestManager}
    */
   constructor(options) {
-    this.client = options.client;
     this.socketManager = options.socketManager;
     this.socketManager.on({
       message: this._handleResponse,
@@ -38,6 +37,12 @@ class WebsocketRequestManager {
     this._requestCallbacks = {};
   }
 
+  /**
+   * Reset all requests we are waiting for responses to.
+   *
+   * @method _reset
+   * @private
+   */
   _reset() {
     this._requestCallbacks = {};
   }
@@ -60,7 +65,7 @@ class WebsocketRequestManager {
    *
    * @method _handleResponse
    * @private
-   * @param  {layer.Core.LayerEvent} evt
+   * @param  {Layer.Core.LayerEvent} evt
    */
   _handleResponse(evt) {
     if (evt.data.type === 'response') {
@@ -122,8 +127,9 @@ class WebsocketRequestManager {
    * @param {Object[]} changes   "create", "update", and "delete" requests from server.
    */
   _handleChangesArray(changes) {
-    changes.forEach(change => this.client.socketChangeManager._processChange(change));
+    changes.forEach(change => Client.socketChangeManager._processChange(change));
   }
+
 
   /**
    * Shortcut for sending a request; builds in handling for callbacks
@@ -142,7 +148,7 @@ class WebsocketRequestManager {
    *
    * @method sendRequest
    * @param  {Object} options
-   * @param  {Object} otions.data                     Data to send to the server
+   * @param  {Object} options.data                     Data to send to the server
    * @param  {Function} [options.callback=null]       Handler for success/failure callback
    * @param  {Boolean} [options.isChangesArray=false] Response contains a changes array that can be fed directly to change-manager.
    * @returns the request callback object if there is one; primarily for use in testing.
@@ -238,7 +244,7 @@ class WebsocketRequestManager {
    * Call all callbacks with a `server_unavailable` error.  The caller may retry,
    * but this component does not have built-in retry.
    *
-   * @method
+   * @method _failAll
    * @private
    */
   _failAll() {
@@ -299,7 +305,7 @@ WebsocketRequestManager.prototype._nextRequestId = 1;
 
 /**
  * The Client that owns this.
- * @type {layer.Client}
+ * @property {Layer.Core.Client}
  */
 WebsocketRequestManager.prototype.client = null;
 
@@ -309,5 +315,5 @@ WebsocketRequestManager.prototype._callbackCleanupId = 0;
 
 WebsocketRequestManager.prototype.socketManager = null;
 
-module.exports = WebsocketRequestManager;
+module.exports = Core.Websockets.RequestManager = WebsocketRequestManager;
 

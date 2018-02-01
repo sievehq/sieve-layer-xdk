@@ -1,10 +1,10 @@
 /**
  * A Sync Event represents a request to the server.
- * A Sync Event may fire immediately, or may wait in the layer.SyncManager's
+ * A Sync Event may fire immediately, or may wait in the Layer.Core.SyncManager's
  * queue for a long duration before firing.
  *
- * DO NOT confuse this with layer.Core.LayerEvent which represents a change notification
- * to your application.  layer.SyncEvent represents a request to the server that
+ * DO NOT confuse this with Layer.Core.LayerEvent which represents a change notification
+ * to your application.  Layer.Core.SyncEvent represents a request to the server that
  * is either in progress or in queue.
  *
  * GET requests are typically NOT done via a SyncEvent as these are typically
@@ -12,18 +12,20 @@
  *
  * Applications typically do not interact with these objects.
  *
- * @class  layer.SyncEvent
- * @extends layer.Root
+ * @class  Layer.Core.SyncEvent
+ * @extends Layer.Core.Root
  */
-import Util from '../util';
+import { client } from '../settings';
+import Util from '../utils';
+import Core from './namespace';
 
 class SyncEvent {
   /**
-   * Create a layer.SyncEvent.  See layer.Core.ClientAuthenticator for examples of usage.
+   * Create a Layer.Core.SyncEvent.  See Layer.Core.ClientAuthenticator for examples of usage.
    *
    * @method  constructor
    * @private
-   * @return {layer.SyncEvent}
+   * @return {Layer.Core.SyncEvent}
    */
   constructor(options) {
     let key;
@@ -55,7 +57,7 @@ class SyncEvent {
    * @method _updateData
    * @private
    */
-  _updateData(client) {
+  _updateData() {
     if (!this.target) return;
     const target = client.getObject(this.target);
     if (target && this.operation === 'POST' && target._getSendData) {
@@ -92,7 +94,7 @@ SyncEvent.prototype.createdAt = 0;
  * Indicates whether this request currently in-flight.
  *
  * * Set to true by _xhr() method,
- * * set to false on completion by layer.SyncManager.
+ * * set to false on completion by Layer.Core.SyncManager.
  * * set to false automatically after 2 minutes
  *
  * @property {Boolean}
@@ -131,8 +133,8 @@ SyncEvent.prototype.id = '';
 /**
  * Indicates whether the request completed successfully.
  *
- * Set by layer.SyncManager.
- * @type {Boolean}
+ * Set by Layer.Core.SyncManager.
+ * @property {Boolean}
  */
 SyncEvent.prototype.success = null;
 
@@ -144,7 +146,7 @@ SyncEvent.prototype.success = null;
  * a persistence layer that persists the SyncManager's queue
  * must have serializable callbacks (object id + method name; not a function)
  * or must accept that callbacks are not always fired.
- * @type {Function}
+ * @property {Function}
  */
 SyncEvent.prototype.callback = null;
 
@@ -152,8 +154,8 @@ SyncEvent.prototype.callback = null;
  * Number of retries on this request.
  *
  * Retries are only counted if its a 502 or 503
- * error.  Set and managed by layer.SyncManager.
- * @type {Number}
+ * error.  Set and managed by Layer.Core.SyncManager.
+ * @property {Number}
  */
 SyncEvent.prototype.retryCount = 0;
 
@@ -161,7 +163,7 @@ SyncEvent.prototype.retryCount = 0;
  * The target of the request.
  *
  * Any Component; typically a Conversation or Message.
- * @type {layer.Root}
+ * @property {Layer.Core.Root}
  */
 SyncEvent.prototype.target = null;
 
@@ -172,13 +174,13 @@ SyncEvent.prototype.target = null;
  * Conversation fails to get created.
  *
  * NOTE: May prove redundant with the target property and needs further review.
- * @type {layer.Root[]}
+ * @property {Layer.Core.Root[]}
  */
 SyncEvent.prototype.depends = null;
 
 /**
  * Data field of the xhr call; can be an Object or string (including JSON string)
- * @type {Object}
+ * @property {Object}
  */
 SyncEvent.prototype.data = null;
 
@@ -187,7 +189,7 @@ SyncEvent.prototype.data = null;
  * consider it to no longer be firing.  Under normal conditions, firing will be set to false explicitly.
  * This check insures that any failure of that process does not leave us stuck with a firing request
  * blocking the queue.
- * @type {number}
+ * @property {number}
  * @static
  */
 SyncEvent.FIRING_EXPIRATION = 1000 * 15;
@@ -195,16 +197,16 @@ SyncEvent.FIRING_EXPIRATION = 1000 * 15;
 /**
  * After checking the database to see if this event has been claimed by another browser tab,
  * how long to wait before flagging it as failed, in the event of no-response.  Measured in ms.
- * @type {number}
+ * @property {number}
  * @static
  */
 SyncEvent.VALIDATION_EXPIRATION = 500;
 
 /**
- * A layer.SyncEvent intended to be fired as an XHR request.
+ * A Layer.Core.SyncEvent intended to be fired as an XHR request.
  *
- * @class layer.SyncEvent.XHRSyncEvent
- * @extends layer.SyncEvent
+ * @class Layer.Core.SyncEvent.XHRSyncEvent
+ * @extends Layer.Core.SyncEvent
  */
 class XHRSyncEvent extends SyncEvent {
 
@@ -213,17 +215,15 @@ class XHRSyncEvent extends SyncEvent {
    *
    * Actually it just returns the parameters needed to make the xhr call:
    *
-   *      var xhr = require('./xhr');
-   *      xhr(event._getRequestData(client));
+   *      Layer.Utils.xhr(event._getRequestData());
    *
    * @method _getRequestData
-   * @param {layer.Client} client
    * @protected
    * @returns {Object}
    */
-  _getRequestData(client) {
-    this._updateUrl(client);
-    this._updateData(client);
+  _getRequestData() {
+    this._updateUrl();
+    this._updateData();
     return {
       url: this.url,
       method: this.method,
@@ -242,7 +242,7 @@ class XHRSyncEvent extends SyncEvent {
    * @method _updateUrl
    * @private
    */
-  _updateUrl(client) {
+  _updateUrl() {
     if (!this.target) return;
     const target = client.getObject(this.target);
     if (target && !this.url.match(/^http(s):\/\//)) {
@@ -265,7 +265,7 @@ class XHRSyncEvent extends SyncEvent {
 
 /**
  * How long before the request times out?
- * @type {Number} [timeout=15000]
+ * @property {Number} [timeout=15000]
  */
 XHRSyncEvent.prototype.timeout = 15000;
 
@@ -299,10 +299,10 @@ XHRSyncEvent.prototype.method = 'GET';
 XHRSyncEvent.prototype.telemetry = null;
 
 /**
- * A layer.SyncEvent intended to be fired as a websocket request.
+ * A Layer.Core.SyncEvent intended to be fired as a websocket request.
  *
- * @class layer.SyncEvent.WebsocketSyncEvent
- * @extends layer.SyncEvent
+ * @class Layer.Core.SyncEvent.WebsocketSyncEvent
+ * @extends Layer.Core.SyncEvent
  */
 class WebsocketSyncEvent extends SyncEvent {
 
@@ -311,11 +311,10 @@ class WebsocketSyncEvent extends SyncEvent {
    *
    * @method _getRequestData
    * @private
-   * @param {layer.Client} client
    * @return {Object}
    */
-  _getRequestData(client) {
-    this._updateData(client);
+  _getRequestData() {
+    this._updateData();
     return this.data;
   }
 
@@ -334,3 +333,6 @@ class WebsocketSyncEvent extends SyncEvent {
 WebsocketSyncEvent.prototype.returnChangesArray = false;
 
 module.exports = { SyncEvent, XHRSyncEvent, WebsocketSyncEvent };
+Core.SyncEvent = SyncEvent;
+Core.XHRSyncEvent = XHRSyncEvent;
+Core.WebsocketSyncEvent = WebsocketSyncEvent;

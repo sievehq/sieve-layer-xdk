@@ -3,15 +3,25 @@
  *
  * This Mixin requires a template that provides a `layer-list-item` class
  *
- * @class layer.UI.mixins.ListItem
+ * ```
+ * <template>
+ *    <div class='layer-list-item' layer-id='listItem'>
+ *       <label class='my-title' layer-id='title'></label>
+ *    </div>
+ * </template>
+ * ```
+ *
+ * @class Layer.UI.mixins.ListItem
  */
 import { registerComponent } from '../components/component';
-import { components } from '../base';
+import { ComponentsHash } from '../component-services';
 
 module.exports = {
   properties: {
     /**
      * Is this component a List Item
+     *
+     * TODO: Automate this for all mixins, and provide methods to test `widget.isMixin(mixinDefinition)`
      *
      * @private
      * @readonly
@@ -22,15 +32,20 @@ module.exports = {
     },
 
     /**
-     * A custom DOM node added by your application; this is not the prior List Item.
+     * A custom DOM node added by your application that goes over this list item.
      *
-     * You can set this to a DOM Node or html string
+     * You can set this to a DOM Node or html string; note that strings will automatically be wrapped in an extra `<div/>`.
+     *
+     * ```
+     * listItem.customNodeAbove = document.createElement('div');
+     * listItem.customNodeAbove = '<div class="my-class">Hello there</div>';
+     * ```
      *
      * @property {HTMLElement | String} [customNodeAbove=null]
      */
     customNodeAbove: {
-      set(node) {
-        if (this.properties._customNodeAbove) this.removeChild(this.properties._customNodeAbove);
+      set(node, oldValue) {
+        if (oldValue) this.removeChild(oldValue);
         if (node && typeof node === 'string') {
           const tmp = node;
           node = document.createElement('div');
@@ -42,20 +57,24 @@ module.exports = {
         } else {
           this.properties.customNodeAbove = null;
         }
-        this.properties._customNodeAbove = node;
       },
     },
 
     /**
-     * A custom DOM node added by your application; this is not the prior List Item.
+     * A custom DOM node added by your application that goes below this list item.
      *
-     * You can set this to a DOM Node or html string
+     * You can set this to a DOM Node or html string; note that strings will automatically be wrapped in an extra `<div/>`.
+     *
+     * ```
+     * listItem.customNodeBelow = document.createElement('div');
+     * listItem.customNodeBelow = '<div class="my-class">Hello there</div>';
+     * ```
      *
      * @property {HTMLElement | String} [customNodeBelow=null]
      */
     customNodeBelow: {
-      set(node) {
-        if (this.properties._customNodeBelow) this.removeChild(this.properties._customNodeBelow);
+      set(node, oldValue) {
+        if (oldValue) this.removeChild(oldValue);
         if (node && typeof node === 'string') {
           const tmp = node;
           node = document.createElement('div');
@@ -67,12 +86,11 @@ module.exports = {
         } else {
           this.properties.customNodeBelow = null;
         }
-        this.properties._customNodeBelow = node;
       },
     },
 
     /**
-     * Shortcut to the `.layer-list-item` node
+     * Shortcut to the `.layer-list-item` node that wraps every list item's contents.
      *
      * @property {HTMLElement} [innerNode=null]
      * @private
@@ -80,7 +98,7 @@ module.exports = {
     innerNode: {},
 
     /**
-     * Sets whether this widget is the first in a series of layerUI.MessageItem set.
+     * Sets whether this widget is the first in a series of items.
      *
      * @property {Boolean} [firstInSeries=false]
      */
@@ -93,7 +111,7 @@ module.exports = {
     },
 
     /**
-     * Sets whether this widget is the last in a series of layerUI.MessageItem set.
+     * Sets whether this widget is the last in a series of items.
      *
      * @property {Boolean} [lastInSeries=false]
      */
@@ -108,7 +126,7 @@ module.exports = {
     /**
      * The item of data in a list of data that this List Item will render.
      *
-     * @property {layer.Root} [item=null]
+     * @property {Layer.Core.Root} [item=null]
      */
     item: {
       propagateToChildren: true,
@@ -124,19 +142,25 @@ module.exports = {
   },
   methods: {
     onCreate() {
-      this.innerNode = this.querySelector('.layer-list-item');
+      this.innerNode = this.nodes.listItem || this.querySelector('.layer-list-item');
     },
 
+    // Delay any onRender call until there is an item
     onRender: {
       conditional: function onCanRender() {
         return Boolean(this.item);
       },
     },
 
+    /**
+     * On having new Replaceable Content setup, iterate over all child nodes and provide them with all `propagateToChildren` property values.
+     *
+     * @method onReplaceableContentAdded
+     */
     onReplaceableContentAdded: {
       mode: registerComponent.MODES.AFTER,
       value: function onReplaceableContentAdded(name, node) {
-        const props = components[this.tagName.toLowerCase()].properties.filter(propDef => propDef.propagateToChildren || propDef.mixinWithChildren);
+        const props = ComponentsHash[this.tagName.toLowerCase()].properties.filter(propDef => propDef.propagateToChildren);
 
         // Setup each node added this way as a full part of this component
         const nodeIterator = document.createNodeIterator(
@@ -148,7 +172,7 @@ module.exports = {
         let currentNode;
         while (currentNode = nodeIterator.nextNode()) {
           props.forEach(propDef => {
-            if (components[currentNode.tagName.toLowerCase()]) {
+            if (ComponentsHash[currentNode.tagName.toLowerCase()]) {
               if (!currentNode.properties._internalState) {
                 // hit using polyfil
                 currentNode.properties[propDef.propertyName] = this[propDef.propertyName];
@@ -167,20 +191,16 @@ module.exports = {
      *
      * @method addClass
      * @param {String} className
+     * @removed
      */
-    addClass(className) {
-      this.classList.add(className);
-    },
 
     /**
      * Removes the CSS class from this list item's outer node.
      *
      * @method removeClass
      * @param {String} className
+     * @removed
      */
-    removeClass(className) {
-      this.classList.remove(className);
-    },
 
     /**
      * Toggles the CSS class of this list item's outer node.
@@ -188,9 +208,7 @@ module.exports = {
      * @method toggleClass
      * @param {String} className
      * @param {Boolean} [add=true]
+     * @removed
      */
-    toggleClass(className, add = true) {
-      this.classList[add ? 'add' : 'remove'](className);
-    },
   },
 };

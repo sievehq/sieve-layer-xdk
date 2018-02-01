@@ -7,14 +7,13 @@ describe("The Websocket Change Manager Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = new Layer.Core.Identity({
             userId: client.userId,
             id: "layer:///identities/" + client.userId,
             firstName: "first",
@@ -25,9 +24,9 @@ describe("The Websocket Change Manager Class", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
-            sessionOwner: true
+            isMine: true
         });
 
 
@@ -53,35 +52,33 @@ describe("The Websocket Change Manager Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         it("Should return a Websockets.ChangeManager", function() {
-            expect(new layer.Core.Websockets.ChangeManager({
-                client: client,
+            expect(new Layer.Core.Websockets.ChangeManager({
                 socketManager: client.socketManager
-            })).toEqual(jasmine.any(layer.Websockets.ChangeManager));
+            })).toEqual(jasmine.any(Layer.Core.Websockets.ChangeManager));
         });
 
 
         it("Should subscribe to call _handleChange on message", function() {
-            var tmp = layer.Websockets.ChangeManager.prototype._handleChange;
-            layer.Websockets.ChangeManager.prototype._handleChange = jasmine.createSpy('handleChange');
-            var changeManager = new layer.Core.Websockets.ChangeManager({
-                client: client,
+            var tmp = Layer.Core.Websockets.ChangeManager.prototype._handleChange;
+            Layer.Core.Websockets.ChangeManager.prototype._handleChange = jasmine.createSpy('handleChange');
+            var changeManager = new Layer.Core.Websockets.ChangeManager({
                 socketManager: client.socketManager
             })
-            expect(layer.Websockets.ChangeManager.prototype._handleChange).not.toHaveBeenCalled();
+            expect(Layer.Core.Websockets.ChangeManager.prototype._handleChange).not.toHaveBeenCalled();
 
             // Run
             client.socketManager.trigger("message", {data: {body: {}}});
 
             // Posttest
-            expect(layer.Websockets.ChangeManager.prototype._handleChange).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(Layer.Core.Websockets.ChangeManager.prototype._handleChange).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
-            layer.Websockets.ChangeManager.prototype._handleChange = tmp;
+            Layer.Core.Websockets.ChangeManager.prototype._handleChange = tmp;
             changeManager.destroy();
         });
     });
@@ -275,8 +272,8 @@ describe("The Websocket Change Manager Class", function() {
 
     describe("The _handlePatch() method", function() {
         it("Should call Util.layerParse if found", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(m);
 
@@ -291,23 +288,22 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).toHaveBeenCalledWith({
+            expect(Layer.Utils.layerParse).toHaveBeenCalledWith({
                 object: m,
                 type: "Message",
                 operations: [{operation: "set", property: "joe", value: "jane"}],
-                client: client
             });
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
         });
 
         it("Should load a Conversation if not found and allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Conversation._loadResourceForPatch;
-            spyOn(layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(true);
+            var _loadResourceForPatch = Layer.Core.Conversation._loadResourceForPatch;
+            spyOn(Layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(true);
 
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -323,20 +319,20 @@ describe("The Websocket Change Manager Class", function() {
             jasmine.clock().tick(100);
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent().url).toEqual(client.url + "/conversations/fred");
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
-            layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Utils.LayerParse = tmp;
+            Layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should not load a Conversation if not found and not allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Conversation._loadResourceForPatch;
-            spyOn(layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(false);
+            var _loadResourceForPatch = Layer.Core.Conversation._loadResourceForPatch;
+            spyOn(Layer.Core.Conversation, "_loadResourceForPatch").and.returnValue(false);
 
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -351,21 +347,21 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent()).toBe(undefined);
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
-            layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Utils.LayerParse = tmp;
+            Layer.Core.Conversation._loadResourceForPatch = _loadResourceForPatch;
         });
 
 
         it("Should load a Channel if not found and allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Channel._loadResourceForPatch;
-            spyOn(layer.Core.Channel, "_loadResourceForPatch").and.returnValue(true);
+            var _loadResourceForPatch = Layer.Core.Channel._loadResourceForPatch;
+            spyOn(Layer.Core.Channel, "_loadResourceForPatch").and.returnValue(true);
 
             var m = channel.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -381,20 +377,20 @@ describe("The Websocket Change Manager Class", function() {
             jasmine.clock().tick(100);
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent().url).toEqual(client.url + "/channels/fred");
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
-            layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Utils.LayerParse = tmp;
+            Layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should not load a Channel if not found and not allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Channel._loadResourceForPatch;
-            spyOn(layer.Core.Channel, "_loadResourceForPatch").and.returnValue(false);
+            var _loadResourceForPatch = Layer.Core.Channel._loadResourceForPatch;
+            spyOn(Layer.Core.Channel, "_loadResourceForPatch").and.returnValue(false);
 
             var m = channel.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -409,20 +405,20 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent()).toBe(undefined);
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
-            layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Utils.LayerParse = tmp;
+            Layer.Core.Channel._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should load a Message if not found and allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Message._loadResourceForPatch;
-            spyOn(layer.Core.Message, "_loadResourceForPatch").and.returnValue(true);
+            var _loadResourceForPatch = Layer.Core.Message._loadResourceForPatch;
+            spyOn(Layer.Core.Message, "_loadResourceForPatch").and.returnValue(true);
 
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -438,20 +434,20 @@ describe("The Websocket Change Manager Class", function() {
             jasmine.clock().tick(100);
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent().url).toEqual(client.url + "/messages/fred");
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
-            layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Utils.LayerParse = tmp;
+            Layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Should not load a Message if not found and not allowed", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
-            var _loadResourceForPatch = layer.Core.Message._loadResourceForPatch;
-            spyOn(layer.Core.Message, "_loadResourceForPatch").and.returnValue(false);
+            var _loadResourceForPatch = Layer.Core.Message._loadResourceForPatch;
+            spyOn(Layer.Core.Message, "_loadResourceForPatch").and.returnValue(false);
 
             var m = conversation.createMessage("hey");
             spyOn(changeManager, "getObject").and.returnValue(null);
@@ -466,17 +462,17 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent()).toBe(undefined);
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
-            layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
+            Layer.Utils.LayerParse = tmp;
+            Layer.Core.Message._loadResourceForPatch = _loadResourceForPatch;
         });
 
         it("Shouldn't do much of anything for Announcements", function() {
-            var tmp = layer.Util.layerParse;
-            spyOn(layer.Util, "layerParse");
+            var tmp = Layer.Utils.layerParse;
+            spyOn(layer.Utils, "layerParse");
 
 
 
@@ -493,21 +489,26 @@ describe("The Websocket Change Manager Class", function() {
             });
 
             // Posttest
-            expect(layer.Util.layerParse).not.toHaveBeenCalled();
+            expect(Layer.Utils.layerParse).not.toHaveBeenCalled();
             expect(requests.mostRecent()).toBe(undefined);
 
             // Cleanup
-            layer.Util.LayerParse = tmp;
+            Layer.Utils.LayerParse = tmp;
         });
     });
     describe("Message Editing Tests", function() {
         it("Should add a message part", function() {
-            var onMessagePartChange = layer.Core.Message.prototype._onMessagePartChange;
-            spyOn(layer.Core.Message.prototype, '_onMessagePartChange');
+            var onMessagePartChange = Layer.Core.Message.prototype._onMessagePartChange;
+            spyOn(Layer.Core.Message.prototype, '_onMessagePartChange');
 
-            m = conversation.createMessage("hello").presend();
-            expect(m.parts.length).toEqual(1);
-            expect(m.parts[0].body).toEqual("hello");
+            m = conversation.createMessage({
+                parts: [{
+                    body: "hello",
+                    mimeType: "text/plain2"
+                }]
+            }).presend();
+            expect(m.parts.size).toEqual(1);
+            expect(m.findPart().body).toEqual("hello");
 
             changeManager._handlePatch({
                 operation: "update",
@@ -521,7 +522,7 @@ describe("The Websocket Change Manager Class", function() {
                     "id": m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a7",
 				    "value": {
 						"id": m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a7",
-						"mime_type": "text/plain",
+						"mime_type": "text/plain2",
 						"body": "This is the message.",
 						"updated_at": "2017-05-15T18:05:09Z"
 					}
@@ -532,21 +533,22 @@ describe("The Websocket Change Manager Class", function() {
                     "value": "2014-09-15T04:44:59+00:00"
                 }]
             });
+            var parts = m.filterParts();
 
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].body).toEqual("hello");
-            expect(m.parts[1].body).toEqual("This is the message.");
-            expect(m.parts[1].mimeType).toEqual("text/plain");
-            expect(m.parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2017-05-15T18:05:09");
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].body).toEqual("hello");
+            expect(parts[1].body).toEqual("This is the message.");
+            expect(parts[1].mimeType).toEqual("text/plain2");
+            expect(parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2017-05-15T18:05:09");
             expect(m.updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
 
             // Should listen to events from the new part
-            layer.Core.Message.prototype._onMessagePartChange.calls.reset();
-            m.parts[1].trigger('messageparts:change', {});
-            expect(layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
+            Layer.Core.Message.prototype._onMessagePartChange.calls.reset();
+            parts[1].trigger('messageparts:change', {});
+            expect(Layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
 
             // Cleanup
-            layer.Core.Message.prototype._onMessagePartChange = onMessagePartChange;
+            Layer.Core.Message.prototype._onMessagePartChange = onMessagePartChange;
         });
 
         it("Should remove a message part", function() {
@@ -554,17 +556,18 @@ describe("The Websocket Change Manager Class", function() {
             m = conversation.createMessage({
                 parts: [{
                     body: "B1",
-                    mimeType: "text/plain"
+                    mimeType: "text/plain2"
                 },
                 {
                     body: "B2",
-                    mimeType: "text/plain2"
+                    mimeType: "text/plain3"
                 }]
             }).presend();
+            var parts = m.filterParts();
 
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].body).toEqual("B1");
-            expect(m.parts[1].body).toEqual("B2");
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].body).toEqual("B1");
+            expect(parts[1].body).toEqual("B2");
             var removedPart = m.parts[0];
 
             changeManager._handlePatch({
@@ -576,7 +579,7 @@ describe("The Websocket Change Manager Class", function() {
                 "data": [{
                     "operation": "remove",
                     "property": "parts",
-                    "id": m.parts[0].id
+                    "id": parts[0].id
                 },
                 {
                     "operation": "set",
@@ -585,21 +588,23 @@ describe("The Websocket Change Manager Class", function() {
                 }]
             });
 
-            expect(m.parts.length).toEqual(1);
-            expect(m.parts[0].body).toEqual("B2");
+            parts = m.filterParts();
+            expect(m.parts.size).toEqual(1);
+            expect(parts[0].body).toEqual("B2");
 
             m = conversation.createMessage({
                 parts: [{
                     body: "B1",
-                    mimeType: "text/plain"
+                    mimeType: "text/plain2"
                 },
                 {
                     body: "B2",
-                    mimeType: "text/plain2"
+                    mimeType: "text/plain3"
                 }]
             }).presend();
+            var parts = m.filterParts();
 
-            removedPart = m.parts[1];
+            removedPart = parts[1];
             changeManager._handlePatch({
                 operation: "update",
                 object: {
@@ -609,7 +614,7 @@ describe("The Websocket Change Manager Class", function() {
                 "data": [{
                     "operation": "remove",
                     "property": "parts",
-                    "id": m.parts[1].id
+                    "id": parts[1].id
                 },
                 {
                     "operation": "set",
@@ -618,17 +623,23 @@ describe("The Websocket Change Manager Class", function() {
                 }]
             });
 
-            expect(m.parts.length).toEqual(1);
-            expect(m.parts[0].body).toEqual("B1");
+            parts = m.filterParts();
+            expect(m.parts.size).toEqual(1);
+            expect(parts[0].body).toEqual("B1");
         });
 
         it("Should overwrite all message parts", function() {
-            var onMessagePartChange = layer.Core.Message.prototype._onMessagePartChange;
-            spyOn(layer.Core.Message.prototype, '_onMessagePartChange');
+            var onMessagePartChange = Layer.Core.Message.prototype._onMessagePartChange;
+            spyOn(Layer.Core.Message.prototype, '_onMessagePartChange');
 
-            m = conversation.createMessage("hello").presend();
-            expect(m.parts.length).toEqual(1);
-            expect(m.parts[0].body).toEqual("hello");
+            m = conversation.createMessage({
+                parts: [{
+                    body: "hello",
+                    mimeType: "text/plain2"
+                }]
+            }).presend();
+            expect(m.parts.size).toEqual(1);
+            expect(m.findPart().body).toEqual("hello");
 
             changeManager._handlePatch({
                 operation: "update",
@@ -659,22 +670,23 @@ describe("The Websocket Change Manager Class", function() {
                 }]
             });
 
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].id).toEqual(m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a7");
-            expect(m.parts[1].id).toEqual(m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a8");
-            expect(m.parts[0].body).toEqual("This is the message.");
-            expect(m.parts[1].body).toEqual("This is not the message.");
-            expect(m.parts[0].mimeType).toEqual("text/plain2");
-            expect(m.parts[1].mimeType).toEqual("text/plain3");
-            expect(m.parts[0].updatedAt.toISOString().substr(0,19)).toEqual("2017-05-15T18:05:09");
-            expect(m.parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2017-06-15T18:05:09");
+            var parts = m.filterParts();
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].id).toEqual(m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a7");
+            expect(parts[1].id).toEqual(m.id + "/parts/aedf4b6b-a9d9-40f2-ac86-3e959a3f99a8");
+            expect(parts[0].body).toEqual("This is the message.");
+            expect(parts[1].body).toEqual("This is not the message.");
+            expect(parts[0].mimeType).toEqual("text/plain2");
+            expect(parts[1].mimeType).toEqual("text/plain3");
+            expect(parts[0].updatedAt.toISOString().substr(0,19)).toEqual("2017-05-15T18:05:09");
+            expect(parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2017-06-15T18:05:09");
             expect(m.updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
 
-            m.parts[1].trigger('messageparts:change', {});
-            expect(layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
+            parts[1].trigger('messageparts:change', {});
+            expect(Layer.Core.Message.prototype._onMessagePartChange).toHaveBeenCalled();
 
             // Cleanup
-            layer.Core.Message.prototype._onMessagePartChange = onMessagePartChange;
+            Layer.Core.Message.prototype._onMessagePartChange = onMessagePartChange;
         });
 
         it("Should update one message part", function() {
@@ -688,14 +700,16 @@ describe("The Websocket Change Manager Class", function() {
                     mimeType: "text/plain2"
                 }]
             }).presend();
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].body).toEqual("B1");
-            expect(m.parts[1].body).toEqual("B2");
+            var parts = m.filterParts();
+
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].body).toEqual("B1");
+            expect(parts[1].body).toEqual("B2");
 
             changeManager._handlePatch({
                 operation: "update",
                 object: {
-                    id: m.parts[1].id,
+                    id: parts[1].id,
                     type: 'MessagePart'
                 },
                 "data": [{
@@ -714,13 +728,14 @@ describe("The Websocket Change Manager Class", function() {
                     "value": "2014-09-15T04:44:59+00:00"
                 }]
             });
+            parts = m.filterParts();
 
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0].body).toEqual("B1");
-            expect(m.parts[1].body).toEqual("This is an updated message");
-            expect(m.parts[1].mimeType).toEqual("text/plain+updated");
-            expect(m.parts[0].updatedAt).toBe(null);
-            expect(m.parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0].body).toEqual("B1");
+            expect(parts[1].body).toEqual("This is an updated message");
+            expect(parts[1].mimeType).toEqual("text/plain+updated");
+            expect(parts[0].updatedAt).toBe(null);
+            expect(parts[1].updatedAt.toISOString().substr(0,19)).toEqual("2014-09-15T04:44:59");
         });
     });
 

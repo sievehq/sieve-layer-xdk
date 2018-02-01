@@ -1,4 +1,6 @@
-import layerUI from '../base';
+import { ComponentsHash } from '../component-services';
+import { register } from './index';
+
 
 /**
  * Call this function to initialize all of the Backbone Views needed to handle the Layer UI for Web widgets.
@@ -6,22 +8,23 @@ import layerUI from '../base';
  * Initialize this adapter using:
  *
  * ```javascript
- * var Backbone = require('backbone');
- * var LayerUIViews = layerUI.adapters.backbone(Backbone);
- * var conversationPanelView = new LayerUIViews.ConversationPanel(client, {conversationId: 'layer:///conversations/UUID'});
- * var conversationsListView = new LayerUIViews.ConversationsList(client);
- * var identitiesListView = new LayerUIViews.UserList(client);
- * var notifierView = new LayerUIViews.Notifier(client, {notifyInForeground: 'toast'});
- * var sendButton = new LayerUIViews.SendButton(client);
- * var fileUploadButton = new LayerUIViews.FileUploadButton(client);
+ * import Backbone from 'backbone';
+ * import '@layerhq/web-xdk/lib/ui/adapters/backbone';
+ * var LayerUIViews = Layer.UI.adapters.backbone(Backbone);
+ * var conversationPanelView = new LayerUIViews.ConversationPanel({conversationId: 'layer:///conversations/UUID'});
+ * var conversationsListView = new LayerUIViews.ConversationsList();
+ * var identitiesListView = new LayerUIViews.UserList();
+ * var notifierView = new LayerUIViews.Notifier({notifyInForeground: 'toast'});
+ * var sendButton = new LayerUIViews.SendButton();
+ * var fileUploadButton = new LayerUIViews.FileUploadButton();
  * ```
  *
 * Calling this will expose the following React Components:
  *
- * * ConversationPanelView: A wrapper around a layer.UI.components.ConversationPanel
- * * ConversationsListView: A wrapper around a layer.UI.components.ConversationsListPanel
- * * IdentitiesListView: A wrapper around a layer.UI.components.IdentitiesListPanel
- * * NotifierView: A wrapper around a layer.UI.components.misc.Notifier
+ * * ConversationPanelView: A wrapper around a Layer.UI.components.ConversationView
+ * * ConversationsListView: A wrapper around a Layer.UI.components.ConversationListPanel
+ * * IdentitiesListView: A wrapper around a Layer.UI.components.IdentityListPanel
+ * * NotifierView: A wrapper around a Layer.UI.components.misc.Notifier
  * * SendButton: An optional button that can be provided to ConversationPanelView's `composeButtons` property
  *   to add a simple Send button to the Composer
  * * FileUploadButton: An optional button that can be provided to ConversationPanelView's `composeButtons` property
@@ -38,7 +41,15 @@ import layerUI from '../base';
  * < layer-conversation-view conversation-id="layer:///conversations/UUID"></layer-conversation-view>
  * ```
  *
- * @class layer.UI.adapters.backbone
+ * ### Importing
+ *
+ * Not included with the standard build. To import:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/adapters/backbone';
+ * ```
+ *
+ * @class Layer.UI.adapters.backbone
  * @singleton
  * @param {Object} backbone     Pass in the backbone library
  */
@@ -48,9 +59,9 @@ function initBackbone(backbone) {
   libraryResult = {};
 
   // Gather all UI Components
-  Object.keys(layerUI.components)
+  Object.keys(ComponentsHash)
   .forEach((componentName) => {
-    const component = layerUI.components[componentName];
+    const component = ComponentsHash[componentName];
 
     // Get the camel case Component name
     const className = (componentName.substring(0, 1).toUpperCase() +
@@ -60,8 +71,7 @@ function initBackbone(backbone) {
     // Define the Backbone View
     const view = libraryResult[className] = backbone.View.extend({
       el: componentName,
-      initialize: function initialize(client, options) {
-        this.client = client;
+      initialize: function initialize(options) {
         Object.keys(options || {}).forEach((propertyName) => {
           this[propertyName] = options[propertyName];
         });
@@ -84,5 +94,5 @@ function initBackbone(backbone) {
 }
 
 module.exports = initBackbone;
-layerUI.addAdapter('backbone', initBackbone);
+register('backbone', initBackbone);
 

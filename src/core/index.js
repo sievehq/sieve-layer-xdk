@@ -1,39 +1,54 @@
-const Core = {};
+/**
+ * @class Layer.Core
+ */
+import Core from './namespace';
+import './root';
 
-Core.Root = require('./root');
-Core.Client = require('./client');
-Core.ClientAuthenticator = require('./client-authenticator');
-Core.Syncable = require('./models/syncable');
-Core.Conversation = require('./models/conversation');
-Core.Channel = require('./models/channel');
-Core.Container = require('./models/container');
-Core.Message = require('./models/message');
-Core.Message.ConversationMessage = require('./models/conversation-message');
-Core.Message.ChannelMessage = require('./models/channel-message');
-Core.Announcement = require('./models/announcement');
-Core.MessagePart = require('./models/message-part');
-Core.Content = require('./models/content');
-Core.MessageTypeModel = require('./models/message-type-model');
-Core.Query = require('./queries/query');
-Core.QueryBuilder = require('./queries/query-builder');
-Core.xhr = require('./xhr');
-Core.Identity = require('./models/identity');
-Core.Membership = require('./models/membership');
-Core.LayerError = require('./layer-error');
-Core.LayerEvent = require('./layer-event');
-Core.SyncManager = require('./sync-manager');
-Core.SyncEvent = require('./sync-event').SyncEvent;
-Core.XHRSyncEvent = require('./sync-event').XHRSyncEvent;
-Core.WebsocketSyncEvent = require('./sync-event').WebsocketSyncEvent;
-Core.Websockets = {
-  SocketManager: require('./websockets/socket-manager'),
-  RequestManager: require('./websockets/request-manager'),
-  ChangeManager: require('./websockets/change-manager'),
-};
-Core.OnlineStateManager = require('./online-state-manager');
-Core.DbManager = require('./db-manager');
-Core.TypingIndicators = require('./typing-indicators/typing-indicators');
-Core.TypingIndicators.TypingListener = require('./typing-indicators/typing-listener');
-Core.TypingIndicators.TypingPublisher = require('./typing-indicators/typing-publisher');
+import './mixins/client-queries';
+import './mixins/client-identities';
+import './mixins/client-conversations';
+import './mixins/client-messages';
+import './mixins/websocket-operations';
+import './mixins/client-message-type-models';
+import './mixins/client-channels';
+import './mixins/client-members';
+import './mixins/client-announcements';
+
+import './client';
+import './client-authenticator';
+import './models/syncable';
+import './models/conversation';
+import './models/container';
+import './models/message';
+import './models/conversation-message';
+import './models/announcement';
+import './models/message-part';
+import './models/content';
+import './models/message-type-model';
+import './models/channel';
+import './models/channel-message';
+import './models/membership';
+
+import './queries/query';
+import './queries/conversations-query';
+import './queries/identities-query';
+import './queries/messages-query';
+import './queries/announcements-query';
+import './queries/channels-query';
+import './queries/members-query';
+import './queries/query-builder';
+
+import './models/identity';
+import './layer-error';
+import './layer-event';
+import './sync-manager';
+import './sync-event';
+import './websockets/socket-manager';
+import './websockets/request-manager';
+import './websockets/change-manager';
+import './online-state-manager';
+import './typing-indicators/typing-indicators';
+import './typing-indicators/typing-listener';
+import './typing-indicators/typing-publisher';
 
 module.exports = Core;

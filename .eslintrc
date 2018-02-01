@@ -18,11 +18,16 @@
     "no-plusplus": 0,
     "padded-blocks": 0,
     "class-methods-use-this": 0,
-    "no-use-before-define": ["error", {"functions": false, "classes": true, "variables": true}]
+    "no-use-before-define": [2, {"functions": false, "classes": true}],
+    "no-prototype-builtins": 0
   },
   "env": {
       "browser": true,
       "node": true,
       "jasmine": true
+  },
+  "globals": {
+    "Layer": true,
+    "CustomElements": true
   }
 }

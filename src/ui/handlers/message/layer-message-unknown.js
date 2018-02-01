@@ -2,8 +2,8 @@
  * The Unknown MessageHandler renders unhandled content with a placeholder politely
  * suggesting that a developer should probably handle it.
  *
- * @class layer.UI.handlers.message.Unknown
- * @extends layer.UI.components.Component
+ * @class Layer.UI.handlers.message.Unknown
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
@@ -18,7 +18,7 @@ registerComponent('layer-message-unknown', {
      * @private
      */
     onRender() {
-      const mimeTypes = this.message.parts.map(part => part.mimeType)
+      const mimeTypes = this.message.mapParts(part => part.mimeType)
       .join(', ');
       this.innerHTML = `Message with mimeTypes ${mimeTypes} has been received but has no renderer`;
     },

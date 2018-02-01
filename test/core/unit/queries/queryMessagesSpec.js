@@ -15,14 +15,13 @@ describe("The MessagesQuery Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -33,9 +32,9 @@ describe("The MessagesQuery Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
 
@@ -50,7 +49,7 @@ describe("The MessagesQuery Class", function() {
         client.onlineManager.isOnline = true;
 
         query = client.createQuery({
-          model: layer.Core.Query.Message
+          model: Layer.Core.Query.Message
         });
         channel = client._createObject(responses.channel1);
         conversation = client._createObject(responses.conversation1);
@@ -69,18 +68,17 @@ describe("The MessagesQuery Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should be an MessagesQuery", function() {
-      expect(query.constructor.prototype.model).toEqual(layer.Core.Query.Message);
+      expect(query.constructor.prototype.model).toEqual(Layer.Core.Query.Message);
     });
 
     describe("The constructor() method", function() {
         it("Should accept a full predicate", function() {
           var query = client.createQuery({
-            client: client,
-            model: layer.Core.Query.Message,
+            model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
           expect(query.predicate).toEqual('conversation.id = \'layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf\'');
@@ -88,8 +86,7 @@ describe("The MessagesQuery Class", function() {
 
         it("Should accept a UUID predicate", function() {
           var query = client.createQuery({
-            client: client,
-            model: layer.Core.Query.Message,
+            model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
           expect(query.predicate).toEqual('conversation.id = \'layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf\'');
@@ -97,8 +94,7 @@ describe("The MessagesQuery Class", function() {
 
         it("Should accept a full predicate double quote", function() {
           var query = client.createQuery({
-            client: client,
-            model: layer.Core.Query.Message,
+            model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
           expect(query.predicate).toEqual("conversation.id = 'layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf'");
@@ -106,8 +102,7 @@ describe("The MessagesQuery Class", function() {
 
         it("Should accept a UUID predicate double quote", function() {
           var query = client.createQuery({
-            client: client,
-            model: layer.Core.Query.Message,
+            model: Layer.Core.Query.Message,
             predicate: 'conversation.id  =    "fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"'
           });
           expect(query.predicate).toEqual("conversation.id = 'layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf'");
@@ -116,12 +111,11 @@ describe("The MessagesQuery Class", function() {
         it("Should reject an invalid predicate", function() {
           expect(function() {
             var query = client.createQuery({
-                client: client,
-                model: layer.Core.Query.Message,
+                model: Layer.Core.Query.Message,
                 predicate: "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf-hey"
             });
-          }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
-          expect(layer.Core.LayerError.ErrorDictionary.invalidPredicate.length > 0).toBe(true);
+          }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+          expect(Layer.Core.LayerError.ErrorDictionary.invalidPredicate.length > 0).toBe(true);
         });
     });
 
@@ -134,15 +128,15 @@ describe("The MessagesQuery Class", function() {
         it("Should throw error on ill formed predicate for conversations", function() {
             expect(function() {
                 query._fixPredicate('conversation.id  =    "la:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('conversation.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77b"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('conversation.id  =    "layer:///channels/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
         });
 
         it("Should generate a well formed predicate for conversations from just a UUID", function() {
@@ -160,15 +154,15 @@ describe("The MessagesQuery Class", function() {
         it("Should throw error on ill formed predicate for channels", function() {
             expect(function() {
                 query._fixPredicate('channel.id  =    "la:///channels/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('channel.id  =    "layer:///channels/fb068f9a-3d2b-4fb2-8b04-7efd185e77b"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
             expect(function() {
                 query._fixPredicate('channel.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
 
         });
 
@@ -181,21 +175,20 @@ describe("The MessagesQuery Class", function() {
         it("Should throw an error if neither a conversation nor channel is clearly being queried", function() {
             expect(function() {
                 query._fixPredicate('identity.id  =    "layer:///conversations/fb068f9a-3d2b-4fb2-8b04-7efd185e77bf"');
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.invalidPredicate);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidPredicate);
         });
     });
 
     describe("The _getConversationPredicateIds() method", function() {
         var query;
         beforeEach(function() {
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {
@@ -207,7 +200,7 @@ describe("The MessagesQuery Class", function() {
           expect(query._getConversationPredicateIds()).toEqual({
             uuid: conversation.id.replace(/layer\:\/\/\/conversations\//, ""),
             id: conversation.id,
-            type: layer.Core.Query.Conversation
+            type: Layer.Core.Query.Conversation
           });
         });
 
@@ -243,7 +236,7 @@ describe("The MessagesQuery Class", function() {
             spyOn(query, "_getConversationPredicateIds").and.returnValue({
               uuid: conversation.id.replace(/^layer\:\/\/\/conversations\//,''),
               id: conversation.id,
-              type: layer.Core.Query.Conversation
+              type: Layer.Core.Query.Conversation
             });
             query.isFiring = false;
             query._fetchData(37);
@@ -289,14 +282,14 @@ describe("The MessagesQuery Class", function() {
         var query;
         beforeEach(function() {
             client._models.conversations[conversation.id] = conversation;
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
                 model: 'Message',
                 paginationWindow: 15,
                 predicate: 'conversation.id = "' + conversation.id + '"'
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {
@@ -326,7 +319,7 @@ describe("The MessagesQuery Class", function() {
             // Test 2
             query._nextServerFromId = 'howdy';
             query._fetchData(140);
-            expect(requests.mostRecent().url).toEqual(client.url + '/conversations/' + layer.Util.uuid(conversation.id) + "/messages?page_size=140&from_id=howdy");
+            expect(requests.mostRecent().url).toEqual(client.url + '/conversations/' + Layer.Utils.uuid(conversation.id) + "/messages?page_size=140&from_id=howdy");
         });
 
         it("Should call DB with _nextDBFromId", function() {
@@ -369,7 +362,7 @@ describe("The MessagesQuery Class", function() {
             requests.reset();
 
             conversation.lastMessage = conversation.createMessage("hi");
-            conversation.syncState = layer.Constants.SYNC_STATE.SAVING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SAVING;
             query.data = [m1, m2];
             query._fetchData(45);
             expect(requests.count()).toEqual(0);
@@ -381,7 +374,7 @@ describe("The MessagesQuery Class", function() {
             requests.reset();
 
             conversation.lastMessage = conversation.createMessage("hi");
-            conversation.syncState = layer.Constants.SYNC_STATE.SAVING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.SAVING;
             query.data = [m1, m2];
             expect(query.pagedToEnd).toBe(false);
 
@@ -425,14 +418,14 @@ describe("The MessagesQuery Class", function() {
         var query;
         beforeEach(function() {
             client._models.channels[channel.id] = channel;
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
                 model: 'Message',
                 paginationWindow: 15,
                 predicate: 'channel.id = "' + channel.id + '"'
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {
@@ -462,7 +455,7 @@ describe("The MessagesQuery Class", function() {
             // Test 2
             query._nextServerFromId = 'howdy';
             query._fetchData(140);
-            expect(requests.mostRecent().url).toEqual(client.url + '/channels/' + layer.Util.uuid(channel.id) + "/messages?page_size=140&from_id=howdy");
+            expect(requests.mostRecent().url).toEqual(client.url + '/channels/' + Layer.Utils.uuid(channel.id) + "/messages?page_size=140&from_id=howdy");
         });
 
         it("Should call DB with _nextDBFromId", function() {
@@ -504,7 +497,7 @@ describe("The MessagesQuery Class", function() {
             var m2 = client._createObject(responses.message2);
             requests.reset();
 
-            channel.syncState = layer.Constants.SYNC_STATE.SAVING;
+            channel.syncState = Layer.Constants.SYNC_STATE.SAVING;
             query.data = [m1, m2];
             query._fetchData(45);
             expect(requests.count()).toEqual(0);
@@ -582,7 +575,6 @@ describe("The MessagesQuery Class", function() {
             message2 = conversation.createMessage("hey");
             message2.position = 10;
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object"
@@ -610,7 +602,6 @@ describe("The MessagesQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",
@@ -627,7 +618,7 @@ describe("The MessagesQuery Class", function() {
             spyOn(query, "_run");
 
             // Run
-            query._handleConvIdChangeEvent(new layer.Core.LayerEvent({
+            query._handleConvIdChangeEvent(new Layer.Core.LayerEvent({
                 property: "id",
                 oldValue: conversation.id,
                 newValue: conversation.id + "1",
@@ -645,7 +636,7 @@ describe("The MessagesQuery Class", function() {
             spyOn(query, "_run");
 
             // Run
-            query._handleConvIdChangeEvent(new layer.Core.LayerEvent({
+            query._handleConvIdChangeEvent(new Layer.Core.LayerEvent({
                 property: "id",
                 oldValue: conversation.id + "1",
                 newValue: conversation.id,
@@ -662,7 +653,6 @@ describe("The MessagesQuery Class", function() {
         var query, message, evt;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",
@@ -673,7 +663,7 @@ describe("The MessagesQuery Class", function() {
 
             var oldPosition = 5;
             var newPosition = message.position = 15;
-            evt = new layer.Core.LayerEvent({
+            evt = new Layer.Core.LayerEvent({
                 property: "position",
                 oldValue: oldPosition,
                 newValue: newPosition,
@@ -748,7 +738,6 @@ describe("The MessagesQuery Class", function() {
         var query, message;
         beforeEach(function() {
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",
@@ -768,7 +757,7 @@ describe("The MessagesQuery Class", function() {
             var newPosition = message.position = 10;
             spyOn(query, "_handlePositionChange").and.returnValue(true);
             spyOn(query, "_getIndex").and.returnValue(0);
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "position",
                 oldValue: oldPosition,
                 newValue: newPosition,
@@ -792,7 +781,7 @@ describe("The MessagesQuery Class", function() {
             spyOn(query, "_handlePositionChange").and.returnValue(true);
             spyOn(query, "_getIndex").and.returnValue(0);
             spyOn(query, "_triggerChange");
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "position",
                 oldValue: oldPosition,
                 newValue: newPosition,
@@ -826,7 +815,7 @@ describe("The MessagesQuery Class", function() {
             // Setup
             spyOn(query, "_handlePositionChange").and.returnValue(true);
             spyOn(query, "_getIndex").and.returnValue(0);
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "position",
                 oldValue: 10,
                 newValue: 10,
@@ -845,7 +834,7 @@ describe("The MessagesQuery Class", function() {
 
 
         it("Should not touch data array if dataType is object but item not in the data", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "recipientStatus",
                 oldValue: [{}],
                 newValue: [{a: "read"}],
@@ -865,7 +854,7 @@ describe("The MessagesQuery Class", function() {
             // Setup
             query.dataType = "instance";
             var data = query.data = [message];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "recipientStatus",
                 oldValue: [{}],
                 newValue: [{a: "read"}],
@@ -881,7 +870,7 @@ describe("The MessagesQuery Class", function() {
 
         it("Should trigger change event if the Message is in the data", function() {
             var data = query.data = [message.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "recipientStatus",
                 oldValue: [{}],
                 newValue: [{a: "read"}],
@@ -908,7 +897,7 @@ describe("The MessagesQuery Class", function() {
 
         it("Should not trigger change event if Message is NOT in the data", function() {
             var data = query.data = [message.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "participants",
                 oldValue: ["a"],
                 newValue: ["a", "b"],
@@ -931,7 +920,6 @@ describe("The MessagesQuery Class", function() {
             message1 = conversation.createMessage("hi").send();
             message2 = conversation.createMessage("ho").send();
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",
@@ -1071,7 +1059,6 @@ describe("The MessagesQuery Class", function() {
         describe("For object type", function() {
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     paginationWindow: 15,
                     dataType: "object",
                 });
@@ -1153,7 +1140,6 @@ describe("The MessagesQuery Class", function() {
         describe("For instance type", function() {
             beforeEach(function() {
                 query = client.createQuery({
-                    client: client,
                     paginationWindow: 15,
                     dataType: "instance",
                 });
@@ -1242,7 +1228,6 @@ describe("The MessagesQuery Class", function() {
             describe("For object type", function() {
                 beforeEach(function() {
                     query = client.createQuery({
-                        client: client,
                         model: Layer.Core.Query.Message,
                         paginationWindow: 15,
                         dataType: "object",
@@ -1315,7 +1300,6 @@ describe("The MessagesQuery Class", function() {
             describe("For instance type", function() {
                 beforeEach(function() {
                     query = client.createQuery({
-                        client: client,
                         model: Layer.Core.Query.Message,
                         paginationWindow: 15,
                         dataType: "instance",
@@ -1394,7 +1378,6 @@ describe("The MessagesQuery Class", function() {
             message1 = conversation.createMessage("hi");
             message2 = conversation.createMessage("ho");
             query = client.createQuery({
-                client: client,
                 model: 'Message',
                 paginationWindow: 15,
                 dataType: "object",

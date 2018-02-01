@@ -2,11 +2,15 @@ describe("List Mixin", function() {
 
     var el, testRoot, client, query, timeoutId, restoreAnimatedScrollTo;
 
+    function isCloseEnough(scrollTop, desiredScrollTop) {
+      return Math.abs(scrollTop - desiredScrollTop) < 1;
+    }
+
     beforeEach(function() {
       jasmine.clock().install();
 
-      restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-      spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+      restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+      spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
         var timeoutId = setTimeout(function() {
           node.scrollTop = position;
           if (callback) callback();
@@ -16,11 +20,10 @@ describe("List Mixin", function() {
         };
       });
 
-      client = new layer.Core.Client({
+      client = new Layer.init({
         appId: 'layer:///apps/staging/Fred'
       });
-      client.user = new layer.Core.Identity({
-        client: client,
+      client.user = new Layer.Core.Identity({
         userId: 'FrodoTheDodo',
         displayName: 'Frodo the Dodo',
         id: 'layer:///identities/FrodoTheDodo',
@@ -28,20 +31,18 @@ describe("List Mixin", function() {
       });
       client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
       testRoot = document.createElement('div');
       document.body.appendChild(testRoot);
       el = document.createElement('layer-identity-list');
       testRoot.appendChild(el);
       query = client.createQuery({
-        model: layer.Core.Query.Identity
+        model: Layer.Core.Query.Identity
       });
       query.isFiring = false;
       query.data = [client.user];
       for (i = 0; i < 100; i++) {
         query.data.push(
-          new layer.Core.Identity({
-            client: client,
+          new Layer.Core.Identity({
             userId: 'user' + i,
             id: 'layer:///identities/user' + i,
             displayName: 'User ' + i,
@@ -52,49 +53,35 @@ describe("List Mixin", function() {
 
       el.query = query;
       CustomElements.takeRecords();
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(500);
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
 
     afterEach(function() {
       try {
-        layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
+        Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
         jasmine.clock().uninstall();
-        layerUI.settings.appId = null;
+        Layer.UI.settings.appId = null;
         document.body.removeChild(testRoot);
-        layer.Core.Client.removeListenerForNewClient();
+
         if (el) el.onDestroy();
+        if (client) client.destroy();
       } catch(e) {}
     });
     describe("Properties", function() {
-      it("Should set the query given a queryId and then a client", function() {
+      it("Should set the query given a queryId", function() {
         var el = document.createElement('layer-identity-list');
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         el.queryId = query.id;
-        expect(el.client).toBe(null);
-        expect(el.query).toBe(null);
-        el.appId = client.appId;
-        expect(el.client).toBe(client);
         expect(el.query).toBe(query);
       });
 
-      it("Should set the query given a client and then a queryId", function() {
-        var el = document.createElement('layer-identity-list');
-        el.useGeneratedQuery = false;
-        layer.Util.defer.flush();
-        el.appId = client.appId;
-        expect(el.client).toBe(client);
-        expect(el.query).toBe(null);
-        el.queryId = query.id;
-        expect(el.client).toBe(client);
-        expect(el.query).toBe(query);
-      });
 
       it("Should call render on setting the query", function() {
         var el = document.createElement('layer-identity-list');
         spyOn(el, "onRender");
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         el.query = query;
         jasmine.clock().tick(10);
         expect(el.onRender).toHaveBeenCalledWith();
@@ -103,26 +90,26 @@ describe("List Mixin", function() {
       // Tests call to onRerender as rerender has already been bound to an event before we can test it
       it("Should wire up rerender on setting the query", function() {
         var el = document.createElement('layer-identity-list');
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
         spyOn(el, "_processQueryEvt");
 
         el.query = query;
         expect(el._processQueryEvt).toHaveBeenCalledWith({ type: 'data', data: el.query.data, inRender: true });
-        expect(el._processQueryEvt).not.toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(el._processQueryEvt).not.toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
         query.trigger("change", {type: "data", data: []});
-        expect(el._processQueryEvt).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+        expect(el._processQueryEvt).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
       });
 
-      it("Should create a query if there is no query AND its a MainComponent and useGeneratedQuery is unset", function() {
+      it("Should create a query if there is no query and useGeneratedQuery is unset", function() {
         var el = document.createElement('layer-identity-list');
         el.client = client;
         expect(el.properties.query).toBe(null);
 
         CustomElements.takeRecords();
-        layer.Util.defer.flush();
+        Layer.Utils.defer.flush();
 
-        expect(el.query).toEqual(jasmine.any(layer.Core.Query));
-        expect(el.properties.query).toEqual(jasmine.any(layer.Core.Query));
+        expect(el.query).toEqual(jasmine.any(Layer.Core.Query));
+        expect(el.properties.query).toEqual(jasmine.any(Layer.Core.Query));
       });
 
       it("Should add and remove classes on setting isDataLoading", function() {
@@ -147,7 +134,7 @@ describe("List Mixin", function() {
 
       it("Should destroy the existing query if hasGeneratedQuery is true", function() {
         el.client = client;
-        var query2 = client.createQuery({model: layer.Conversation});
+        var query2 = client.createQuery({model: Layer.Core.Conversation});
         el.query = query2;
         el.properties.hasGeneratedQuery = true;
         el.query = query;
@@ -157,7 +144,7 @@ describe("List Mixin", function() {
 
       it("Should not destroy the existing query if hasGeneratedQuery is false", function() {
         el.client = client;
-        var query2 = client.createQuery({model: layer.Conversation});
+        var query2 = client.createQuery({model: Layer.Core.Conversation});
         el.query = query2;
         el.properties.hasGeneratedQuery = false;
         el.query = query;
@@ -231,34 +218,31 @@ describe("List Mixin", function() {
     });
 
     describe("The throttle() method", function() {
-      it("Should schedule a call to perform an action", function() {
+      it("Should promptly act on the first call to perform an action", function() {
         var spy = jasmine.createSpy("hello");
         el._throttler(spy);
         jasmine.clock().tick(10);
-        expect(spy).not.toHaveBeenCalled();
-        jasmine.clock().tick(100);
         expect(spy).toHaveBeenCalled();
       });
 
-      it("Should do nothing if its already scheduled", function() {
-        var el = document.createElement('layer-identity-list');
-        el.query = query;
+      it("Should schedule additional calls to perform an action", function() {
         var spy = jasmine.createSpy("hello");
         el._throttler(spy);
-        jasmine.clock().tick(50);
-        expect(spy).not.toHaveBeenCalled();
+        jasmine.clock().tick(10);
+        spy.calls.reset();
+
         el._throttler(spy);
         el._throttler(spy);
         el._throttler(spy);
         expect(spy).not.toHaveBeenCalled();
 
-        jasmine.clock().tick(50);
+        jasmine.clock().tick(160);
+        expect(spy).toHaveBeenCalled();
         expect(spy.calls.count()).toEqual(1);
         jasmine.clock().tick(5000);
         expect(spy.calls.count()).toEqual(1);
       });
     });
-
     describe("The _handleScroll() method", function() {
       it("Should page the query if near the bottom of the list", function() {
         el.pageSize = 31;
@@ -303,20 +287,19 @@ describe("List Mixin", function() {
         var identity = client.getIdentity("layer:///identities/user40");
         var identityWidget = document.getElementById(el._getItemId(identity.id));
         expect(el.scrollToItem(identity)).toEqual(true);
-        expect(el.scrollTop).toEqual(identityWidget.offsetTop - el.offsetTop);
-        expect(el.scrollTop).not.toEqual(0);
+        expect(isCloseEnough(el.scrollTop, identityWidget.offsetTop - el.offsetTop)).toBe(true);
+        expect(isCloseEnough(el.scrollTop, 0)).toBe(false)
       });
 
       it("Should do nothing and return false", function() {
-        var identity = new layer.Core.Identity({
-          client: client,
+        var identity = new Layer.Core.Identity({
           userId: 'user200',
           id: 'layer:///identities/user200',
           displayName: 'User 200',
           isFullIdentity: true
         });
         expect(el.scrollToItem(identity)).toEqual(false);
-        expect(el.scrollTop).toEqual(0);
+        expect(isCloseEnough(el.scrollTop, 0)).toBe(true);
       });
 
       it("Should return true and animate scrolling", function() {
@@ -326,8 +309,8 @@ describe("List Mixin", function() {
         expect(el.scrollToItem(identity, 200)).toEqual(true);
         jasmine.clock().tick(200);
 
-        expect(el.scrollTop).toEqual(identityWidget.offsetTop - el.offsetTop);
-        expect(el.scrollTop).not.toEqual(0);
+        expect(isCloseEnough(el.scrollTop, identityWidget.offsetTop - el.offsetTop)).toBe(true);
+        expect(isCloseEnough(el.scrollTop, 0)).toBe(false);
       });
 
       it("Should call the animateScrolling callback", function() {
@@ -349,15 +332,15 @@ describe("List Mixin", function() {
         var count = 0;
         var spy = function() {
           count++;
-          position = el.scrollTop;
+          position = Math.round(el.scrollTop);
         };
         el.scrollToItem(identity, 200, spy);
         jasmine.clock().tick(50);
         el.scrollToItem(identity2, 200, spy);
         jasmine.clock().tick(200);
         expect(count).toEqual(1);
-        expect(position).toEqual(identityWidget.offsetTop - el.offsetTop);
-        expect(position).toEqual(el.scrollTop);
+        expect(isCloseEnough(position, identityWidget.offsetTop - el.offsetTop)).toBe(true);
+        expect(isCloseEnough(position, el.scrollTop)).toBe(true);
       });
     });
 
@@ -370,7 +353,7 @@ describe("List Mixin", function() {
 
         query.data = [];
         el.onRender();
-        expect(el.onRerender).not.toHaveBeenCalled();
+        expect(el.onRerender).not.toHaveBeenCalledWith(jasmine.any(Object));
       });
     });
 
@@ -530,16 +513,16 @@ describe("List Mixin", function() {
         el.style.height = "100px";
         el.style.overflow = "auto";
         el.scrollTop = 100;
-        expect(el.scrollTop > 0).toBe(true);
+        expect(el.scrollTop > 1).toBe(true);
         query.reset();
-        expect(el.scrollTop > 0).toBe(false);
+        expect(el.scrollTop > 1).toBe(false);
       });
 
-      it("Should empty the list of items, but still contain a loadingIndicator node", function() {
+      it("Should empty the list of items, but still contain the listMeta node", function() {
         expect(el.childNodes.length > 1).toBe(true);
         query.reset();
-        expect(el.childNodes.length > 1).toBe(false);
-        expect(el.firstChild.classList.contains('layer-load-indicator')).toBe(true);
+        expect(el.childNodes.length).toEqual(1);
+        expect(el.firstChild).toBe(el.nodes.listMeta);
       });
     });
 
@@ -598,8 +581,7 @@ describe("List Mixin", function() {
       it("Should update listData", function() {
         query._handleAddEvent('identities', {
           identities: [
-            new layer.Core.Identity({
-              client: client,
+            new Layer.Core.Identity({
               userId: 'user' + 10000,
               id: 'layer:///identities/user' + 10000,
               displayName: 'User ' + 10000,
@@ -613,8 +595,7 @@ describe("List Mixin", function() {
       });
 
       it("Should insert a list item at the proper index", function() {
-        var identity = new layer.Core.Identity({
-          client: client,
+        var identity = new Layer.Core.Identity({
           userId: 'user' + 10000,
           id: 'layer:///identities/user' + 10000,
           displayName: 'User ' + 10000,
@@ -636,8 +617,7 @@ describe("List Mixin", function() {
 
       it("Should call _gatherAndProcessAffectedItems on 3 items before and 3 items after the inserted item", function() {
         spyOn(el, "_gatherAndProcessAffectedItems");
-        var identity = new layer.Core.Identity({
-          client: client,
+        var identity = new Layer.Core.Identity({
           userId: 'user' + 10000,
           id: 'layer:///identities/user' + 10000,
           displayName: 'User ' + 10000,
@@ -667,8 +647,7 @@ describe("List Mixin", function() {
 
       it("Should call _gatherAndProcessAffectedItems with isTopNewItem as false if index > 0", function() {
         spyOn(el, "_gatherAndProcessAffectedItems");
-        var identity = new layer.Core.Identity({
-          client: client,
+        var identity = new Layer.Core.Identity({
           userId: 'user' + 10000,
           id: 'layer:///identities/user' + 10000,
           displayName: 'User ' + 10000,
@@ -698,8 +677,7 @@ describe("List Mixin", function() {
 
       it("Should call _gatherAndProcessAffectedItems with isTopNewItem as true if index === 0", function() {
         spyOn(el, "_gatherAndProcessAffectedItems");
-        var identity = new layer.Core.Identity({
-          client: client,
+        var identity = new Layer.Core.Identity({
           userId: 'user' + 10000,
           id: 'layer:///identities/user' + 10000,
           displayName: 'User ' + 10000,
@@ -729,15 +707,13 @@ describe("List Mixin", function() {
       it("Should update listData", function() {
         spyOn(el, "_renderPagedData").and.callThrough();
         var identities = [
-          new layer.Core.Identity({
-            client: client,
+          new Layer.Core.Identity({
             userId: 'user' + 10000,
             id: 'layer:///identities/user' + 10000,
             displayName: 'User ' + 10000,
             isFullIdentity: true
           }),
-          new layer.Core.Identity({
-            client: client,
+          new Layer.Core.Identity({
             userId: 'user' + 10001,
             id: 'layer:///identities/user' + 10001,
             displayName: 'User ' + 10001,
@@ -761,17 +737,15 @@ describe("List Mixin", function() {
         expect(el.properties.listData[el.properties.listData.length - 1].displayName).toEqual("User 10001");
       });
 
-      it("Should append all new items just before the loadIndicator", function() {
+      it("Should append all new items just before the listMeta", function() {
         var identities = [
-          new layer.Core.Identity({
-            client: client,
+          new Layer.Core.Identity({
             userId: 'user' + 10000,
             id: 'layer:///identities/user' + 10000,
             displayName: 'User ' + 10000,
             isFullIdentity: true
           }),
-          new layer.Core.Identity({
-            client: client,
+          new Layer.Core.Identity({
             userId: 'user' + 10001,
             id: 'layer:///identities/user' + 10001,
             displayName: 'User ' + 10001,
@@ -790,7 +764,7 @@ describe("List Mixin", function() {
         });
 
         // Posttest
-        expect(el.childNodes[el.childNodes.length - 1]).toBe(el.nodes.loadIndicator);
+        expect(el.childNodes[el.childNodes.length - 1]).toBe(el.nodes.listMeta);
         expect(el.childNodes[el.childNodes.length - 2].item.displayName).toEqual("User 10001");
       });
 
@@ -798,15 +772,13 @@ describe("List Mixin", function() {
         var last3Items = query.data.slice(query.data.length-3, query.data.length);
         expect(last3Items.length).toEqual(3);
         var identities = [
-          new layer.Core.Identity({
-            client: client,
+          new Layer.Core.Identity({
             userId: 'user' + 10000,
             id: 'layer:///identities/user' + 10000,
             displayName: 'User ' + 10000,
             isFullIdentity: true
           }),
-          new layer.Core.Identity({
-            client: client,
+          new Layer.Core.Identity({
             userId: 'user' + 10001,
             id: 'layer:///identities/user' + 10001,
             displayName: 'User ' + 10001,
@@ -834,15 +806,13 @@ describe("List Mixin", function() {
         var last3Items = query.data.slice(query.data.length-3, query.data.length);
         expect(last3Items.length).toEqual(3);
         var identities = [
-          new layer.Core.Identity({
-            client: client,
+          new Layer.Core.Identity({
             userId: 'user' + 10000,
             id: 'layer:///identities/user' + 10000,
             displayName: 'User ' + 10000,
             isFullIdentity: true
           }),
-          new layer.Core.Identity({
-            client: client,
+          new Layer.Core.Identity({
             userId: 'user' + 10001,
             id: 'layer:///identities/user' + 10001,
             displayName: 'User ' + 10001,

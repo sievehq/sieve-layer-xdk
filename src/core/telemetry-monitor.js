@@ -9,13 +9,13 @@
  * This is currently setup to run once per hour, sending hourly updates to the server.
  *
  * @class layer.TelemetryMonitor
- * @extends layer.Root
+ * @extends Layer.Core.Root
  * @private
  */
-
+import { client as Client } from '../settings';
+import Core from './namespace';
 import Root from './root';
-import Xhr from './xhr';
-import Util from '../util';
+import Util, { xhr } from '../utils';
 import version from '../version';
 
 class TelemetryMonitor extends Root {
@@ -26,19 +26,17 @@ class TelemetryMonitor extends Root {
    *
    * @method constructor
    * @param {Object} options
-   * @param {layer.Client} options.client
    * @param {Boolean} [options.enabled=true]   Set to false to disable telemetry reporting
    * @param {Number} [options.reportingInterval=1000 * 3600]   Defaults to 1 hour, but can be set to other intervals
    */
   constructor(options) {
     super(options);
-    this.client = options.client;
     this.state = {
       id: this.id,
       records: [],
     };
     this.tempState = {};
-    this.storageKey = 'layer-telemetry-' + this.client.appId;
+    this.storageKey = 'layer-telemetry-' + Client.appId;
 
     if (!global.localStorage) {
       this.enabled = false;
@@ -55,8 +53,8 @@ class TelemetryMonitor extends Root {
       }
     }
 
-    this.client.on('state-change', this.trackEvent, this);
-    Xhr.addConnectionListener(this.trackRestPerformance.bind(this));
+    Client.on('state-change', this.trackEvent, this);
+    xhr.addConnectionListener(this.trackRestPerformance.bind(this));
     this.setupReportingInterval();
   }
 
@@ -64,7 +62,7 @@ class TelemetryMonitor extends Root {
    * Given a `telemetryId` and an optional `id`, and a `started` or `ended` key,
    * track performance of the given telemetry statistic.
    *
-   * @method
+   * @method trackEvent
    */
   trackEvent(evt) {
     if (!this.enabled) return;
@@ -101,7 +99,7 @@ class TelemetryMonitor extends Root {
    *
    * The `telemetry` object should contain `name` and `duration` keys
    *
-   * @method
+   * @method trackRestPerformance
    */
   trackRestPerformance(evt) {
     if (this.enabled && evt.request.telemetry) {
@@ -118,7 +116,7 @@ class TelemetryMonitor extends Root {
    *
    * Results of writing performance are to increment count, and total time for the operation.
    *
-   * @method
+   * @method writePerformance
    */
   writePerformance(name, timing) {
     const performance = this.getCurrentStateObject().performance;
@@ -138,7 +136,7 @@ class TelemetryMonitor extends Root {
   /**
    * When writing usage, we are simply incrementing the usage counter for the metric.
    *
-   * @method
+   * @method writeUsage
    */
   writeUsage(name) {
     const usage = this.getCurrentStateObject().usage;
@@ -153,19 +151,20 @@ class TelemetryMonitor extends Root {
    * note that environmental data may change from hour to hour,
    * so we regather this information for each record we send to the server.
    *
-   * @method
+   * @method getEnvironment
    */
   getEnvironment() {
     const environment = {
       platform: 'web',
       locale: (navigator.language || '').replace(/-/g, '_'), // should match the en_us format that mobile devices are using rather than the much nicer en-us
       layer_sdk_version: version,
+      layer_ui_sdk_version: 'xdk',
       domain: location.hostname,
     };
 
     // This event allows other libraries to add information to the environment object; specifically: Layer UI
     this.trigger('telemetry-environment', {
-      environment
+      environment,
     });
     return environment;
   }
@@ -176,7 +175,7 @@ class TelemetryMonitor extends Root {
    * note that device data may change from hour to hour,
    * so we regather this information for each record we send to the server.
    *
-   * @method
+   * @method getDevice
    */
   getDevice() {
     return {
@@ -195,7 +194,7 @@ class TelemetryMonitor extends Root {
   /**
    * Return the state object used to track performance for the current time slot
    *
-   * @method
+   * @method getCurrentStateObject
    */
   getCurrentStateObject(doNotCreate) {
     const today = new Date();
@@ -240,7 +239,7 @@ class TelemetryMonitor extends Root {
    * Writing the state is an expensive operation that should be done less often,
    * and containing more changes rather than done immediatley and repeated with each change.
    *
-   * @method
+   * @method writeState
    */
   writeState() {
     if (this.enabled && !this._writeTimeoutId) {
@@ -254,7 +253,7 @@ class TelemetryMonitor extends Root {
   /**
    * Given a time slot's data, convert its data to what the server expects.
    *
-   * @method
+   * @method convertRecord
    */
   convertRecord(record) {
     const result = {
@@ -281,14 +280,14 @@ class TelemetryMonitor extends Root {
    *
    * Remove any data successfully sent from our records.
    *
-   * @method
+   * @method sendData
    */
   sendData() {
     const doNotSendCurrentRecord = this.getCurrentStateObject(true);
     const records = this.state.records
       .filter(record => record !== doNotSendCurrentRecord);
     if (records.length) {
-      Xhr({
+      xhr({
         sync: false,
         method: 'POST',
         url: this.telemetryUrl,
@@ -297,7 +296,7 @@ class TelemetryMonitor extends Root {
         },
         data: {
           id: Util.uuid(this.state.id),
-          layer_app_id: this.client.appId,
+          layer_app_id: Client.appId,
           records: records.map(record => this.convertRecord(record)),
         },
       }, (result) => {
@@ -316,7 +315,7 @@ class TelemetryMonitor extends Root {
   /**
    * Periodicalily call sendData to send updates to the server.
    *
-   * @method
+   * @method setupReportingInterval
    */
   setupReportingInterval() {
     if (this.enabled) {
@@ -335,7 +334,7 @@ class TelemetryMonitor extends Root {
    *
    * The above code will stop the telemetryMonitor from sending data.
    *
-   * @method
+   * @method __updateEnabled
    */
   __updateEnabled() {
     if (this._intervalId) {
@@ -343,6 +342,10 @@ class TelemetryMonitor extends Root {
       this._intervalId = 0;
     }
     if (this.enabled) this.setupReportingInterval();
+  }
+
+  toString() {
+    return '[object ' + this.constructor.name + ']';
   }
 }
 
@@ -414,14 +417,14 @@ TelemetryMonitor.prototype.tempState = null;
 TelemetryMonitor.prototype.enabled = true;
 
 /**
- * Pointer to the layer.Client
+ * Pointer to the Layer.Core.Client
  *
- * @property {layer.Client}
+ * @property {Layer.Core.Client}
  */
 TelemetryMonitor.prototype.client = null;
 
 /**
- * The presence of this causes layer.Root to automatically generate an id if one isn't present.
+ * The presence of this causes Layer.Core.Root to automatically generate an id if one isn't present.
  *
  * This id is written to localStorage so that it can persist across sessions.
  *
@@ -431,8 +434,8 @@ TelemetryMonitor.prototype.client = null;
 TelemetryMonitor.prefixUUID = 'layer:///telemetry/';
 
 TelemetryMonitor._supportedEvents = Root._supportedEvents.concat([
-  'telemetry-environment'
+  'telemetry-environment',
 ]);
 
-Root.initClass.apply(TelemetryMonitor, [TelemetryMonitor, 'TelemetryMonitor']);
+Root.initClass.apply(TelemetryMonitor, [TelemetryMonitor, 'TelemetryMonitor', Core]);
 module.exports = TelemetryMonitor;

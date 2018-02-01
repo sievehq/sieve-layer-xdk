@@ -1,12 +1,12 @@
 describe('Button Message Components', function() {
-  var ButtonsModel, TextModel, ChoiceModel;
+  var ButtonsModel, TextModel, ChoiceModel, client;
   var conversation;
   var testRoot;
 
   var styleNode;
   beforeAll(function() {
     styleNode = document.createElement('style');
-    styleNode.innerHTML = 'layer-message-viewer.layer-choice-view  {width: 300px; height: 150px;}';
+    styleNode.innerHTML = 'layer-message-viewer.layer-choice-message-view  {width: 300px; height: 150px;}';
     document.body.appendChild(styleNode);
   });
 
@@ -16,8 +16,8 @@ describe('Button Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -27,23 +27,20 @@ describe('Button Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
     client._clientAuthenticated();
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -51,19 +48,20 @@ describe('Button Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    ButtonsModel = layer.Core.Client.getMessageTypeModelClass("ButtonsModel");
-    TextModel = layer.Core.Client.getMessageTypeModelClass("TextModel");
-    ChoiceModel = layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
+    ButtonsModel = Layer.Core.Client.getMessageTypeModelClass("ButtonsModel");
+    TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
+    ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
-    jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    if (client) client.destroy();
+    jasmine.clock().uninstall();
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
+
   });
 
   describe("Model Tests", function() {
@@ -94,9 +92,9 @@ describe('Button Message Components', function() {
         message = m;
       });
 
-      expect(message.parts.length).toEqual(1);
-      expect(message.parts[0].mimeType).toEqual('application/vnd.layer.buttons+json');
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      expect(message.parts.size).toEqual(1);
+      var part = message.filterPartsByMimeType('application/vnd.layer.buttons+json')[0];
+      expect(JSON.parse(part.body)).toEqual({
         buttons: [
           {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
           {"type": "action", "text": "Give Holy Grail", "event": "grant-grail", "tooltip": "Grail", data: {who: "Lunchalot"}}
@@ -107,12 +105,12 @@ describe('Button Message Components', function() {
 
 
     it("Should instantiate a Basic Action Buttons Model from a Message", function() {
-      var uuid1 = layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
 
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type: ButtonsModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
             buttons: [
@@ -124,7 +122,7 @@ describe('Button Message Components', function() {
       });
       var model = new ButtonsModel({
         message: m,
-        part: m.parts[0],
+        part: m.findPart(),
       });
 
       expect(model.buttons).toEqual([
@@ -148,31 +146,32 @@ describe('Button Message Components', function() {
         message = m;
       });
 
-      expect(message.parts.length).toEqual(2);
-      expect(message.parts[0].mimeType).toEqual('application/vnd.layer.buttons+json');
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      var rootPart = message.getRootPart();
+      var contentPart = message.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+      expect(message.parts.size).toEqual(2);
+      expect(rootPart.mimeType).toEqual('application/vnd.layer.buttons+json');
+      expect(JSON.parse(rootPart.body)).toEqual({
         buttons: [
           {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
           {"type": "action", "text": "Give Holy Grail", "event": "grant-grail", "tooltip": "Grail", data: {who: "Lunchalot"}}
         ]
       });
-      expect(JSON.parse(message.parts[1].body)).toEqual({
+      expect(JSON.parse(contentPart.body)).toEqual({
         text: "howdy"
       });
-      expect(message.parts[1].mimeType).toEqual('application/vnd.layer.text+json');
-      expect(message.parts[1].parentId).toEqual(message.parts[0].nodeId);
-      expect(message.parts[1].parentId.length > 0).toBe(true);
+      expect(contentPart.parentId).toEqual(rootPart.nodeId);
+      expect(contentPart.parentId.length > 0).toBe(true);
     });
 
 
 
     it("Should instantiate a Basic Action Buttons Model with Content from a Message", function() {
-      var uuid1 = layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
 
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type: ButtonsModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
             buttons: [
@@ -181,14 +180,14 @@ describe('Button Message Components', function() {
             ]
           })
         }, {
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type: 'application/vnd.layer.text+json; role=content;parent-node-id=a',
           body: JSON.stringify({text: "howdy"})
         }]
       });
       var model = new ButtonsModel({
         message: m,
-        part: m.parts[0],
+        part: m.findPart(),
       });
 
       expect(model.buttons).toEqual([
@@ -251,19 +250,15 @@ describe('Button Message Components', function() {
       expect(isstarred.allowMultiselect).toBe(false);
       expect(isstarred.allowDeselect).toBe(true);
       expect(isstarred.customResponseData).toEqual({hey: "ho"});
-      expect(isstarred.choices).toEqual([
-        {"text": "Favorite", "id": "fav", "tooltip": "star"}
-      ]);
+      expect(isstarred.choices.length).toEqual(1);
+      expect(isstarred.choices[0].id).toEqual("fav");
 
       var isliked = model.choices.isliked;
       expect(isliked.allowMultiselect).toBe(false);
       expect(isliked.allowDeselect).toBe(false);
       expect(isliked.allowReselect).toBe(true);
       expect(isliked.enabledFor).toEqual(["layer:///identities/a"]);
-      expect(isliked.choices).toEqual([
-        {"text": "Like", "id": "l", "tooltip": "like"},
-        {"text": "Dislike", "id": "d", "tooltip": "dislike"}
-      ]);
+      expect(isliked.choices.map(function(choice) {return choice.id;})).toEqual(["l", "d"]);
 
       expect(issuperstarred).toEqual(jasmine.any(ChoiceModel));
       expect(isstarred).toEqual(jasmine.any(ChoiceModel));
@@ -302,9 +297,11 @@ describe('Button Message Components', function() {
         message = m;
       });
 
-      expect(message.parts.length).toEqual(2);
-      expect(message.parts[0].mimeType).toEqual('application/vnd.layer.buttons+json');
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      var rootPart = message.getRootPart();
+      var contentPart = message.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+      expect(message.parts.size).toEqual(2);
+      expect(rootPart.mimeType).toEqual('application/vnd.layer.buttons+json');
+      expect(JSON.parse(rootPart.body)).toEqual({
         buttons: [
           {
             "type": "choice",
@@ -313,8 +310,8 @@ describe('Button Message Components', function() {
               {"text": "Dislike", "id": "d", "tooltip": "dislike"}
             ],
             data: {
-              responseName: "isliked",
-              allowReselect: true
+              response_name: "isliked",
+              allow_reselect: true
             }
           },
           {
@@ -323,29 +320,28 @@ describe('Button Message Components', function() {
               {"text": "Favorite", "id": "fav", "tooltip": "star"}
             ],
             data: {
-              responseName: "isstarred",
-              allowDeselect: true
+              response_name: "isstarred",
+              allow_deselect: true
             }
           }
         ]
       });
-      expect(JSON.parse(message.parts[1].body)).toEqual({
+      expect(JSON.parse(contentPart.body)).toEqual({
         text: "howdy"
       });
-      expect(message.parts[1].mimeType).toEqual('application/vnd.layer.text+json');
-      expect(message.parts[1].parentId).toEqual(message.parts[0].nodeId);
-      expect(message.parts[1].parentId.length > 0).toBe(true);
+      expect(contentPart.parentId).toEqual(rootPart.nodeId);
+      expect(contentPart.parentId.length > 0).toBe(true);
     });
 
 
 
     it("Should instantiate a Basic Action Buttons Model with Content from a Message", function() {
-      var uuid1 = layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
 
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type: ButtonsModel.MIMEType + '; role=root; node-id=a',
           body: JSON.stringify({
             buttons: [
@@ -363,14 +359,14 @@ describe('Button Message Components', function() {
             ]
           })
         }, {
-          id: 'layer:///messages/' + uuid1 + '/parts/' + layer.Util.generateUUID(),
+          id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
           mime_type: 'application/vnd.layer.text+json; role=content;parent-node-id=a',
           body: JSON.stringify({text: "howdy"})
         }]
       });
       var model = new ButtonsModel({
         message: m,
-        part: m.parts[0],
+        part: m.findPart(),
       });
 
       expect(model.buttons).toEqual([
@@ -390,7 +386,8 @@ describe('Button Message Components', function() {
       expect(model.contentModel.text).toEqual("howdy");
       expect(model.choices.isstarred.allowDeselect).toBe(true);
       expect(model.choices.isstarred.allowMultiselect).toBe(false);
-      expect(model.choices.isstarred.choices).toEqual([{"text": "Favorite", "id": "fav", "tooltip": "star"}]);
+      expect(model.choices.isstarred.choices.length).toEqual(1);
+      expect(model.choices.isstarred.choices[0].id).toEqual("fav");
     });
 
 
@@ -400,14 +397,16 @@ describe('Button Message Components', function() {
           {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
         ]
       });
-      expect(model.getOneLineSummary()).toEqual("Buttons");
+      model.generateMessage(conversation);
+      expect(model.getOneLineSummary()).toEqual("Buttons sent");
 
       model = new ButtonsModel({
         buttons: [
           {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
         ],
-        contentModel: new TextModel({ text: "Howdy" }),
+        contentModel: new TextModel({ text: "Howdy" })
       });
+      model.generateMessage(conversation);
       expect(model.getOneLineSummary()).toEqual("Howdy");
     });
   });
@@ -420,7 +419,7 @@ describe('Button Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     });
 
@@ -434,12 +433,11 @@ describe('Button Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-chat-bubble class
+      // Message Viewer: gets the layer-card-width-any-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
       // Message UI:
@@ -468,19 +466,18 @@ describe('Button Message Components', function() {
           {"type": "action", "text": "Give Holy Grail", "event": "grant-grail", "tooltip": "Grail", data: {who: "Lunchalot"}}
         ],
         contentModel: new TextModel({
-          text: "hello"
+          text: "hello2"
         })
       });
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.nodes.ui.nodes.content.firstChild.tagName).toEqual('LAYER-MESSAGE-VIEWER');
-      expect(el.nodes.ui.nodes.content.firstChild.model.text).toEqual('hello');
+      expect(el.nodes.ui.nodes.content.firstChild.model.text).toEqual('hello2');
       expect(el.nodes.ui.nodes.content.firstChild.model).toEqual(jasmine.any(TextModel));
     });
 
@@ -491,16 +488,16 @@ describe('Button Message Components', function() {
           {"type": "action", "text": "Give Holy Grail", "event": "grant-grail", "tooltip": "Grail", data: {who: "Lunchalot"}}
         ],
         contentModel: new TextModel({
-          text: "hello"
+          text: "hello3"
         })
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       var ui = el.nodes.ui;
       var buttons = ui.nodes.buttons;
@@ -513,6 +510,7 @@ describe('Button Message Components', function() {
       expect(textUI.trigger).toHaveBeenCalledWith('kill-arthur',  {
         model: model.contentModel,
         rootModel: model,
+        messageViewer: el.nodes.ui.nodes.subviewer,
         data: {who: "Arthur"},
       });
     });
@@ -533,19 +531,21 @@ describe('Button Message Components', function() {
         ]
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
       message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       var buttons = el.nodes.ui.nodes.buttons;
 
       expect(model.choices.isstarred.selectedAnswer).toEqual("");
 
       buttons.childNodes[0].childNodes[0].click();
+      Layer.Utils.defer.flush();
+      jasmine.clock().tick(1);
 
       expect(model.choices.isstarred.selectedAnswer).toEqual("fav");
       expect(buttons.childNodes[0].childNodes[0].selected).toBe(true);
@@ -575,19 +575,21 @@ describe('Button Message Components', function() {
         ]
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       var buttons = el.nodes.ui.nodes.buttons;
       expect(buttons.childNodes[0].childNodes[0].text).toEqual("Favorite");
       model.choices.isstarred.selectAnswer({id: "fav" });
+      jasmine.clock().tick(1);
       expect(buttons.childNodes[0].childNodes[0].text).toEqual("B");
 
       model.choices.isstarred.selectAnswer({id: "fav" });
+      jasmine.clock().tick(1);
       expect(buttons.childNodes[0].childNodes[0].text).toEqual("Favorite");
     });
 
@@ -616,15 +618,15 @@ describe('Button Message Components', function() {
         contentModel: new TextModel({text: "hey"})
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
 
       var spy = jasmine.createSpy('clickme');
       el.addEventListener('isstarred', spy);
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       var buttons = el.nodes.ui.nodes.buttons;
 
@@ -666,15 +668,14 @@ describe('Button Message Components', function() {
         contentModel: new TextModel({text: "hey"})
       });
       model.generateMessage(conversation, function(m) {
+        m.presend();
         message = m;
       });
-      el.client = client;
       el.message = message;
 
       message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
 
-      layer.Util.defer.flush();
-
+      Layer.Utils.defer.flush();
 
       spyOn(model.choices.isstarred, '_sendResponse');
 
@@ -683,13 +684,13 @@ describe('Button Message Components', function() {
       buttons.childNodes[0].childNodes[0].click();
 
       var responseMessage = model.choices.isstarred._sendResponse.calls.allArgs()[0][0];
-      var responsePart = responseMessage.parts[0];
-      var textPart = responseMessage.parts[1];
+      var responsePart = responseMessage.getRootPart();
+      var statusPart = responseMessage.findPart(part => part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType);
 
-      expect(textPart.mimeType).toEqual('application/vnd.layer.text+json');
-      expect(textPart.parentId).toEqual(responsePart.nodeId);
-      expect(textPart.role).toEqual("message");
-      expect(JSON.parse(textPart.body)).toEqual({
+      expect(statusPart.mimeType).toEqual('application/vnd.layer.status+json');
+      expect(statusPart.parentId).toEqual(responsePart.nodeId);
+      expect(statusPart.role).toEqual("status");
+      expect(JSON.parse(statusPart.body)).toEqual({
         text: 'Frodo the Dodo selected "Favorite"'
       });
 

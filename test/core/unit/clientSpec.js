@@ -19,25 +19,23 @@ describe("The Client class", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = userIdentity = new Layer.Core.Identity({
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
-        userIdentity2 = new layer.Core.Identity({
-            clientId: client.appId,
+        userIdentity2 = new Layer.Core.Identity({
             id: "layer:///identities/1",
             displayName: "UserIdentity",
             userId: '1'
         });
-        membership = client._createObject(responses.membership1);
+        membership1 = client._createObject(responses.membership1);
         client.isReady = true;
     });
 
@@ -47,20 +45,13 @@ describe("The Client class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
-        it("Should register the Client", function() {
-            var client = new layer.Core.Client({
-                appId: "Samunwise",
-                url: "https://huh.com"
-            });
-            expect(layer.Core.Client.getClient("Samunwise")).toBe(client);
-        });
 
         it("Should initialize all caches", function() {
-            var client = new layer.Core.Client({
+            var client = new Layer.Core.Client({
                 appId: "Samunwise",
                 url: "https://huh.com"
             });
@@ -69,13 +60,13 @@ describe("The Client class", function() {
 
 
         it("Should call _initComponents", function() {
-            expect(client.syncManager).toEqual(jasmine.any(layer.SyncManager));
+            expect(client.syncManager).toEqual(jasmine.any(Layer.Core.SyncManager));
         });
 
         it("Should call _connectionRestored on receiving an online event", function() {
-            var _connectionRestored =  layer.Core.Client.prototype._connectionRestored;
-            spyOn(layer.Core.Client.prototype, "_connectionRestored");
-            var client = new layer.Core.Client({
+            var _connectionRestored =  Layer.Core.Client.prototype._connectionRestored;
+            spyOn(Layer.Core.Client.prototype, "_connectionRestored");
+            var client = new Layer.Core.Client({
                 appId: "Samunwise",
                 url: "https://huh.com"
             });
@@ -88,14 +79,14 @@ describe("The Client class", function() {
             expect(client._connectionRestored).toHaveBeenCalled();
 
             // Restore
-            layer.Core.Client.prototype._connectionRestored = _connectionRestored;
+            Layer.Core.Client.prototype._connectionRestored = _connectionRestored;
         });
     });
 
     describe("The _initComponents() method", function() {
         it("Should setup the TypingListenerIndicator", function() {
             client._initComponents();
-            expect(client._typingIndicators).toEqual(jasmine.any(layer.Root));
+            expect(client._typingIndicators).toEqual(jasmine.any(Layer.Core.Root));
         });
 
         xit("Should have a test for plugins", function() {
@@ -121,12 +112,6 @@ describe("The Client class", function() {
             expect(client._destroyComponents).toHaveBeenCalledWith();
         });
 
-        it("Should unregister the client", function() {
-            var appId = client.appId;
-            expect(layer.Core.Client.getClient(appId)).toBe(client);
-            client.destroy();
-            expect(layer.Core.Client.getClient(appId)).toBe(null);
-        });
     });
 
     describe("The __adjustAppId() method", function() {
@@ -139,8 +124,8 @@ describe("The Client class", function() {
         it("Should not allow appId to be reset", function() {
             expect(function() {
                 client.appId = "Ray!";
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.appIdImmutable);
-            expect(layer.Core.LayerError.ErrorDictionary.appIdImmutable.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.appIdImmutable);
+            expect(Layer.Core.LayerError.ErrorDictionary.appIdImmutable.length > 0).toBe(true);
         });
     });
 
@@ -148,11 +133,10 @@ describe("The Client class", function() {
         beforeEach(function() {
             client.isTrustedDevice = true;
             delete client._models.identities['layer:///identities/Frodo'];
-            client.user = new layer.Core.Identity({
+            client.user = new Layer.Core.Identity({
                userId: client.userId,
                displayName: "Frodo2",
-               syncState: layer.Constants.SYNC_STATE.LOADING,
-               clientId: client.appId,
+               syncState: Layer.Constants.SYNC_STATE.LOADING,
 
            });
 
@@ -197,7 +181,8 @@ describe("The Client class", function() {
             });
 
             it("Should get by id", function() {
-                expect(client.getMessagePart(responses.message1.parts[1].id)).toBe(message.parts[1]);
+                var part = message.findPart(part => part.mimeType === responses.message1.parts[1].mime_type);
+                expect(client.getMessagePart(responses.message1.parts[1].id)).toBe(part);
             });
 
             it("Should fail by id", function() {
@@ -267,8 +252,7 @@ describe("The Client class", function() {
                 client._clientReady();
                 conversation = client.createConversation({ participants: ["a"] });
                 message = conversation.createMessage("hey").send();
-                announcement = new layer.Core.Announcement({
-                    client: client,
+                announcement = new Layer.Core.Announcement({
                     parts: "Hey Ho"
                 });
                 client._addMessage(announcement);
@@ -300,7 +284,7 @@ describe("The Client class", function() {
                 identHash[responses.useridentity.id] = client.getIdentity(responses.useridentity.id);
                 identHash[userIdentity2.id] = userIdentity2;
                 identHash[serviceIdentity.id] = serviceIdentity;
-                identHash[membership.identity.id] = membership.identity;
+                identHash[membership1.identity.id] = membership1.identity;
 
                 expect(client._models.conversations).toEqual(cHash);
                 expect(client._models.messages).toEqual(mHash);
@@ -380,9 +364,9 @@ describe("The Client class", function() {
 
             it("Should call Message._createFromServer", function() {
                 // Setup
-                var tmp = layer.Core.Message.ConversationMessage._createFromServer;
+                var tmp = Layer.Core.Message.ConversationMessage._createFromServer;
                 var m = client.createConversation({ participants: ["a"]}).createMessage("a").send();
-                spyOn(layer.Core.Message.ConversationMessage, "_createFromServer").and.returnValue(m);
+                spyOn(Layer.Core.Message.ConversationMessage, "_createFromServer").and.returnValue(m);
                 var messageObj = JSON.parse(JSON.stringify(responses.message1));
 
                 // Run
@@ -390,21 +374,20 @@ describe("The Client class", function() {
 
                 // Posttest
                 expect(message).toBe(m);
-                expect(layer.Core.Message.ConversationMessage._createFromServer).toHaveBeenCalledWith(messageObj, client);
+                expect(Layer.Core.Message.ConversationMessage._createFromServer).toHaveBeenCalledWith(messageObj);
 
                 // Restore
-                layer.Core.Message.ConversationMessage._createFromServer = tmp;
+                Layer.Core.Message.ConversationMessage._createFromServer = tmp;
             });
 
             it("Should call Announcement._createFromServer", function() {
                 // Setup
-                var tmp = layer.Announcement._createFromServer;
-                var announcement = new layer.Core.Announcement({
-                client: client,
-                fromServer: JSON.parse(JSON.stringify(responses.announcement))
+                var tmp = Layer.Core.Announcement._createFromServer;
+                var announcement = new Layer.Core.Announcement({
+                    fromServer: JSON.parse(JSON.stringify(responses.announcement))
                 });
                 delete client._models.messages[announcement.id];
-                spyOn(layer.Announcement, "_createFromServer").and.returnValue(announcement);
+                spyOn(Layer.Core.Announcement, "_createFromServer").and.returnValue(announcement);
                 var messageObj = JSON.parse(JSON.stringify(responses.announcement));
 
                 // Run
@@ -412,19 +395,18 @@ describe("The Client class", function() {
 
                 // Posttest
                 expect(message).toBe(announcement);
-                expect(layer.Announcement._createFromServer).toHaveBeenCalledWith(messageObj, client);
+                expect(Layer.Core.Announcement._createFromServer).toHaveBeenCalledWith(messageObj);
 
                 // Restore
-                layer.Announcement._createFromServer = tmp;
+                Layer.Core.Announcement._createFromServer = tmp;
             });
 
             it("Should call Conversation._createFromServer", function() {
                 // Setup
-                var tmp = layer.Core.Conversation._createFromServer;
-                var c = new layer.Core.Conversation({
-                    client: client
+                var tmp = Layer.Core.Conversation._createFromServer;
+                var c = new Layer.Core.Conversation({
                 });
-                spyOn(layer.Core.Conversation, "_createFromServer").and.returnValue(c);
+                spyOn(Layer.Core.Conversation, "_createFromServer").and.returnValue(c);
                 var conversationObj = JSON.parse(JSON.stringify(responses.conversation1));
 
                 // Run
@@ -432,20 +414,19 @@ describe("The Client class", function() {
 
                 // Posttest
                 expect(conversation).toBe(c);
-                expect(layer.Core.Conversation._createFromServer).toHaveBeenCalledWith(conversationObj, client);
+                expect(Layer.Core.Conversation._createFromServer).toHaveBeenCalledWith(conversationObj);
 
                 // Restore
-                layer.Core.Conversation._createFromServer = tmp;
+                Layer.Core.Conversation._createFromServer = tmp;
             });
 
             it("Should call Identity._createFromServer", function() {
                 // Setup
-                var tmp = layer.Core.Identity._createFromServer;
-                var identity = new layer.Core.Identity({
+                var tmp = Layer.Core.Identity._createFromServer;
+                var identity = new Layer.Core.Identity({
                     id: responses.useridentity.id,
-                    clientId: client.appId
                 });
-                spyOn(layer.Core.Identity, "_createFromServer").and.returnValue(identity);
+                spyOn(Layer.Core.Identity, "_createFromServer").and.returnValue(identity);
                 var identityObj = JSON.parse(JSON.stringify(responses.useridentity));
                 delete client._models.identities[identity.id];
 
@@ -454,20 +435,19 @@ describe("The Client class", function() {
 
                 // Posttest
                 expect(identity2).toBe(identity);
-                expect(layer.Core.Identity._createFromServer).toHaveBeenCalledWith(identityObj, client);
+                expect(Layer.Core.Identity._createFromServer).toHaveBeenCalledWith(identityObj);
 
                 // Restore
-                layer.Core.Identity._createFromServer = tmp;
+                Layer.Core.Identity._createFromServer = tmp;
             });
 
             it("Should call ServiceIdentity._createFromServer", function() {
                 // Setup
-                var tmp = layer.Core.Identity._createFromServer;
-                var identity = new layer.Core.Identity({
-                    id: layer.Core.Identity.prefixUUID + '/dohbot',
-                    clientId: client.appId
+                var tmp = Layer.Core.Identity._createFromServer;
+                var identity = new Layer.Core.Identity({
+                    id: Layer.Core.Identity.prefixUUID + '/dohbot',
                 });
-                spyOn(layer.Core.Identity, "_createFromServer").and.returnValue(identity);
+                spyOn(Layer.Core.Identity, "_createFromServer").and.returnValue(identity);
                 var identityObj = {
                     displayName: "dohbot",
                     id: "layer:///identities/dohbot"
@@ -478,36 +458,35 @@ describe("The Client class", function() {
 
                 // Posttest
                 expect(identity2).toBe(identity);
-                expect(layer.Core.Identity._createFromServer).toHaveBeenCalledWith(identityObj, client);
+                expect(Layer.Core.Identity._createFromServer).toHaveBeenCalledWith(identityObj);
 
                 // Restore
-                layer.Core.Identity._createFromServer = tmp;
+                Layer.Core.Identity._createFromServer = tmp;
             });
 
             it("Should call Membership._createFromServer", function() {
                 // Setup
-                var tmp = layer.Membership._createFromServer;
+                var tmp = Layer.Core.Membership._createFromServer;
                 var membershipObj = JSON.parse(JSON.stringify(responses.membership1));
 
-                var membership = new layer.Core.Membership({
+                var membership = new Layer.Core.Membership({
                     id: responses.membership1.id,
                     role: responses.membership1.role,
                     identity: userIdentity,
-                    clientId: client.appId
                 });
                 client._models.members = {};
 
-                spyOn(layer.Membership, "_createFromServer").and.returnValue(membership);
+                spyOn(Layer.Core.Membership, "_createFromServer").and.returnValue(membership);
 
                 // Run
                 var membership2 = client._createObject(membershipObj);
 
                 // Posttest
                 expect(membership2).toBe(membership);
-                expect(layer.Membership._createFromServer).toHaveBeenCalledWith(membershipObj, client);
+                expect(Layer.Core.Membership._createFromServer).toHaveBeenCalledWith(membershipObj);
 
                 // Restore
-                layer.Membership._createFromServer = tmp;
+                Layer.Core.Membership._createFromServer = tmp;
             });
 
             it("Should return null if type not recognized", function() {
@@ -519,11 +498,9 @@ describe("The Client class", function() {
 
             it("Should call _foldEvents on all conversations:add events", function() {
                 // Setup
-                var c1 = new layer.Core.Conversation({
-                    client: client
+                var c1 = new Layer.Core.Conversation({
                 });
-                var c2 = new layer.Core.Conversation({
-                    client: client
+                var c2 = new Layer.Core.Conversation({
                 });
                 client._delayedTriggers = [];
                 client._triggerAsync("conversations:a", {value: "a"});
@@ -545,16 +522,14 @@ describe("The Client class", function() {
                         ["conversations:add", jasmine.objectContaining({
                             conversations: [c2]
                         })]
-                    ], "conversations", client);
+                    ], "conversations");
             });
 
             it("Should call _foldEvents on all conversations:remove events", function() {
                 // Setup
-                var c1 = new layer.Core.Conversation({
-                    client: client
+                var c1 = new Layer.Core.Conversation({
                 });
-                var c2 = new layer.Core.Conversation({
-                    client: client
+                var c2 = new Layer.Core.Conversation({
                 });
                 client._triggerAsync("conversations:a", {value: "a"});
                 client._triggerAsync("conversations:b", {value: "b"});
@@ -575,7 +550,7 @@ describe("The Client class", function() {
                         ["conversations:remove", jasmine.objectContaining({
                             conversations: [c2]
                         })]
-                    ], "conversations", client);
+                    ], "conversations);
             });
 
             it("Should call _foldEvents on all messages:add events", function() {
@@ -603,7 +578,7 @@ describe("The Client class", function() {
                         ["messages:add", jasmine.objectContaining({
                             messages: [m2]
                         })]
-                    ], "messages", client);
+                    ], "messages");
             });
 
             it("Should call _foldEvents on all messages:remove events", function() {
@@ -631,13 +606,13 @@ describe("The Client class", function() {
                         ["messages:remove", jasmine.objectContaining({
                             messages: [m2]
                         })]
-                    ], "messages", client);
+                    ], "messages");
             });
 
             it("Should call _foldEvents on all identities:add events", function() {
                 // Setup
-                var i1 = new layer.Core.Identity({clientId: client.appId, userId: "a", id: "layer:///identities/a"});
-                var i2 = new layer.Core.Identity({clientId: client.appId, userId: "b", id: "layer:///identities/b"});
+                var i1 = new Layer.Core.Identity({userId: "a", id: "layer:///identities/a"});
+                var i2 = new Layer.Core.Identity({userId: "b", id: "layer:///identities/b"});
                 client._delayedTriggers = [];
                 client._triggerAsync("identities:a", {value: "a"});
                 client._triggerAsync("identities:b", {value: "b"});
@@ -658,13 +633,13 @@ describe("The Client class", function() {
                         ["identities:add", jasmine.objectContaining({
                             identities: [i2]
                         })]
-                    ], "identities", client);
+                    ], "identities");
             });
 
             it("Should call _foldEvents on all identities:remove events", function() {
                 // Setup
-                var i1 = new layer.Core.Identity({clientId: client.appId, userId: "a", id: "layer:///identities/a"});
-                var i2 = new layer.Core.Identity({clientId: client.appId, userId: "b", id: "layer:///identities/b"});
+                var i1 = new Layer.Core.Identity({userId: "a", id: "layer:///identities/a"});
+                var i2 = new Layer.Core.Identity({userId: "b", id: "layer:///identities/b"});
                 client._delayedTriggers = [];
                 client._triggerAsync("identities:a", {value: "a"});
                 client._triggerAsync("identities:b", {value: "b"});
@@ -685,7 +660,7 @@ describe("The Client class", function() {
                         ["identities:remove", jasmine.objectContaining({
                             identities: [i2]
                         })]
-                    ], "identities", client);
+                    ], "identities");
             });
         });
 
@@ -738,9 +713,8 @@ describe("The Client class", function() {
             it("Should reset identity data", function() {
                 // Setup
                 client._clientReady();
-                var serviceIdentity = new layer.Core.Identity({
-                    clientId: client.appId,
-                    id: "layer:///identities/2",
+                var serviceIdentity = new Layer.Core.Identity({
+                            id: "layer:///identities/2",
                     displayName: "ServiceIdentity"
                 });
 
@@ -792,7 +766,7 @@ describe("The Client class", function() {
 
             it("Should keep Conversations if they are in a Query and remove and destroy all others", function() {
                 // Setup
-                var query = client.createQuery({model: layer.Core.Query.Conversation});
+                var query = client.createQuery({model: Layer.Core.Query.Conversation});
                 var c1 = client.createConversation({ participants: ["a"] });
                 var c2 = client.createConversation({ participants: ["b"] });
                 var c3 = client.createConversation({ participants: ["c"] });
@@ -815,7 +789,7 @@ describe("The Client class", function() {
 
             it("Should handle immutable objects; keeping Conversations if they are in a Query and remove and destroy all others", function() {
                 // Setup
-                var query = client.createQuery({model: layer.Core.Query.Conversation});
+                var query = client.createQuery({model: Layer.Core.Query.Conversation});
                 var c1 = client.createConversation({ participants: ["a"] });
                 var c2 = client.createConversation({ participants: ["b"] });
                 var c3 = client.createConversation({ participants: ["c"] });
@@ -839,7 +813,7 @@ describe("The Client class", function() {
                 // Setup
                 var c = client.createConversation({ participants: ["a"] });
                 var query = client.createQuery({
-                    model: layer.Core.Query.Message,
+                    model: Layer.Core.Query.Message,
                     predicate: "conversation.id = '" + c.id + "'"
                 });
                 var m1 = c.createMessage("a").send();
@@ -873,7 +847,7 @@ describe("The Client class", function() {
                     participants: ["a","z"],
                     distinct: false
                 });
-                conversation.syncState = layer.Constants.SYNC_STATE.SYNCED;
+                conversation.syncState = Layer.Constants.SYNC_STATE.SYNCED;
             });
 
             afterEach(function() {
@@ -886,7 +860,7 @@ describe("The Client class", function() {
 
                 // Run
                 client._scheduleCheckAndPurgeCache(conversation);
-                jasmine.clock().tick(layer.Core.Client.CACHE_PURGE_INTERVAL + 1);
+                jasmine.clock().tick(Layer.Core.Client.CACHE_PURGE_INTERVAL + 1);
 
                 // Posttest
                 expect(client._runScheduledCheckAndPurgeCache).toHaveBeenCalledWith();
@@ -898,7 +872,7 @@ describe("The Client class", function() {
 
                 // Run
                 client._scheduleCheckAndPurgeCache(conversation);
-                jasmine.clock().tick(layer.Core.Client.CACHE_PURGE_INTERVAL + 1);
+                jasmine.clock().tick(Layer.Core.Client.CACHE_PURGE_INTERVAL + 1);
 
                 // Posttest
                 expect(client._runScheduledCheckAndPurgeCache).toHaveBeenCalledWith();
@@ -914,7 +888,7 @@ describe("The Client class", function() {
                 client._scheduleCheckAndPurgeCache(conversation);
                 jasmine.clock().tick(1);
                 client._scheduleCheckAndPurgeCache(conversation);
-                jasmine.clock().tick(layer.Core.Client.CACHE_PURGE_INTERVAL + 1);
+                jasmine.clock().tick(Layer.Core.Client.CACHE_PURGE_INTERVAL + 1);
 
                 // Posttest
                 expect(client._runScheduledCheckAndPurgeCache.calls.count()).toEqual(1);
@@ -936,7 +910,7 @@ describe("The Client class", function() {
 
             it("Should ignore unsaved objects", function() {
                 client._scheduleCheckAndPurgeCacheItems = [];
-                conversation.syncState = layer.Constants.SYNC_STATE.SAVING;
+                conversation.syncState = Layer.Constants.SYNC_STATE.SAVING;
                 client._scheduleCheckAndPurgeCacheAt = Date.now() + 10;
                 client._scheduleCheckAndPurgeCache(conversation);
                 expect(client._scheduleCheckAndPurgeCacheItems).toEqual([]);
@@ -1030,12 +1004,7 @@ describe("The Client class", function() {
         describe("The createTypingListener() method", function() {
             it("Should return a layer.TypingListener.TypingListener", function() {
                 var input = document.createElement("input");
-                expect(client.createTypingListener(input)).toEqual(jasmine.any(layer.TypingIndicators.TypingListener));
-            });
-
-            it("Should get a proper client ID property", function() {
-                var input = document.createElement("input");
-                expect(client.createTypingListener(input).clientId).toBe(client.appId);
+                expect(client.createTypingListener(input)).toEqual(jasmine.any(Layer.Core.TypingIndicators.TypingListener));
             });
 
             it("Should get a proper input property", function() {
@@ -1046,11 +1015,7 @@ describe("The Client class", function() {
 
         describe("The createTypingPublisher() method", function() {
             it("Should return a layer.TypingListener.TypingPublisher", function() {
-                expect(client.createTypingPublisher()).toEqual(jasmine.any(layer.TypingIndicators.TypingPublisher));
-            });
-
-            it("Should get a proper client ID", function() {
-                expect(client.createTypingPublisher().clientId).toBe(client.appId);
+                expect(client.createTypingPublisher()).toEqual(jasmine.any(Layer.Core.TypingIndicators.TypingPublisher));
             });
         });
 
@@ -1062,62 +1027,6 @@ describe("The Client class", function() {
                     paused: []
                 });
                 expect(client._typingIndicators.getState).toHaveBeenCalledWith('layer:///conversations/c11');
-            });
-        });
-
-        describe("The getClient() static method", function() {
-            it("Should get a registered client", function() {
-                var client = new layer.Core.Client({
-                    appId: "test1"
-                });
-                expect(layer.Core.Client.getClient("test1")).toBe(client);
-            });
-
-            it("Should not get an unregistered client", function() {
-                var client = new layer.Core.Client({
-                    appId: "test1"
-                });
-                expect(layer.Core.Client.getClient("test2")).toBe(null);
-            });
-        });
-
-        describe("The addListenerForNewClient() static method", function() {
-            beforeEach(function() {
-                layer.Util.defer.flush();
-            });
-
-            it("Should call callback each time a client is registered", function() {
-                var clients = [];
-                layer.Core.Client.addListenerForNewClient(function(client) {
-                    clients.push(client);
-                });
-
-                // Run
-                var client1 = new layer.Core.Client({appId: "1"});
-                var client2 = new layer.Core.Client({appId: "2"});
-                var client3 = new layer.Core.Client({appId: "3"});
-
-                // Posttest
-                layer.Util.defer.flush();
-                expect(clients).toEqual([client1, client2, client3]);
-
-                // Cleanup
-                layer.Core.Client.removeListenerForNewClient();
-            });
-
-            it("Should remove all listeners", function() {
-                var clients = [];
-                layer.Core.Client.addListenerForNewClient(function(client) {
-                    clients.push(client);
-                });
-                layer.Core.Client.removeListenerForNewClient();
-
-                // Run
-                var client1 = new layer.Core.Client({appId: "1"});
-
-                // Posttest
-                layer.Util.defer.flush();
-                expect(clients).toEqual([]);
             });
         });
 
@@ -1140,7 +1049,7 @@ describe("The Client class", function() {
         describe("The _triggerLogger() method", function() {
             it("Should not throw errors logging a message, messages, conversation or channels", function() {
                 expect(function() {
-                    var evt = new layer.Core.LayerEvent({
+                    var evt = new Layer.Core.LayerEvent({
                         messages: [client._createObject(responses.message1)],
                         message: client._createObject(responses.message1),
                         conversations: [client._createObject(responses.conversation1)],
@@ -1148,7 +1057,7 @@ describe("The Client class", function() {
                     }, 'something:done');
                     client.trigger('conversations:add', evt);
 
-                    var evt2 = new layer.Core.LayerEvent({
+                    var evt2 = new Layer.Core.LayerEvent({
                     }, 'something:done');
                     client.off(null, null, client.dbManager);
                     client.trigger('conversations:add', evt2);

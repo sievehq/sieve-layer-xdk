@@ -1,14 +1,17 @@
 /**
- * A List Item Mixin that add an `isSelected` property to a List.
+ * A List Item Mixin that adds an {@link #isSelected} property to a List.
  *
- * Also listens for `click` events to update the `selectedId` property,
- * and triggers a selection events.
- *
- * @class layer.UI.mixins.ListSelection
+ * @class Layer.UI.mixins.ListItemSelection
  */
 
 module.exports = {
   properties: {
+
+    /**
+     * Is this list item selected?
+     *
+     * @property {Boolean} [isSelected=false]
+     */
     isSelected: {
       type: Boolean,
       set(value) {
@@ -20,6 +23,19 @@ module.exports = {
   methods: {
     /**
      * MIXIN HOOK: Each time a an item's selection state changes, this will be called.
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'my-list-item': {
+     *       methods: {
+     *         onSelection(isSelected) {
+     *           console.log("Item ", item, " is now ", isSelected);
+     *         }
+     *       }
+     *     }
+     *   }
+     * });
      *
      * @method onSelection
      * @param {Boolean} isSelected

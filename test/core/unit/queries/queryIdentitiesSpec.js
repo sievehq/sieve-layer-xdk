@@ -12,14 +12,13 @@ describe("The IdentitiesQuery Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -30,9 +29,9 @@ describe("The IdentitiesQuery Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
 
@@ -48,7 +47,7 @@ describe("The IdentitiesQuery Class", function() {
 
         identity = client._createObject(responses.useridentity);
         query = client.createQuery({
-          model: layer.Core.Query.Identity
+          model: Layer.Core.Query.Identity
         });
 
         jasmine.clock().tick(1);
@@ -63,24 +62,24 @@ describe("The IdentitiesQuery Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     it("Should be an IdentitiesQuery", function() {
-      expect(query.constructor.prototype.model).toEqual(layer.Core.Query.Identity);
+      expect(query.constructor.prototype.model).toEqual(Layer.Core.Query.Identity);
     });
 
 
     describe("The _fetchData() method", function() {
         var query;
         beforeEach(function() {
-            var tmp = layer.Core.Query.prototype._run;
-            layer.Core.Query.prototype._run = function() {}
+            var tmp = Layer.Core.Query.prototype._run;
+            Layer.Core.Query.prototype._run = function() {}
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15
             });
-            layer.Core.Query.prototype._run = tmp;
+            Layer.Core.Query.prototype._run = tmp;
         });
 
         afterEach(function() {
@@ -143,7 +142,7 @@ describe("The IdentitiesQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15
             });
         });
@@ -171,7 +170,7 @@ describe("The IdentitiesQuery Class", function() {
 
           query.data = [i1.toObject(), i2.toObject()];
           query.dataType = "object";
-          query.model = layer.Core.Query.Identity;
+          query.model = Layer.Core.Query.Identity;
 
           // Run
           query._appendResults({
@@ -192,7 +191,7 @@ describe("The IdentitiesQuery Class", function() {
         var query;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15
             });
             query.data = [identity];
@@ -232,7 +231,7 @@ describe("The IdentitiesQuery Class", function() {
         var query, identity2;
         beforeEach(function() {
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15,
                 dataType: "object"
             });
@@ -245,7 +244,7 @@ describe("The IdentitiesQuery Class", function() {
         });
 
         it("Should not touch data array if dataType is object but item not in the data", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "displayName",
                 oldValue: 'Frodo',
                 newValue: 'FrodoTheDodo',
@@ -265,7 +264,7 @@ describe("The IdentitiesQuery Class", function() {
             // Setup
             query.dataType = "instance";
             var data = query.data = [identity];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "displayName",
                 oldValue: 'Frodo',
                 newValue: 'FrodoTheDodo',
@@ -280,7 +279,7 @@ describe("The IdentitiesQuery Class", function() {
         });
 
         it("Should change data array if dataType is object and item is in the data", function() {
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "displayName",
                 oldValue: 'Frodo',
                 newValue: 'FrodoTheDodo',
@@ -297,7 +296,7 @@ describe("The IdentitiesQuery Class", function() {
 
         it("Should trigger change event if the Identity is in the data", function() {
             var data = query.data = [identity.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "displayName",
                 oldValue: 'Frodo',
                 newValue: 'FrodoTheDodo',
@@ -324,7 +323,7 @@ describe("The IdentitiesQuery Class", function() {
 
         it("Should not trigger change event if Identity is NOT in the data", function() {
             var data = query.data = [identity.toObject()];
-            var evt = new layer.Core.LayerEvent({
+            var evt = new Layer.Core.LayerEvent({
                 property: "displayName",
                     oldValue: 'Frodo',
                     newValue: 'FrodoTheDodo',
@@ -350,7 +349,7 @@ describe("The IdentitiesQuery Class", function() {
                 display_name: "2"
             });
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15,
                 dataType: "object",
             });
@@ -462,7 +461,7 @@ describe("The IdentitiesQuery Class", function() {
                 display_name: "2"
             });
             query = client.createQuery({
-                model: layer.Core.Query.Identity,
+                model: Layer.Core.Query.Identity,
                 paginationWindow: 15,
                 dataType: "object",
             });

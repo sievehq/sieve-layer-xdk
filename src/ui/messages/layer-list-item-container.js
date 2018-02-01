@@ -1,7 +1,7 @@
-/**
+/* NOT SUPPORTED
  *
- * @class layer.UI.handlers.message.messageViewer
- * @extends layer.UI.components.Component
+ * @class Layer.UI.handlers.message.messageViewer
+ * @extends Layer.UI.Component
  */
 import { registerComponent } from '../components/component';
 
@@ -59,15 +59,7 @@ registerComponent('layer-list-item-container', {
   methods: {
 
     onAfterCreate() {
-      this.model.on('change', this.onRerender, this);
-    },
-
-    /**
-     *
-     * @method
-     */
-    onRender() {
-      this.onRerender();
+      this.model.on('message-type-model:change', this.onRerender, this);
     },
 
     onRerender() {
@@ -75,7 +67,7 @@ registerComponent('layer-list-item-container', {
       this.title = model.getTitle();
       this.description = model.getDescription();
       this.footer = model.getFooter();
-      this.classList[!this.title && !this.description && !this.footer ? 'add' : 'remove']('layer-card-no-metadata');
+      this.toggleClass('layer-card-no-metadata', !this.title && !this.description && !this.footer);
     },
   },
 });

@@ -2,7 +2,7 @@
  * Query class for running a Query on Channel Members
  *
  *      var membersQuery = client.createQuery({
- *        model: layer.Core.Query.Membership,
+ *        model: Layer.Core.Query.Membership,
  *        predicate: 'channel.id = "layer:///channels/UUID"'
  *      });
  *
@@ -21,12 +21,14 @@
  * Note that the `predicate` property is only supported for Messages and Membership, and only supports
  * querying by Channel.
  *
- * @class  layer.MembersQuery
- * @extends layer.Core.Query
+ * @class  Layer.Core.MembersQuery
+ * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import { logger } from '../../util';
+import { logger } from '../../utils';
 import Query from './query';
 
 const findChannelIdRegex = new RegExp(
@@ -85,7 +87,7 @@ class MembersQuery extends Query {
 
     const channelId = 'layer:///channels/' + predicateIds.uuid;
     if (!this._predicate) this._predicate = predicateIds.id;
-    const channel = this.client.getChannel(channelId);
+    const channel = client.getChannel(channelId);
 
     const newRequest = `channels/${predicateIds.uuid}/members?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -94,7 +96,7 @@ class MembersQuery extends Query {
     if ((!channel || channel.isSaved()) && newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'member_query_time',
         },
@@ -138,6 +140,6 @@ MembersQuery.MaxPageSize = 500;
 
 MembersQuery.prototype.model = Query.Membership;
 
-Root.initClass.apply(MembersQuery, [MembersQuery, 'MembersQuery']);
+Root.initClass.apply(MembersQuery, [MembersQuery, 'MembersQuery', Core.Query]);
 
 module.exports = MembersQuery;

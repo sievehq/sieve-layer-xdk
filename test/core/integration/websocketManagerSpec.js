@@ -1,11 +1,11 @@
 /* eslint-disable */
 describe("Websocket tests", function() {
-    var convId1 = layer.Core.Conversation.prefixUUID + layer.Util.generateUUID();
-    var convId2 = layer.Core.Conversation.prefixUUID + layer.Util.generateUUID();
-    var convId3 = layer.Core.Conversation.prefixUUID + layer.Util.generateUUID();
-    var messId1 = layer.Core.Message.prefixUUID + layer.Util.generateUUID();
-    var messId2 = layer.Core.Message.prefixUUID + layer.Util.generateUUID();
-    var messId3 = layer.Core.Message.prefixUUID + layer.Util.generateUUID();
+    var convId1 = Layer.Core.Conversation.prefixUUID + Layer.Utils.generateUUID();
+    var convId2 = Layer.Core.Conversation.prefixUUID + Layer.Utils.generateUUID();
+    var convId3 = Layer.Core.Conversation.prefixUUID + Layer.Utils.generateUUID();
+    var messId1 = Layer.Core.Message.prefixUUID + Layer.Utils.generateUUID();
+    var messId2 = Layer.Core.Message.prefixUUID + Layer.Utils.generateUUID();
+    var messId3 = Layer.Core.Message.prefixUUID + Layer.Utils.generateUUID();
     var sampleConv = {
       "type": "change",
       "counter": 1,
@@ -15,7 +15,7 @@ describe("Websocket tests", function() {
           "object": {
               "type": "Conversation",
               "id": convId1,
-              "url": layer.Core.Client.prototype.url + convId1.replace(/layer\:\/\//, "")
+              "url": Layer.Core.Client.prototype.url + convId1.replace(/layer\:\/\//, "")
           },
           "data": {
             "id": convId1,
@@ -42,7 +42,7 @@ describe("Websocket tests", function() {
           "object": {
               "type": "Message",
               id: messId2,
-              "url": layer.Core.Client.prototype.url + messId2.replace(/layer\:\/\//, "")
+              "url": Layer.Core.Client.prototype.url + messId2.replace(/layer\:\/\//, "")
           },
           "data": {
             "position": 15032697020,
@@ -81,12 +81,11 @@ describe("Websocket tests", function() {
         requests = jasmine.Ajax.requests;
         jasmine.clock().install();
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: "Client1"
         });
 
-        var identity = new layer.Core.Identity({
-          clientId: client.appId,
+        var identity = new Layer.Core.Identity({
           userId: "c",
           id: "layer:///identities/" + "c",
           firstName: "first",
@@ -97,7 +96,7 @@ describe("Websocket tests", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true
         });
         client.user = identity;
@@ -151,7 +150,7 @@ describe("Websocket tests", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("Should route events to the right handler", function() {
@@ -265,15 +264,13 @@ describe("Websocket tests", function() {
                 // Setup
                 var conv = client.getConversation(c1.id, false);
                 spyOn(conv, "_trigger");
-                var fred = new layer.Core.Identity({
+                var fred = new Layer.Core.Identity({
                     id: "layer:///identities/fred",
                     userId: "fred",
-                    client: client
                 });
-                var joe = new layer.Core.Identity({
+                var joe = new Layer.Core.Identity({
                     id: "layer:///identities/joe",
                     userId: "joe",
-                    client: client
                 });
 
                 // Pretest
@@ -619,7 +616,7 @@ describe("Websocket tests", function() {
                 "layer:///identities/b": "delivered",
                 "layer:///identities/c": "sent"
             };
-            expect(m1.readStatus).toEqual(layer.Constants.RECIPIENT_STATE.SOME);
+            expect(m1.readStatus).toEqual(Layer.Constants.RECIPIENT_STATE.SOME);
 
             // Run
             client.socketChangeManager._handlePatch({
@@ -646,7 +643,7 @@ describe("Websocket tests", function() {
                 "layer:///identities/b": "read",
                 "layer:///identities/c": "read"
             });
-            expect(m1.readStatus).toEqual(layer.Constants.RECIPIENT_STATE.ALL);
+            expect(m1.readStatus).toEqual(Layer.Constants.RECIPIENT_STATE.ALL);
         });
     });
 
@@ -761,12 +758,11 @@ describe("Websocket tests", function() {
                 client.getConversation(c1.id, false).destroy();
             }
 
-            var c = new layer.Core.Conversation({
+            var c = new Layer.Core.Conversation({
                 fromServer: {
                     id: c1.id,
                     participants: [{user_id: "a", id: "layer:///identities/a"}, {user_id: "b", id: "layer:///identities/b"}]
                 },
-                client: client
             });
 
             // Run
@@ -812,12 +808,11 @@ describe("Websocket tests", function() {
                 client.getConversation(c1.id, false).destroy();
             }
 
-            var c = new layer.Core.Conversation({
+            var c = new Layer.Core.Conversation({
                 fromServer: {
                     id: c1.id,
                     participants: [{user_id: "a", id: "layer:///identities/a"}, {user_id: "b", id: "layer:///identities/b"}]
                 },
-                client: client
             });
 
             // Run
@@ -866,12 +861,11 @@ describe("Websocket tests", function() {
                 client.getConversation(c1.id, false).destroy();
             }
 
-            var c = new layer.Core.Conversation({
+            var c = new Layer.Core.Conversation({
                 fromServer: {
                     id: c1.id,
                     participants: [{user_id: "a", id: "layer:///identities/a"}, {user_id: "b", id: "layer:///identities/b"}]
                 },
-                client: client
             });
 
             var m = client._createObject({

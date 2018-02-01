@@ -28,8 +28,8 @@ describe('Image Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -39,23 +39,20 @@ describe('Image Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
     client._clientAuthenticated();
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -63,17 +60,18 @@ describe('Image Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    ImageModel = layer.Core.Client.getMessageTypeModelClass("ImageModel");
+    ImageModel = Layer.Core.Client.getMessageTypeModelClass("ImageModel");
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    if (client) client.destroy();
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
+
   });
 
   describe("Model Tests", function() {
@@ -92,9 +90,11 @@ describe('Image Message Components', function() {
 
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(ImageModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+
+        expect(rootPart.mimeType).toEqual(ImageModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           title: "b",
           artist: "c",
           subtitle: "d",
@@ -115,9 +115,10 @@ describe('Image Message Components', function() {
         sourceUrl: "e",
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(ImageModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(ImageModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           source_url: "e"
         });
       });
@@ -132,14 +133,17 @@ describe('Image Message Components', function() {
       });
       model.generateMessage(conversation, function(message) {
         try {
-          expect(message.parts.length).toEqual(3);
-          expect(message.parts[0].mimeType).toEqual(ImageModel.MIMEType);
-          expect(JSON.parse(message.parts[0].body)).toEqual({
+          expect(message.parts.size).toEqual(3);
+          var rootPart = message.getRootPart();
+          var sourcePart = message.getPartsMatchingAttribute({role: "source"})[0];
+          var previewPart = message.getPartsMatchingAttribute({role: "preview"})[0];
+          expect(rootPart.mimeType).toEqual(ImageModel.MIMEType);
+          expect(JSON.parse(rootPart.body)).toEqual({
           });
-          expect(message.parts[1].mimeType).toEqual('image/png');
-          expect(message.parts[1].body).toBe(blob);
-          expect(message.parts[2].mimeType).toEqual('image/png');
-          expect(message.parts[2].body).toBe(blob);
+          expect(sourcePart.mimeType).toEqual('image/png');
+          expect(sourcePart.body).toBe(blob);
+          expect(previewPart.mimeType).toEqual('image/png');
+          expect(previewPart.body).toBe(blob);
           done();
         } catch(e) {
           done(e);
@@ -155,13 +159,17 @@ describe('Image Message Components', function() {
       });
       model.generateMessage(conversation, function(message) {
         try {
-          expect(message.parts.length).toEqual(2);
-          expect(message.parts[0].mimeType).toEqual(ImageModel.MIMEType);
-          expect(JSON.parse(message.parts[0].body)).toEqual({
+          expect(message.parts.size).toEqual(2);
+          var rootPart = message.getRootPart();
+          var sourcePart = message.getPartsMatchingAttribute({role: "source"})[0];
+          var previewPart = message.getPartsMatchingAttribute({role: "preview"})[0];
+          expect(rootPart.mimeType).toEqual(ImageModel.MIMEType);
+          expect(JSON.parse(rootPart.body)).toEqual({
             width: 128, height: 128,
           });
-          expect(message.parts[1].mimeType).toEqual('image/png');
-          expect(message.parts[1].body).toBe(blob);
+          expect(sourcePart.mimeType).toEqual('image/png');
+          expect(sourcePart.body).toBe(blob);
+          expect(previewPart).toBe(undefined);
          /* expect(message.parts[2].mimeType).toEqual('image/jpeg');
           expect(message.parts[2].body).toEqual(jasmine.any(Blob));*/
           done();
@@ -173,9 +181,9 @@ describe('Image Message Components', function() {
 
     it("Should instantiate a Model from a Message with metadata", function() {
       var blob = generateBlob(imgBase64);
-      var uuid1 = layer.Util.generateUUID();
-      var uuid2 = layer.Util.generateUUID();
-      var uuid3 = layer.Util.generateUUID();
+      var uuid1 = Layer.Utils.generateUUID();
+      var uuid2 = Layer.Utils.generateUUID();
+      var uuid3 = Layer.Utils.generateUUID();
       var m = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [{
@@ -201,7 +209,7 @@ describe('Image Message Components', function() {
       });
       var m = new ImageModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
 
       expect(m.title).toEqual("b");
@@ -228,7 +236,7 @@ describe('Image Message Components', function() {
       });
       var m = new ImageModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.title).toEqual("");
       expect(m.artist).toEqual("");
@@ -272,12 +280,14 @@ describe('Image Message Components', function() {
         subtitle: "d",
         sourceUrl: "e"
       });
+      model1.generateMessage(conversation);
       var model2 = new ImageModel({
         sourceUrl: "e"
       });
+      model2.generateMessage(conversation);
 
       expect(model1.getOneLineSummary()).toEqual("b");
-      expect(model2.getOneLineSummary()).toEqual("Picture");
+      expect(model2.getOneLineSummary()).toEqual("Picture sent");
     });
 
     it("Should get the correct url value", function() {
@@ -313,31 +323,40 @@ describe('Image Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
-      if (el) el.onDestroy();
+
+      if (el) el.destroy();
+      el = null;
     });
 
-    it("Should render sourceUrl alone as a chat bubble", function() {
+    it("Should render sourceUrl alone as a chat bubble", function(done) {
       var model = new ImageModel({
         sourceUrl: "https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png"
       });
       model.generateMessage(conversation, function(m) {
         message = m;
+        m.presend();
       });
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      CustomElements.takeRecords();
+      setTimeout(function() {
+        try {
+          // Message Viewer: gets the layer-card-width-any-width class
+          expect(el.classList.contains('layer-card-width-any-width')).toBe(true);
 
-      // Message Viewer: gets the layer-card-width-chat-bubble class
-      expect(el.classList.contains('layer-card-width-chat-bubble')).toBe(true);
+          // Container: hide metadata
+          expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(true);
 
-      // Container: hide metadata
-      expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(true);
-
-      // Message UI: contains anchor tag
-      expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
-      expect(el.nodes.ui.firstChild.src).toEqual('https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png');
+          // Message UI: contains anchor tag
+          expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
+          expect(el.nodes.ui.firstChild.src).toEqual('https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png');
+        } catch (e) {
+          done(e);
+          return;
+        }
+        done();
+      }, 100);
     });
 
     it("Should render source alone as a chat bubble", function(done) {
@@ -352,17 +371,17 @@ describe('Image Message Components', function() {
           el.client = client;
           el.message = message;
 
-          layer.Util.defer.flush();
+          Layer.Utils.defer.flush();
           setTimeout(function() {
             try {
-              // Message Viewer: gets the layer-card-width-chat-bubble class
-              expect(el.classList.contains('layer-card-width-chat-bubble')).toBe(true);
+              // Message Viewer: gets the layer-card-width-any-width class
+              expect(el.classList.contains('layer-card-width-any-width')).toBe(true);
 
               // Container: hide metadata
               expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(true);
 
-              // Message UI: contains anchor tag
-              expect(el.nodes.ui.firstChild.tagName).toEqual('CANVAS');
+              // Message UI: contains IMG tag
+              expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
               done();
             } catch(e) {
               done(e);
@@ -386,16 +405,17 @@ describe('Image Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
+      CustomElements.takeRecords()
 
       // Message Viewer: gets the layer-card-width-flex-width class
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
       // Container: show metadata
       expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(false);
-      expect(el.querySelector('.layer-card-title').innerHTML).toEqual('Picture here');
+      expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('Picture here');
 
-      // Message UI: contains anchor tag
+      // Message UI: contains image tag
       expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
       expect(el.nodes.ui.firstChild.src).toEqual('https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png');
     });
@@ -413,24 +433,25 @@ describe('Image Message Components', function() {
           el.client = client;
           el.message = message;
 
-          layer.Util.defer.flush();
+          Layer.Utils.defer.flush();
+          CustomElements.takeRecords()
 
-          setTimeout(function() {
-            try {
-              // Message Viewer: gets the layer-card-width-flex-width class
-              expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
+            setTimeout(function() {
+              try {
+                // Message Viewer: gets the layer-card-width-flex-width class
+                expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
-              // Container: show metadata
-              expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(false);
-              expect(el.querySelector('.layer-card-title').innerHTML).toEqual('Picture here');
+                // Container: show metadata
+                expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(false);
+                expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('Picture here');
 
-              // Message UI: contains anchor tag
-              expect(el.nodes.ui.firstChild.tagName).toEqual('CANVAS');
-              done();
-            } catch(e) {
-              done(e);
-            }
-          }, 200);
+                // Message UI: contains anchor tag
+                expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
+                done();
+              } catch (e) {
+                done(e);
+              }
+            }, 200);
         } catch(e) {
           done(e);
         }
@@ -443,7 +464,9 @@ describe('Image Message Components', function() {
     });
 
     it("Should open the image using the sourceUrl", function() {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
+
       var model = new ImageModel({
         sourceUrl: "https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png",
       });
@@ -452,15 +475,19 @@ describe('Image Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-url');
-      el.runAction({});
-      expect(el.showFullScreen).toHaveBeenCalledWith("https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png");
+      el._runAction({});
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith("https://s3.amazonaws.com/static.layer.com/sdk/sampleavatars/0.png");
+
+      // Restore
+      Layer.UI.UIUtils.showFullScreen = tmp;
     });
 
     it("Should open the link using Blob url", function(done) {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
       var blob = generateBlob(imgBase64);
 
       var model = new ImageModel({
@@ -472,15 +499,18 @@ describe('Image Message Components', function() {
 
           el.client = client;
           el.message = message;
-          layer.Util.defer.flush();
+          Layer.Utils.defer.flush();
 
           expect(model.actionEvent).toEqual('open-url');
-          el.runAction({});
-          expect(el.showFullScreen.calls.argsFor(0)[0]).toMatch(/^blob\:/);
+          el._runAction({});
+          expect(Layer.UI.UIUtils.showFullScreen.calls.argsFor(0)[0]).toMatch(/^blob\:/);
           done();
         } catch(e) {
           done(e);
         }
+
+        // Restore
+        Layer.UI.UIUtils.showFullScreen = tmp;
       });
     });
   });

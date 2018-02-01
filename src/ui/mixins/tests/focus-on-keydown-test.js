@@ -1,8 +1,8 @@
 describe("Focus On Keydown Mixin", function() {
   var called;
   beforeAll(function() {
-    layerUI.registerComponent('focus-on-keydown-test', {
-      mixins: [layerUI.mixins.FocusOnKeydown],
+    Layer.UI.registerComponent('focus-on-keydown-test', {
+      mixins: [Layer.UI.mixins.FocusOnKeydown],
       methods: {
         onKeyDown() {
 
@@ -16,11 +16,10 @@ describe("Focus On Keydown Mixin", function() {
   beforeEach(function() {
     jasmine.clock().install();
     called = false;
-    client = new layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -28,21 +27,20 @@ describe("Focus On Keydown Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('focus-on-keydown-test');
     testRoot.appendChild(el);
 
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {
     jasmine.clock().uninstall();
     client.destroy();
     document.body.removeChild(testRoot);
-    layer.Core.Client.removeListenerForNewClient();
+
   });
 
   beforeEach(function() {

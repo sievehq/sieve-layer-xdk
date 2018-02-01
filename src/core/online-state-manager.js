@@ -13,21 +13,22 @@
  * 4. Trigger events `connected` and `disconnected` to let the rest of the system know when we are/are not connected.
  *    NOTE: The Websocket manager will use that to reconnect its websocket, and resume its `getCounter` call every 30 seconds.
  *
- * NOTE: Apps that want to be notified of changes to online/offline state should see layer.Client's `online` event.
+ * NOTE: Apps that want to be notified of changes to online/offline state should see Layer.Core.Client's `online` event.
  *
  * NOTE: One iteration of this class treated navigator.onLine = false as fact.  If onLine is false, then we don't need to test
  * anything.  If its true, then this class verifies it can reach layer's servers.  However, https://code.google.com/p/chromium/issues/detail?id=277372 has replicated multiple times in chrome; this bug causes one tab of chrome to have navigator.onLine=false while all other tabs
  * correctly report navigator.onLine=true.  As a result, we can't rely on this value and this class must continue to poll the server while
  * offline and to ignore values from navigator.onLine.  Future Work: Allow non-chrome browsers to use navigator.onLine.
  *
- * @class  layer.OnlineStateManager
+ * @class  Layer.Core.OnlineStateManager
  * @private
- * @extends layer.Root
+ * @extends Layer.Core.Root
  *
  */
+import { client } from '../settings';
+import Core from './namespace';
 import Root from './root';
-import xhr from './xhr';
-import Util, { logger } from '../util';
+import Util, { logger, xhr } from '../utils';
 import { ACCEPT } from '../constants';
 import version from '../version';
 
@@ -37,13 +38,13 @@ class OnlineStateManager extends Root {
    *
    * An Application is expected to only have one of these.
    *
-   *      var onlineStateManager = new layer.OnlineStateManager({
+   *      var onlineStateManager = new Layer.Core.OnlineStateManager({
    *          socketManager: socketManager,
    *      });
    *
    * @method constructor
    * @param  {Object} options
-   * @param  {layer.Websockets.SocketManager} options.socketManager - A websocket manager to monitor for messages
+   * @param  {Layer.Core.Websockets.SocketManager} options.socketManager - A websocket manager to monitor for messages
    */
   constructor(options) {
     super(options);
@@ -187,7 +188,6 @@ class OnlineStateManager extends Root {
    */
   checkOnlineStatus(callback) {
     this._clearCheck();
-    const client = this.socketManager.client;
 
     logger.info('OnlineStateManager: Firing XHR for online check');
     this._lastCheckOnlineStatus = new Date();
@@ -266,7 +266,7 @@ OnlineStateManager.prototype.isClientReady = false;
 /**
  * A Websocket manager whose 'message' event we will listen to
  * in order to know that we are still online.
- * @type {layer.Websockets.SocketManager}
+ * @property {Layer.Core.Websockets.SocketManager}
  */
 OnlineStateManager.prototype.socketManager = null;
 
@@ -274,7 +274,7 @@ OnlineStateManager.prototype.socketManager = null;
  * Number of test requests we've been offline for.
  *
  * Will stop growing once the number is suitably large (10-20).
- * @type {Number}
+ * @property {Number}
  */
 OnlineStateManager.prototype.offlineCounter = 0;
 
@@ -285,37 +285,37 @@ OnlineStateManager.prototype.offlineCounter = 0;
  * to see if we are online again. This value determines the maximum wait; any higher value returned by exponential backoff
  * are ignored and this value used instead.
  * Value is measured in seconds.
- * @type {Number}
+ * @property {Number}
  */
 OnlineStateManager.prototype.maxOfflineWait = 60;
 
 /**
  * Minimum wait between tries in ms.
- * @type {Number}
+ * @property {Number}
  */
 OnlineStateManager.prototype.minBackoffWait = 100;
 
 /**
  * Time that the last successful message was observed.
- * @type {Date}
+ * @property {Date}
  */
 OnlineStateManager.prototype.lastMessageTime = null;
 
 /**
  * For debugging, tracks the last time we checked if we are online.
- * @type {Date}
+ * @property {Date}
  */
 OnlineStateManager.prototype._lastCheckOnlineStatus = null;
 
 /**
  * Are we currently online?
- * @type {Boolean}
+ * @property {Boolean}
  */
 OnlineStateManager.prototype.isOnline = false;
 
 /**
  * setTimeoutId for the next checkOnlineStatus() call.
- * @type {Number}
+ * @property {Number}
  */
 OnlineStateManager.prototype.onlineCheckId = 0;
 
@@ -326,7 +326,7 @@ OnlineStateManager.prototype.onlineCheckId = 0;
  * Measured in miliseconds. NOTE: Websocket has a separate ping which mostly makes
  * this one unnecessary.  May end up removing this one... though we'd keep the
  * ping for when our state is offline.
- * @type {Number}
+ * @property {Number}
  */
 OnlineStateManager.prototype.pingFrequency = 100 * 1000;
 
@@ -344,5 +344,5 @@ OnlineStateManager._supportedEvents = [
    */
   'disconnected',
 ].concat(Root._supportedEvents);
-Root.initClass.apply(OnlineStateManager, [OnlineStateManager, 'OnlineStateManager']);
+Root.initClass.apply(OnlineStateManager, [OnlineStateManager, 'OnlineStateManager', Core]);
 module.exports = OnlineStateManager;

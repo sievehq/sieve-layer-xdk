@@ -3,11 +3,10 @@ describe("List Item Mixin", function() {
   var el, testRoot, client;
   beforeEach(function() {
     jasmine.clock().install();
-    client = new layer.Core.Client({
-      appId: 'Fred'
+    client = new Layer.init({
+      appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
       displayName: 'Frodo is a Dodo',
@@ -15,22 +14,21 @@ describe("List Item Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-identity-item');
     testRoot.appendChild(el);
     el.item = client.user;
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(1000);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(10);
   });
 
   afterEach(function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
-    layer.Core.Client.removeListenerForNewClient();
+
   });
 
   describe("The customNodeAbove property", function() {
@@ -140,11 +138,8 @@ describe("List Item Mixin", function() {
   });
 
   describe("The innerNode property", function() {
-    it("Should point to our user data", function() {
-      expect(el.innerNode.childNodes[0].tagName).toEqual('LAYER-AVATAR');
-      expect(el.innerNode.childNodes[1].tagName).toEqual('LAYER-PRESENCE');
-      expect(el.innerNode.childNodes[2].tagName).toEqual('LABEL');
-      expect(el.innerNode.childNodes[3].tagName).toEqual('INPUT');
+    it("Should point to our wrapper node", function() {
+      expect(el.innerNode.parentNode).toBe(el);
     });
   });
 
@@ -171,6 +166,27 @@ describe("List Item Mixin", function() {
 
       el.lastInSeries = false;
       expect(el.classList.contains('layer-list-item-last')).toBe(false);
+    });
+  });
+
+  describe("The onReplaceableContentAdded method", function() {
+    it("Should propagate any propagateToChildren items to replacement children", function() {
+      el.destroy();
+      Layer.Utils.defer.flush();
+      var rightSide = document.createElement("div");
+      var avatar = document.createElement('avatar');
+      rightSide.appendChild(avatar);
+
+      el = document.createElement('layer-identity-item');
+      el.replaceableContent = {
+        identityRowRightSide: rightSide
+      };
+      testRoot.appendChild(el);
+      el.item = client.user;
+      Layer.Utils.defer.flush();
+
+      // Posttest
+      expect(avatar.item).toBe(client.user);
     });
   });
 });

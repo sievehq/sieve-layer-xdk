@@ -1,26 +1,28 @@
-import layerUI from '../base';
+import { ComponentsHash } from '../component-services';
+import { register } from './index';
 
 /**
  * Call this function to initialize all of the react components needed to handle the Layer UI for Web widgets.
  *
- * Before using this, please note that layer.UI.init() must be called prior to calling layerUI.adapters.react().
+ * Before using this, please note that Layer.UI.init() must be called prior to calling Layer.UI.adapters.react().
  *
  * Initialize with:
  *
  * ```
  * import React from 'react';
  * import ReactDom from 'react-dom';
- * const { ConversationPanel, ConversationList, UserList, Notifier } = layerUI.adapters.react(React, ReactDom);
+ * import '@layerhq/web-xdk/lib/ui/adapters/react';
+ * const { ConversationView, ConversationList, UserList, Notifier } = Layer.UI.adapters.react(React, ReactDom);
  * ```
  *
  * Calling this will expose the following React Components:
  *
- * * ConversationPanel: A wrapper around a layer.UI.components.ConversationPanel
- * * ConversationsList: A wrapper around a layer.UI.components.ConversationsListPanel
- * * IdentitiesList: A wrapper around a layer.UI.components.IdentitiesListPanel
- * * Notifier: A wrapper around a layer.UI.components.misc.Notifier
- * * SendButton: A wrapper around a layer.UI.components.SendButton
- * * FileUploadButton: A wrapper around a layer.UI.components.FileUploadButton
+ * * ConversationView: A wrapper around a Layer.UI.components.ConversationView
+ * * ConversationsList: A wrapper around a Layer.UI.components.ConversationListPanel
+ * * IdentitiesList: A wrapper around a Layer.UI.components.IdentityListPanel
+ * * Notifier: A wrapper around a Layer.UI.components.misc.Notifier
+ * * SendButton: A wrapper around a Layer.UI.components.SendButton
+ * * FileUploadButton: A wrapper around a Layer.UI.components.FileUploadButton
  *
  * You can then use:
  *
@@ -32,27 +34,34 @@ import layerUI from '../base';
  * }
  * ```
  *
- * To insure that LayerUI.init() is called before layerUI.adapters.react(), and each is only called once, we
+ * To insure that Layer.UI.init() is called before Layer.UI.adapters.react(), and each is only called once, we
  * recommend puttings this code in its own module:
  *
  * ```
  * import React, { Component, PropTypes } from 'react';
  * import ReactDom from 'react-dom';
- * import Layer from 'layer-websdk';
- * import * as LayerUI from 'layer-ui-web';
+ * import '@layerhq/web-xdk/lib/ui/adapters/react';
+ * import Layer from '@layerhq/web-xdk';
  *
- * LayerUI.init({
- *   appId: 'layer:///apps/staging/my-app-id',
- *   layer: Layer
+ * Layer.init({
+ *   appId: 'layer:///apps/staging/my-app-id'
  * });
- * const LayerUIWidgets = LayerUI.adapters.react(React, ReactDom);
+ * const LayerUIWidgets = Layer.UI.adapters.react(React, ReactDom);
  * module.exports = LayerUIWidgets;
  * ```
  *
  * Now anywhere you need access to the LayerUIWidgets library can import this module and expect everything to
  * evaluate at the correct time, correct order, and only evaluate once.
  *
- * @class layer.UI.adapters.react
+ * ### Importing
+ *
+ * Not included with the standard build. To import:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/adapters/react';
+ * ```
+ *
+ * @class Layer.UI.adapters.react
  * @singleton
  * @param {Object} React - Pass in the reactJS library
  * @param {Object} ReactDom - Pass in the ReactDom library
@@ -63,9 +72,9 @@ function initReact(React, ReactDom) {
   libraryResult = {};
 
   // Gather all UI Components flagged as Main Components; other components don't require special React Components for direct use.
-  Object.keys(layerUI.components)
+  Object.keys(ComponentsHash)
   .forEach((componentName) => {
-    const component = layerUI.components[componentName];
+    const component = ComponentsHash[componentName];
 
     // Get the camel case Component name
     const className = (componentName.substring(0, 1).toUpperCase() +
@@ -85,21 +94,27 @@ function initReact(React, ReactDom) {
             if (typeof value === 'function' && !value.replaceableIsSetup) {
               this.replaceableContent[nodeName] = (widget, parent) => {
                 let result = value(widget);
-                if (result && !(result instanceof HTMLElement)) {
+                if (result) {
+                  if (typeof result === 'string') {
+                    return result;
+                  } else if (!(result instanceof HTMLElement)) {
 
-                  // React does bad stuff if you give it a component without children to ReactDom.render()
-                  if (!result.props.children) {
-                    result = React.createElement('div', null, result);
+                    // React does bad stuff if you give it a component without children to ReactDom.render()
+                    if (!result.props.children) {
+                      result = React.createElement('div', null, result);
+                    }
+
+                    // Render it
+                    const tmpNode = parent || document.createElement('div');
+                    widget.addEventListener('layer-widget-destroyed', () => ReactDom.unmountComponentAtNode(tmpNode));
+                    return ReactDom.render(result, tmpNode);
+                  } else {
+                    return result;
                   }
-
-                  // Render it
-                  const tmpNode = parent || document.createElement('div');
-                  widget.addEventListener('layer-widget-destroyed', () => ReactDom.unmountComponentAtNode(tmpNode));
-                  return ReactDom.render(result, tmpNode);
-                } else {
-                  return result;
                 }
               };
+            } else {
+              this.replaceableContent[nodeName] = value;
             }
           });
         }
@@ -109,6 +124,8 @@ function initReact(React, ReactDom) {
        * On mounting, copy in all properties, and optionally setup a Query.
        *
        * Delay added to prevent Webcomponents property setters from being blown away in safari and firefox
+       *
+       * @method componentDidMount
        */
       componentDidMount() {
         this.node.componentDidMount = true;
@@ -149,11 +166,13 @@ function initReact(React, ReactDom) {
 
       /**
        * Copy all properties into the dom node, but never let React recreate this widget.
+       *
+       * @method shouldComponentUpdate
        */
       shouldComponentUpdate(nextProps) {
         // Get the properties/attributes that match those used in this.props
         const props = component.properties.filter(property =>
-          this.props[property.propertyName] !== undefined || this.props[property.attributeName] !== undefined);
+          nextProps[property.propertyName] !== undefined || nextProps[property.attributeName] !== undefined);
 
         // Set the webcomponent properties if they have changed
         props.forEach((propDef) => {
@@ -171,6 +190,13 @@ function initReact(React, ReactDom) {
         return false;
       }
 
+      /**
+       * If the property type is HTMLElement, assume the value is a function that generates React Components, or it IS a React Component that need to be wrapped in an HTMLElement and set as the property value.
+       *
+       * @method handleReactDom
+       * @param {Object} propDef
+       * @param {Function|Object} value
+       */
       handleReactDom(propDef, value) {
         if (!this.layerUIGeneratedNodes) this.layerUIGeneratedNodes = {};
 
@@ -199,6 +225,11 @@ function initReact(React, ReactDom) {
       }
 
 
+      /**
+       * Render method should only be called once and creates the React element with the webcomponent.
+       *
+       * @method render
+       */
       render() {
         return React.createElement(componentName, {
           ref: (node) => { this.node = node; },
@@ -212,4 +243,4 @@ function initReact(React, ReactDom) {
 }
 
 module.exports = initReact;
-layerUI.addAdapter('react', initReact);
+register('react', initReact);

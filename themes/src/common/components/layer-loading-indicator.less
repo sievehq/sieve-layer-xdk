@@ -1,0 +1,46 @@
+/* Animation */
+@-webkit-keyframes layer-loader {
+  to { -webkit-transform: rotate(360deg); }
+}
+@keyframes layer-loader {
+  to { transform: rotate(360deg); }
+}
+
+/* Parent Nodes */
+.layer-load-indicator {
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+
+  .layer-replaceable-inner {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 15px 0px;
+  }
+}
+
+
+layer-loading-indicator {
+  display: block;
+  margin: 15px 0px;
+  width: 50px;
+  height: 50px;
+
+  & > div {
+    border-top-color: @loading-indicator-color1;
+    border-right-color: @loading-indicator-color1;
+    border-bottom-color: @loading-indicator-color2;
+    border-left-color: @loading-indicator-color2;
+    box-sizing: border-box;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: transparent;
+    border-width: 4px;
+    border-style: solid;
+
+    -webkit-animation: layer-loader 1.2s infinite linear;
+    animation: layer-loader 1.2s infinite linear;
+  }
+}

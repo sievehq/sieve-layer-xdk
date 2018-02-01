@@ -19,7 +19,7 @@ describe("The XHR Module", function() {
     it("Should send a proper xhr GET request", function() {
 
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             url: "/ho",
             method: "GET",
             data: {
@@ -44,7 +44,7 @@ describe("The XHR Module", function() {
 
     it("Should send GET request as default type", function() {
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             url: "/ho",
             data: {
                 a: "b",
@@ -60,7 +60,7 @@ describe("The XHR Module", function() {
     it("Should send a proper xhr POST request", function() {
 
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             method: "POST",
             url: "/ho",
             data: {
@@ -86,7 +86,7 @@ describe("The XHR Module", function() {
         var result, response = responses.error1;
 
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             url: "ho",
             data: {
                 a: "b",
@@ -118,7 +118,7 @@ describe("The XHR Module", function() {
             };
 
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             url: "ho",
             data: {
                 a: "b",
@@ -152,7 +152,7 @@ describe("The XHR Module", function() {
             };
 
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             url: "ho",
             data: {
                 a: "b",
@@ -188,7 +188,7 @@ describe("The XHR Module", function() {
 
     it("Should pass in the timeout property", function() {
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             url: "ho",
             data: {
                 a: "b",
@@ -204,7 +204,7 @@ describe("The XHR Module", function() {
         var result, response = responses.error1;
 
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             url: "ho",
             data: {
                 a: "b",
@@ -230,7 +230,7 @@ describe("The XHR Module", function() {
         var result;
 
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             url: "ho",
             data: {
                 a: "b",
@@ -257,7 +257,7 @@ describe("The XHR Module", function() {
         var result;
 
         // Run test
-        layer.xhr({
+        Layer.Utils.xhr({
             url: "ho",
             data: {
                 a: "b",

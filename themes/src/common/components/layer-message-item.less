@@ -121,59 +121,18 @@ layer-message-list {
     .layer-message-row {
       margin-bottom: 2px;
       margin-top: 2px;
-    }
-
-    /* The Message Content refers to the image, text or other content, and ommits any information about
-      * sender, date, status, etc... */
-    .layer-message-item-content {
-      display: inline-block;
-    }
-    /* Only text-plain messages get the full-on chat bubble treatment; so make sure they get suitable padding
-      * between text and bubble borders.
-      */
-    layer-message-text-plain .layer-message-text {
-      padding: 8px 12px;
-    }
-
-    /* Give all messages the basic bubble treatment */
-    layer-message-text-plain .layer-message-text, layer-message-image canvas, layer-message-video video {
-      border-radius: @message-item-border-radius;
-    }
-
-    .layer-message-text-plain-after-text {
-      margin-top: 6px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end; /* Align avatar with Message Viewer */
     }
   }
 
-  /* Styling for content from Text Processor's afterText properties */
-  .layer-parsed-image {
-    height: 200px;
-  }
-
-  &.layer-message-preview .layer-list-item {
-    .layer-message-text, layer-message-image canvas, layer-message-video video {
-      opacity: 0.5;
-    }
-  }
-
-
-  /*
-  * Custom formatting for Messages received by the session owner.
-  */
-  layer-message-item-received {
-    /* Apply the chat participant text colors, and assign that color to any links to avoid blue-on-blue type scenarios. */
-    layer-message-text-plain .layer-message-text {
-      color: @message-item-bubble-received-color;
-      background-color: @message-item-bubble-received-background-color;
-
-      a, a:visited, a:focus, a:active {
-        color: @message-item-bubble-received-color;
-      }
-    }
+   .layer-message-row {
+    flex-grow: 1;
   }
 
   /* Left/Right panel layout */
-  .layer-message-item {
+  .layer-message-item:not(.layer-message-item-hide-replaceable-content) {
     .layer-message-left-side:not(.layer-replaceable-content-empty), .layer-message-right-side:not(.layer-replaceable-content-empty) {
       display: flex;
       flex-direction: row;
@@ -222,11 +181,6 @@ layer-message-list {
   * Custom formatting for Messages sent by the session owner.
   */
   layer-message-item-sent .layer-list-item {
-    layer-message-text-plain .layer-message-text, layer-message-image canvas, layer-message-video video {
-      color: @message-item-bubble-text-sent-color;
-      margin: 0px;
-    }
-
     .layer-message-footer {
       text-align: right;
     }
@@ -247,6 +201,13 @@ layer-message-list {
       justify-content: center;
       padding: 8px 0px;
     }
+
+    .layer-message-item-main {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+
     layer-message-viewer {
       background-color: transparent;
       color: @message-item-status-color;
@@ -256,8 +217,13 @@ layer-message-list {
         background-color: transparent;
       }
 
-      layer-text-view {
-        padding: 4px 0px;
+      layer-text-message-view {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+
+      &.layer-status-message-view {
+        padding: 0px 4px;
       }
     }
   }

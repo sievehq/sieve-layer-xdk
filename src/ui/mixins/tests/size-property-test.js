@@ -1,10 +1,16 @@
 describe("Size Property Mixin", function() {
   var called;
   beforeAll(function() {
-    layerUI.registerComponent('size-property-test', {
-      mixins: [layerUI.mixins.SizeProperty],
-      methods: {
-      }
+    Layer.UI.registerComponent('size-property-test', {
+      mixins: [Layer.UI.mixins.SizeProperty],
+      properties: {
+        size: {
+          value: 'largish'
+        },
+        supportedSizes: {
+          value: ['smallish', 'mediumish', 'largish'],
+        },
+      },
     });
   });
 
@@ -13,11 +19,10 @@ describe("Size Property Mixin", function() {
   beforeEach(function() {
     jasmine.clock().install();
     called = false;
-    client = new layer.Core.Client({
+    client = Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -25,24 +30,35 @@ describe("Size Property Mixin", function() {
     });
     client._clientAuthenticated();
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('size-property-test');
     testRoot.appendChild(el);
 
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {
     jasmine.clock().uninstall();
-    client.destroy();
     document.body.removeChild(testRoot);
-    layer.Core.Client.removeListenerForNewClient();
+
+    if (client) client.destroy();
   });
 
-  it("Should have tests", function() {
-    expect(1).toBe(0);
+  it("Should initialize properly", function() {
+    expect(el.size).toBe('largish');
+    expect(el.className).toEqual('layer-size-largish');
+  });
+
+  it("Should change properly", function() {
+    el.size = "mediumish";
+    expect(el.className).toEqual('layer-size-mediumish');
+  });
+
+  it("Should reject invalid sizes", function() {
+    el.size = "frodo";
+    expect(el.size).toEqual("largish");
+    expect(el.className).toEqual('layer-size-largish');
   });
 });

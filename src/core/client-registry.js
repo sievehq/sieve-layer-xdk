@@ -4,11 +4,11 @@
  * Provides a global utility that can be required by all modules for accessing
  * the client.
  *
- * @class  layer.ClientRegistry
+ * @class  Layer.Core.ClientRegistry
  * @private
  */
 
-import { defer } from '../util';
+import { defer } from '../utils';
 
 const registry = {};
 const listeners = [];
@@ -17,7 +17,7 @@ const listeners = [];
  * Register a new Client; will destroy any previous client with the same appId.
  *
  * @method register
- * @param  {layer.Client} client
+ * @param  {Layer.Core.Client} client
  */
 function register(client) {
   const appId = client.appId;
@@ -33,7 +33,7 @@ function register(client) {
  * Removes a Client.
  *
  * @method unregister
- * @param  {layer.Client} client
+ * @param  {Layer.Core.Client} client
  */
 function unregister(client) {
   if (registry[client.appId]) delete registry[client.appId];
@@ -44,7 +44,7 @@ function unregister(client) {
  *
  * @method get
  * @param  {string} appId
- * @return {layer.Client}
+ * @return {Layer.Core.Client}
  */
 function get(appId) {
   return registry[appId] || null;
@@ -59,7 +59,7 @@ function getAll() {
  *
  * @method addListener
  * @param {Function} listener
- * @param {layer.Client} listener.client
+ * @param {Layer.Core.Client} listener.client
  */
 function addListener(listener) {
   listeners.push(listener);
@@ -69,8 +69,9 @@ function addListener(listener) {
  * Remove a registered listener or all listeners.
  *
  * If called with no arguments or null arguments, removes all listeners.
+ *
  * @method removeListener
- * @param {Function}
+ * @param {Function} listener
  */
 function removeListener(listener) {
   if (listener) {

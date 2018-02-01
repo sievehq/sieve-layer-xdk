@@ -1,24 +1,18 @@
 /**
  * A List Mixin that provides common list patterns
  *
- * @class layer.UI.mixins.List
- * @mixin layerUI.mixins.HasQuery
+ * @class Layer.UI.mixins.List
+ * @mixin Layer.UI.mixins.HasQuery
+ * @mixin Layer.UI.mixins.Throttler
  */
+import { client } from '../../settings';
 import Layer from '../../core';
-import Util from '../../util';
-import { animatedScrollTo, components } from '../base';
+import Util, { defer } from '../../utils';
+import { animatedScrollTo } from '../ui-utils';
 import { registerComponent } from '../components/component';
 import HasQuery from './has-query';
 import Throttler from './throttler';
 
-// Shallow array comparison test
-function isEqual(arr1, arr2) {
-  if (arr1.length !== arr2.length) return false;
-  for (let i = 0; i < arr1.length; i++) {
-    if (arr1[i] !== arr2[i]) return false;
-  }
-  return true;
-}
 
 module.exports = {
   mixins: [HasQuery, Throttler],
@@ -34,40 +28,29 @@ module.exports = {
       value: true,
     },
 
-    /**
-     * Set/get state related to whether the Query data is loading data from the server.
-     *
-     * This is managed by the app, and is updated any time the layer.Core.Query changes state.
-     *
-     * You could set this as well if you need to indicate some activity outside of the layer.Core.Query:
-     *
-     * ```
-     * widget.isDataLoading = true;
-     * ```
-     *
-     * @property {Boolean} [isDataLoading=false]
-     */
+    // Redefined from Layer.UI.mixins.ListLoadIndicator because that mixin is not gaurenteed to be present
     isDataLoading: {},
 
     /**
      * Any time we are about to render an object, call any provided onRenderListItem function to see if there
-     * are nodes to be inserted before/after the User Item.
+     * are nodes to be inserted before/after the Item.
      *
      * ```javascript
-     * userList.onRenderListItem = function(widget, dataArray, index, isTopItemNew) {
-     *     var conversation = widget.item;
-     *     var priorConversation = dataArray[index - 1];
-     *     if (index > 0 && conversation.metadata.category !== priorConversation.metadata.category) {
+     * listWidget.onRenderListItem = function(widget, dataArray, index, isTopItemNew) {
+     *     var item = widget.item;
+     *     var priorItem = dataArray[index - 1];
+     *     if (index > 0 && item.metadata.category !== priorItem.metadata.category) {
      *        widget.customNodeAbove = '<div class="my-separator">' + widget.user.metadata.category + '</div>';
      *     }
      * });
      * ```
      *
-     * Typical actions on receiving a widget is to set its customNodeAbove and/or customNodeBelow to either a DOM node or an HTML String.
+     * Typical actions for this handler is, on receiving a widget,
+     * to set its customNodeAbove and/or customNodeBelow to either a DOM node or an HTML String.
      *
      * @property {Function} [onRenderListItem=null]      Function to call on each rendered item.
-     * @property {layer.Root} onRenderListItem.widget    Current user/message/conversation/list-item widget that has been created from the Query.
-     * @property {layer.Root[]} onRenderListItem.items   Full set of users/messages/conversations have been/will be rendered
+     * @property {Layer.Core.Root} onRenderListItem.widget    Current user/message/conversation/list-item widget that has been created from the Query.
+     * @property {Layer.Core.Root[]} onRenderListItem.items   Full set of users/messages/conversations have been/will be rendered
      * @property {Number} onRenderListItem.index         Index of the user/message/conversation in the items array
      * @property {Boolean} onRenderListItem.isTopItemNew If the top item is index 0, and its newly added rather than just affected by changes
      *           around it, this is often useful to know.
@@ -76,15 +59,8 @@ module.exports = {
       type: Function,
     },
 
-    /**
-     * How many items to page in each time we page the Query.
-     *
-     * @property {Number} [pageSize=50]
-     */
-    pageSize: {
-      value: 50,
-    },
-
+    // additional behaviors on top of Layer.UI.mixins.StateManager for propagating state changes
+    // to List Items
     state: {
       set(newState) {
         Array.prototype.slice.call(this.childNodes).forEach((node) => {
@@ -94,12 +70,18 @@ module.exports = {
     },
 
     /**
-     * String, Regular Expression or Function for filtering Conversations.
+     * String, Regular Expression or Function for filtering items that are in {@link Layer.Core.Query#data}.
      *
-     * Defaults to filtering by comparing input against things like Conversation.metadata.conversationName, or Identity.displayName, etc.
-     * Provide your own Function to change this behavior
+     * ```
+     * list.filter = function(item) {
+     *    return isGood(item); // return true to show, false to hide
+     * };
+     * ```
      *
-     * @property {String|RegEx|Function} [filter='']
+     * Note that this is for quick local searches of items; to actually filter data that should not be shown
+     * to users, see {@link #queryFilter}
+     *
+     * @property {String/RegExp/Function} [filter='']
      */
     filter: {
       set(value) {
@@ -130,10 +112,8 @@ module.exports = {
       }
     },
 
-
-
     /**
-     * Any time we get a new Query assigned, wire it up.
+     * Any time a new Query is assigned, wire it up.
      *
      * @method _updateQuery
      * @private
@@ -187,12 +167,12 @@ module.exports = {
     /**
      * Scroll to the specified item.
      *
-     * Item is assumed to be a layer.Message, layer.Conversation, or whatever the core
+     * Item is assumed to be a Layer.Core.Message, Layer.Core.Conversation, or whatever the core
      * data set is that is in your list.  Note that this does not load the item from the server;
      * scrolling to an item not in the list will return `false`.
      *
      * @method scrollToItem
-     * @param {layer.Root} item
+     * @param {Layer.Core.Root} item
      * @param {Number} [animateSpeed=0]   Number of miliseconds of animated scrolling; 0 for no animation
      * @param {Function} [animateCallback] Function to call when animation completes
      * @return {Boolean}                  Returns true if operation was successful,
@@ -226,6 +206,9 @@ module.exports = {
 
     onRerender: {
       mode: registerComponent.MODES.BEFORE,
+      conditional: function onCanRerender() {
+        return Boolean(this.query);
+      },
       value(evt = {}) {
         if (this.query.isDestroyed) {
           this._renderResetData(evt);
@@ -250,7 +233,7 @@ module.exports = {
     },
 
     /**
-     * Generate a unique but consistent DOM ID for each layerUI.mixins.ListItem.
+     * Generate a unique but consistent DOM ID for each Layer.UI.mixins.ListItem.
      *
      * @method _getItemId
      * @param {String} itemId
@@ -267,7 +250,7 @@ module.exports = {
      * @private
      */
     _generateFragmentItem(item, fragment) {
-      const itemInstance = item instanceof Layer.Root ? item : this.client.getObject(item.id);
+      const itemInstance = item instanceof Layer.Root ? item : client.getObject(item.id);
       if (itemInstance) {
         const widget = this._generateItem(itemInstance);
 
@@ -304,7 +287,7 @@ module.exports = {
      * items should use `onRenderListItem`.
      *
      * @method
-     * @param {layerUI.mixins.ListItem} widget
+     * @param {Layer.UI.mixins.ListItem} widget
      */
     onGenerateListItem(widget) {
       // No-op
@@ -364,7 +347,7 @@ module.exports = {
      *
      * @method _processAffectedWidgetsCustom
      * @private
-     * @param {layerUI.mixins.ListItem} widgets
+     * @param {Layer.UI.mixins.ListItem} widgets
      * @param {Number} firstIndex - Index in the listData array of the first item in the widgets array
      * @param {Boolean} isTopItemNew - If the top item is index 0 and its a new item rather than an "affected" item, this is true.
      */
@@ -400,11 +383,12 @@ module.exports = {
     },
 
     /**
-     * The query has been reset of all data, perhaps its now got a new predicate.
+     * The query has been reset of all data (perhaps its now got a new predicate) or destroyed.
      *
      * Clear all data and list state
      *
      * @method _renderResetData
+     * @param {Layer.Core.LayerEvent} evt
      * @private
      */
     _renderResetData(evt) {
@@ -480,6 +464,10 @@ module.exports = {
 
       // isTopItemNew is true if there wasn't any prior data... data length == event length
       this._gatherAndProcessAffectedItems(affectedItems, evt.data.length === this.properties.query.data.length);
+
+      CustomElements.takeRecords();
+      defer.flush();
+
       this.isDataLoading = this.properties.query.isFiring;
       if (!evt.inRender) this.onRerender();
       if (this._renderPagedDataDone) this._renderPagedDataDone();
@@ -493,7 +481,7 @@ module.exports = {
      */
     _runFilter() {
       if (!this.filter) {
-        this.querySelectorAllArray('.layer-item-filtered').forEach(item => item.removeClass('layer-item-filtered'));
+        this.querySelectorAllArray('.layer-item-filtered').forEach(item => item.classList.remove('layer-item-filtered'));
       } else {
         for (let i = 0; i < this.childNodes.length; i++) {
           const listItem = this.childNodes[i];

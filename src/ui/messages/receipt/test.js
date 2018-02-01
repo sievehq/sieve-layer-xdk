@@ -1,12 +1,13 @@
 describe('Receipt Message Components', function() {
   var ReceiptModel, ProductModel, ChoiceModel, LocationModel;
-  var conversation;
+  var conversation, message;
   var testRoot;
+  var client;
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -16,23 +17,20 @@ describe('Receipt Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
     client._clientAuthenticated();
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -40,20 +38,20 @@ describe('Receipt Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    ReceiptModel = layer.Core.Client.getMessageTypeModelClass("ReceiptModel");
-    ProductModel = layer.Core.Client.getMessageTypeModelClass("ProductModel");
-    ChoiceModel = layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
-    LocationModel = layer.Core.Client.getMessageTypeModelClass("LocationModel");
+    ReceiptModel = Layer.Core.Client.getMessageTypeModelClass("ReceiptModel");
+    ProductModel = Layer.Core.Client.getMessageTypeModelClass("ProductModel");
+    ChoiceModel = Layer.Core.Client.getMessageTypeModelClass("ChoiceModel");
+    LocationModel = Layer.Core.Client.getMessageTypeModelClass("LocationModel");
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
     jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
+
   });
 
   describe("Model Tests", function() {
@@ -112,9 +110,15 @@ describe('Receipt Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      expect(message.parts.length).toEqual(6);
-      expect(message.parts[0].mimeType).toEqual(ReceiptModel.MIMEType);
-      expect(JSON.parse(message.parts[0].body)).toEqual({
+      expect(message.parts.size).toEqual(6);
+      var rootPart = message.getRootPart();
+      var choiceItems = message.getPartsMatchingAttribute({'role': 'options'});
+      var productItems = message.getPartsMatchingAttribute({'role': 'product-items'});
+      var shippingItems = message.getPartsMatchingAttribute({'role': 'shipping-address'});
+      var billingItems = message.getPartsMatchingAttribute({'role': 'billing-address'});
+
+      expect(rootPart.mimeType).toEqual(ReceiptModel.MIMEType);
+      expect(JSON.parse(rootPart.body)).toEqual({
         created_at: new Date("10/10/2010").toISOString(),
         currency: "EUR",
         discounts: {
@@ -132,35 +136,35 @@ describe('Receipt Message Components', function() {
         },
       });
 
-      expect(message.parts[1].mimeType).toEqual(ProductModel.MIMEType);
-      expect(JSON.parse(message.parts[1].body).name).toEqual("a");
+      expect(productItems[0].mimeType).toEqual(ProductModel.MIMEType);
+      expect(JSON.parse(productItems[0].body).name).toEqual("a");
 
-      expect(message.parts[2].mimeType).toEqual(ChoiceModel.MIMEType);
-      expect(JSON.parse(message.parts[2].body)).toEqual({
+      expect(choiceItems[0].mimeType).toEqual(ChoiceModel.MIMEType);
+      expect(JSON.parse(choiceItems[0].body)).toEqual({
         choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
       });
 
-      expect(message.parts[3].mimeType).toEqual(ChoiceModel.MIMEType);
-      expect(JSON.parse(message.parts[3].body)).toEqual({
+      expect(choiceItems[1].mimeType).toEqual(ChoiceModel.MIMEType);
+      expect(JSON.parse(choiceItems[1].body)).toEqual({
         choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
       });
 
-      expect(message.parts[4].mimeType).toEqual(LocationModel.MIMEType);
-      expect(JSON.parse(message.parts[4].body).title).toEqual("Shipping Address");
+      expect(shippingItems[0].mimeType).toEqual(LocationModel.MIMEType);
+      expect(JSON.parse(shippingItems[0].body).title).toEqual("Shipping Address");
 
-      expect(message.parts[5].mimeType).toEqual(LocationModel.MIMEType);
-      expect(JSON.parse(message.parts[5].body).title).toEqual("Billing Address");
+      expect(billingItems[0].mimeType).toEqual(LocationModel.MIMEType);
+      expect(JSON.parse(billingItems[0].body).title).toEqual("Billing Address");
     });
 
     it("Should instantiate a Model from a Message ", function() {
-      var uuid1 = layer.Util.generateUUID();
-      var uuid2 = layer.Util.generateUUID();
-      var uuid3 = layer.Util.generateUUID();
-      var uuid4 = layer.Util.generateUUID();
-      var uuid5 = layer.Util.generateUUID();
-      var uuid6 = layer.Util.generateUUID();
-      var uuid7 = layer.Util.generateUUID();
-      var m = conversation.createMessage({
+      var uuid1 = Layer.Utils.generateUUID();
+      var uuid2 = Layer.Utils.generateUUID();
+      var uuid3 = Layer.Utils.generateUUID();
+      var uuid4 = Layer.Utils.generateUUID();
+      var uuid5 = Layer.Utils.generateUUID();
+      var uuid6 = Layer.Utils.generateUUID();
+      var uuid7 = Layer.Utils.generateUUID();
+      var message = conversation.createMessage({
         id: 'layer:///messages/' + uuid1,
         parts: [
           {
@@ -237,8 +241,8 @@ describe('Receipt Message Components', function() {
         }]
       });
       var m = new ReceiptModel({
-        message: m,
-        part: m.parts[0]
+        message: message,
+        part: message.getRootPart(),
       });
 
       expect(m.createdAt).toEqual(new Date("10/10/2010"));
@@ -329,11 +333,11 @@ describe('Receipt Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     });
 

@@ -3,6 +3,7 @@ describe('Location Message Components', function() {
   var conversation;
   var testRoot;
   var styleNode;
+  var client;
   beforeAll(function() {
     styleNode = document.createElement('style');
     styleNode.innerHTML = 'layer-message-viewer > * {width: 300px;}';
@@ -15,8 +16,8 @@ describe('Location Message Components', function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -26,23 +27,20 @@ describe('Location Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
     client._clientAuthenticated();
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -51,16 +49,17 @@ describe('Location Message Components', function() {
     testRoot.style.height = '300px';
     testRoot.style.width = '300px';
 
-    LocationModel = layer.Core.Client.getMessageTypeModelClass("LocationModel");
+    LocationModel = Layer.Core.Client.getMessageTypeModelClass("LocationModel");
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    if (client) client.destroy();
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
+
   });
 
   describe("Model Tests", function() {
@@ -78,9 +77,10 @@ describe('Location Message Components', function() {
       });
 
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LocationModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(LocationModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           latitude: 37.7734858,
           longitude: -122.3916087,
           heading: 23.45,
@@ -106,9 +106,10 @@ describe('Location Message Components', function() {
       });
 
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LocationModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(message.getRootPart().mimeType).toEqual(LocationModel.MIMEType);
+        expect(JSON.parse(message.getRootPart().body)).toEqual({
           street1: "a",
           street2: "b",
           city: "c",
@@ -127,9 +128,10 @@ describe('Location Message Components', function() {
         longitude: -122.3916087,
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual(LocationModel.MIMEType);
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual(LocationModel.MIMEType);
+        expect(JSON.parse(rootPart.body)).toEqual({
           latitude: 37.7734858,
           longitude: -122.3916087,
         });
@@ -154,7 +156,7 @@ describe('Location Message Components', function() {
       });
       var m = new LocationModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.latitude).toEqual(37.7734858);
       expect(m.longitude).toEqual(-122.3916087);
@@ -176,7 +178,7 @@ describe('Location Message Components', function() {
       });
       var m = new LocationModel({
         message: m,
-        part: m.parts[0]
+        part: m.findPart(),
       });
       expect(m.latitude).toEqual(37.7734858);
       expect(m.longitude).toEqual(-122.3916087);
@@ -218,7 +220,7 @@ describe('Location Message Components', function() {
       expect(model3.getTitle()).toEqual("z");
 
       expect(model1.getDescription()).toEqual("a");
-      expect(model2.getDescription()).toEqual("a<br/>b<br/>c d, e");
+      expect(model2.getDescription()).toEqual("a\nb\nc d, e");
       expect(model3.getDescription()).toEqual("g");
 
       expect(model1.getFooter()).toEqual("");
@@ -233,14 +235,16 @@ describe('Location Message Components', function() {
         description: "a",
         title: "b",
       });
+      model1.generateMessage(conversation);
       var model2 = new LocationModel({
         latitude: 37.7734858,
         longitude: -122.3916087,
         description: "a",
       });
+      model2.generateMessage(conversation);
 
       expect(model1.getOneLineSummary()).toEqual("b");
-      expect(model2.getOneLineSummary()).toEqual("Location");
+      expect(model2.getOneLineSummary()).toEqual("Location sent");
     });
   });
 
@@ -252,7 +256,7 @@ describe('Location Message Components', function() {
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     });
 
@@ -267,11 +271,11 @@ describe('Location Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(el.nodes.ui.childNodes.length).toEqual(1);
       expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
-      expect(el.nodes.ui.firstChild.src).toEqual('http://maps.googleapis.com/maps/api/staticmap?size=300x300&language=en-US&key=undefined&zoom=16&markers=37.7734858,-122.3916087');
+      expect(el.nodes.ui.firstChild.src).toEqual('http://maps.googleapis.com/maps/api/staticmap?size=300x250&language=en-US&key=undefined&zoom=16&markers=37.7734858,-122.3916087');
    });
 
     it("Should show the top content based on the hideMap property", function() {
@@ -285,7 +289,7 @@ describe('Location Message Components', function() {
       el.client = client;
       el.message = message;
 
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el.nodes.ui.hideMap = false;
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
@@ -302,16 +306,17 @@ describe('Location Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       el.nodes.ui.hideMap = true;
-      expect(el.nodes.ui.classList.contains('layer-location-view-address-only')).toEqual(true);
+      expect(el.classList.contains('layer-location-message-view-address-only')).toEqual(true);
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
       expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(true);
     });
 
     it("Should open the map using lat/lon", function() {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
 
       var model = new LocationModel({
         latitude: 37.7734858,
@@ -322,17 +327,21 @@ describe('Location Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-map');
 
-      el.runAction({});
-      expect(el.showFullScreen).toHaveBeenCalledWith('https://www.google.com/maps/search/?api=1&query=37.7734858,-122.3916087&zoom=16');
+      el._runAction({});
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith('https://www.google.com/maps/search/?api=1&query=37.7734858,-122.3916087&zoom=16');
+
+      // Restore
+      Layer.UI.UIUtils.showFullScreen = tmp;
 
     });
 
     it("Should open the map using address", function() {
-      spyOn(el, "showFullScreen");
+      var tmp = Layer.UI.UIUtils.showFullScreen;
+      spyOn(Layer.UI.UIUtils, "showFullScreen");
 
       var model = new LocationModel({
         street1: "a",
@@ -347,16 +356,19 @@ describe('Location Message Components', function() {
       });
       el.client = client;
       el.message = message;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
       expect(model.actionEvent).toEqual('open-map');
 
-      var url = Layer.UI.messageActionHandlers['open-map'].call(el, {});
+      el._runAction({});
       var expectedUrl = 'http://www.google.com/maps/?q=';
       expectedUrl += escape(model.street1 + (model.street2 ? ' ' + model.street2 : '') + ' ' + `${model.city} ${model.administrativeArea}, ${model.postalCode} ${model.country}`);
 
-      el.runAction({});
-      expect(el.showFullScreen).toHaveBeenCalledWith(expectedUrl);
+      el._runAction({});
+      expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith(expectedUrl);
+
+      // Restore
+      Layer.UI.UIUtils.showFullScreen = tmp;
     });
   });
 });

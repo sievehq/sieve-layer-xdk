@@ -19,20 +19,18 @@ describe("The Client Queries Mixin", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = userIdentity = new Layer.Core.Identity({
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
         });
-        userIdentity2 = new layer.Core.Identity({
-            clientId: client.appId,
+        userIdentity2 = new Layer.Core.Identity({
             id: "layer:///identities/1",
             displayName: "UserIdentity",
             userId: '1'
@@ -40,11 +38,11 @@ describe("The Client Queries Mixin", function() {
 
           client.isTrustedDevice = true;
           delete client._models.identities['layer:///identities/Frodo'];
-          client.user = new layer.Core.Identity({
+          client.user = new Layer.Core.Identity({
               userId: client.userId,
               displayName: "Frodo2",
-              syncState: layer.Constants.SYNC_STATE.LOADING,
-              clientId: client.appId,
+              syncState: Layer.Constants.SYNC_STATE.LOADING,
+
 
           });
 
@@ -65,7 +63,7 @@ describe("The Client Queries Mixin", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -107,16 +105,14 @@ describe("The Client Queries Mixin", function() {
                   model: "Conversation"
               });
 
-              expect(query).toEqual(jasmine.any(layer.Core.Query));
-              expect(query.client).toBe(client);
+              expect(query).toEqual(jasmine.any(Layer.Core.Query));
               expect(query.model).toEqual("Conversation");
           });
 
           it("Should return a Query from QueryBuilder", function() {
-              var query = client.createQuery(layer.Core.QueryBuilder.conversations());
+              var query = client.createQuery(Layer.Core.QueryBuilder.conversations());
 
-              expect(query).toEqual(jasmine.any(layer.Core.Query));
-              expect(query.client).toBe(client);
+              expect(query).toEqual(jasmine.any(Layer.Core.Query));
               expect(query.model).toEqual("Conversation");
           });
 
@@ -138,8 +134,8 @@ describe("The Client Queries Mixin", function() {
         it("Should throw an error if an invalid id is passed in", function() {
             expect(function() {
                 client.getQuery(5);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
-            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toEqual(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(Layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toEqual(true);
         });
 
         it("Should return a Query if it exists", function() {

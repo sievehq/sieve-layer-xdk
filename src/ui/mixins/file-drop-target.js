@@ -1,35 +1,27 @@
-import ImageManager from 'blueimp-load-image/js/load-image';
-import 'blueimp-load-image/js/load-image-orientation';
-import 'blueimp-load-image/js/load-image-meta';
-import 'blueimp-load-image/js/load-image-exif';
-import Layer, { MessagePart } from '../../core';
-import { settings } from '../base';
-import normalizeSize from '../utils/sizing';
-import ImageModel from '../messages/image/layer-image-model';
-import FileModel from '../messages/file/layer-file-model';
-import CarouselModel from '../messages/carousel/layer-carousel-model';
-
-const Files = {};
-module.exports = Files;
-
-window.loadImage = ImageManager;
-
 /**
  * A helper mixin for any widget that wants to be a drop target for files.
  *
  * Must be mixed in with a Component that defines a `conversation` property.
  *
- *
- * @class layer.UI.mixins.FileDropTarget
+ * @class Layer.UI.mixins.FileDropTarget
  */
+import { client } from '../../settings';
+import ImageModel from '../messages/image/layer-image-message-model';
+import FileModel from '../messages/file/layer-file-message-model';
+import CarouselModel from '../messages/carousel/layer-carousel-message-model';
+
 module.exports = {
   properties: {
     /**
-     * By default, the Conversation View supports dropping Files from your file system to send them as Messages.
+     * By default, this widget supports dropping Files from your file system to send them as Messages.
      *
-     * You can turn this off by setting the Conversation View's `isDropTargetEnabled` to `false`.
+     * You can turn this off by setting this widget's `isDropTargetEnabled` to `false`:
      *
-     * @property {Boolean}
+     * ```
+     * widget.isDropTargetEnabled = false;
+     * ```
+     *
+     * @property {Boolean} isDropTargetEnabled
      */
     isDropTargetEnabled: {
       type: Boolean,
@@ -37,11 +29,13 @@ module.exports = {
     },
   },
   methods: {
+    // Wire up all of othe event handlers for being a drop target
     onCreate() {
-      this.properties.onDragOverBound = this.onDragOver.bind(this);
-      this.properties.onDragEndBound = this.onDragEnd.bind(this);
-      this.properties.onFileDropBound = this.onFileDrop.bind(this);
-      this.properties.ignoreDropBound = this.ignoreDrop.bind(this);
+      // TODO: this pattern sucks. Setup a utility that streamlines caching of these functions for later unsubscribing
+      this.properties.onDragOverBound = this._onDragOver.bind(this);
+      this.properties.onDragEndBound = this._onDragEnd.bind(this);
+      this.properties.onFileDropBound = this.onFileDrop.bind(this); // public
+      this.properties.ignoreDropBound = this._ignoreDrop.bind(this);
 
       // Tells the browser that we *can* drop on this target
       this.addEventListener('dragover', this.properties.onDragOverBound, false);
@@ -57,11 +51,7 @@ module.exports = {
       document.addEventListener('dragover', this.properties.ignoreDropBound, false);
     },
 
-    /**
-     * Destroy this component, in particular, remove any handling of any events.
-     *
-     * @method
-     */
+    // Remove all of the event handlers for being a drop target
     onDestroy() {
       this.removeEventListener('dragover', this.properties.onDragOverBound, false);
       this.removeEventListener('dragenter', this.properties.onDragOverBound, false);
@@ -86,7 +76,7 @@ module.exports = {
      * @method
      * @private
      */
-    ignoreDrop(evt) {
+    _ignoreDrop(evt) {
       if (!this.isDropTargetEnabled) return;
       if (evt.preventDefault) {
         evt.preventDefault();
@@ -101,7 +91,7 @@ module.exports = {
      * @method
      * @private
      */
-    onDragOver(evt) {
+    _onDragOver(evt) {
       if (!this.isDropTargetEnabled) return;
       this.classList.add('layer-file-drag-and-drop-hover');
       evt.preventDefault();
@@ -114,64 +104,109 @@ module.exports = {
      * @method
      * @private
      */
-    onDragEnd(evt) {
+    _onDragEnd(evt) {
       this.classList.remove('layer-file-drag-and-drop-hover');
     },
 
 
     /**
-     * On file drop, generate an array of Message Parts and pass it on to app.
+     * MIXIN HOOK: On file drop, generate a Layer.Core.MessageTypeModel to represent the file(s).
      *
-     * @method
-     * @private
+     * Provide a mixin to replace this with your own file drop behaviors:
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'my-widget-with-file-drop-mixin': {
+     *       methods: {
+     *         onFileDrop: {
+     *           mode: Layer.UI.registerComponent.MODES.OVERWRITE,
+     *           value: function(evt) {
+     *              if (!this.isDropTargetEnabled) return;
+     *              this._onDragEnd();
+     *
+     *              // stops the browser from redirecting off to the image.
+     *              evt.preventDefault();
+     *              evt.stopPropagation();
+     *
+     *              const dt = evt.dataTransfer;
+     *              const files = Array.prototype.filter.call(dt.files, file => file.type);
+     *              const MyCustomMessageModel = Layer.Core.Client.getMessageTypeModelClass('MyCustomMessageModel')
+     *              var model = new MyCustomMessageModel({ files: files });
+     *              model.generateMessage(this.conversation, message => message.send({
+     *                text: 'MyCustomMessage received',
+     *                title: `New Message from ${client.user.displayName}`,
+     *              }));
+     *           }
+     *         }
+     *       }
+     *     }
+     *   }
+     * });
+     * ```
+     *
+     * @method onFileDrop
+     * @param {Event} evt
+     * @param {Function} [callback]   Provided mostly for unit tests
      */
-    onFileDrop(evt) {
+    onFileDrop(evt, callback) {
       if (!this.isDropTargetEnabled) return;
-      this.onDragEnd();
+      this._onDragEnd();
 
       // stops the browser from redirecting off to the image.
-      if (evt.preventDefault) {
-        evt.preventDefault();
-        evt.stopPropagation();
-      }
+      evt.preventDefault();
+      evt.stopPropagation();
 
       const dt = evt.dataTransfer;
       const files = Array.prototype.filter.call(dt.files, file => file.type);
 
       if (files.length === 1) {
-        const model = this.processAttachment(files[0]);
-        model.generateMessage(this.conversation, message => message.send({
-          text: 'File received',
-          title: `New Message from ${model.getClient().user.displayName}`,
-        }));
+        const model = this._processAttachment(files[0]);
+        model.generateMessage(this.conversation, (message) => {
+          message.send({
+            text: 'File received',
+            title: `New Message from ${client.user.displayName}`,
+          });
+          if (callback) callback(message);
+        });
       } else {
-        const model = this.processAttachments(files);
-        model.generateMessage(this.conversation, message => message.send({
-          text: 'Carousel received',
-          title: `New Message from ${model.getClient().user.displayName}`,
-        }));
+        const model = this._processAttachments(files);
+        model.generateMessage(this.conversation, (message) => {
+          message.send({
+            text: 'Carousel received',
+            title: `New Message from ${client.user.displayName}`,
+          });
+          if (callback) callback(message);
+        });
       }
       return false;
     },
 
     /**
-     * Adds data to your message.
+     * Given an array of Files, generates a Carousel of File Messages or Image Messages.
      *
-     * Given an array of Message Parts, determines if it needs to generate image or video
-     * previews and metadata message parts
-     *
-     * @method processAttachments
-     * @param {layer.MessagePart[]} files    File Objects to turn into a carousel
+     * @method _processAttachments
+     * @param {File} files    File Objects to turn into a carousel
+     * @returns {Layer.Core.MessageTypeModel}
+     * @private
      */
-    processAttachments(files) {
+    _processAttachments(files) {
       const imageTypes = ['image/gif', 'image/png', 'image/jpeg', 'image/svg'];
       const nonImageParts = files.filter(file => imageTypes.indexOf(file.type) === -1);
       return new CarouselModel({
-        items: nonImageParts.length ? files.map(file => new FileModel({ source: file })) : files.map(file => new ImageModel({ source: file })),
+        items: nonImageParts.length ? files.map(file => new FileModel({ source: file, title: file.name })) : files.map(file => new ImageModel({ source: file, title: file.name })),
       });
     },
 
-    processAttachment(file) {
+    /**
+     * Given an single File, generates a File Message or Image Message.
+     *
+     * @method _processAttachments
+     * @param {File} files    File Objects to turn into a carousel
+     * @returns {Layer.Core.MessageTypeModel}
+     * @private
+     */
+    _processAttachment(file) {
       if (['image/gif', 'image/png', 'image/jpeg', 'image/svg'].indexOf(file.type) !== -1) {
         return new ImageModel({
           source: file,

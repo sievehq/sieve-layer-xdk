@@ -2,7 +2,7 @@
  * Query class for running a Query on Identities
  *
  *      var identityQuery = client.createQuery({
- *        model: layer.Core.Query.Identity
+ *        model: Layer.Core.Query.Identity
  *      });
  *
  *
@@ -16,9 +16,11 @@
  *
  *      query.destroy();
  *
- * @class  layer.IdentitiesQuery
- * @extends layer.Core.Query
+ * @class  Layer.Core.IdentitiesQuery
+ * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
 import Query from './query';
 
@@ -26,8 +28,8 @@ class IdentitiesQuery extends Query {
   _fetchData(pageSize) {
     // There is not yet support for paging Identities;  as all identities are loaded,
     // if there is a _nextDBFromId, we no longer need to get any more from the database
-    if (!this._nextDBFromId) {
-      this.client.dbManager.loadIdentities((identities) => {
+    if (!this._nextDBFromId && client.dbManager) {
+      client.dbManager.loadIdentities((identities) => {
         if (identities.length) this._appendResults({ data: identities }, true);
       });
     }
@@ -39,7 +41,7 @@ class IdentitiesQuery extends Query {
     if (newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'identity_query_time',
         },
@@ -84,6 +86,6 @@ IdentitiesQuery.MaxPageSize = 500;
 
 IdentitiesQuery.prototype.model = Query.Identity;
 
-Root.initClass.apply(IdentitiesQuery, [IdentitiesQuery, 'IdentitiesQuery']);
+Root.initClass.apply(IdentitiesQuery, [IdentitiesQuery, 'IdentitiesQuery', Core.Query]);
 
 module.exports = IdentitiesQuery;

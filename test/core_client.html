@@ -33,6 +33,7 @@
   <script type="text/javascript" src="core/unit/mixins/clientIdentitiesMixinSpec.js"></script>
   <script type="text/javascript" src="core/unit/mixins/clientQueriesMixinSpec.js"></script>
   <script type="text/javascript" src="core/unit/mixins/clientMessagesMixinSpec.js"></script>
+  <script type="text/javascript" src="core/unit/mixins/clientMessageTypeMixinSpec.js"></script>
   <script type="text/javascript" src="core/unit/mixins/clientConversationsMixinSpec.js"></script>
   <script type="text/javascript" src="core/unit/mixins/clientChannelsMixinSpec.js"></script>
   <script type="text/javascript" src="core/unit/mixins/clientMembersMixinSpec.js"></script>
@@ -53,7 +54,9 @@
     reporter.jasmineDone = function(a, b, c) {
       jasmineDone.call(reporter);
       if (jasmine.jsReport.passed) {
-        window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'core_models.html');
+        if (!location.search.match(/stop=true/)) {
+          window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'core_models.html');
+        }
       }
     };
     jasmineEnv.addReporter(reporter);

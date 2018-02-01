@@ -29,13 +29,12 @@ describe("The Client Authenticator Requests", function() {
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://duh.com"
         });
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: userId,
           id: "layer:///identities/" + userId,
           firstName: "first",
@@ -46,9 +45,9 @@ describe("The Client Authenticator Requests", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
         client._initComponents();
@@ -68,7 +67,7 @@ describe("The Client Authenticator Requests", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The sendSocketRequest() method", function() {
@@ -89,7 +88,7 @@ describe("The Client Authenticator Requests", function() {
                 body: "Hey!",
                 sync: {}
             });
-            expect(client.syncManager.request).toHaveBeenCalledWith(jasmine.any(layer.WebsocketSyncEvent));
+            expect(client.syncManager.request).toHaveBeenCalledWith(jasmine.any(Layer.Core.WebsocketSyncEvent));
         });
 
         it("Should create a SyncEvent with specified callback if sync is empty", function() {
@@ -494,7 +493,7 @@ describe("The Client Authenticator Requests", function() {
             var callback = jasmine.createSpy('callback');
             spyOn(client.syncManager, "request");
             client._syncXhr({url: "test"}, callback, 0);
-            expect(client.syncManager.request.calls.argsFor(0)[0] instanceof layer.XHRSyncEvent).toBe(true);
+            expect(client.syncManager.request.calls.argsFor(0)[0] instanceof Layer.Core.XHRSyncEvent).toBe(true);
             expect(client.syncManager.request.calls.argsFor(0)[0].url).toEqual("test");
         });
 
@@ -567,7 +566,7 @@ describe("The Client Authenticator Requests", function() {
             expect(headers).toEqual({
                 "hey-ho": "Doh",
                 "content-type": "application/json",
-                accept: "application/vnd.layer+json; version=2.0"
+                accept: "application/vnd.layer+json; version=3.0"
             });
         });
 
@@ -582,7 +581,7 @@ describe("The Client Authenticator Requests", function() {
             expect(headers).toEqual({
                 "hey-ho": "Doh",
                 "content-type": "application/json",
-                accept: "application/vnd.layer+json; version=2.0"
+                accept: "application/vnd.layer+json; version=3.0"
             });
         });
 
@@ -596,7 +595,7 @@ describe("The Client Authenticator Requests", function() {
             // Posttest
             expect(headers).toEqual({
                 "content-type": "text/mountain",
-                accept: "application/vnd.layer+json; version=2.0"
+                accept: "application/vnd.layer+json; version=3.0"
             });
         });
     });
@@ -672,6 +671,9 @@ describe("The Client Authenticator Requests", function() {
             client._xhrResult({
                 success: false,
                 status: 401,
+                request: {
+                    headers: {}
+                },
                 data: {
                     id: "fred",
                     data: {
@@ -687,10 +689,13 @@ describe("The Client Authenticator Requests", function() {
         it("Should clear localStorage sessionToken on getting a 401", function() {
           client.isAuthenticated = true;
           client._wantsToBeAuthenticated = true;
-          localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = "Frodo and Gollum Kissing in a Tree";
+          localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId] = "Frodo and Gollum Kissing in a Tree";
           client._xhrResult({
               success: false,
               status: 401,
+              request: {
+                headers: {}
+            },
               data: {
                   id: "fred",
                   data: {
@@ -699,7 +704,7 @@ describe("The Client Authenticator Requests", function() {
               }
           });
 
-          expect(localStorage[layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
+          expect(localStorage[Layer.Constants.LOCALSTORAGE_KEYS.SESSIONDATA + client.appId]).toBe(undefined);
         });
 
         it("Should call _authenticate on getting a 401 if wants to be authenticated", function() {
@@ -712,6 +717,9 @@ describe("The Client Authenticator Requests", function() {
             client._xhrResult({
                 success: false,
                 status: 401,
+                request: {
+                    headers: {}
+                },
                 data: {
                     id: "fred",
                     data: {
@@ -743,6 +751,9 @@ describe("The Client Authenticator Requests", function() {
             client._xhrResult({
                 success: false,
                 status: 401,
+                request: {
+                    headers: {}
+                },
                 data: {
                     id: "fred",
                     data: {
@@ -762,6 +773,9 @@ describe("The Client Authenticator Requests", function() {
             client._xhrResult({
                 success: false,
                 status: 401,
+                request: {
+                    headers: {}
+                },
                 data: {
                     id: "fred",
                     data: {
@@ -788,7 +802,7 @@ describe("The Client Authenticator Requests", function() {
             client._generateError(results);
 
             // Posttest
-            expect(results.data).toEqual(jasmine.any(layer.Core.LayerEvent));
+            expect(results.data).toEqual(jasmine.any(Layer.Core.LayerError));
             expect(results.data.id).toEqual("fred");
         });
     });

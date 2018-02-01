@@ -15,14 +15,13 @@ describe("The Message class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://doh.com"
         });
 
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: "999",
           id: "layer:///identities/999",
           firstName: "first",
@@ -33,30 +32,26 @@ describe("The Message class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
-        userIdentity1 = new layer.Core.Identity({
-            clientId: client.appId,
+        userIdentity1 = new Layer.Core.Identity({
             id: "layer:///identities/1",
             displayName: "1",
             userId: "1"
         });
-        userIdentity2 = new layer.Core.Identity({
-            clientId: client.appId,
+        userIdentity2 = new Layer.Core.Identity({
             id: "layer:///identities/2",
             displayName: "2",
             userId: "2"
         });
-        userIdentity3 = new layer.Core.Identity({
-            clientId: client.appId,
+        userIdentity3 = new Layer.Core.Identity({
             id: "layer:///identities/3",
             displayName: "3",
             userId: "3"
         });
-        userIdentity4 = new layer.Core.Identity({
-            clientId: client.appId,
+        userIdentity4 = new Layer.Core.Identity({
             id: "layer:///identities/4",
             displayName: "4",
             userId: "4"
@@ -72,8 +67,8 @@ describe("The Message class", function() {
         client._clientReady();
         client.onlineManager.isOnline = true;
 
-        conversation = layer.Core.Conversation._createFromServer(responses.conversation2, client);
-        channel = layer.Core.Channel._createFromServer(responses.channel1, client);
+        conversation = Layer.Core.Conversation._createFromServer(responses.conversation2);
+        channel = Layer.Core.Channel._createFromServer(responses.channel1);
 
         jasmine.clock().tick(1);
         requests.reset();
@@ -86,15 +81,14 @@ describe("The Message class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         var message;
         beforeEach(function() {
-            message = new layer.Core.Message.ConversationMessage({
+            message = new Layer.Core.Message.ConversationMessage({
                 parts: [{body: "Hello There", mimeType: "text/plain"}],
-                client: client
             });
         });
         afterEach(function() {
@@ -124,7 +118,7 @@ describe("The Message class", function() {
             var m = conversation.createMessage({});
 
             // Posttest
-            expect(m.parts).toEqual([]);
+            expect(m.parts.size).toEqual(0);
         });
 
         it("Should be created with a string for a part", function() {
@@ -134,38 +128,36 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m.parts[0].body).toEqual("Hello There");
-            expect(m.parts[0].mimeType).toEqual("text/plain");
+            expect(m.findPart().body).toEqual("Hello There");
+            expect(m.findPart().mimeType).toEqual("text/plain");
         });
 
         it("Should be created with a Part", function() {
             // Run
             var m = conversation.createMessage({
-                parts: new layer.Core.MessagePart({
+                parts: new Layer.Core.MessagePart({
                     body: "Hello There",
                     mimeType: "text/greeting"
                 }),
             });
 
             // Posttest
-            expect(m.parts[0].body).toEqual("Hello There");
-            expect(m.parts[0].mimeType).toEqual("text/greeting");
-            expect(m.parts[0].clientId).toEqual(m.clientId);
+            expect(m.findPart().body).toEqual("Hello There");
+            expect(m.findPart().mimeType).toEqual("text/greeting");
         });
 
         it("Should be created with array of parts", function() {
             // Run
             var m = conversation.createMessage({
-                parts: [new layer.Core.MessagePart({
+                parts: [new Layer.Core.MessagePart({
                     body: "Hello There",
                     mimeType: "text/greeting"
                 })],
             });
 
             // Posttest
-            expect(m.parts[0].body).toEqual("Hello There");
-            expect(m.parts[0].mimeType).toEqual("text/greeting");
-            expect(m.parts[0].clientId).toEqual(m.clientId);
+            expect(m.findPart().body).toEqual("Hello There");
+            expect(m.findPart().mimeType).toEqual("text/greeting");
         });
 
         it("Should be created with array of mixed", function() {
@@ -178,11 +170,14 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m.parts[0].body).toEqual("Hello There 1");
-            expect(m.parts[0].mimeType).toEqual("text/plain");
+            expect(m.parts.size).toEqual(2);
+            var part1 = m.findPart();
+            var part2 = m.findPart(function(part) {return part !== part1});
+            expect(part1.body).toEqual("Hello There 1");
+            expect(part1.mimeType).toEqual("text/plain");
 
-            expect(m.parts[1].body).toEqual("Hello There 2");
-            expect(m.parts[1].mimeType).toEqual("text/greeting");
+            expect(part2.body).toEqual("Hello There 2");
+            expect(part2.mimeType).toEqual("text/greeting");
         });
 
         it("Should set isRead = true and isUnread = false for normal call", function() {
@@ -193,28 +188,30 @@ describe("The Message class", function() {
         });
 
         it("Should set isRead to not isUnread", function() {
-            var m = conversation.createMessage({
-                isUnread: true
+            var m = client._createObject({
+                id: responses.message1.id,
+                conversation: responses.conversation2,
+                is_unread: true,
+                sender: userIdentity2,
+                parts: [],
             });
             expect(m.isRead).toBe(false);
+            m.destroy();
 
-            var m = conversation.createMessage({
-                isUnread: false
+            var m = client._createObject({
+                id: responses.message1.id,
+                conversation: responses.conversation2,
+                is_unread: false,
+                sender: userIdentity2,
+                parts: [],
             });
             expect(m.isRead).toBe(true);
         });
 
-        it("Should require a Client", function() {
-            expect(function() {
-                new layer.Core.Message.ConversationMessage({});
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
-            expect(layer.Core.LayerError.ErrorDictionary.clientMissing.length > 0).toBe(true);
-        });
-
         it("Should call _populateFromServer", function() {
             // Setup
-            var tmp = layer.Core.Message.prototype._populateFromServer;
-            spyOn(layer.Core.Message.prototype, "_populateFromServer");
+            var tmp = Layer.Core.Message.prototype._populateFromServer;
+            spyOn(Layer.Core.Message.prototype, "_populateFromServer").and.callThrough();
             var serverDef = {
                 sender: {user_id: "fred"},
                 is_unread: true,
@@ -229,16 +226,16 @@ describe("The Message class", function() {
             var m = client._createObject(serverDef);
 
             // Posttest
-            expect(layer.Core.Message.ConversationMessage.prototype._populateFromServer).toHaveBeenCalledWith(serverDef);
+            expect(Layer.Core.Message.ConversationMessage.prototype._populateFromServer).toHaveBeenCalledWith(serverDef);
 
             // Restore
-            layer.Core.Message.prototype._populateFromServer = tmp;
+            Layer.Core.Message.prototype._populateFromServer = tmp;
         });
 
         it("Should call __updateRecipientStatus", function() {
             // Setup
-            var tmp = layer.Core.Message.ConversationMessage.prototype.__updateRecipientStatus;
-            spyOn(layer.Core.Message.ConversationMessage.prototype, "__updateRecipientStatus");
+            var tmp = Layer.Core.Message.ConversationMessage.prototype.__updateRecipientStatus;
+            spyOn(Layer.Core.Message.ConversationMessage.prototype, "__updateRecipientStatus");
             var serverDef = {
                 sender: {user_id: "fred"},
                 is_unread: true,
@@ -256,10 +253,10 @@ describe("The Message class", function() {
             var m = client._createObject(serverDef);
 
             // Posttest
-            expect(layer.Core.Message.ConversationMessage.prototype.__updateRecipientStatus).toHaveBeenCalledWith(serverDef.recipient_status);
+            expect(Layer.Core.Message.ConversationMessage.prototype.__updateRecipientStatus).toHaveBeenCalledWith(serverDef.recipient_status);
 
             // Restore
-            layer.Core.Message.ConversationMessage.prototype.__updateRecipientStatus = tmp;
+            Layer.Core.Message.ConversationMessage.prototype.__updateRecipientStatus = tmp;
         });
 
         it("Should register the message if from server", function() {
@@ -296,10 +293,6 @@ describe("The Message class", function() {
             expect(m.conversationId).toEqual(channel.id);
         });
 
-        it("Should get a clientId", function() {
-            var m = conversation.createMessage({});
-            expect(m.clientId).toEqual(client.appId);
-        });
     });
 
     describe("The isSaved() isNew() isSaving() isSynced() methods", function() {
@@ -313,7 +306,7 @@ describe("The Message class", function() {
           message.destroy();
       });
       it("Should correctly handle new messages", function() {
-        message.syncState = layer.Constants.SYNC_STATE.NEW;
+        message.syncState = Layer.Constants.SYNC_STATE.NEW;
         expect(message.isNew()).toBe(true);
         expect(message.isSaving()).toBe(false);
         expect(message.isSaved()).toBe(false);
@@ -325,7 +318,7 @@ describe("The Message class", function() {
       });
 
       it("Should correctly handle sending messages", function() {
-        message.syncState = layer.Constants.SYNC_STATE.SAVING;
+        message.syncState = Layer.Constants.SYNC_STATE.SAVING;
         expect(message.isNew()).toBe(false);
         expect(message.isSaving()).toBe(true);
         expect(message.isSaved()).toBe(false);
@@ -337,7 +330,7 @@ describe("The Message class", function() {
       });
 
       it("Should correctly handle sent messages", function() {
-        message.syncState = layer.Constants.SYNC_STATE.SYNCED;
+        message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         expect(message.isNew()).toBe(false);
         expect(message.isSaving()).toBe(false);
         expect(message.isSaved()).toBe(true);
@@ -349,7 +342,7 @@ describe("The Message class", function() {
       });
 
       it("Should correctly handle out of sync messages", function() {
-        message.syncState = layer.Constants.SYNC_STATE.SYNCING;
+        message.syncState = Layer.Constants.SYNC_STATE.SYNCING;
         expect(message.isNew()).toBe(false);
         expect(message.isSaving()).toBe(false);
         expect(message.isSaved()).toBe(true);
@@ -361,50 +354,27 @@ describe("The Message class", function() {
       });
     });
 
-    describe("The getClient() method", function() {
-        it("Should return the client", function() {
-            var m = new layer.Core.Message.ConversationMessage({
-                client: client
-            });
-            expect(m.getClient()).toEqual(client);
-        });
-
-        it("Should return nothing", function() {
-            var m = new layer.Core.Message.ConversationMessage({
-                clientId: client.appId
-            });
-            m.clientId += 'a';
-            expect(m.getClient()).toEqual(null);
-
-            // Restore
-            m.clientId = client.appId;
-        });
-    });
-
     describe("The getConversation() method", function() {
         it("Should return the client", function() {
-            var m = new layer.Core.Message.ConversationMessage({
+            var m = new Layer.Core.Message.ConversationMessage({
                 conversation: conversation,
-                client: client
             });
             expect(m.getConversation()).toEqual(conversation);
         });
 
         it("Should load the Conversation", function() {
-            var m = new layer.Core.Message.ConversationMessage({
+            var m = new Layer.Core.Message.ConversationMessage({
                 conversationId: conversation.id + 'a',
-                client: client
             });
             var c = m.getConversation(true);
-            expect(c).toEqual(jasmine.any(layer.Core.Conversation));
-            expect(c.syncState).toEqual(layer.Constants.SYNC_STATE.LOADING);
+            expect(c).toEqual(jasmine.any(Layer.Core.Conversation));
+            expect(c.syncState).toEqual(Layer.Constants.SYNC_STATE.LOADING);
             expect(c.isLoading).toBe(true);
         });
 
         it("Should not load the Conversation", function() {
-            var m = new layer.Core.Message.ConversationMessage({
+            var m = new Layer.Core.Message.ConversationMessage({
                 conversationId: conversation.id + 'a',
-                client: client
             });
             var c = m.getConversation(false);
             expect(c).toEqual(null);
@@ -413,28 +383,25 @@ describe("The Message class", function() {
 
     describe("The getConversation() method for ChannelMessage", function() {
         it("Should return the client", function() {
-            var m = new layer.Core.Message.ChannelMessage({
+            var m = new Layer.Core.Message.ChannelMessage({
                 channel: channel,
-                client: client
             });
             expect(m.getConversation()).toEqual(channel);
         });
 
         it("Should load the channel", function() {
-            var m = new layer.Core.Message.ChannelMessage({
+            var m = new Layer.Core.Message.ChannelMessage({
                 conversationId: channel.id + 'a',
-                client: client
             });
             var c = m.getConversation(true);
-            expect(c).toEqual(jasmine.any(layer.Core.Channel));
-            expect(c.syncState).toEqual(layer.Constants.SYNC_STATE.LOADING);
+            expect(c).toEqual(jasmine.any(Layer.Core.Channel));
+            expect(c.syncState).toEqual(Layer.Constants.SYNC_STATE.LOADING);
             expect(c.isLoading).toBe(true);
         });
 
         it("Should not load the channel", function() {
-            var m = new layer.Core.Message.ChannelMessage({
+            var m = new Layer.Core.Message.ChannelMessage({
                 conversationId: conversation.id + 'a',
-                client: client
             });
             var c = m.getConversation(false);
             expect(c).toEqual(null);
@@ -445,10 +412,8 @@ describe("The Message class", function() {
     describe("The __adjustParts() method", function() {
         var message;
         beforeEach(function() {
-            message = new layer.Core.Message.ChannelMessage({
+            message = new Layer.Core.Message.ChannelMessage({
                 parts: [{body: "Hello There", mimeType: "text/plain"}],
-                client: client,
-                clientId: client.appId
             });
         });
 
@@ -457,12 +422,14 @@ describe("The Message class", function() {
         });
 
         it("Should listen for part changes", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: "ho",
                 mimeType: "text/ho"
             });
             spyOn(message, "_onMessagePartChange");
-            message.parts = [part];
+            var parts = new Set();
+            parts.add(part);
+            message.parts = parts;
 
             // Run
             part.body = "howdy";
@@ -476,10 +443,8 @@ describe("The Message class", function() {
     describe("The addPart() method", function() {
         var message;
         beforeEach(function() {
-            message = new layer.Core.Message.ChannelMessage({
+            message = new Layer.Core.Message.ChannelMessage({
                 parts: [{body: "Hello There", mimeType: "text/plain"}],
-                client: client,
-                clientId: client.appId
             });
         });
 
@@ -489,64 +454,54 @@ describe("The Message class", function() {
 
         it("Should add an object part", function() {
             // Pretest
-            expect(message.parts).toEqual([jasmine.objectContaining({
+            expect(message.parts.size).toEqual(1);
+            var part1 = message.findPart();
+            expect(part1).toEqual(jasmine.objectContaining({
                 body: "Hello There",
                 mimeType: "text/plain",
-                clientId: message.clientId
-            })]);
+            }));
 
             // Run
             message.addPart({
                 body: "ho",
                 mimeType: "text/ho"
             });
+            var part2 = message.findPart(function(part) {return part !== part1});
 
             // Posttest
-            expect(message.parts).toEqual([
-                jasmine.objectContaining({
-                    body: "Hello There",
-                    mimeType: "text/plain",
-                    clientId: message.clientId
-                }),
-                jasmine.objectContaining({
-                    body: "ho",
-                    mimeType: "text/ho",
-                    clientId: message.clientId
-                })
-            ]);
+            expect(message.parts.size).toEqual(2);
+            expect(part2).toEqual(jasmine.objectContaining({
+                body: "ho",
+                mimeType: "text/ho",
+            }));
         });
 
         it("Should add an instance part", function() {
             // Pretest
-            expect(message.parts).toEqual([jasmine.objectContaining({
+            var part1 = message.findPart();
+            expect(message.parts.size).toEqual(1);
+            expect(part1).toEqual(jasmine.objectContaining({
                 body: "Hello There",
                 mimeType: "text/plain",
-                clientId: message.clientId
-            })]);
+            }));
 
             // Run
-            message.addPart(new layer.Core.MessagePart({
+            message.addPart(new Layer.Core.MessagePart({
                 body: "ho",
                 mimeType: "text/ho"
             }));
+            var part2 = message.findPart(function(part) {return part !== part1});
 
             // Posttest
-            expect(message.parts).toEqual([
-                jasmine.objectContaining({
-                    body: "Hello There",
-                    mimeType: "text/plain",
-                    clientId: message.clientId
-                }),
-                jasmine.objectContaining({
-                    body: "ho",
-                    mimeType: "text/ho",
-                    clientId: message.clientId
-                })
-            ]);
+            expect(message.parts.size).toEqual(2);
+            expect(part2).toEqual(jasmine.objectContaining({
+                body: "ho",
+                mimeType: "text/ho",
+            }));
         });
 
         it("Should listen for part changes", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: "ho",
                 mimeType: "text/ho"
             });
@@ -565,9 +520,8 @@ describe("The Message class", function() {
     describe("The _onMessagePartChange() method", function() {
         var message;
         beforeEach(function() {
-            message = new layer.Core.Message.ConversationMessage({
+            message = new Layer.Core.Message.ConversationMessage({
                 parts: [{body: "Hello There", mimeType: "text/plain"}],
-                client: client
             });
         });
         afterEach(function() {
@@ -575,12 +529,14 @@ describe("The Message class", function() {
         });
 
         it("Should trigger message change events when parts change", function() {
-            var part = new layer.Core.MessagePart({
+            var part = new Layer.Core.MessagePart({
                 body: "ho",
                 mimeType: "text/ho"
             });
             spyOn(message, "_triggerAsync");
-            message.parts = [part];
+            var parts = new Set();
+            parts.add(part);
+            message.parts = parts;
 
             // Run
             part.body = "howdy";
@@ -599,9 +555,8 @@ describe("The Message class", function() {
     describe("The _getReceiptStatus() method", function() {
         var message;
         beforeEach(function() {
-            message = new layer.Core.Message.ConversationMessage({
+            message = new Layer.Core.Message.ConversationMessage({
                 parts: [{body: "Hello There", mimeType: "text/plain"}],
-                client: client
             });
         });
         afterEach(function() {
@@ -667,8 +622,7 @@ describe("The Message class", function() {
           conversation.participants = [userIdentity1, userIdentity2, userIdentity3, client.user];
           var messageData = JSON.parse(JSON.stringify(responses.message1));
 
-          m = new layer.Core.Message.ConversationMessage({
-              client: client,
+          m = new Layer.Core.Message.ConversationMessage({
               fromServer: messageData,
               conversationId: conversation.id
           });
@@ -685,8 +639,8 @@ describe("The Message class", function() {
             "layer:///identities/d": "read",
             "layer:///identities/999": "read"
           };
-        expect(m.recipientStatus["layer:///identities/b"]).toEqual(layer.Constants.RECEIPT_STATE.DELIVERED);
-        expect(layer.Constants.RECEIPT_STATE.DELIVERED.length > 0).toBe(true);
+        expect(m.recipientStatus["layer:///identities/b"]).toEqual(Layer.Constants.RECEIPT_STATE.DELIVERED);
+        expect(Layer.Constants.RECEIPT_STATE.DELIVERED.length > 0).toBe(true);
       });
 
       it("Should return {} for a new Message with no Conversation", function() {
@@ -698,12 +652,12 @@ describe("The Message class", function() {
       it("Should return PENDING for users who have not yet been sent the Message", function() {
         m.recipientStatus = {};
         expect(m.recipientStatus).toEqual({
-          "layer:///identities/1": layer.Constants.RECEIPT_STATE.PENDING,
-          "layer:///identities/2": layer.Constants.RECEIPT_STATE.PENDING,
-          "layer:///identities/3": layer.Constants.RECEIPT_STATE.PENDING,
-          "layer:///identities/999": layer.Constants.RECEIPT_STATE.READ
+          "layer:///identities/1": Layer.Constants.RECEIPT_STATE.PENDING,
+          "layer:///identities/2": Layer.Constants.RECEIPT_STATE.PENDING,
+          "layer:///identities/3": Layer.Constants.RECEIPT_STATE.PENDING,
+          "layer:///identities/999": Layer.Constants.RECEIPT_STATE.READ
         });
-        expect(layer.Constants.RECEIPT_STATE.PENDING.length > 0).toBe(true);
+        expect(Layer.Constants.RECEIPT_STATE.PENDING.length > 0).toBe(true);
       });
     });
 
@@ -718,8 +672,7 @@ describe("The Message class", function() {
               "layer:///identities/d": "read",
               "layer:///identities/999": "read"
             };
-            m = new layer.Core.Message.ConversationMessage({
-              client: client,
+            m = new Layer.Core.Message.ConversationMessage({
               conversationId: conversation.id,
               fromServer: messageData
           });
@@ -891,10 +844,9 @@ describe("The Message class", function() {
         var m;
         beforeEach(function() {
             conversation.participants = [userIdentity1, userIdentity2, userIdentity3, client.user];
-            m = new layer.Core.Message.ConversationMessage({
+            m = new Layer.Core.Message.ConversationMessage({
                 parts: "hello",
                 conversation: conversation,
-                client: client
             });
         });
 
@@ -904,92 +856,92 @@ describe("The Message class", function() {
 
         it("Should set deliveryStatus to none", function() {
             // Pretest
-            m.deliveryStatus = layer.Constants.RECIPIENT_STATE.SOME;
+            m.deliveryStatus = Layer.Constants.RECIPIENT_STATE.SOME;
 
             // Run
             m._setReceiptStatus(0, 0, 10)
 
             // Posttest
-            expect(m.deliveryStatus).toEqual(layer.Constants.RECIPIENT_STATE.NONE);
+            expect(m.deliveryStatus).toEqual(Layer.Constants.RECIPIENT_STATE.NONE);
         });
 
         it("Should set deliveryStatus to some", function() {
             // Pretest
-            m.deliveryStatus = layer.Constants.RECIPIENT_STATE.NONE;
+            m.deliveryStatus = Layer.Constants.RECIPIENT_STATE.NONE;
 
             // Run
             m._setReceiptStatus(0, 3, 10)
 
             // Posttest
-            expect(m.deliveryStatus).toEqual(layer.Constants.RECIPIENT_STATE.SOME);
+            expect(m.deliveryStatus).toEqual(Layer.Constants.RECIPIENT_STATE.SOME);
         });
 
         it("Should set deliveryStatus to some if read", function() {
             // Pretest
-            m.deliveryStatus = layer.Constants.RECIPIENT_STATE.NONE;
+            m.deliveryStatus = Layer.Constants.RECIPIENT_STATE.NONE;
 
             // Run
             m._setReceiptStatus(3, 3, 10)
 
             // Posttest
-            expect(m.deliveryStatus).toEqual(layer.Constants.RECIPIENT_STATE.SOME);
+            expect(m.deliveryStatus).toEqual(Layer.Constants.RECIPIENT_STATE.SOME);
         });
 
         it("Should set deliveryStatus to all", function() {
             // Pretest
-            m.deliveryStatus = layer.Constants.RECIPIENT_STATE.NONE;
+            m.deliveryStatus = Layer.Constants.RECIPIENT_STATE.NONE;
 
             // Run
             m._setReceiptStatus(0, 10, 10)
 
             // Posttest
-            expect(m.deliveryStatus).toEqual(layer.Constants.RECIPIENT_STATE.ALL);
+            expect(m.deliveryStatus).toEqual(Layer.Constants.RECIPIENT_STATE.ALL);
         });
 
 
 
         it("Should set readStatus to none", function() {
             // Pretest
-            m.readStatus = layer.Constants.RECIPIENT_STATE.SOME;
+            m.readStatus = Layer.Constants.RECIPIENT_STATE.SOME;
 
             // Run
             m._setReceiptStatus(0, 3, 10)
 
             // Posttest
-            expect(m.readStatus).toEqual(layer.Constants.RECIPIENT_STATE.NONE);
+            expect(m.readStatus).toEqual(Layer.Constants.RECIPIENT_STATE.NONE);
         });
 
         it("Should set readStatus to some", function() {
             // Pretest
-            m.readStatus = layer.Constants.RECIPIENT_STATE.NONE;
+            m.readStatus = Layer.Constants.RECIPIENT_STATE.NONE;
 
             // Run
             m._setReceiptStatus(3, 5, 10)
 
             // Posttest
-            expect(m.readStatus).toEqual(layer.Constants.RECIPIENT_STATE.SOME);
+            expect(m.readStatus).toEqual(Layer.Constants.RECIPIENT_STATE.SOME);
         });
 
         it("Should set readStatus to none if delivered", function() {
             // Pretest
-            m.readStatus = layer.Constants.RECIPIENT_STATE.SOME;
+            m.readStatus = Layer.Constants.RECIPIENT_STATE.SOME;
 
             // Run
             m._setReceiptStatus(0, 10, 10)
 
             // Posttest
-            expect(m.readStatus).toEqual(layer.Constants.RECIPIENT_STATE.NONE);
+            expect(m.readStatus).toEqual(Layer.Constants.RECIPIENT_STATE.NONE);
         });
 
         it("Should set readStatus to all", function() {
             // Pretest
-            m.readStatus = layer.Constants.RECIPIENT_STATE.NONE;
+            m.readStatus = Layer.Constants.RECIPIENT_STATE.NONE;
 
             // Run
             m._setReceiptStatus(10, 10, 10)
 
             // Posttest
-            expect(m.readStatus).toEqual(layer.Constants.RECIPIENT_STATE.ALL);
+            expect(m.readStatus).toEqual(Layer.Constants.RECIPIENT_STATE.ALL);
         });
     });
 
@@ -1283,22 +1235,13 @@ describe("The Message class", function() {
             m.destroy();
         });
 
-        it("Should fail if there is no  client", function() {
-            delete m.clientId;
-
-            // Run
-            expect(function() {
-                m.presend();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
-        });
-
         it("Should fail if conversationId is missing", function() {
             delete m.conversationId;
 
             // Run
             expect(function() {
                 m.presend();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.conversationMissing);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.conversationMissing);
         });
 
 
@@ -1306,12 +1249,12 @@ describe("The Message class", function() {
             m._setSyncing();
             expect(function() {
                 m.presend();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadySent);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.alreadySent);
 
             m._setSynced();
             expect(function() {
                 m.presend();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadySent);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.alreadySent);
         });
 
 
@@ -1353,22 +1296,13 @@ describe("The Message class", function() {
             m.destroy();
         });
 
-        it("Should fail if there is no  client", function() {
-            delete m.clientId;
-
-            // Run
-            expect(function() {
-                m.send();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
-        });
-
         it("Should fail if conversationId is missing", function() {
             delete m.conversationId;
 
             // Run
             expect(function() {
                 m.send();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.conversationMissing);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.conversationMissing);
         });
 
         it("Should load Conversation if missing", function() {
@@ -1378,13 +1312,13 @@ describe("The Message class", function() {
             // Run
              m.send();
             var conversation = client.getConversation(m.conversationId);
-            expect(conversation).toEqual(jasmine.any(layer.Core.Conversation));
+            expect(conversation).toEqual(jasmine.any(Layer.Core.Conversation));
             expect(conversation.isLoading).toBe(true);
         });
 
         it("Should delay if Conversation is loading but call _setupMessage", function() {
             var conversation = m.getConversation();
-            conversation.syncState = layer.Constants.SYNC_STATE.LOADING;
+            conversation.syncState = Layer.Constants.SYNC_STATE.LOADING;
             spyOn(conversation, "once");
             spyOn(conversation, "_setupMessage");
 
@@ -1404,19 +1338,19 @@ describe("The Message class", function() {
             m._setSyncing();
             expect(function() {
                 m.send();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadySent);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.alreadySent);
 
             m._setSynced();
             expect(function() {
                 m.send();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.alreadySent);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.alreadySent);
         });
 
         it("Should fail if there are no parts", function() {
-            m.parts = [];
+            m.parts = new Set();
             expect(function() {
                 m.send();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.partsMissing);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.partsMissing);
         });
 
         it("Should call _setSyncing", function() {
@@ -1521,9 +1455,9 @@ describe("The Message class", function() {
         });
 
         it("Should call the _fetchTextFromFile on each Textual Blob", function(done) {
-            var blob0 = new Blob([new Array(layer.Core.DbManager.MaxPartSize + 10).join('a')], {type : 'text/plain'});
-            var blob1 = new Blob([new Array(layer.Core.DbManager.MaxPartSize + 10).join('b')], {type : 'text/markdown'});
-            var blob2 = new Blob([new Array(layer.Core.DbManager.MaxPartSize + 10).join('c')], {type : 'image/png'});
+            var blob0 = new Blob([new Array(Layer.Core.DbManager.MaxPartSize + 10).join('a')], {type : 'text/plain'});
+            var blob1 = new Blob([new Array(Layer.Core.DbManager.MaxPartSize + 10).join('b')], {type : 'text/markdown'});
+            var blob2 = new Blob([new Array(Layer.Core.DbManager.MaxPartSize + 10).join('c')], {type : 'image/png'});
 
 
             m = conversation.createMessage({
@@ -1547,18 +1481,18 @@ describe("The Message class", function() {
                 ]
             });
 
-            var fetchTextFromFile  = layer.Util.fetchTextFromFile;
-            spyOn(layer.Util, "fetchTextFromFile").and.callThrough();
+            var fetchTextFromFile  = Layer.Utils.fetchTextFromFile;
+            spyOn(layer.Utils, "fetchTextFromFile").and.callThrough();
 
 
             m._readAllBlobs(function() {
-                layer.Util.fetchTextFromFile.calls.allArgs().forEach(function(callData) {
+                Layer.Utils.fetchTextFromFile.calls.allArgs().forEach(function(callData) {
                     expect(callData[1]).toEqual(jasmine.any(Function));
                 });
-                expect(layer.Util.fetchTextFromFile.calls.allArgs()[0][0].type).toEqual('text/plain');
-                expect(layer.Util.fetchTextFromFile.calls.allArgs()[1][0].type).toEqual('text/markdown');
-                expect(layer.Util.fetchTextFromFile.calls.allArgs().length).toEqual(2);
-                layer.Util.fetchTextFromFile = fetchTextFromFile;
+                expect(Layer.Utils.fetchTextFromFile.calls.allArgs()[0][0].type).toEqual('text/plain');
+                expect(Layer.Utils.fetchTextFromFile.calls.allArgs()[1][0].type).toEqual('text/markdown');
+                expect(Layer.Utils.fetchTextFromFile.calls.allArgs().length).toEqual(2);
+                Layer.Utils.fetchTextFromFile = fetchTextFromFile;
                 done();
             });
         });
@@ -1577,8 +1511,9 @@ describe("The Message class", function() {
 
         it("Should call parts.send on all parts", function() {
             // Setup
-            spyOn(m.parts[0], "_send");
-            spyOn(m.parts[1], "_send");
+            var parts = m.filterParts();
+            spyOn(parts[0], "_send");
+            spyOn(parts[1], "_send");
 
             // Run
             m._preparePartsForSending({
@@ -1587,28 +1522,31 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m.parts[0]._send).toHaveBeenCalledWith(client);
-            expect(m.parts[1]._send).toHaveBeenCalledWith(client);
+            expect(parts[0]._send).toHaveBeenCalledWith();
+            expect(parts[1]._send).toHaveBeenCalledWith();
         });
 
         it("Should copy in part data on receiving a parts:send event and call send", function() {
             // Setup
             spyOn(m, "_send");
-            spyOn(m.parts[0], "_send");
-            spyOn(m.parts[1], "_send");
+            var parts = m.filterParts();
+            spyOn(parts[0], "_send");
+            spyOn(parts[1], "_send");
 
             // Run
             m._preparePartsForSending({
               parts: [null, null],
               id: m.id
             });
-            m.parts[0].trigger("parts:send", {
+            parts[0].trigger("parts:send", {
                 mime_type: "actor/mime",
-                body: "I am a Mime"
+                body: "I am a Mime",
+                id: "parta",
             });
-            m.parts[1].trigger("parts:send", {
+            parts[1].trigger("parts:send", {
                 mime_type: "actor/mimic",
-                body: "I am a Mimic"
+                body: "I am a Mimic",
+                id: "partb",
             });
 
             // Posttest
@@ -1616,10 +1554,12 @@ describe("The Message class", function() {
                 id: m.id,
                 parts: [{
                     mime_type: "actor/mime",
-                    body: "I am a Mime"
+                    body: "I am a Mime",
+                    id: "parta",
                 }, {
                     mime_type: "actor/mimic",
-                    body: "I am a Mimic"
+                    body: "I am a Mimic",
+                    id: "partb",
                 }]
             });
         });
@@ -1876,7 +1816,7 @@ describe("The Message class", function() {
 
         it("Should call any callbacks if subscribing to conversations:loaded", function() {
             // Setup
-            m.syncState = layer.Constants.SYNC_STATE.SYNCED;
+            m.syncState = Layer.Constants.SYNC_STATE.SYNCED;
             var spy = jasmine.createSpy("spy");
 
             // Run
@@ -1889,7 +1829,7 @@ describe("The Message class", function() {
 
         it("Should call any callbacks if subscribing to ms:loaded via object", function() {
             // Setup
-            m.syncState = layer.Constants.SYNC_STATE.SYNCED;
+            m.syncState = Layer.Constants.SYNC_STATE.SYNCED;
             var spy = jasmine.createSpy("spy");
 
             // Run
@@ -1907,7 +1847,7 @@ describe("The Message class", function() {
         var m;
         beforeEach(function() {
             m = conversation.createMessage("hello");
-            m.syncState = layer.Constants.SYNC_STATE.SYNCED;
+            m.syncState = Layer.Constants.SYNC_STATE.SYNCED;
             jasmine.clock().tick(1);
         });
 
@@ -1917,19 +1857,19 @@ describe("The Message class", function() {
 
         it("Should fail if already deleting", function() {
             // Setup
-            m.delete(layer.Constants.DELETION_MODE.ALL);
+            m.delete(Layer.Constants.DELETION_MODE.ALL);
 
             // Run
             expect(function() {
                 m.delete();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.isDestroyed);
         });
 
         it("Should fail if invalid deletion mode", function() {
             // Run
             expect(function() {
                 m.delete(false);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.deletionModeUnsupported);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.deletionModeUnsupported);
         });
 
 
@@ -1938,7 +1878,7 @@ describe("The Message class", function() {
             spyOn(m, "_xhr");
 
             // Run
-            m.delete(layer.Constants.DELETION_MODE.ALL);
+            m.delete(Layer.Constants.DELETION_MODE.ALL);
 
             // Posttest
             expect(m._xhr).toHaveBeenCalledWith({
@@ -1966,7 +1906,7 @@ describe("The Message class", function() {
             spyOn(m, "_xhr");
 
             // Run
-            m.delete(layer.Constants.DELETION_MODE.MY_DEVICES);
+            m.delete(Layer.Constants.DELETION_MODE.MY_DEVICES);
 
             // Posttest
             expect(m._xhr).toHaveBeenCalledWith({
@@ -1980,7 +1920,7 @@ describe("The Message class", function() {
             spyOn(m, "trigger");
 
             // Run
-            m.delete(layer.Constants.DELETION_MODE.ALL);
+            m.delete(Layer.Constants.DELETION_MODE.ALL);
 
             // Posttest
             expect(m.trigger).toHaveBeenCalledWith("messages:delete");
@@ -1989,48 +1929,48 @@ describe("The Message class", function() {
         it("Should destroy the message", function() {
 
             // Run
-            m.delete(layer.Constants.DELETION_MODE.ALL);
+            m.delete(Layer.Constants.DELETION_MODE.ALL);
 
             // Posttest
             expect(m.isDestroyed).toBe(true);
         });
 
         it("Should load a new copy if deletion fails from something other than not_found", function() {
-          var tmp = layer.Core.Message.load;
-          spyOn(layer.Core.Message, "load");
+          var tmp = Layer.Core.Message.load;
+          spyOn(Layer.Core.Message, "load");
           spyOn(m, "_xhr").and.callFake(function(args, callback) {
             callback({success: false});
           });
 
 
           // Run
-          m.delete(layer.Constants.DELETION_MODE.ALL);
+          m.delete(Layer.Constants.DELETION_MODE.ALL);
 
           // Posttest
           expect(m.isDestroyed).toBe(true);
-          expect(layer.Core.Message.load).toHaveBeenCalledWith(m.id, client);
+          expect(Layer.Core.Message.load).toHaveBeenCalledWith(m.id);
 
           // Cleanup
-          layer.Core.Message.load = tmp;
+          Layer.Core.Message.load = tmp;
         })
 
         it("Should NOT load a new copy if deletion fails from not_found", function() {
-          var tmp = layer.Core.Message.load;
-          spyOn(layer.Core.Message, "load");
+          var tmp = Layer.Core.Message.load;
+          spyOn(Layer.Core.Message, "load");
           spyOn(m, "_xhr").and.callFake(function(args, callback) {
             callback({success: false, data: {id: 'not_found'}});
           });
 
 
           // Run
-          m.delete(layer.Constants.DELETION_MODE.ALL);
+          m.delete(Layer.Constants.DELETION_MODE.ALL);
 
           // Posttest
           expect(m.isDestroyed).toBe(true);
-          expect(layer.Core.Message.load).not.toHaveBeenCalled();
+          expect(Layer.Core.Message.load).not.toHaveBeenCalled();
 
           // Cleanup
-          layer.Core.Message.load = tmp;
+          Layer.Core.Message.load = tmp;
         });
 
         it("Should ignore mode for channels", function() {
@@ -2067,8 +2007,9 @@ describe("The Message class", function() {
 
         it("Should destroy all parts", function() {
             // Setup
-            var p1 = m.parts[0];
-            var p2 = m.parts[1];
+            var parts = m.filterParts();
+            var p1 = parts[0];
+            var p2 = parts[1];
 
             // Pretest
             expect(p1.isDestroyed).toBe(false);
@@ -2121,24 +2062,21 @@ describe("The Message class", function() {
         });
 
         it("Should set the id", function() {
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             m._populateFromServer(responses.message1);
             expect(m.id).toEqual(responses.message1.id);
         });
 
         it("Should set the url", function() {
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             m._populateFromServer(responses.message1);
             expect(m.url).toEqual(responses.message1.url);
         });
 
         it("Should set the position", function() {
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             m._populateFromServer(responses.message1);
             expect(m.position).toEqual(responses.message1.position);
@@ -2147,66 +2085,67 @@ describe("The Message class", function() {
 
         it("Should call __adjustParts", function() {
             // Setup
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             spyOn(m, "__adjustParts");
+
 
             // Run
             m._populateFromServer(responses.message1);
 
             // Posttest
-            expect(m.__adjustParts).toHaveBeenCalledWith([
-                jasmine.any(layer.Core.MessagePart),
-                jasmine.any(layer.Core.MessagePart)
-            ]);
+            var args = m.__adjustParts.calls.allArgs()[0];
+            expect(args[0]).toEqual(jasmine.any(Set));
+            var parts = [];
+            args[0].forEach(function(part) {parts.push(part);});
+
+            expect(parts).toEqual(m.filterParts());
+            expect(parts.length).toEqual(2);
         });
 
         it("Should call MessagePart._createFromServer", function() {
             // Setup
-            var tmp = layer.Core.MessagePart._createFromServer;
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            var tmp = Layer.Core.MessagePart._createFromServer;
+            m = new Layer.Core.Message.ConversationMessage({
             });
-            spyOn(layer.Core.MessagePart, "_createFromServer").and.callThrough();
+            spyOn(Layer.Core.MessagePart, "_createFromServer").and.callThrough();
 
             // Run
             m._populateFromServer(responses.message1);
 
             // Posttest
-            expect(layer.Core.MessagePart._createFromServer).toHaveBeenCalledWith(
+            expect(Layer.Core.MessagePart._createFromServer).toHaveBeenCalledWith(
                 responses.message1.parts[0]
             );
 
             // Restore
-            layer.Core.MessagePart._createFromServer = tmp;
+            Layer.Core.MessagePart._createFromServer = tmp;
         });
 
         it("Should call MessagePart._populateFromServer", function() {
             // Setup
-            m = new layer.Core.Message.ConversationMessage({
-              client: client,
+            m = new Layer.Core.Message.ConversationMessage({
               fromServer: responses.message1
             });
-            spyOn(m.parts[0], "_populateFromServer");
-            spyOn(m.parts[1], "_populateFromServer");
-            var parts = m.parts;
+            var parts = m.filterParts();
+            spyOn(parts[0], "_populateFromServer");
+            spyOn(parts[1], "_populateFromServer");
 
             // Run
             m._populateFromServer(responses.message1);
+            var newParts = m.filterParts();
 
             // Posttest
-            expect(m.parts[0]).toBe(parts[0]);
-            expect(m.parts[1]).toBe(parts[1]);
-            expect(m.parts.length).toEqual(2);
-            expect(m.parts[0]._populateFromServer).toHaveBeenCalledWith(responses.message1.parts[0]);
-            expect(m.parts[1]._populateFromServer).toHaveBeenCalledWith(responses.message1.parts[1]);
+            expect(newParts[0]).toBe(parts[0]);
+            expect(newParts[1]).toBe(parts[1]);
+            expect(m.parts.size).toEqual(2);
+            expect(parts[0]._populateFromServer).toHaveBeenCalledWith(responses.message1.parts[0]);
+            expect(parts[1]._populateFromServer).toHaveBeenCalledWith(responses.message1.parts[1]);
         });
 
         it("Should call __updateRecipientStatus()", function() {
             // Setup
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             spyOn(m, "__updateRecipientStatus");
             var data = JSON.parse(JSON.stringify(responses.message1));
@@ -2220,11 +2159,10 @@ describe("The Message class", function() {
         });
 
         it("Should set sender to existing Identity", function() {
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             var data = JSON.parse(JSON.stringify(responses.message1));
-            expect(client.getIdentity(data.sender.user_id)).toEqual(jasmine.any(layer.Core.Identity));
+            expect(client.getIdentity(data.sender.user_id)).toEqual(jasmine.any(Layer.Core.Identity));
 
             m._populateFromServer(data);
 
@@ -2232,8 +2170,7 @@ describe("The Message class", function() {
         });
 
         it("Should set sender to a new Identity", function() {
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             var data = JSON.parse(JSON.stringify(responses.message1));
             delete client._models.identities[data.sender.id];
@@ -2244,15 +2181,14 @@ describe("The Message class", function() {
             m._populateFromServer(data);
 
             // Posttest
-            expect(m.sender).toEqual(jasmine.any(layer.Core.Identity));
+            expect(m.sender).toEqual(jasmine.any(Layer.Core.Identity));
             expect(m.sender.userId).toEqual(data.sender.user_id);
             expect(m.sender.id).toEqual(data.sender.id);
         });
 
         it("Should set sender.display_name to an anonymous Identity", function() {
             client._models.identities = {};
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             var data = JSON.parse(JSON.stringify(responses.message1));
             data.sender = {display_name: "Fred"};
@@ -2263,14 +2199,13 @@ describe("The Message class", function() {
             expect(m.sender.userId).toEqual("");
             expect(m.sender.id).toEqual("");
             expect(m._events).toEqual({});
-            expect(m.sender).toEqual(jasmine.any(layer.Core.Identity));
+            expect(m.sender).toEqual(jasmine.any(Layer.Core.Identity));
             expect(client._models.identities).toEqual({});
         });
 
         it("Should call _setSynced", function() {
             // Setup
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             spyOn(m, "_setSynced");
 
@@ -2283,8 +2218,7 @@ describe("The Message class", function() {
 
         it("Should trigger a position change", function() {
             // Setup
-            m = new layer.Core.Message.ConversationMessage({
-                client: client
+            m = new Layer.Core.Message.ConversationMessage({
             });
             spyOn(m, "_triggerAsync");
             var position = m.position = 5;
@@ -2311,11 +2245,87 @@ describe("The Message class", function() {
     // tested by _populateFromServer
     xdescribe("The getPartById() method", function() {});
 
+    describe("The getPartsMatchingAttribute() method", function() {
+        it("Should find the parts with the specified attribute value", function() {
+            // Setup
+            m = new Layer.Core.Message.ConversationMessage({
+                parts: [
+                    {mimeType: "text/plain;a=b", body: "a"},
+                    {mimeType: "text/plain;a=c", body: "b"},
+                    {mimeType: "text/plain;a=d", body: "c"},
+                    {mimeType: "text/plain;a=c", body: "d"},
+                    {mimeType: "text/plain;a=e", body: "e"},
+                ]
+            });
+
+            // Run
+            expect(m.getPartsMatchingAttribute({a: "c"}) ).toEqual([
+                jasmine.objectContaining({body: "b"}),
+                jasmine.objectContaining({body: "d"})
+            ]);
+        });
+    });
+
+    describe("The getRootPart() method", function() {
+        it("Should find the root part", function() {
+            // Setup
+            m = new Layer.Core.Message.ConversationMessage({
+                parts: [
+                    {mimeType: "text/plain;a=b", body: "a"},
+                    {mimeType: "text/plain;a=c", body: "b"},
+                    {mimeType: "text/plain;a=d", body: "c"},
+                    {mimeType: "text/plain;role=root", body: "d"},
+                    {mimeType: "text/plain;a=e", body: "e"},
+                ]
+            });
+
+            // Run
+            expect(m.getRootPart().body).toEqual("d");
+        });
+    });
+
+    describe("The createModel() method", function() {
+        it("Should call rootPart.createModel()", function() {
+            // Setup
+            m = new Layer.Core.Message.ConversationMessage({
+                parts: [
+                    {mimeType: "application/vnd.layer.text+json;a=b", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;a=c", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;a=d", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;role=root", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;a=e", body: '{"text": "a"}'},
+                ]
+            });
+            spyOn(m.getRootPart(), "createModel").and.callThrough();
+
+            // Run
+            expect(m.createModel()).toEqual(jasmine.any(Layer.Core.MessageTypeModel));
+            expect(m.getRootPart().createModel).toHaveBeenCalledWith();
+        });
+    });
+
+    describe("The getModelName() method", function() {
+        it("Should return model names", function() {
+            // Setup
+            m = new Layer.Core.Message.ConversationMessage({
+                parts: [
+                    {mimeType: "application/vnd.layer.image+json;a=b", body: '{"image": "a"}'},
+                    {mimeType: "application/vnd.layer.image+json;a=c", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.image+json;a=d", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.text+json;role=root", body: '{"text": "a"}'},
+                    {mimeType: "application/vnd.layer.image+json;a=e", body: '{"text": "a"}'},
+                ]
+            });
+
+            // Test
+            expect (m.getModelName()).toEqual("TextModel");
+        });
+    });
+
     describe("The _handlePatchEvent() method", function() {
         it("Should call __updateRecipientStatus", function() {
             // Setup
-            var m = new layer.Core.Message.ConversationMessage({
-                client: client
+            var m = new Layer.Core.Message.ConversationMessage({
             });
             spyOn(m, "__updateRecipientStatus");
 
@@ -2349,7 +2359,7 @@ describe("The Message class", function() {
             // Run
             expect(function() {
                 m._xhr({});
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.isDestroyed);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.isDestroyed);
         });
 
         it("Should use resource url", function() {
@@ -2446,70 +2456,6 @@ describe("The Message class", function() {
         });
     });
 
-
-
-    describe("The getText() method", function() {
-        it("Should return '' if no matching parts", function() {
-            // Setup
-            var m = new layer.Core.Message.ConversationMessage({
-                parts: [
-                    new layer.Core.MessagePart({mimeType: "blah", body: "bleh"}),
-                    new layer.Core.MessagePart({mimeType: "blah", body: "bleh2"}),
-                    new layer.Core.MessagePart({mimeType: "text/plain2", body: "I fly over the plain"})
-                ],
-                client: client
-            });
-
-            // Posttest
-            expect(m.getText()).toEqual("");
-        });
-
-        it("Should only return text/plain message parts", function() {
-            // Setup
-            var m = new layer.Core.Message.ConversationMessage({
-                parts: [
-                    new layer.Core.MessagePart({mimeType: "blah", body: "bleh"}),
-                    new layer.Core.MessagePart({mimeType: "blah", body: "bleh2"}),
-                    new layer.Core.MessagePart({mimeType: "text/plain", body: "I fly over the plain"})
-                ],
-                client: client
-            });
-
-            // Posttest
-            expect(m.getText()).toEqual("I fly over the plain");
-        });
-
-        it("Should concatenate text/plain message parts using the default '.  '", function() {
-            // Setup
-            var m = new layer.Core.Message.ConversationMessage({
-                parts: [
-                    new layer.Core.MessagePart({mimeType: "text/plain", body: "bleh"}),
-                    new layer.Core.MessagePart({mimeType: "blah", body: "bleh2"}),
-                    new layer.Core.MessagePart({mimeType: "text/plain", body: "I fly over the plain"})
-                ],
-                client: client
-            });
-
-            // Posttest
-            expect(m.getText()).toEqual("bleh. I fly over the plain");
-        });
-
-        it("Should concatenate text/plain message parts using a custom join", function() {
-            // Setup
-            var m = new layer.Core.Message.ConversationMessage({
-                parts: [
-                    new layer.Core.MessagePart({mimeType: "text/plain", body: "bleh"}),
-                    new layer.Core.MessagePart({mimeType: "blah", body: "bleh2"}),
-                    new layer.Core.MessagePart({mimeType: "text/plain", body: "I fly over the plain"})
-                ],
-                client: client
-            });
-
-            // Posttest
-            expect(m.getText("DOH!")).toEqual("blehDOH!I fly over the plain");
-        });
-    });
-
     describe("The toObject() method", function() {
         var m;
         beforeEach(function() {
@@ -2537,13 +2483,13 @@ describe("The Message class", function() {
             // Setup
             var id = conversation.createMessage("Hello").send().id;
 
-            var m = layer.Core.Message.ConversationMessage._createFromServer({
+            var m = Layer.Core.Message.ConversationMessage._createFromServer({
                 id: id,
                 url: "hey ho",
                 parts: [],
                 sender: {},
                 conversation: {id: "layer:///conversations/fred"}
-            }, client);
+            });
 
             // Posttest
             expect(m.url).toEqual("hey ho");
@@ -2553,13 +2499,13 @@ describe("The Message class", function() {
 
         it("Should register the message", function() {
             // Run
-            var m = layer.Core.Message.ConversationMessage._createFromServer({
+            var m = Layer.Core.Message.ConversationMessage._createFromServer({
                 url: "hey ho",
                 id: "layer:///messages/m103",
                 parts: [],
                 sender: {},
                 conversation: {id: "layer:///conversations/fred"}
-            }, client);
+            });
 
             // Posttest
             expect(client.getMessage(m.id)).toBe(m);
@@ -2569,48 +2515,49 @@ describe("The Message class", function() {
             // Setup
             var data = JSON.parse(JSON.stringify(responses.message1));
             data.recipient_status["layer:///identities/999"] = "sent";
-            var tmp = layer.Core.Message.ConversationMessage.prototype._sendReceipt;
-            spyOn(layer.Core.Message.ConversationMessage.prototype, "_sendReceipt");
+            var tmp = Layer.Core.Message.ConversationMessage.prototype._sendReceipt;
+            spyOn(Layer.Core.Message.ConversationMessage.prototype, "_sendReceipt");
 
             // Run,
-            var m = layer.Core.Message.ConversationMessage._createFromServer(data, client);
+            var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
             jasmine.clock().tick(1);
 
             // Posttest
-            expect(layer.Core.Message.ConversationMessage.prototype._sendReceipt).toHaveBeenCalledWith('delivery');
+            expect(Layer.Core.Message.ConversationMessage.prototype._sendReceipt).toHaveBeenCalledWith('delivery');
 
             // Restore
-            layer.Core.Message.ConversationMessage.prototype._sendReceipt = tmp;
+            Layer.Core.Message.ConversationMessage.prototype._sendReceipt = tmp;
         });
 
         it("Should NOT send delivery receipt if marked as delivered", function() {
             // Setup
             var data = JSON.parse(JSON.stringify(responses.message1));
             data.recipient_status["layer:///identities/999"] = "delivered";
-            var tmp = layer.Core.Message.ConversationMessage.prototype._sendReceipt;
-            spyOn(layer.Core.Message.ConversationMessage.prototype, "_sendReceipt");
+            var tmp = Layer.Core.Message.ConversationMessage.prototype._sendReceipt;
+            spyOn(Layer.Core.Message.ConversationMessage.prototype, "_sendReceipt");
 
             // Run,
-            var m = layer.Core.Message.ConversationMessage._createFromServer(data, client);
+            var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
 
             // Posttest
-            expect(layer.Core.Message.ConversationMessage.prototype._sendReceipt).not.toHaveBeenCalledWith('delivery');
+            expect(Layer.Core.Message.ConversationMessage.prototype._sendReceipt).not.toHaveBeenCalledWith('delivery');
 
             // Restore
-            layer.Core.Message.ConversationMessage.prototype._sendReceipt = tmp;
+            Layer.Core.Message.ConversationMessage.prototype._sendReceipt = tmp;
         });
 
         it("Should trigger a messages:notify event if fromWebsocket is true", function() {
             var data = JSON.parse(JSON.stringify(responses.message1));
+            data.notification = {text: "Hey", title: "ho"};
             data.fromWebsocket = true;
             client.getMessage(data.id).destroy();
             spyOn(client, "_triggerAsync");
 
             // Run,
-            var m = layer.Core.Message.ConversationMessage._createFromServer(data, client);
+            var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
 
             // Posttest
-            expect(client._triggerAsync).toHaveBeenCalledWith('messages:notify', { message: m });
+            expect(client._triggerAsync).toHaveBeenCalledWith('messages:notify', { message: m, notification:  {text: "Hey", title: "ho"}});
         });
 
         it("Should not trigger a messages:notify event if message is from sender", function() {
@@ -2621,7 +2568,7 @@ describe("The Message class", function() {
             spyOn(client, "_triggerAsync");
 
             // Run,
-            var m = layer.Core.Message.ConversationMessage._createFromServer(data, client);
+            var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
 
             // Posttest
             expect(client._triggerAsync).not.toHaveBeenCalledWith('messages:notify', { message: m });
@@ -2635,7 +2582,7 @@ describe("The Message class", function() {
             spyOn(client, "_triggerAsync");
 
             // Run,
-            var m = layer.Core.Message.ConversationMessage._createFromServer(data, client);
+            var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
 
             // Posttest
             expect(client._triggerAsync).not.toHaveBeenCalledWith('messages:notify', { message: m });
@@ -2647,7 +2594,7 @@ describe("The Message class", function() {
             spyOn(client, "_triggerAsync");
 
             // Run,
-            var m = layer.Core.Message.ConversationMessage._createFromServer(data, client);
+            var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
 
             // Posttest
             expect(client._triggerAsync).not.toHaveBeenCalledWith('messages:notify', { message: m });
@@ -2656,7 +2603,7 @@ describe("The Message class", function() {
         it("Should setup a parent that is a Conversation", function() {
             var data = JSON.parse(JSON.stringify(responses.message1));
             data.conversation = {id: conversation.id};
-            var m = layer.Core.Message.ConversationMessage._createFromServer(data, client);
+            var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
             expect(m.getConversation()).toBe(conversation);
         });
 
@@ -2664,7 +2611,7 @@ describe("The Message class", function() {
             var data = JSON.parse(JSON.stringify(responses.message1));
             delete data.conversation;
             data.channel = {id: channel.id};
-            var m = layer.Core.Message.ChannelMessage._createFromServer(data, client);
+            var m = Layer.Core.Message.ChannelMessage._createFromServer(data);
             expect(m.getConversation()).toBe(channel);
         });
     });
@@ -2686,7 +2633,7 @@ describe("The Message class", function() {
       });
 
       it("Should setup the Channel ID", function() {
-        var message = new layer.Core.Message.ChannelMessage({client: client});
+    var message = new Layer.Core.Message.ChannelMessage({});
         var message1 = JSON.parse(JSON.stringify(responses.message1));
         message1.channel = {id: channel.id};
         delete message1.conversation;
@@ -2705,49 +2652,46 @@ describe("The Message class", function() {
 
         it("Sets syncState to SYNCED if SAVING and syncCounter=1", function() {
             // Setup
-            var c = new layer.Core.Message.ConversationMessage({
-                syncState: layer.Constants.SYNC_STATE.SAVING,
+            var c = new Layer.Core.Message.ConversationMessage({
+                syncState: Layer.Constants.SYNC_STATE.SAVING,
                 _syncCounter: 1,
-                client: client
             });
 
             // Run
             c._setSynced();
 
             // Posttest
-            expect(c.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCED);
+            expect(c.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCED);
             expect(c._syncCounter).toEqual(0);
         });
 
         it("Sets syncState to SYNCING if SAVING and syncCounter=2", function() {
             // Setup
-            var c = new layer.Core.Message.ConversationMessage({
-                syncState: layer.Constants.SYNC_STATE.SAVING,
+            var c = new Layer.Core.Message.ConversationMessage({
+                syncState: Layer.Constants.SYNC_STATE.SAVING,
                 _syncCounter: 2,
-                client: client
             });
 
             // Run
             c._setSynced();
 
             // Posttest
-            expect(c.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCING);
+            expect(c.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCING);
             expect(c._syncCounter).toEqual(1);
         });
 
         it("Sets syncState to SYNCED if SYNCING and syncCounter=1", function() {
             // Setup
-            var c = new layer.Core.Message.ConversationMessage({
-                syncState: layer.Constants.SYNC_STATE.SYNCING,
+            var c = new Layer.Core.Message.ConversationMessage({
+                syncState: Layer.Constants.SYNC_STATE.SYNCING,
                 _syncCounter: 1,
-                client: client
             });
 
             // Run
             c._setSynced();
 
             // Posttest
-            expect(c.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCED);
+            expect(c.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCED);
             expect(c._syncCounter).toEqual(0);
         });
     });
@@ -2755,33 +2699,30 @@ describe("The Message class", function() {
     describe("They _setSyncing() method", function() {
         it("Initial sync state is NEW / 0", function() {
             // Run
-            var m = new layer.Core.Message.ConversationMessage({
-                client: client
+            var m = new Layer.Core.Message.ConversationMessage({
             });
 
             // Posttest
-            expect(m.syncState).toEqual(layer.Constants.SYNC_STATE.NEW);
+            expect(m.syncState).toEqual(Layer.Constants.SYNC_STATE.NEW);
             expect(m._syncCounter).toEqual(0);
         });
 
         it("Sets syncState to SAVING if syncState is NEW and syncCounter=0", function() {
             // Setup
-            var m = new layer.Core.Message.ConversationMessage({
-                client: client
+            var m = new Layer.Core.Message.ConversationMessage({
             });
 
             // Run
             m._setSyncing();
 
             // Posttest
-            expect(m.syncState).toEqual(layer.Constants.SYNC_STATE.SAVING);
+            expect(m.syncState).toEqual(Layer.Constants.SYNC_STATE.SAVING);
             expect(m._syncCounter).toEqual(1);
         });
 
         it("Sets syncState to SAVING if syncState is NEW and syncCounter=N", function() {
             // Setup
-            var m = new layer.Core.Message.ConversationMessage({
-                client: client,
+            var m = new Layer.Core.Message.ConversationMessage({
                 _syncCounter: 500
             });
 
@@ -2789,46 +2730,43 @@ describe("The Message class", function() {
             m._setSyncing();
 
             // Posttest
-            expect(m.syncState).toEqual(layer.Constants.SYNC_STATE.SAVING);
+            expect(m.syncState).toEqual(Layer.Constants.SYNC_STATE.SAVING);
             expect(m._syncCounter).toEqual(501);
         });
 
         it("Sets syncState to SAVING if syncState is SAVING and inc syncCounter", function() {
             // Setup
-            var m = new layer.Core.Message.ConversationMessage({
+            var m = new Layer.Core.Message.ConversationMessage({
                 _syncCounter: 500,
-                syncState: layer.Constants.SYNC_STATE.SAVING,
-                client: client
+                syncState: Layer.Constants.SYNC_STATE.SAVING,
             });
 
             // Run
             m._setSyncing();
 
             // Posttest
-            expect(m.syncState).toEqual(layer.Constants.SYNC_STATE.SAVING);
+            expect(m.syncState).toEqual(Layer.Constants.SYNC_STATE.SAVING);
             expect(m._syncCounter).toEqual(501);
         });
 
         it("Sets syncState to SYNCING if syncState is SYNCED and inc syncCounter", function() {
             // Setup
-            var m = new layer.Core.Message.ConversationMessage({
-                client: client,
-                syncState: layer.Constants.SYNC_STATE.SYNCED
+            var m = new Layer.Core.Message.ConversationMessage({
+                syncState: Layer.Constants.SYNC_STATE.SYNCED
             });
 
             // Run
             m._setSyncing();
 
             // Posttest
-            expect(m.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCING);
+            expect(m.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCING);
             expect(m._syncCounter).toEqual(1);
         });
 
         it("Sets syncState to SYNCING if syncState is SYNCING and inc syncCounter", function() {
             // Setup
-            var m = new layer.Core.Message.ConversationMessage({
-                client: client,
-                syncState: layer.Constants.SYNC_STATE.SYNCING,
+            var m = new Layer.Core.Message.ConversationMessage({
+                syncState: Layer.Constants.SYNC_STATE.SYNCING,
                 _syncCounter: 500
             });
 
@@ -2836,7 +2774,7 @@ describe("The Message class", function() {
             m._setSyncing();
 
             // Posttest
-            expect(m.syncState).toEqual(layer.Constants.SYNC_STATE.SYNCING);
+            expect(m.syncState).toEqual(Layer.Constants.SYNC_STATE.SYNCING);
             expect(m._syncCounter).toEqual(501);
         });
     });

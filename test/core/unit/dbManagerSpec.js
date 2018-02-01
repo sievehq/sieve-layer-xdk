@@ -21,7 +21,6 @@ var dbIt = it;
 
   describe("The DbManager Class", function() {
       var appId = "Fred's App";
-
       var client,
           conversation,
           channel,
@@ -63,7 +62,7 @@ var dbIt = it;
 
       // NOTE: beforeEach finishes by deleting everything from the database. You must insert before you can query.
       beforeEach(function(done) {
-          client = new layer.Core.Client({
+          client = new Layer.init({
               appId: appId,
               url: "https://huh.com",
               isTrustedDevice: true,
@@ -71,8 +70,7 @@ var dbIt = it;
           });
           client.sessionToken = "sessionToken";
 
-          identity = new layer.Core.Identity({
-            clientId: client.appId,
+          identity = new Layer.Core.Identity({
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
             firstName: "first",
@@ -83,7 +81,7 @@ var dbIt = it;
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
             presence: {
               status: 'away',
@@ -94,31 +92,34 @@ var dbIt = it;
 
           client.on('ready', function() {
             dbManager = client.dbManager;
-            setTimeout(function() {
-              client.syncManager.queue = [];
-              conversation = client._createObject(responses.conversation1);
-              channel = client._createObject(responses.channel1);
-              message = conversation.lastMessage;
-              announcement = client._createObject(responses.announcement);
-              userIdentity = client._createObject(responses.useridentity);
-              basicIdentity = new layer.Core.Identity({
-                clientId: client.appId,
+            client.syncManager.queue = [];
+            conversation = client._createObject(responses.conversation1);
+            channel = client._createObject(responses.channel1);
+            message = conversation.lastMessage;
+            announcement = client._createObject(responses.announcement);
+            userIdentity = client._createObject(responses.useridentity);
+            basicIdentity = new Layer.Core.Identity({
                 userId: client.userId,
-                id: "layer:///identities/" + client.userId,
-                isFullIdentity: false
-              });
+              id: "layer:///identities/" + client.userId,
+              isFullIdentity: false
+            });
 
+            // The above commands are going to write stuff to db
+            // if we deleteTables before then they will wind up in our result data
+            setTimeout(function() {
               deleteTables(function() {
-                done();
+                setTimeout(function() {
+                  done();
+                }, 100);
               });
-            }, 10);
+            }, 400);
           });
 
           client._clientAuthenticated();
       });
 
       afterEach(function() {
-          //client.destroy();
+          if (client && !client.isDestroyed) client.destroy();
       });
 
       describe("The constructor() method", function() {
@@ -243,25 +244,23 @@ var dbIt = it;
         });
 
         it("Should call _open", function() {
-          var _open = layer.Core.DbManager.prototype._open;
-          spyOn(layer.Core.DbManager.prototype, "_open");
-          var dbManager = new layer.Core.DbManager({
+          var _open = Layer.Core.DbManager.prototype._open;
+          spyOn(Layer.Core.DbManager.prototype, "_open");
+          var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {conversations: true}
           });
 
           // Posttest
-          expect(layer.Core.DbManager.prototype._open).toHaveBeenCalledWith(false);
+          expect(Layer.Core.DbManager.prototype._open).toHaveBeenCalledWith(false);
 
           // Cleanup
-          layer.Core.DbManager.prototype._open = _open;
+          Layer.Core.DbManager.prototype._open = _open;
         });
 
         it("Should accept a tables property", function() {
-          var dbManager = new layer.Core.DbManager({
+          var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {
               conversations: true,
               channels: true,
@@ -277,9 +276,8 @@ var dbIt = it;
         });
 
         it("Should set syncQueue to false if either conversations or messages are false", function() {
-          var dbManager = new layer.Core.DbManager({
+          var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {
               conversations: true,
               channels: true,
@@ -298,8 +296,7 @@ var dbIt = it;
 
       describe("The _open() method", function() {
         it("Should callback immediately if no tables enabled", function() {
-          var dbManager = new layer.Core.DbManager({
-            client: client,
+          var dbManager = new Layer.Core.DbManager({
             tables: {
               conversations: false,
               messages: false,
@@ -314,9 +311,8 @@ var dbIt = it;
           expect(done).toBe(true);
         });
         it("Should trigger open event", function(done) {
-          var dbManager = new layer.Core.DbManager({
+          var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {conversations: true}
           });
           dbManager.on('open', function() {
@@ -333,9 +329,8 @@ var dbIt = it;
 
       describe("The onOpen() method", function() {
         it("Should callback when open", function(done) {
-          var dbManager = new layer.Core.DbManager({
+          var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {conversations: true}
           });
           dbManager.onOpen(function() {
@@ -346,9 +341,8 @@ var dbIt = it;
 
         it("Should callback immediately if open", function() {
           var spy = jasmine.createSpy('opOpen');
-          var dbManager = new layer.Core.DbManager({
+          var dbManager = new Layer.Core.DbManager({
             enabled: true,
-            client: client,
             tables: {conversations: true}
           });
           dbManager.isOpen = true;
@@ -369,20 +363,22 @@ var dbIt = it;
         });
 
         it("Should ignore loading Conversations", function() {
-          conversation.syncState = layer.Constants.SYNC_STATE.LOADING;
+          conversation.syncState = Layer.Constants.SYNC_STATE.LOADING;
           expect(dbManager._getConversationData([conversation])).toEqual([]);
         });
 
         it("Should ignore SYNC-NEW Conversations", function() {
-          conversation.syncState = layer.Constants.SYNC_STATE.NEW;
+          conversation.syncState = Layer.Constants.SYNC_STATE.NEW;
           expect(dbManager._getConversationData([conversation])).toEqual([]);
         });
 
         it("Should generate a proper object", function() {
+          var identityData = Layer.Core.Identity.toDbBasicObjects(conversation.participants);
+
           expect(dbManager._getConversationData([conversation])).toEqual([{
             id: conversation.id,
             url: conversation.url,
-            participants: client.dbManager._getIdentityData(conversation.participants, true),
+            participants: identityData,
             distinct: conversation.distinct,
             created_at: conversation.createdAt.toISOString(),
             metadata: conversation.metadata,
@@ -471,12 +467,12 @@ var dbIt = it;
         });
 
         it("Should ignore loading Channels", function() {
-          channel.syncState = layer.Constants.SYNC_STATE.LOADING;
+          channel.syncState = Layer.Constants.SYNC_STATE.LOADING;
           expect(dbManager._getChannelData([channel])).toEqual([]);
         });
 
         it("Should ignore SYNC-NEW Channels", function() {
-          channel.syncState = layer.Constants.SYNC_STATE.NEW;
+          channel.syncState = Layer.Constants.SYNC_STATE.NEW;
           expect(dbManager._getChannelData([channel])).toEqual([]);
         });
 
@@ -581,7 +577,7 @@ var dbIt = it;
         });
 
         it("Should ignore loading messages", function() {
-          message.syncState = layer.Constants.SYNC_STATE.LOADING;
+          message.syncState = Layer.Constants.SYNC_STATE.LOADING;
           var isDone = false;
 
           dbManager._getMessageData([message], function(result) {
@@ -614,10 +610,10 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
-                body: message.parts[0].body,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                id: message.getRootPart().id,
+                body: message.getRootPart().body,
+                encoding: message.getRootPart().encoding,
+                mime_type: message.getRootPart().mimeType,
                 content: null
               }]
             }]);
@@ -631,7 +627,7 @@ var dbIt = it;
         it("Should generate a proper Announcement object", function() {
           message = client._createObject(JSON.parse(JSON.stringify(responses.announcement)));
           message.receivedAt = new Date();
-          message.sender = new layer.Core.Identity({
+          message.sender = new Layer.Core.Identity({
             fromServer: {
               id: null,
               user_id: null,
@@ -639,7 +635,6 @@ var dbIt = it;
               display_name: 'Hey ho',
               avatar_url: null,
             },
-            client: client
           });
           var isDone = false;
 
@@ -662,10 +657,10 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
-                body: message.parts[0].body,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                id: message.findPart().id,
+                body: message.findPart().body,
+                encoding: message.findPart().encoding,
+                mime_type: message.findPart().mimeType,
                 content: null
               }]
             }]);
@@ -679,8 +674,10 @@ var dbIt = it;
           // Setup
           var text = new Array(1000).join('a');
           var blob = new Blob([text], {type : 'unknown/unhandlable'});
+          var part1 = new Layer.Core.MessagePart(blob);
+          var part2 = new Layer.Core.MessagePart(blob);
           var message = conversation.createMessage({
-            parts: [new layer.Core.MessagePart(blob), new layer.Core.MessagePart(blob)]
+            parts: [part1, part2]
           });
           message.receivedAt = new Date();
 
@@ -704,18 +701,18 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
+                id: part1.id,
                 body: jasmine.any(String),
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                encoding: part1.encoding,
+                mime_type: part1.mimeType,
                 useBlob: true,
                 content: null
               },
               {
-                id: message.parts[1].id,
+                id: part2.id,
                 body: jasmine.any(String),
-                encoding: message.parts[1].encoding,
-                mime_type: message.parts[1].mimeType,
+                encoding: part2.encoding,
+                mime_type: part2.mimeType,
                 useBlob: true,
                 content: null
               }]
@@ -729,10 +726,10 @@ var dbIt = it;
 
         it("Should not write large Blobs", function() {
           // Setup
-          var text = new Array(layer.Core.DbManager.MaxPartSize + 10).join('a');
+          var text = new Array(Layer.Core.DbManager.MaxPartSize + 10).join('a');
           var blob = new Blob([text], {type : 'unknown/unhandlable'});
           var message = conversation.createMessage({
-            parts: [new layer.Core.MessagePart(blob)]
+            parts: [new Layer.Core.MessagePart(blob)]
           });
           message.receivedAt = new Date();
           var isDone = false;
@@ -757,10 +754,10 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
+                id: message.findPart().id,
                 body: null,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                encoding: message.findPart().encoding,
+                mime_type: message.findPart().mimeType,
                 content: null
               }]
             }]);
@@ -795,10 +792,10 @@ var dbIt = it;
               },
               sync_state: message.syncState,
               parts: [{
-                id: message.parts[0].id,
-                body: message.parts[0].body,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                id: message.findPart().id,
+                body: message.findPart().body,
+                encoding: message.findPart().encoding,
+                mime_type: message.findPart().mimeType,
                 content: null
               }]
             }]);
@@ -810,24 +807,26 @@ var dbIt = it;
         it("Should generate a proper Content object", function() {
           var isDone = false;
           dbManager._getMessageData([message], function(result) {
+            var part1 = client.getMessagePart(responses.conversation1.last_message.parts[0].id);
+            var part2 = client.getMessagePart(responses.conversation1.last_message.parts[1].id);
             expect(result[0]).toEqual(jasmine.objectContaining({
               parts: [{
-                id: message.parts[0].id,
-                body: message.parts[0].body,
-                encoding: message.parts[0].encoding,
-                mime_type: message.parts[0].mimeType,
+                id: part1.id,
+                body: part1.body,
+                encoding: part1.encoding,
+                mime_type: part1.mimeType,
                 content: null
               }, {
-                id: message.parts[1].id,
-                body: message.parts[1].body,
-                encoding: message.parts[1].encoding,
-                mime_type: message.parts[1].mimeType,
+                id: part2.id,
+                body: part2.body,
+                encoding: part2.encoding,
+                mime_type: part2.mimeType,
                 content: {
-                  download_url: message.parts[1]._content.downloadUrl,
-                  expiration:   message.parts[1]._content.expiration,
-                  id:  message.parts[1]._content.id,
-                  refresh_url:  message.parts[1]._content.refreshUrl,
-                  size:  message.parts[1]._content.size
+                  download_url: part2._content.downloadUrl,
+                  expiration:   part2._content.expiration,
+                  id:  part2._content.id,
+                  refresh_url:  part2._content.refreshUrl,
+                  size:  part2._content.size
                 }
               }]
             }));
@@ -861,19 +860,9 @@ var dbIt = it;
     });
 
 
-    describe("The _getIdentityData() method", function() {
-      it("Should ignore anything that just came out of the database and clear _fromDB", function() {
-        identity._fromDB = true;
-        expect(dbManager._getIdentityData([identity])).toEqual([]);
-        expect(identity._fromDB).toBe(false);
-      });
-
-      it("Should ignore Basic Identities", function() {
-        expect(dbManager._getIdentityData([identity, basicIdentity])).toEqual(dbManager._getIdentityData([identity]));
-      });
-
+    describe("The Identity.toDbObject() method", function() {
       it("Should write Basic Identities", function() {
-        expect(dbManager._getIdentityData([identity, basicIdentity], true)).toEqual([dbManager._getIdentityData([identity], true)[0], {
+        expect(Layer.Core.Identity.toDbBasicObjects([basicIdentity], true)).toEqual([{
           id: basicIdentity.id,
           url: client.url + "/identities/" + basicIdentity.userId,
           user_id: basicIdentity.userId,
@@ -882,14 +871,10 @@ var dbIt = it;
         }]);
       });
 
-      it("Should ignore Loading Identities", function() {
-        identity.syncState = layer.Constants.SYNC_STATE.LOADING;
-        expect(dbManager._getIdentityData([identity, basicIdentity])).toEqual([]);
-      });
-
-
       it("Should generate a proper Identity object", function() {
-        expect(dbManager._getIdentityData([identity])).toEqual([{
+        var result;
+        Layer.Core.Identity.toDbObjects([identity], a => result = a);
+        expect(result).toEqual([{
           id: identity.id,
           url: identity.url,
           user_id: identity.userId,
@@ -902,38 +887,71 @@ var dbIt = it;
           public_key: identity.publicKey,
           phone_number: identity.phoneNumber,
           sync_state: identity.syncState,
-          type: layer.Core.Identity.UserType,
+          type: Layer.Core.Identity.UserType,
         }]);
       });
     });
 
     describe("The writeIdentities() method", function() {
+      it("Should ignore Basic Identities", function() {
+        var result;
+        Layer.Core.Identity.toDbObjects([identity, basicIdentity], a => result = a);
+        spyOn(dbManager, "_writeObjects");
+        dbManager.writeIdentities([identity, basicIdentity]);
+        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [jasmine.objectContaining({id: identity.id})], undefined);
+      });
+
+      it("Should ignore anything flagged as _fromDB", function(){
+        var i2 = new Layer.Core.Identity({
+          userId: "i2",
+          id: "layer:///identities/" + "i2",
+          isFullIdentity: true
+        });
+        var i3 = new Layer.Core.Identity({
+          userId: "i3",
+          id: "layer:///identities/" + "i3",
+          isFullIdentity: true
+        });
+        i2._fromDB = true;
+        spyOn(dbManager, "_writeObjects");
+//        spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
+        dbManager.writeIdentities([identity, i2, i3]);
+        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [jasmine.objectContaining({id: identity.id}), jasmine.objectContaining({id: i3.id})], undefined);
+      });
+
+      it("Should ignore Loading Identities", function() {
+        spyOn(dbManager, "_writeObjects");
+        identity.syncState = Layer.Constants.SYNC_STATE.LOADING;
+        dbManager.writeIdentities([identity]);
+        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [], undefined);
+      });
+
       it("Should forward isUpdate true to writeIdentities", function() {
         spyOn(dbManager, "_writeObjects");
-        spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
+        //spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
         dbManager.writeIdentities([identity]);
         expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', jasmine.any(Object), undefined);
       });
 
       it("Should forward isUpdate true to writeIdentities", function() {
         spyOn(dbManager, "_writeObjects");
-        spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
-        dbManager.writeIdentities([message]);
+        //spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
+        dbManager.writeIdentities([identity]);
         expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', jasmine.any(Object), undefined);
       });
 
       it("Should feed data from _getIdentityData to _writeObjects", function() {
         spyOn(dbManager, "_writeObjects");
-        spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
-        dbManager.writeIdentities([message]);
-        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [{id: 'fred'}], undefined);
+        //spyOn(dbManager, "_getIdentityData").and.returnValue([{id: 'fred'}]);
+        dbManager.writeIdentities([identity]);
+        expect(dbManager._writeObjects).toHaveBeenCalledWith('identities', [jasmine.objectContaining({id: identity.id})], undefined);
       });
     });
 
     describe("The _getSyncEventData() method", function() {
       var syncEvent;
       beforeEach(function() {
-        syncEvent = new layer.Core.XHRSyncEvent({
+        syncEvent = new Layer.Core.XHRSyncEvent({
           target: "fred",
           depends: ["joe", "fred"],
           operation: "brain removal",
@@ -969,7 +987,7 @@ var dbIt = it;
       });
 
       it("Should generate a proper object", function() {
-        var syncEvent = new layer.Core.WebsocketSyncEvent({
+        var syncEvent = new Layer.Core.WebsocketSyncEvent({
           target: "fred",
           depends: ["joe", "fred"],
           operation: "brain removal",
@@ -997,7 +1015,7 @@ var dbIt = it;
     describe("The writeSyncEvents() method", function () {
       var syncEvent;
       beforeEach(function() {
-        var syncEvent = new layer.Core.XHRSyncEvent({
+        var syncEvent = new Layer.Core.XHRSyncEvent({
           target: "fred",
           depends: ["joe", "fred"],
           operation: "brain removal",
@@ -1028,6 +1046,12 @@ var dbIt = it;
 
 
     describe("The _writeObjects() method", function() {
+      beforeEach(function(done) {
+        setTimeout(function() {
+          done();
+        }, 100);
+      });
+
       it("Should do nothing if no data", function() {
         var spy = jasmine.createSpy('spy');
         spyOn(dbManager, "onOpen");
@@ -1227,7 +1251,7 @@ var dbIt = it;
         spyOn(dbManager, "_createConversation");
         var c1 = client.createConversation({participants: ["c1"]});
         var c2 = client.createConversation({participants: ["c2"]});
-        c1.syncState = c2.syncState = layer.Constants.SYNC_STATE.SYNCED;
+        c1.syncState = c2.syncState = Layer.Constants.SYNC_STATE.SYNCED;
 
         // Run
         dbManager._loadConversationsResult(dbManager._getConversationData([c1, c2]), []);
@@ -1241,7 +1265,7 @@ var dbIt = it;
         var callback = jasmine.createSpy('callback');
         var c1 = client.createConversation({participants: ["c1"]});
         var c2 = client.createConversation({participants: ["c2"]});
-        c1.syncState = c2.syncState = layer.Constants.SYNC_STATE.SYNCED;
+        c1.syncState = c2.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         client._models.conversations = {};
         client._models.conversations[c2.id] = c2;
 
@@ -1272,7 +1296,7 @@ var dbIt = it;
         spyOn(dbManager, "_createChannel");
         var c1 = client.createChannel({name: 'a1'});
         var c2 = client.createChannel({name: 'a2'});
-        c1.syncState = c2.syncState = layer.Constants.SYNC_STATE.SYNCED;
+        c1.syncState = c2.syncState = Layer.Constants.SYNC_STATE.SYNCED;
 
         // Run
         dbManager._loadChannelsResult(dbManager._getChannelData([c1, c2]));
@@ -1286,7 +1310,7 @@ var dbIt = it;
         var callback = jasmine.createSpy('callback');
         var c1 = client.createChannel({name: 'a1'});
         var c2 = client.createChannel({name: 'a2'});
-        c1.syncState = c2.syncState = layer.Constants.SYNC_STATE.SYNCED;
+        c1.syncState = c2.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         client._models.channels = {};
         client._models.channels[c2.id] = c2;
 
@@ -1427,11 +1451,13 @@ var dbIt = it;
         basicIdentity.isFullIdentity = true;
 
         // Run
-        dbManager._loadIdentitiesResult(dbManager._getIdentityData([identity, basicIdentity]));
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity, basicIdentity], a => identityData = a);
+        dbManager._loadIdentitiesResult(identityData);
 
         // Posttest
-        expect(dbManager._createIdentity).toHaveBeenCalledWith(dbManager._getIdentityData([identity])[0]);
-        expect(dbManager._createIdentity).toHaveBeenCalledWith(dbManager._getIdentityData([basicIdentity])[0]);
+        expect(dbManager._createIdentity).toHaveBeenCalledWith(identityData[0]);
+        expect(dbManager._createIdentity).toHaveBeenCalledWith(identityData[1]);
       });
 
       it("Only returns new identities", function() {
@@ -1441,7 +1467,9 @@ var dbIt = it;
         var spy = jasmine.createSpy('spy');
 
         // Run
-        dbManager._loadIdentitiesResult(dbManager._getIdentityData([identity, basicIdentity]), spy);
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity, basicIdentity], a => identityData = a);
+        dbManager._loadIdentitiesResult(identityData, spy);
 
         // Posttest
         expect(spy).toHaveBeenCalledWith([identity, jasmine.objectContaining({id: basicIdentity.id})]);
@@ -1451,7 +1479,7 @@ var dbIt = it;
     describe("The _createConversation() method", function() {
       it("Should return a Conversation", function() {
         delete client._models.conversations[conversation.id];
-        expect(dbManager._createConversation(dbManager._getConversationData([conversation])[0])).toEqual(jasmine.any(layer.Core.Conversation));
+        expect(dbManager._createConversation(dbManager._getConversationData([conversation])[0])).toEqual(jasmine.any(Layer.Core.Conversation));
       });
 
       it("Should flag Conversation with _fromDB property", function() {
@@ -1473,7 +1501,7 @@ var dbIt = it;
     describe("The _createChannel() method", function() {
       it("Should return a Channel", function() {
         delete client._models.channels[channel.id];
-        expect(dbManager._createChannel(dbManager._getChannelData([channel])[0])).toEqual(jasmine.any(layer.Core.Channel));
+        expect(dbManager._createChannel(dbManager._getChannelData([channel])[0])).toEqual(jasmine.any(Layer.Core.Channel));
       });
 
       it("Should flag Channel with _fromDB property", function() {
@@ -1499,7 +1527,7 @@ var dbIt = it;
         isDone = false;
         dbManager._getMessageData([message], function(result) {
           var m = dbManager._createMessage(result[0]);
-          expect(m).toEqual(jasmine.any(layer.Core.Message));
+          expect(m).toEqual(jasmine.any(Layer.Core.Message));
           isDone = true;
         });
         expect(isDone).toBe(true);
@@ -1531,17 +1559,23 @@ var dbIt = it;
     describe("The _createIdentity() method", function() {
       it("Should return an Identity", function() {
         delete client._models.identities[identity.id];
-        expect(dbManager._createIdentity(dbManager._getIdentityData([identity])[0])).toEqual(jasmine.any(layer.Core.Identity));
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity], a => identityData = a);
+        expect(dbManager._createIdentity(identityData[0])).toEqual(jasmine.any(Layer.Core.Identity));
       });
 
       it("Should flag Identity with _fromDB property", function() {
         delete client._models.identities[identity.id];
-        expect(dbManager._createIdentity(dbManager._getIdentityData([identity])[0])._fromDB).toBe(true);
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity], a => identityData = a);
+        expect(dbManager._createIdentity(identityData[0])._fromDB).toBe(true);
       });
 
       it("Should do nothing if the Identity already is instantiated", function() {
         client._models.identities[identity.id] = identity;
-        expect(dbManager._createIdentity(dbManager._getIdentityData([identity])[0])).toBe(undefined);
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity], a => identityData = a);
+        expect(dbManager._createIdentity(identityData[0])).toBe(undefined);
       });
     });
 
@@ -1555,7 +1589,7 @@ var dbIt = it;
       it("Should call _loadSyncEventRelatedData with results", function() {
         spyOn(dbManager, "_loadSyncEventRelatedData");
         var spy = jasmine.createSpy('callback');
-        var syncEvent = new layer.Core.XHRSyncEvent({});
+        var syncEvent = new Layer.Core.XHRSyncEvent({});
         var syncEventRaw = dbManager._getSyncEventData([syncEvent])[0];
         spyOn(dbManager, "_loadAll").and.callFake(function(tableName, callback) {
           callback([syncEventRaw]);
@@ -1570,13 +1604,13 @@ var dbIt = it;
       var rawSyncEvents;
       beforeEach(function() {
         rawSyncEvents = dbManager._getSyncEventData([
-            new layer.Core.XHRSyncEvent({
+            new Layer.Core.XHRSyncEvent({
               target: conversation.id
             }),
-            new layer.Core.XHRSyncEvent({
+            new Layer.Core.XHRSyncEvent({
               target: message.id
             }),
-            new layer.Core.XHRSyncEvent({
+            new Layer.Core.XHRSyncEvent({
               target: identity.id
             })
         ]);
@@ -1653,17 +1687,18 @@ var dbIt = it;
       });
 
       it("Should call _createIdentity for all identityIds", function() {
-        var rawIdentity = dbManager._getIdentityData([identity])[0];
+        var identityData;
+        Layer.Core.Identity.toDbObjects([identity], a => identityData = a[0]);
         spyOn(dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
           if (tableName === 'identities') {
-            callback([rawIdentity]);
+            callback([identityData]);
           } else {
             callback([]);
           }
         });
         spyOn(dbManager, "_createIdentity");
         dbManager._loadSyncEventRelatedData(rawSyncEvents, function() {});
-        expect(dbManager._createIdentity).toHaveBeenCalledWith(rawIdentity);
+        expect(dbManager._createIdentity).toHaveBeenCalledWith(identityData);
       });
 
       it("Should call _loadSyncEventResults", function() {
@@ -1683,7 +1718,7 @@ var dbIt = it;
       beforeEach(function() {
         now = Date.now();
         syncEvents = [
-          new layer.Core.WebsocketSyncEvent({
+          new Layer.Core.WebsocketSyncEvent({
             target: message.id,
             depends: [conversation.id],
             operation: "POST",
@@ -1692,7 +1727,7 @@ var dbIt = it;
             createdAt: now,
             fromDB: false
           }),
-          new layer.Core.XHRSyncEvent({
+          new Layer.Core.XHRSyncEvent({
             target: conversation.id,
             depends: [],
             operation: "update",
@@ -1704,7 +1739,7 @@ var dbIt = it;
             createdAt: now,
             fromDB: false
           }),
-          new layer.Core.XHRSyncEvent({
+          new Layer.Core.XHRSyncEvent({
             target: conversation.id + 'a',
             depends: [],
             operation: "update",
@@ -1716,7 +1751,7 @@ var dbIt = it;
             createdAt: now,
             fromDB: false
           }),
-          new layer.Core.XHRSyncEvent({
+          new Layer.Core.XHRSyncEvent({
             target: conversation.id + 'b',
             depends: [],
             operation: "DELETE",
@@ -1777,31 +1812,35 @@ var dbIt = it;
       var m1, m2, m3, m4;
       var writtenData;
       beforeEach(function(done) {
-        deleteTables(function() {
-
-          m1 = conversation.createMessage("m1").send();
-          m2 = conversation.createMessage("m2").send();
-          m3 = conversation.createMessage("m3").send();
-          m4 = conversation.createMessage("m4").send();
+        setTimeout(function() {
+          m1 = conversation.createMessage("m1").presend();
+          m2 = conversation.createMessage("m2").presend();
+          m3 = conversation.createMessage("m3").presend();
+          m4 = conversation.createMessage("m4").presend();
           dbManager._getMessageData([message, m4, m2, m3, m1], function(result) {
             writtenData = result;
-            dbManager._writeObjects('messages', result, done);
+            dbManager._writeObjects('messages', result, function() {
+              setTimeout(done, 100);
+            });
           });
-        });
+        }, 100);
       });
 
       it("Should load everything in the table", function(done) {
         dbManager._loadAll('messages', function(result) {
-          var sortedExpect = layer.Util.sortBy(writtenData, function(item) {return item.id});
-          expect(result).toEqual(sortedExpect);
-          done();
+          try {
+            var sortedExpect = Layer.Utils.sortBy(writtenData, function(item) {return item.id});
+            expect(result).toEqual(sortedExpect);
+            done();
+          } catch(e) {
+            done(e);
+          }
         });
       });
 
       it("Should load nothing if table is", function(done) {
-        var dbManager = new layer.Core.DbManager({
+        var dbManager = new Layer.Core.DbManager({
           enabled: true,
-          client: client,
           tables: {conversations: true}
         });
         dbManager._loadAll('messages', function(result) {
@@ -1815,22 +1854,18 @@ var dbIt = it;
       var m1, m2, m3, m4;
       var writtenData;
       beforeEach(function(done) {
-        var c2 = client.createConversation({participants: ["c2"]});
-        message = conversation.createMessage("first message").send();
-        m1 = conversation.createMessage("m1").send();
-        m2 = conversation.createMessage("m2").send();
-        m3 = c2.createMessage("m3").send();
-        m4 = c2.createMessage("m4").send();
-        setTimeout(function() {
-          deleteTables(function() {
-            dbManager._getMessageData([m1, m2, m3, m4], function(result) {
-              writtenData = result;
-              dbManager._writeObjects('messages', result, function() {
-                setTimeout(done, 50);
-              });
+          var c2 = client.createConversation({participants: ["c2"]});
+          message = conversation.createMessage("first message").presend();
+          m1 = conversation.createMessage("m1").presend();
+          m2 = conversation.createMessage("m2").presend();
+          m3 = c2.createMessage("m3").presend();
+          m4 = c2.createMessage("m4").presend();
+          dbManager._getMessageData([m1, m2, m3, m4], function(result) {
+            writtenData = result;
+            dbManager._writeObjects('messages', result, function() {
+              setTimeout(done, 50);
             });
           });
-        }, 50);
       });
 
       it("Should get only items matching the index", function(done) {
@@ -1838,7 +1873,7 @@ var dbIt = it;
         dbManager._getMessageData([m2, m1], function(result) { expectedResult = result; });
         const query = window.IDBKeyRange.bound([conversation.id, 0], [conversation.id, MAX_SAFE_INTEGER]);
         dbManager._loadByIndex('messages', 'conversationId', query, false, null, function(result) {
-          var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.position}).reverse();
+          var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.position}).reverse();
           expect(result).toEqual(sortedExpect);
           done();
         });
@@ -1850,7 +1885,7 @@ var dbIt = it;
 
         const query = window.IDBKeyRange.bound([conversation.id, 0], [conversation.id, MAX_SAFE_INTEGER]);
         dbManager._loadByIndex('messages', 'conversationId', query, false, 2, function(result) {
-          var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.position}).reverse();
+          var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.position}).reverse();
 
           expect(result).toEqual([sortedExpect[0], sortedExpect[1]]);
           done();
@@ -1863,7 +1898,7 @@ var dbIt = it;
 
         const query = window.IDBKeyRange.bound([conversation.id, 0], [conversation.id, MAX_SAFE_INTEGER]);
         dbManager._loadByIndex('messages', 'conversationId', query, true, null, function(result) {
-          var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.position}).reverse();
+          var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.position}).reverse();
 
           expect(result).toEqual([sortedExpect[1]]);
           done();
@@ -1872,9 +1907,8 @@ var dbIt = it;
 
 
       it("Should get nothing if disabled", function(done) {
-        var dbManager = new layer.Core.DbManager({
+        var dbManager = new Layer.Core.DbManager({
           enabled: true,
-          client: client,
           tables: {messages: false}
           });
         const query = window.IDBKeyRange.bound([conversation.id, 0], [conversation.id, MAX_SAFE_INTEGER]);
@@ -1891,16 +1925,14 @@ var dbIt = it;
       var m1, m2, m3, m4;
       var writtenData;
       beforeEach(function(done) {
-        deleteTables(function() {
-          m1 = conversation.createMessage("m1").send();
-          m2 = conversation.createMessage("m2").send();
-          m3 = conversation.createMessage("m3").send();
-          m4 = conversation.createMessage("m4").send();
-          dbManager._getMessageData([m1, m2, m3, m4], function(result) {
-            writtenData = result;
-            dbManager._writeObjects('messages', result, function() {
-              setTimeout(done, 200);
-            });
+        m1 = conversation.createMessage("m1").presend();
+        m2 = conversation.createMessage("m2").presend();
+        m3 = conversation.createMessage("m3").presend();
+        m4 = conversation.createMessage("m4").presend();
+        dbManager._getMessageData([m1, m2, m3, m4], function(result) {
+          writtenData = result;
+          dbManager._writeObjects('messages', result, function() {
+            setTimeout(done, 200);
           });
         });
       });
@@ -1910,7 +1942,7 @@ var dbIt = it;
         dbManager._getMessageData([m4, m2], function(result) {expectedResult = result;});
         dbManager.deleteObjects('messages', [m1, m3], function() {
           dbManager._loadAll('messages', function(result) {
-            var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.id});
+            var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.id});
             expect(result).toEqual(sortedExpect);
             done();
           });
@@ -1933,7 +1965,7 @@ var dbIt = it;
         var expectedResult;
         dbManager._getMessageData([m2, m4, m1], function(result) {expectedResult = result;});
         dbManager.getObjects('messages', [m2.id, m4.id, m1.id], function(result) {
-          var sortedExpect =  layer.Util.sortBy(expectedResult, function(item) {return item.id});
+          var sortedExpect =  Layer.Utils.sortBy(expectedResult, function(item) {return item.id});
           expect(result).toEqual(sortedExpect);
           done();
         });
@@ -1971,13 +2003,14 @@ var dbIt = it;
       it("Should get the specified object with blob data and no encoding", function(done) {
         dbManager.getObject('messages', m1.id, function(result) {
           expect(result.parts[1].encoding).toBe(null);
-          expect(layer.Util.isBlob(result.parts[1].body)).toBe(true);
+          expect(Layer.Utils.isBlob(result.parts[1].body)).toBe(true);
           done();
         });
       });
 
       it("Should get the specified identity", function(done) {
-        var expectedResult = dbManager._getIdentityData([userIdentity]);
+        var expectedResult;
+        Layer.Core.Identity.toDbObjects([userIdentity], result => expectedResult = result);
         dbManager.writeIdentities([userIdentity], function() {
           dbManager.getObject('identities', userIdentity.id, function(result) {
             expect(result).toEqual(expectedResult[0]);

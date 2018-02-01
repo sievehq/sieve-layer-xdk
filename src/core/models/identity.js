@@ -3,8 +3,8 @@
  *
  * Identities are created by the System, never directly by apps.
  *
- * @class layer.Core.Identity
- * @extends layer.Syncable
+ * @class Layer.Core.Identity
+ * @extends Layer.Core.Syncable
  */
 
 /*
@@ -22,12 +22,13 @@
  *    to the Messages and Conversations tables anyways as part of those larger objects.
  * 7. API For explicit follows/unfollows
  */
-
+import Core from '../namespace';
 import Syncable from './syncable';
 import Root from '../root';
 import { SYNC_STATE } from '../../constants';
 import { ErrorDictionary } from '../layer-error';
-import { strictEncodeURI } from '../../util';
+import { strictEncodeURI } from '../../utils';
+import { client } from '../../settings';
 
 class Identity extends Syncable {
   constructor(options = {}) {
@@ -39,10 +40,6 @@ class Identity extends Syncable {
     } else if (options.id && !options.userId) {
       options.userId = decodeURIComponent(options.id.substring(Identity.prefixUUID.length));
     }
-
-    // Make sure we have an clientId property
-    if (options.client) options.clientId = options.client.appId;
-    if (!options.clientId) throw new Error(ErrorDictionary.clientMissing);
 
     super(options);
 
@@ -67,13 +64,13 @@ class Identity extends Syncable {
     }
 
     if (!this.url && this.id) {
-      this.url = `${this.getClient().url}/${this.id.substring(9)}`;
+      this.url = `${client.url}/${this.id.substring(9)}`;
     } else if (!this.url) {
       this.url = '';
     }
-    this.getClient()._addIdentity(this);
+    client._addIdentity(this);
 
-    this.getClient().on('online', (evt) => {
+    client.on('online', (evt) => {
       if (!evt.isOnline) this._updateValue(['_presence', 'status'], Identity.STATUS.OFFLINE);
     }, this);
 
@@ -81,19 +78,8 @@ class Identity extends Syncable {
   }
 
   destroy() {
-    const client = this.getClient();
-    if (client) client._removeIdentity(this);
+    client._removeIdentity(this);
     super.destroy();
-  }
-
-  _triggerAsync(evtName, args) {
-    this._clearObject();
-    super._triggerAsync(evtName, args);
-  }
-
-  trigger(evtName, args) {
-    this._clearObject();
-    super.trigger(evtName, args);
   }
 
   /**
@@ -106,7 +92,6 @@ class Identity extends Syncable {
    * @param  {Object} identity - Server representation of the identity
    */
   _populateFromServer(identity) {
-    const client = this.getClient();
 
     // Disable events if creating a new Identity
     // We still want property change events for anything that DOES change
@@ -136,13 +121,13 @@ class Identity extends Syncable {
     }
 
     if (!this.url && this.id) {
-      this.url = this.getClient().url + this.id.substring(8);
+      this.url = client.url + this.id.substring(8);
     }
 
     this._disableEvents = false;
 
     // See if we have the Full Identity Object in database
-    if (!this.isFullIdentity && client.isAuthenticated) {
+    if (!this.isFullIdentity && client.isAuthenticated && client.dbManager) {
       client.dbManager.getObjects('identities', [this.id], (result) => {
         if (result.length) this._populateFromServer(result[0]);
       });
@@ -261,17 +246,17 @@ class Identity extends Syncable {
    * Set the status of the current user.
    *
    * @method setStatus
-   * @param {String} status    One of layer.Core.Identity.STATUS.AVAILABLE, layer.Core.Identity.STATUS.AWAY,
-   *        layer.Core.Identity.STATUS.BUSY, layer.Core.Identity.STATUS.OFLINE
+   * @param {String} status    One of Layer.Core.Identity.STATUS.AVAILABLE, Layer.Core.Identity.STATUS.AWAY,
+   *        Layer.Core.Identity.STATUS.BUSY, Layer.Core.Identity.STATUS.OFLINE
    */
   setStatus(status) {
     status = (status || '').toLowerCase();
     if (!Identity.STATUS[status.toUpperCase()]) throw new Error(ErrorDictionary.valueNotSupported);
-    if (this !== this.getClient().user) throw new Error(ErrorDictionary.permissionDenied);
+    if (!this.isMine) throw new Error(ErrorDictionary.permissionDenied);
     if (status === Identity.STATUS.INVISIBLE) status = Identity.STATUS.OFFLINE; // these are equivalent; only one supported by server
 
     const oldValue = this._presence.status;
-    this.getClient().sendSocketRequest({
+    client.sendSocketRequest({
       method: 'PATCH',
       body: {
         method: 'Presence.update',
@@ -304,12 +289,11 @@ class Identity extends Syncable {
   * @param {string} userId
   */
   _setUserId(userId) {
-    const client = this.getClient();
     client._removeIdentity(this);
     this.__userId = userId;
     const encoded = strictEncodeURI(userId);
     this.id = Identity.prefixUUID + encoded;
-    this.url = `${this.getClient().url}/identities/${encoded}`;
+    this.url = `${client.url}/identities/${encoded}`;
     client._addIdentity(this);
   }
 
@@ -340,9 +324,11 @@ class Identity extends Syncable {
   */
   // Turn a Full Identity into a Basic Identity and delete the Full Identity from the database
   _handleWebsocketDelete(data) {
-    this.getClient().dbManager.deleteObjects('identities', [this]);
-    ['firstName', 'lastName', 'emailAddress', 'phoneNumber', 'metadata', 'publicKey', 'isFullIdentity', 'type']
-      .forEach(key => delete this[key]);
+    if (client.dbManager) {
+      client.dbManager.deleteObjects('identities', [this]);
+      ['firstName', 'lastName', 'emailAddress', 'phoneNumber', 'metadata', 'publicKey', 'isFullIdentity', 'type']
+        .forEach(key => delete this[key]);
+    }
     this._triggerAsync('identities:unfollow');
   }
 
@@ -352,55 +338,84 @@ class Identity extends Syncable {
    * @method _createFromServer
    * @static
    * @param {Object} identity - Server Identity Object
-   * @param {layer.Client} client
-   * @returns {layer.Core.Identity}
+   * @returns {Layer.Core.Identity}
    */
-  static _createFromServer(identity, client) {
+  static _createFromServer(identity) {
     return new Identity({
-      client,
       fromServer: identity,
       _fromDB: identity._fromDB,
+    });
+  }
+
+  static toDbObjects(items, callback) {
+    const result = items.map((identity) => {
+      if (identity.isFullIdentity) {
+        return {
+          id: identity.id,
+          url: identity.url,
+          user_id: identity.userId,
+          first_name: identity.firstName,
+          last_name: identity.lastName,
+          display_name: identity.displayName,
+          avatar_url: identity.avatarUrl,
+          metadata: identity.metadata,
+          public_key: identity.publicKey,
+          phone_number: identity.phoneNumber,
+          email_address: identity.emailAddress,
+          sync_state: identity.syncState,
+          type: identity.type,
+        };
+      } else {
+        return Identity.toDbBasicObjects([identity])[0];
+      }
+    });
+    callback(result);
+  }
+
+  static toDbBasicObjects(items) {
+    return items.map((identity) => {
+      return {
+        id: identity.id,
+        url: identity.url,
+        user_id: identity.userId,
+        display_name: identity.displayName,
+        avatar_url: identity.avatarUrl,
+      };
     });
   }
 }
 
 /**
  * Display name for the User or System Identity.
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.displayName = '';
 
 /**
- * The Identity matching `layer.Core.Client.user` will have this be true.
+ * The Identity matching {@link Layer.Core.Client#user} will have this be true.
  *
  * All other Identities will have this as false.
- * @type {boolean}
+ * @property {boolean}
  */
-Identity.prototype.sessionOwner = false;
-
-/**
- * ID of the Client this Identity is associated with.
- * @type {string}
- */
-Identity.prototype.clientId = '';
+Identity.prototype.isMine = false;
 
 /**
  * Is this a Full Identity or Basic Identity?
  *
  * Note that Service Identities are always considered to be Basic.
- * @type {boolean}
+ * @property {boolean}
  */
 Identity.prototype.isFullIdentity = false;
 
 /**
  * Unique ID for this User.
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.userId = '';
 
 /**
  * Optional URL for the user's icon.
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.avatarUrl = '';
 
@@ -409,7 +424,7 @@ Identity.prototype.avatarUrl = '';
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.firstName = '';
 
@@ -418,7 +433,7 @@ Identity.prototype.firstName = '';
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.lastName = '';
 
@@ -427,7 +442,7 @@ Identity.prototype.lastName = '';
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.emailAddress = '';
 
@@ -436,7 +451,7 @@ Identity.prototype.emailAddress = '';
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.phoneNumber = '';
 
@@ -445,7 +460,7 @@ Identity.prototype.phoneNumber = '';
  *
  * Full Identities Only.
  *
- * @type {Object}
+ * @property {Object}
  */
 Identity.prototype.metadata = null;
 
@@ -454,28 +469,28 @@ Identity.prototype.metadata = null;
  *
  * Full Identities Only.
  *
- * @type {string}
+ * @property {string}
  */
 Identity.prototype.publicKey = '';
 
 /**
  * @static
- * @type {string} The Identity represents a user.  Value used in the layer.Core.Identity.type field.
+ * @property {string} The Identity represents a user.  Value used in the Layer.Core.Identity.type field.
  */
 Identity.UserType = 'user';
 
 /**
  * @static
- * @type {string} The Identity represents a bot.  Value used in the layer.Core.Identity.type field.
+ * @property {string} The Identity represents a bot.  Value used in the Layer.Core.Identity.type field.
  */
 Identity.BotType = 'bot';
 
 /**
  * What type of Identity does this represent?
  *
- * * A bot? Use layer.Core.Identity.BotType
- * * A User? Use layer.Core.Identity.UserType
- * @type {string}
+ * * A bot? Use Layer.Core.Identity.BotType
+ * * A User? Use Layer.Core.Identity.UserType
+ * @property {string}
  */
 Identity.prototype.type = Identity.UserType;
 
@@ -505,17 +520,17 @@ Identity.prototype._presence = null;
  *
  * Value is one of:
  *
- * * `layer.Core.Identity.STATUS.AVAILABLE`: User has set their status to `available`.  This is the default initial state
- * * `layer.Core.Identity.STATUS.AWAY`: App or User has changed their status to `away`
- * * `layer.Core.Identity.STATUS.BUSY`: App or User has changed their status to `busy`
- * * `layer.Core.Identity.STATUS.OFFLINE`: User is not connected or has set their status to `offline`
- * * `layer.Core.Identity.STATUS.INVISIBLE`: When a user has set their status to `offline` they instead see a status of `invisible` so that they know
+ * * `Layer.Core.Identity.STATUS.AVAILABLE`: User has set their status to `available`.  This is the default initial state
+ * * `Layer.Core.Identity.STATUS.AWAY`: App or User has changed their status to `away`
+ * * `Layer.Core.Identity.STATUS.BUSY`: App or User has changed their status to `busy`
+ * * `Layer.Core.Identity.STATUS.OFFLINE`: User is not connected or has set their status to `offline`
+ * * `Layer.Core.Identity.STATUS.INVISIBLE`: When a user has set their status to `offline` they instead see a status of `invisible` so that they know
  *    that they have deliberately set their status to `offline` but are still connected.
  *
  * This property can only be set on the session owner's identity, not on other identities via:
  *
  * ```
- * client.user.setStatus(layer.Core.Identity.STATUS.AVAILABLE);
+ * client.user.setStatus(Layer.Core.Identity.STATUS.AVAILABLE);
  * ```
  *
  * @property {String} status
@@ -532,7 +547,7 @@ Object.defineProperty(Identity.prototype, 'status', {
  * Time that the user was last known to be online.
  *
  * Accurate to within about 15 minutes.  User's who are online, but set their status
- * to `layer.Core.Identity.STATUS.INVISIBLE` will not have their `lastSeenAt` value updated.
+ * to `Layer.Core.Identity.STATUS.INVISIBLE` will not have their `lastSeenAt` value updated.
  *
  * @property {Date} lastSeenAt
  * @readonly
@@ -547,7 +562,7 @@ Object.defineProperty(Identity.prototype, 'lastSeenAt', {
 /**
  * Is this Identity a bot?
  *
- * If the layer.Core.Identity.type field is equal to layer.Core.Identity.BotType then this will return true.
+ * If the Layer.Core.Identity.type field is equal to Layer.Core.Identity.BotType then this will return true.
  * @property {boolean} isBot
  */
 Object.defineProperty(Identity.prototype, 'isBot', {
@@ -558,7 +573,7 @@ Object.defineProperty(Identity.prototype, 'isBot', {
 });
 
 /**
- * Possible values for layer.Core.Identity.status field to be used in `setStatus()`
+ * Possible values for Layer.Core.Identity.status field to be used in `setStatus()`
  *
  * @property {Object} STATUS
  * @property {String} STATUS.AVAILABLE   User has set their status to `available`.  This is the default initial state
@@ -579,8 +594,6 @@ Identity.STATUS = {
 
 Identity.inObjectIgnore = Root.inObjectIgnore;
 
-Identity.bubbleEventParent = 'getClient';
-
 Identity._supportedEvents = [
   'identities:change',
   'identities:loaded',
@@ -592,7 +605,7 @@ Identity.eventPrefix = 'identities';
 Identity.prefixUUID = 'layer:///identities/';
 Identity.enableOpsIfNew = true;
 
-Root.initClass.apply(Identity, [Identity, 'Identity']);
+Root.initClass.apply(Identity, [Identity, 'Identity', Core]);
 Syncable.subclasses.push(Identity);
 
 module.exports = Identity;

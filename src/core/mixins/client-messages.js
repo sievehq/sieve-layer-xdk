@@ -1,12 +1,14 @@
 /**
- * Adds Message handling to the layer.Core.Client.
+ * Adds Message handling to the Layer.Core.Client.
  *
- * @class layer.mixins.ClientMessages
+ * @class Layer.Core.mixins.ClientMessages
  */
 
 import Syncable from '../models/syncable';
 import Message from '../models/message';
+import MessagePart from '../models/message-part';
 import { ErrorDictionary } from '../layer-error';
+import Core from '../namespace';
 
 module.exports = {
   events: [
@@ -24,8 +26,8 @@ module.exports = {
             })
     *
     * @event
-    * @param {layer.Core.LayerEvent} evt
-    * @param {layer.Message} evt.Message
+    * @param {Layer.Core.LayerEvent} evt
+    * @param {Layer.Core.Message} evt.Message
     */
     'messages:notify',
 
@@ -37,7 +39,7 @@ module.exports = {
      * This event is triggered on
      *
      * * creating/sending a new message
-     * * Receiving a new layer.Message or layer.Announcement via websocket
+     * * Receiving a new Layer.Core.Message or Layer.Core.Announcement via websocket
      * * Querying/downloading a set of Messages
      *
             client.on('messages:add', function(evt) {
@@ -46,11 +48,11 @@ module.exports = {
                 });
             });
     *
-    * NOTE: Such rendering would typically be done using events on layer.Core.Query.
+    * NOTE: Such rendering would typically be done using events on Layer.Core.Query.
     *
     * @event
-    * @param {layer.Core.LayerEvent} evt
-    * @param {layer.Message[]} evt.messages
+    * @param {Layer.Core.LayerEvent} evt
+    * @param {Layer.Core.Message[]} evt.messages
     */
     'messages:add',
 
@@ -69,11 +71,11 @@ module.exports = {
      *          });
      *      });
      *
-     * NOTE: Such rendering would typically be done using events on layer.Core.Query.
+     * NOTE: Such rendering would typically be done using events on Layer.Core.Query.
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Message} evt.message
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Message} evt.message
      */
     'messages:remove',
 
@@ -85,8 +87,8 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Message} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Message} evt.target
      */
     'messages:sent',
 
@@ -104,8 +106,8 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Message} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Message} evt.target
      */
     'messages:sending',
 
@@ -113,8 +115,8 @@ module.exports = {
      * Server failed to receive a Message.
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Core.LayerEvent} evt.error
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.LayerEvent} evt.error
      */
     'messages:sent-error',
 
@@ -131,11 +133,11 @@ module.exports = {
      *          }
      *      });
      *
-     * NOTE: Such rendering would typically be done using events on layer.Core.Query.
+     * NOTE: Such rendering would typically be done using events on Layer.Core.Query.
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Message} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Message} evt.target
      * @param {Object[]} evt.changes
      * @param {Mixed} evt.changes.newValue
      * @param {Mixed} evt.changes.oldValue
@@ -146,34 +148,34 @@ module.exports = {
     /**
      * This event is a more specific version of messages:change (which will also fire when a part is added)
      *
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Message} evt.target
-     * @param {layer.MessagePart} evt.part    The Part that was added
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Message} evt.target
+     * @param {Layer.Core.MessagePart} evt.part    The Part that was added
      */
     'messages:part-added',
 
     /**
      * This event is a more specific version of messages:change (should also fire when a part is removed)
      *
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Message} evt.target
-     * @param {layer.MessagePart} evt.part    The Part that was removed
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Message} evt.target
+     * @param {Layer.Core.MessagePart} evt.part    The Part that was removed
      */
     'messages:part-removed',
 
     /**
-     * A call to layer.Message.load has completed successfully
+     * A call to Layer.Core.Message.load has completed successfully
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Message} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Message} evt.target
      */
     'messages:loaded',
 
     /**
      * A Message has been deleted from the server.
      *
-     * Caused by either a successful call to layer.Message.delete() on the Message
+     * Caused by either a successful call to Layer.Core.Message.delete() on the Message
      * or by a remote user.
      *
      *      client.on('messages:delete', function(evt) {
@@ -181,8 +183,8 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Message} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Message} evt.target
      */
     'messages:delete',
   ],
@@ -191,7 +193,7 @@ module.exports = {
       this._models.messages = {};
     },
     cleanup() {
-      Object.keys(this._models.messages).forEach((id) => {
+      Object.keys(this._models.messages || {}).forEach((id) => {
         const message = this._models.messages[id];
         if (message && !message.isDestroyed) {
           message.destroy();
@@ -213,7 +215,7 @@ module.exports = {
      *
      * If you want it to load it from cache and then from server if not in cache, use the `canLoad` parameter.
      * If loading from the server, the method will return
-     * a layer.Message instance that has no data; the messages:loaded/messages:loaded-error events
+     * a Layer.Core.Message instance that has no data; the messages:loaded/messages:loaded-error events
      * will let you know when the message has finished/failed loading from the server.
      *
      *      var m = client.getMessage('layer:///messages/123', true)
@@ -228,7 +230,7 @@ module.exports = {
      * @method getMessage
      * @param  {string} id              - layer:///messages/uuid
      * @param  {boolean} [canLoad=false] - Pass true to allow loading a message from the server if not found
-     * @return {layer.Message}
+     * @return {Layer.Core.Message}
      */
     getMessage(id, canLoad) {
       let result = null;
@@ -243,7 +245,7 @@ module.exports = {
       if (this._models.messages[id]) {
         result = this._models.messages[id];
       } else if (canLoad) {
-        result = Syncable.load(id, this);
+        result = Syncable.load(id);
       }
       if (canLoad) result._loadType = 'fetched';
 
@@ -275,15 +277,19 @@ module.exports = {
      * May also update Conversation.lastMessage.
      *
      * @method _addMessage
-     * @protected
-     * @param  {layer.Message} message
+     * @private
+     * @param  {Layer.Core.Message} message
      */
     _addMessage(message) {
       if (!this._models.messages[message.id]) {
+        message.parts.forEach((part) => { part._message = null; });
         this._models.messages[message.id] = message;
         this._triggerAsync('messages:add', { messages: [message] });
         if (message._notify) {
-          this._triggerAsync('messages:notify', { message });
+          this._triggerAsync('messages:notify', {
+            message,
+            notification: message._notify,
+          });
           message._notify = false;
         }
 
@@ -307,7 +313,7 @@ module.exports = {
      *
      * @method _removeMessage
      * @private
-     * @param  {layer.Message|string} message or Message ID
+     * @param  {Layer.Core.Message|string} message or Message ID
      */
     _removeMessage(message) {
       const id = (typeof message === 'string') ? message : message.id;
@@ -341,7 +347,7 @@ module.exports = {
      * @param {number} fromPosition
      */
     _purgeMessagesByPosition(conversationId, fromPosition) {
-      Object.keys(this._models.messages).forEach((id) => {
+      Object.keys(this._models.messages || {}).forEach((id) => {
         const message = this._models.messages[id];
         if (message.conversationId === conversationId && message.position <= fromPosition) {
           message.destroy();
@@ -353,10 +359,16 @@ module.exports = {
      * Iterate over every locally cached Message, calling your function.
      *
      * @param {Function} fn
-     * @param {layer.Message} fn.message
+     * @param {Layer.Core.Message} fn.message
      */
     forEachMessage(fn) {
-      Object.keys(this._models.messages).forEach(id => fn(this._models.messages[id]));
+      Object.keys(this._models.messages || {}).forEach(id => fn(this._models.messages[id]));
+    },
+
+    _createMessagePartFromServer(obj) {
+      return MessagePart._createFromServer(obj);
     },
   },
 };
+
+Core.mixins.Client.push(module.exports);

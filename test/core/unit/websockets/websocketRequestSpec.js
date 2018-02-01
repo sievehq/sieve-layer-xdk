@@ -7,14 +7,13 @@ describe("The Websocket Request Manager Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = new Layer.Core.Identity({
             userId: 'Frodo',
             id: "layer:///identities/" + 'Frodo',
             firstName: "first",
@@ -25,9 +24,9 @@ describe("The Websocket Request Manager Class", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
-            sessionOwner: true
+            isMine: true
         });
 
 
@@ -55,15 +54,14 @@ describe("The Websocket Request Manager Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         it("Should return a Websockets.RequestManager", function() {
-            expect(new layer.Core.Websockets.RequestManager({
-                client: client,
+            expect(new Layer.Core.Websockets.RequestManager({
                 socketManager: client.socketManager
-            })).toEqual(jasmine.any(layer.Websockets.RequestManager));
+            })).toEqual(jasmine.any(Layer.Core.Websockets.RequestManager));
         });
 
         it("Should setup _requestCallbacks", function() {
@@ -71,42 +69,40 @@ describe("The Websocket Request Manager Class", function() {
         });
 
 	      it("Should subscribe to call _handleResponse on message", function() {
-            var tmp = layer.Websockets.RequestManager.prototype._handleResponse;
-            layer.Websockets.RequestManager.prototype._handleResponse = jasmine.createSpy('handleResponse');
-            var requestManager = new layer.Core.Websockets.RequestManager({
-                client: client,
+            var tmp = Layer.Core.Websockets.RequestManager.prototype._handleResponse;
+            Layer.Core.Websockets.RequestManager.prototype._handleResponse = jasmine.createSpy('handleResponse');
+            var requestManager = new Layer.Core.Websockets.RequestManager({
                 socketManager: client.socketManager
             })
-            expect(layer.Websockets.RequestManager.prototype._handleResponse).not.toHaveBeenCalled();
+            expect(Layer.Core.Websockets.RequestManager.prototype._handleResponse).not.toHaveBeenCalled();
 
             // Run
             client.socketManager.trigger("message", {data: {body: {}}});
 
             // Posttest
-            expect(layer.Websockets.RequestManager.prototype._handleResponse).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(Layer.Core.Websockets.RequestManager.prototype._handleResponse).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
-            layer.Websockets.RequestManager.prototype._handleResponse = tmp;
+            Layer.Core.Websockets.RequestManager.prototype._handleResponse = tmp;
             requestManager.destroy();
         });
 
         it("Should subscribe to call _reset on disconnected", function() {
-            var tmp = layer.Websockets.RequestManager.prototype._reset;
-            layer.Websockets.RequestManager.prototype._reset = jasmine.createSpy('handleResponse');
-            var requestManager = new layer.Core.Websockets.RequestManager({
-                client: client,
+            var tmp = Layer.Core.Websockets.RequestManager.prototype._reset;
+            Layer.Core.Websockets.RequestManager.prototype._reset = jasmine.createSpy('handleResponse');
+            var requestManager = new Layer.Core.Websockets.RequestManager({
                 socketManager: client.socketManager
             })
-            expect(layer.Websockets.RequestManager.prototype._reset).not.toHaveBeenCalled();
+            expect(Layer.Core.Websockets.RequestManager.prototype._reset).not.toHaveBeenCalled();
 
             // Run
             client.socketManager.trigger("disconnected");
 
             // Posttest
-            expect(layer.Websockets.RequestManager.prototype._reset).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(Layer.Core.Websockets.RequestManager.prototype._reset).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
 
             // Restore
-            layer.Websockets.RequestManager.prototype._reset = tmp;
+            Layer.Core.Websockets.RequestManager.prototype._reset = tmp;
             requestManager.destroy();
         });
     });
@@ -132,7 +128,7 @@ describe("The Websocket Request Manager Class", function() {
                 data: {hey: "ho"},
                 callback: spy,
             });
-            expect(spy).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+            expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerError));
             expect(spy).toHaveBeenCalledWith(jasmine.objectContaining({
               success: false,
               data: {

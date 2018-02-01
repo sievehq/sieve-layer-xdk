@@ -4,11 +4,10 @@ describe("List Selection Mixin", function() {
 
   beforeEach(function() {
     jasmine.clock().install();
-    client = new layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -16,21 +15,18 @@ describe("List Selection Mixin", function() {
     });
     client._clientAuthenticated();
 
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
     el = document.createElement('layer-conversation-list');
     testRoot.appendChild(el);
     query = client.createQuery({
-      model: layer.Core.Query.Conversation
+      model: Layer.Core.Query.Conversation
     });
     query.isFiring = false;
     for (i = 0; i < 100; i++) {
       query.data.push(
-        new layer.Conversation({
-          client: client,
-          participants: [client.user],
+        new Layer.Core.Conversation({
+              participants: [client.user],
           id: 'layer:///conversations/c' + i,
           distinct: false,
           metadata: {conversationName: "C " + i}
@@ -38,9 +34,9 @@ describe("List Selection Mixin", function() {
       );
     }
     el.query = query;
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(50);
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(50);
 
   });
@@ -49,8 +45,9 @@ describe("List Selection Mixin", function() {
     try {
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
+      if (client) client.destroy();
     } catch(e) {}
   });
 
@@ -70,9 +67,8 @@ describe("List Selection Mixin", function() {
     });
 
     it("Should set isSelected when generating items", function() {
-      var query2 = new layer.Core.Query({
-        client: client,
-      });
+      var query2 = new Layer.Core.Query({
+        });
       el.query = query2;
       expect(el.childNodes.length).toBe(1);
       el.selectedId = query.data[5].id;

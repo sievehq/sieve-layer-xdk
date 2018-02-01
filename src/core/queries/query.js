@@ -9,11 +9,15 @@
  *
  *      // 2. Passing properties directly
  *      var conversationQuery = client.createQuery({
- *        model: layer.Core.Query.Conversation,
+ *        model: Layer.Core.Query.Conversation,
  *        sortBy: [{'createdAt': 'desc'}]
  *      });
  *      var channelQuery = client.createQuery({
- *        model: layer.Core.Query.Channel
+ *        model: Layer.Core.Query.Conversation,
+ *        sortBy: [{'createdAt': 'desc'}]
+ *      });
+ *      var channelQuery = client.createQuery({
+ *        model: Layer.Core.Query.Channel
  *      });
  *
  * You can change the data selected by your query any time you want using:
@@ -38,31 +42,31 @@
  *
  * For documentation on creating each of these types of queries, see the specified Query Subclass:
  *
- * * layer.ConversationsQuery
- * * layer.ChannelsQuery
- * * layer.MessagesQuery
- * * layer.IdentitiesQuery
- * * layer.MembersQuery
+ * * Layer.Core.ConversationsQuery
+ * * Layer.Core.ChannelsQuery
+ * * Layer.Core.MessagesQuery
+ * * Layer.Core.IdentitiesQuery
+ * * Layer.Core.MembersQuery
  *
  * #### dataType
  *
- * The layer.Core.Query.dataType property lets you specify what type of data shows up in your results:
+ * The Layer.Core.Query.dataType property lets you specify what type of data shows up in your results:
  *
  * ```javascript
  * var query = client.createQuery({
- *     model: layer.Core.Query.Message,
+ *     model: Layer.Core.Query.Message,
  *     predicate: "conversation.id = 'layer:///conversations/uuid'",
- *     dataType: layer.Core.Query.InstanceDataType
+ *     dataType: Layer.Core.Query.InstanceDataType
  * })
  *
  * var query = client.createQuery({
- *     model: layer.Core.Query.Message,
+ *     model: Layer.Core.Query.Message,
  *     predicate: "conversation.id = 'layer:///conversations/uuid'",
- *     dataType: layer.Core.Query.ObjectDataType
+ *     dataType: Layer.Core.Query.ObjectDataType
  * })
  * ```
  *
- * The property defaults to layer.Core.Query.InstanceDataType.  Instances support methods and let you subscribe to events for direct notification
+ * The property defaults to Layer.Core.Query.InstanceDataType.  Instances support methods and let you subscribe to events for direct notification
  * of changes to any of the results of your query:
  *
 * ```javascript
@@ -71,7 +75,7 @@
  * });
  * ```
  *
- * A value of layer.Core.Query.ObjectDataType will cause the data to be an array of immutable objects rather than instances.  One can still get an instance from the POJO:
+ * A value of Layer.Core.Query.ObjectDataType will cause the data to be an array of immutable objects rather than instances.  One can still get an instance from the POJO:
  *
  * ```javascript
  * var m = client.getMessage(query.data[0].id);
@@ -106,7 +110,7 @@
  *
  * A new Conversation or Message was created. It may have been created locally by your user, or it may have been remotely created, received via websocket, and added to the Query's results.
  *
- * The layer.Core.LayerEvent.target property contains the newly inserted object.
+ * The Layer.Core.LayerEvent.target property contains the newly inserted object.
  *
  * ```javascript
  *  query.on('change', function(evt) {
@@ -123,7 +127,7 @@
  *
  * A Conversation or Message was deleted. This may have been deleted locally by your user, or it may have been remotely deleted, a notification received via websocket, and removed from the Query results.
  *
- * The layer.Core.LayerEvent.target property contains the removed object.
+ * The Layer.Core.LayerEvent.target property contains the removed object.
  *
  * ```javascript
  * query.on('change', function(evt) {
@@ -153,11 +157,11 @@
  *
  * ### 5. Property Events
  *
- * If any properties change in any of the objects listed in your layer.Core.Query.data property, a `property` event will be fired.
+ * If any properties change in any of the objects listed in your Layer.Core.Query.data property, a `property` event will be fired.
  *
- * The layer.Core.LayerEvent.target property contains object that was modified.
+ * The Layer.Core.LayerEvent.target property contains object that was modified.
  *
- * See layer.Core.LayerEvent.changes for details on how changes are reported.
+ * See Layer.Core.LayerEvent.changes for details on how changes are reported.
  *
  * ```javascript
  * query.on('change', function(evt) {
@@ -197,25 +201,20 @@
  *```
  * Note that `query.on('change:move', function(evt) {}` is also supported.
  *
- * @class  layer.Core.Query
- * @extends layer.Root
+ * @class  Layer.Core.Query
+ * @extends Layer.Core.Root
  *
  */
+import { client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import Util, { logger } from '../../util';
+import { logger } from '../../utils';
 
 class Query extends Root {
 
-  constructor(...args) {
-    let options;
-    if (args.length === 2) {
-      options = args[1].build();
-      options.client = args[0];
-    } else {
-      options = args[0];
-    }
-
+  constructor(options) {
+    if (typeof options.build === 'function') options = options.build();
     super(options);
     this.predicate = this._fixPredicate(options.predicate || '');
 
@@ -230,11 +229,10 @@ class Query extends Root {
 
     this.data = [];
     this._initialPaginationWindow = this.paginationWindow;
-    if (!this.client) throw new Error(ErrorDictionary.clientMissing);
-    this.client.on('all', this._handleEvents, this);
+    client.on('all', this._handleEvents, this);
 
-    if (!this.client.isReady) {
-      this.client.once('ready', () => this._run(), this);
+    if (!client.isReady) {
+      client.once('ready', () => this._run(), this);
     } else {
       this._run();
     }
@@ -251,8 +249,8 @@ class Query extends Root {
       data: [],
       type: 'reset',
     });
-    this.client.off(null, null, this);
-    this.client._removeQuery(this);
+    client.off(null, null, this);
+    client._removeQuery(this);
     this.data = null;
     super.destroy();
   }
@@ -301,10 +299,10 @@ class Query extends Root {
    *
    * @method update
    * @param  {Object} options
-   * @param {string} [options.predicate] - A new predicate for the query
-   * @param {string} [options.model] - A new model for the Query
+   * @param {String} [options.predicate] - A new predicate for the query
+   * @param {String} [options.model] - A new model for the Query
    * @param {number} [paginationWindow] - Increase/decrease our result size to match this pagination window.
-   * @return {layer.Core.Query} this
+   * @return {Layer.Core.Query} this
    */
   update(options = {}) {
     let needsRefresh,
@@ -364,7 +362,7 @@ class Query extends Root {
     this.totalSize = 0;
     const data = this.data;
     this.data = [];
-    this.client._checkAndPurgeCache(data);
+    client._checkAndPurgeCache(data);
     this.isFiring = false;
     this._predicate = null;
     this._nextDBFromId = '';
@@ -405,7 +403,7 @@ class Query extends Root {
     if (pageSize < 0) {
       const removedData = this.data.slice(this.paginationWindow);
       this.data = this.data.slice(0, this.paginationWindow);
-      this.client._checkAndPurgeCache(removedData);
+      client._checkAndPurgeCache(removedData);
       this.pagedToEnd = false;
       this._triggerAsync('change', { data: [] });
     } else if (pageSize === 0 || this.pagedToEnd) {
@@ -455,9 +453,9 @@ class Query extends Root {
       this._appendResults(results, false);
 
     } else if (results.data.getNonce()) {
-      this.client.once('ready', () => {
+      client.once('ready', () => {
         this._run();
-      });
+      }, this);
     } else {
       this.trigger('error', { error: results.data });
     }
@@ -476,7 +474,7 @@ class Query extends Root {
     // If already registered with the client, properties will be updated as needed
     // Database results rather than server results will arrive already registered.
     results.data.forEach((item) => {
-      if (!(item instanceof Root)) this.client._createObject(item);
+      if (!(item instanceof Root)) client._createObject(item);
     });
 
     // Filter results to just the new results
@@ -499,7 +497,7 @@ class Query extends Root {
 
     // Insert the results... if the results are a match
     newResults.forEach((itemIn) => {
-      const item = this.client.getObject(itemIn.id);
+      const item = client.getObject(itemIn.id);
       if (item && (!this.filter || this.filter(item))) {
         this._appendResultsSplice(item);
         finalResults.push(item);
@@ -512,7 +510,7 @@ class Query extends Root {
       type: 'data',
       data: finalResults.map(item => this._getData(item)),
       query: this,
-      target: this.client,
+      target: client,
     });
   }
 
@@ -535,7 +533,7 @@ class Query extends Root {
    *
    * @method _getData
    * @private
-   * @param  {layer.Root} item - Conversation, Message, etc... instance
+   * @param  {Layer.Core.Root} item - Conversation, Message, etc... instance
    * @return {Object} - Conversation, Message, etc... instance or Object
    */
   _getData(item) {
@@ -549,12 +547,12 @@ class Query extends Root {
    * Returns an instance regardless of whether the input is instance or object
    * @method _getInstance
    * @private
-   * @param {layer.Root|Object} item - Conversation, Message, etc... object/instance
-   * @return {layer.Root}
+   * @param {Layer.Core.Root|Object} item - Conversation, Message, etc... object/instance
+   * @return {Layer.Core.Root}
    */
   _getInstance(item) {
     if (item instanceof Root) return item;
-    return this.client.getObject(item.id);
+    return client.getObject(item.id);
   }
 
   /**
@@ -564,7 +562,7 @@ class Query extends Root {
    *
    * @method _getItem
    * @private
-   * @param  {string} id
+   * @param  {String} id
    * @return {Object} Conversation, Message, etc... object or instance
    */
   _getItem(id) {
@@ -577,7 +575,7 @@ class Query extends Root {
    *
    * @method _getIndex
    * @private
-   * @param  {string} id
+   * @param  {String} id
    * @return {number}
    */
   _getIndex(id) {
@@ -588,7 +586,7 @@ class Query extends Root {
   }
 
   /**
-   * Handle any change event received from the layer.Core.Client.
+   * Handle any change event received from the Layer.Core.Client.
    *
    * These can be caused by websocket events, as well as local
    * requests to create/delete/modify Conversations and Messages.
@@ -598,8 +596,8 @@ class Query extends Root {
    *
    * @method _handleEvents
    * @private
-   * @param {string} eventName - "messages:add", "conversations:change"
-   * @param {layer.Core.LayerEvent} evt
+   * @param {String} eventName - "messages:add", "conversations:change"
+   * @param {Layer.Core.LayerEvent} evt
    */
   _handleEvents(eventName, evt) {
     // Noop
@@ -609,7 +607,7 @@ class Query extends Root {
    * Handle a change event... for models that don't require custom handling
    *
    * @method _handleChangeEvent
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @private
    */
   _handleChangeEvent(name, evt) {
@@ -702,7 +700,7 @@ class Query extends Root {
    * @method _updateNextFromId
    * @private
    * @param {number} index - Current index of the nextFromId
-   * @returns {string} - Next ID or empty string
+   * @returns {String} - Next ID or empty string
    */
   _updateNextFromId(index) {
     if (index > 0) return this.data[index - 1].id;
@@ -713,7 +711,7 @@ class Query extends Root {
    * If this is ever changed to be async, make sure that destroy() still triggers synchronous events
    */
   _triggerChange(evt) {
-    if (this.isDestroyed || this.client._inCleanup) return;
+    if (this.isDestroyed || client._inCleanup) return;
     this.trigger('change', evt);
     this.trigger('change:' + evt.type, evt);
   }
@@ -729,8 +727,8 @@ Query.prefixUUID = 'layer:///queries/';
 /**
  * Query for Conversations.
  *
- * Use this value in the layer.Core.Query.model property.
- * @type {string}
+ * Use this value in the Layer.Core.Query.model property.
+ * @property {String} Conversation
  * @static
  */
 Query.Conversation = 'Conversation';
@@ -738,8 +736,8 @@ Query.Conversation = 'Conversation';
 /**
  * Query for Channels.
  *
- * Use this value in the layer.Core.Query.model property.
- * @type {string}
+ * Use this value in the Layer.Core.Query.model property.
+ * @property {String} Channel
  * @static
  */
 Query.Channel = 'Channel';
@@ -747,8 +745,8 @@ Query.Channel = 'Channel';
 /**
  * Query for Messages.
  *
- * Use this value in the layer.Core.Query.model property.
- * @type {string}
+ * Use this value in the Layer.Core.Query.model property.
+ * @property {String} Message
  * @static
  */
 Query.Message = 'Message';
@@ -756,8 +754,8 @@ Query.Message = 'Message';
 /**
  * Query for Announcements.
  *
- * Use this value in the layer.Core.Query.model property.
- * @type {string}
+ * Use this value in the Layer.Core.Query.model property.
+ * @property {String} Announcement
  * @static
  */
 Query.Announcement = 'Announcement';
@@ -765,8 +763,8 @@ Query.Announcement = 'Announcement';
 /**
  * Query for Identities.
  *
- * Use this value in the layer.Core.Query.model property.
- * @type {string}
+ * Use this value in the Layer.Core.Query.model property.
+ * @property {String} Identity
  * @static
  */
 Query.Identity = 'Identity';
@@ -774,8 +772,8 @@ Query.Identity = 'Identity';
 /**
  * Query for Members of a Channel.
  *
- * Use this value in the layer.Core.Query.model property.
- * @type {string}
+ * Use this value in the Layer.Core.Query.model property.
+ * @property {String}
  * @static
  */
 Query.Membership = 'Membership';
@@ -783,19 +781,19 @@ Query.Membership = 'Membership';
 /**
  * Get data as POJOs/immutable objects.
  *
- * This value of layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as immutable objects.
+ * This value of Layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as immutable objects.
  *
- * @type {string}
+ * @property {String}
  * @static
  */
 Query.ObjectDataType = 'object';
 
 /**
- * Get data as instances of layer.Message and layer.Conversation.
+ * Get data as instances of Layer.Core.Message and Layer.Core.Conversation.
  *
- * This value of layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as instances.
+ * This value of Layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as instances.
  *
- * @type {string}
+ * @property {String}
  * @static
  */
 Query.InstanceDataType = 'instance';
@@ -803,7 +801,7 @@ Query.InstanceDataType = 'instance';
 /**
  * Set the maximum page size for queries.
  *
- * @type {number}
+ * @property {number}
  * @static
  */
 Query.MaxPageSize = 100;
@@ -811,7 +809,7 @@ Query.MaxPageSize = 100;
 /**
  * Access the number of results currently loaded.
  *
- * @type {Number}
+ * @property {Number}
  * @readonly
  */
 Object.defineProperty(Query.prototype, 'size', {
@@ -825,28 +823,18 @@ Object.defineProperty(Query.prototype, 'size', {
  *
  * Will be 0 until the first query has successfully loaded results.
  *
- * @type {Number}
+ * @property {Number}
  * @readonly
  */
 Query.prototype.totalSize = 0;
 
-
-/**
- * Access to the client so it can listen to websocket and local events.
- *
- * @type {layer.Client}
- * @protected
- * @readonly
- */
-Query.prototype.client = null;
-
 /**
  * Query results.
  *
- * Array of data resulting from the Query; either a layer.Root subclass.
+ * Array of data resulting from the Query; either a Layer.Core.Root subclass.
  *
  * or plain Objects
- * @type {Object[]}
+ * @property {Object[]}
  * @readonly
  */
 Query.prototype.data = null;
@@ -856,15 +844,15 @@ Query.prototype.data = null;
  *
  * Model is one of
  *
- * * layer.Core.Query.Conversation
- * * layer.Core.Query.Channel
- * * layer.Core.Query.Message
- * * layer.Core.Query.Announcement
- * * layer.Core.Query.Identity
+ * * Layer.Core.Query.Conversation
+ * * Layer.Core.Query.Channel
+ * * Layer.Core.Query.Message
+ * * Layer.Core.Query.Announcement
+ * * Layer.Core.Query.Identity
  *
- * Value can be set via constructor and layer.Core.Query.update().
+ * Value can be set via constructor and Layer.Core.Query.update().
  *
- * @type {String}
+ * @property {String}
  * @readonly
  */
 Query.prototype.model = '';
@@ -883,7 +871,7 @@ Query.prototype.model = '';
  * This Query API is designed only for use with 'object' at this time; waiting for updates to server for
  * this functionality.
  *
- * @type {String}
+ * @property {String}
  * @readonly
  */
 Query.prototype.returnType = 'object';
@@ -895,7 +883,7 @@ Query.prototype.returnType = 'object';
  * * Query.ObjectDataType
  * * Query.InstanceDataType
  *
- * @type {String}
+ * @property {String}
  * @readonly
  */
 Query.prototype.dataType = Query.InstanceDataType;
@@ -915,7 +903,7 @@ Query.prototype.dataType = Query.InstanceDataType;
  *
  * Note that the server will only permit 100 at a time.
  *
- * @type {Number}
+ * @property {Number}
  * @readonly
  */
 Query.prototype.paginationWindow = 100;
@@ -941,7 +929,7 @@ Query.prototype.paginationWindow = 100;
  * Why such limitations? Why this structure?  The server will be exposing a Query API at which point the
  * above sort options will make a lot more sense, and full sorting will be provided.
  *
- * @type {String}
+ * @property {String}
  * @readonly
  */
 Query.prototype.sortBy = null;
@@ -949,7 +937,7 @@ Query.prototype.sortBy = null;
 /**
  * This value tells us what to reset the paginationWindow to when the query is redefined.
  *
- * @type {Number}
+ * @property {Number}
  * @private
  */
 Query.prototype._initialPaginationWindow = 100;
@@ -966,7 +954,7 @@ Query.prototype._initialPaginationWindow = 100;
  *
  * Note that both ' and " are supported.
  *
- * @type {string}
+ * @property {String}
  * @readonly
  */
 Query.prototype.predicate = null;
@@ -985,7 +973,7 @@ Query.prototype.predicate = null;
  * };
  * ```
  *
- * @type {Function}
+ * @property {Function}
  */
 Query.prototype.filter = null;
 
@@ -1007,7 +995,7 @@ Query.prototype.filter = null;
  *          });
  *      }
  *
- * @type {Boolean}
+ * @property {Boolean}
  * @readonly
  */
 Query.prototype.isFiring = false;
@@ -1015,7 +1003,7 @@ Query.prototype.isFiring = false;
 /**
  * True if we have reached the last result, and further paging will just return []
  *
- * @type {Boolean}
+ * @property {Boolean}
  * @readonly
  */
 Query.prototype.pagedToEnd = false;
@@ -1025,7 +1013,7 @@ Query.prototype.pagedToEnd = false;
  *
  * If multiple requests are inflight, the response
  * matching this request is the ONLY response we will process.
- * @type {String}
+ * @property {String}
  * @private
  */
 Query.prototype._firingRequest = '';
@@ -1039,7 +1027,7 @@ Query.prototype._firingRequest = '';
  * belongs at the end despite skipping over other items of data.  Paging should not be from this new item, but
  * only the last item pulled via this query from the server.
  *
- * @type {string}
+ * @property {String}
  */
 Query.prototype._nextServerFromId = '';
 
@@ -1052,7 +1040,7 @@ Query.prototype._nextServerFromId = '';
  * belongs at the end despite skipping over other items of data.  Paging should not be from this new item, but
  * only the last item pulled via this query from the database.
  *
- * @type {string}
+ * @property {String}
  */
 Query.prototype._nextDBFromId = '';
 
@@ -1110,6 +1098,6 @@ Query._supportedEvents = [
 
 ].concat(Root._supportedEvents);
 
-Root.initClass.apply(Query, [Query, 'Query']);
+Root.initClass.apply(Query, [Query, 'Query', Core]);
 
 module.exports = Query;

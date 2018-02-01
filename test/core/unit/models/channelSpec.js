@@ -12,14 +12,13 @@ describe("The Channel Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: "Frodo",
           id: "layer:///identities/" + "Frodo",
           firstName: "first",
@@ -30,19 +29,17 @@ describe("The Channel Class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
-        userIdentity1 = new layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/1",
+        userIdentity1 = new Layer.Core.Identity({
+              id: "layer:///identities/1",
             displayName: "1",
             userId: "1"
         });
-        userIdentity2 = new layer.Core.Identity({
-            clientId: client.appId,
-            id: "layer:///identities/2",
+        userIdentity2 = new Layer.Core.Identity({
+              id: "layer:///identities/2",
             displayName: "2",
             userId: "2"
         });
@@ -71,7 +68,7 @@ describe("The Channel Class", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -127,7 +124,7 @@ describe("The Channel Class", function() {
       it("Should call client.sendSocketRequest", function() {
           // Setup
           spyOn(client, "sendSocketRequest");
-          channel.syncState = layer.Constants.SYNC_STATE.NEW;
+          channel.syncState = Layer.Constants.SYNC_STATE.NEW;
 
           // Run
           channel.send();
@@ -153,8 +150,7 @@ describe("The Channel Class", function() {
 
     describe("The _getSendData() method", function() {
       it("Should return the current state of the data in a create format", function() {
-        var channel = new layer.Core.Channel({
-          client: client,
+        var channel = new Layer.Core.Channel({
           metadata: {hey: "ho"},
           name: "Frodo is a Dodo"
         });
@@ -170,9 +166,8 @@ describe("The Channel Class", function() {
       });
 
       it("Should return null if no metadata", function() {
-        var channel = new layer.Core.Channel({
+        var channel = new Layer.Core.Channel({
           members: [userIdentity1, client.user],
-          client: client,
           name: "Frodo is a Dodo"
         });
         expect(channel._getSendData()).toEqual({
@@ -190,7 +185,7 @@ describe("The Channel Class", function() {
     describe("The _createResultConflict() method", function() {
       it("Should call _createSuccess if given a channel", function() {
         var returnedChannel = {};
-        channel = new layer.Core.Channel({client: client});
+        channel = new Layer.Core.Channel({});
         spyOn(channel, "trigger");
         spyOn(channel, "_createSuccess");
         channel._createResultConflict({data: returnedChannel});
@@ -199,7 +194,7 @@ describe("The Channel Class", function() {
       });
 
       it("Should trigger sent-error and mark it as NEW if not given a channel", function() {
-        channel = new layer.Core.Channel({client: client});
+        channel = new Layer.Core.Channel({});
         spyOn(channel, "trigger");
         spyOn(channel, "_createSuccess");
         channel._createResultConflict({data: null});
@@ -211,23 +206,23 @@ describe("The Channel Class", function() {
 
     describe("The name property", function() {
       it("Should be setable if new", function() {
-        channel = new layer.Core.Channel({client: client});
+        channel = new Layer.Core.Channel({});
         channel.name = "fred";
         expect(channel.name).toEqual("fred");
       });
 
       it("Should throw error if setting it when not new", function() {
-        channel = new layer.Core.Channel({client: client});
-        channel.syncState = layer.Constants.SYNC_STATE.SYNCED;
+        channel = new Layer.Core.Channel({});
+        channel.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         expect(function() {
           channel.name = "fred";
-        }).toThrowError(layer.Core.LayerError.ErrorDictionary.permissionDenied);
-        expect(layer.Core.LayerError.ErrorDictionary.permissionDenied).toEqual(jasmine.any(String));
+        }).toThrowError(Layer.Core.LayerError.ErrorDictionary.permissionDenied);
+        expect(Layer.Core.LayerError.ErrorDictionary.permissionDenied).toEqual(jasmine.any(String));
         expect(channel.name).not.toEqual("fred");
       });
 
       it("Should trigger change events when set", function() {
-        channel = new layer.Core.Channel({client: client});
+        channel = new Layer.Core.Channel({});
         spyOn(channel, "_triggerAsync");
 
         channel.name = "fred";
@@ -243,7 +238,7 @@ describe("The Channel Class", function() {
         var channel, c;
         beforeEach(function() {
             c = JSON.parse(JSON.stringify(responses.channel2));
-            channel = new layer.Core.Channel({client: client});
+            channel = new Layer.Core.Channel({});
             jasmine.clock().tick(1);
         });
 
@@ -259,14 +254,14 @@ describe("The Channel Class", function() {
             expect(channel.createdAt).toEqual(new Date(c.created_at));
 
             /* WAITING FOR SPEC TO COMPLETE
-            expect(channel.membership).toEqual(jasmine.any(layer.Membership));
+            expect(channel.membership).toEqual(jasmine.any(Layer.Core.Membership));
             expect(channel.membership).toBe(client.getMember(c.membership.id));
             */
         });
 
         it("Should trigger change events if not new", function() {
             // Setup
-            channel.syncState = layer.Constants.SYNC_STATE.SYNCED;
+            channel.syncState = Layer.Constants.SYNC_STATE.SYNCED;
             spyOn(channel, "_triggerAsync");
 
             // Run
@@ -320,8 +315,8 @@ describe("The Channel Class", function() {
             channel._populateFromServer(c);
 
             // Posttest
-            expect(client._models.members[channel.membership.id]).toEqual(jasmine.any(layer.Membership));
-            expect(channel.membership).toEqual(jasmine.any(layer.Membership));
+            expect(client._models.members[channel.membership.id]).toEqual(jasmine.any(Layer.Core.Membership));
+            expect(channel.membership).toEqual(jasmine.any(Layer.Core.Membership));
         });
 
         /* TODO Waiting for SPEC Complete */
@@ -336,7 +331,7 @@ describe("The Channel Class", function() {
             channel._populateFromServer(c);
 
             // Posttest
-            expect(channel.membership).toEqual(jasmine.any(layer.Membership));
+            expect(channel.membership).toEqual(jasmine.any(Layer.Core.Membership));
             expect(channel.membership).toBe(client._models.members[mid]);
         });
 
@@ -375,7 +370,7 @@ describe("The Channel Class", function() {
           id: channel.id
         }});
         expect(channel._triggerAsync).toHaveBeenCalledWith('channels:sent', {
-          result: layer.Core.Channel.CREATED
+          result: Layer.Core.Channel.CREATED
         });
       });
 
@@ -392,14 +387,14 @@ describe("The Channel Class", function() {
           }
         }});
         expect(channel._triggerAsync).toHaveBeenCalledWith('channels:sent', {
-          result: layer.Core.Channel.FOUND
+          result: Layer.Core.Channel.FOUND
         });
         expect(channel.metadata).toEqual({
           deathTo: "Frodo",
           longLive: "Sauruman"
         });
         expect(channel.id).toEqual("layer:///channels/frodo-brodo");
-        expect(layer.Core.Channel.FOUND.length > 0).toBe(true);
+        expect(Layer.Core.Channel.FOUND.length > 0).toBe(true);
       });
 
       it("Should trigger trigger channels:sent-error if errors", function() {
@@ -506,8 +501,8 @@ describe("The Channel Class", function() {
 
       it("Should return an empty member that is loading", function() {
         var m = channel.getMember(responses.membership1.identity.id, true);
-        expect(m).toEqual(jasmine.any(layer.Membership));
-        expect(m.syncState).toEqual(layer.Constants.SYNC_STATE.LOADING);
+        expect(m).toEqual(jasmine.any(Layer.Core.Membership));
+        expect(m.syncState).toEqual(Layer.Constants.SYNC_STATE.LOADING);
       });
     });
 
@@ -549,25 +544,16 @@ describe("The Channel Class", function() {
     });
 
     describe("The create() method", function() {
-      it("Should throw error if no client", function() {
-        expect(function() {
-          layer.Core.Channel.create({
-            name: "Argh"
-          });
-        }).toThrowError(layer.Core.LayerError.ErrorDictionary.clientMissing);
 
-      });
 
       it("Should return a Channel", function() {
-        expect(layer.Core.Channel.create({
-          client: client,
+        expect(Layer.Core.Channel.create({
           name: "FrodoIsLame"
-        })).toEqual(jasmine.any(layer.Core.Channel));
+        })).toEqual(jasmine.any(Layer.Core.Channel));
       });
 
       it("Should have suitable properties", function() {
-        var channel = layer.Core.Channel.create({
-          client: client,
+        var channel = Layer.Core.Channel.create({
           name: "FrodoIsLame",
           metadata: {
             subtopic: {
@@ -585,8 +571,7 @@ describe("The Channel Class", function() {
       });
 
       it("Should return a matching Channel with different metadata", function() {
-        var channel2 = layer.Core.Channel.create({
-          client: client,
+        var channel2 = Layer.Core.Channel.create({
           name: channel.name,
           metadata: {
             subtopic: {
@@ -603,14 +588,13 @@ describe("The Channel Class", function() {
         });
         expect(channel2.metadata).toEqual(channel.metadata);
         expect(channel._sendDistinctEvent).not.toBe(null);
-        expect(channel._sendDistinctEvent.result).toEqual(layer.Core.Channel.FOUND_WITHOUT_REQUESTED_METADATA);
-        expect(layer.Core.Channel.FOUND_WITHOUT_REQUESTED_METADATA.length > 0).toBe(true);
+        expect(channel._sendDistinctEvent.result).toEqual(Layer.Core.Channel.FOUND_WITHOUT_REQUESTED_METADATA);
+        expect(Layer.Core.Channel.FOUND_WITHOUT_REQUESTED_METADATA.length > 0).toBe(true);
         expect(channel._sendDistinctEvent.target).toBe(channel2);
       });
 
       it("Should return a matching Channel with same metadata", function() {
-        var channel2 = layer.Core.Channel.create({
-          client: client,
+        var channel2 = Layer.Core.Channel.create({
           name: channel.name,
           metadata: channel.metadata
         });
@@ -618,8 +602,8 @@ describe("The Channel Class", function() {
         expect(channel2).toBe(channel);
 
         expect(channel._sendDistinctEvent).not.toBe(null);
-        expect(channel._sendDistinctEvent.result).toEqual(layer.Core.Channel.FOUND);
-        expect(layer.Core.Channel.FOUND.length > 0).toBe(true);
+        expect(channel._sendDistinctEvent.result).toEqual(Layer.Core.Channel.FOUND);
+        expect(Layer.Core.Channel.FOUND.length > 0).toBe(true);
         expect(channel._sendDistinctEvent.target).toBe(channel2);
       });
   });

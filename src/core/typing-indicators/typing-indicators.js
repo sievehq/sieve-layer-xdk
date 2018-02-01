@@ -1,31 +1,33 @@
 /**
  * Static properties here only needed if your directly using
- * the layer.TypingIndicators.TypingPublisher (not needed if
- * you are using the layer.TypingIndicators.TypingListener).
+ * the Layer.Core.TypingIndicators.TypingPublisher (not needed if
+ * you are using the Layer.Core.TypingIndicators.TypingListener).
  *
- *      typingPublisher.setState(layer.TypingIndicators.STARTED);
+ *      typingPublisher.setState(Layer.Core.TypingIndicators.STARTED);
  *
- * @class  layer.TypingIndicators
+ * @class  Layer.Core.TypingIndicators
  * @static
  */
-module.exports = {
+import Core from '../namespace';
+
+module.exports = Core.TypingIndicators = {
   /**
    * Typing has started/resumed
-   * @type {String}
+   * @property {String}
    * @static
    */
   STARTED: 'started',
 
   /**
    * Typing has paused
-   * @type {String}
+   * @property {String}
    * @static
    */
   PAUSED: 'paused',
 
   /**
    * Typing has finished
-   * @type {String}
+   * @property {String}
    * @static
    */
   FINISHED: 'finished',

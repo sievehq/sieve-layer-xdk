@@ -1,8 +1,9 @@
+import Core from '../namespace';
 import Query from './query';
 
 /**
  * Query builder class generating queries for a set of messages.
- * Used in Creating and Updating layer.Core.Query instances.
+ * Used in Creating and Updating Layer.Core.Query instances.
  *
  * Using the Query Builder, we should be able to instantiate a Query
  *
@@ -21,7 +22,7 @@ import Query from './query';
  *       .paginationWindow(200);
  *      query.update(qBuilder);
  *
- * @class layer.Core.QueryBuilder.MessagesQuery
+ * @class Layer.Core.QueryBuilder.MessagesQuery
  */
 class MessagesQuery {
 
@@ -90,7 +91,7 @@ class MessagesQuery {
   /**
    * Returns the built query object to send to the server.
    *
-   * Called by layer.Core.QueryBuilder. You should not need to call this.
+   * Called by Layer.Core.QueryBuilder. You should not need to call this.
    *
    * @method build
    */
@@ -109,8 +110,8 @@ class MessagesQuery {
  *       .paginationWindow(100);
  *      var query = client.createQuery(qBuilder);
  *
- * @class layer.Core.QueryBuilder.AnnouncementsQuery
- * @extends layer.Core.QueryBuilder.MessagesQuery
+ * @class Layer.Core.QueryBuilder.AnnouncementsQuery
+ * @extends Layer.Core.QueryBuilder.MessagesQuery
  */
 class AnnouncementsQuery extends MessagesQuery {
   constructor(options) {
@@ -125,7 +126,7 @@ class AnnouncementsQuery extends MessagesQuery {
 /**
  * Query builder class generating queries for a set of Conversations.
  *
- * Used in Creating and Updating layer.Core.Query instances.
+ * Used in Creating and Updating Layer.Core.Query instances.
  *
  * To get started:
  *
@@ -141,7 +142,7 @@ class AnnouncementsQuery extends MessagesQuery {
  *       .paginationWindow(200);
  *      query.update(qBuilder);
  *
- * @class layer.Core.QueryBuilder.ConversationsQuery
+ * @class Layer.Core.QueryBuilder.ConversationsQuery
  */
 class ConversationsQuery {
 
@@ -180,7 +181,7 @@ class ConversationsQuery {
    *
    * @method paginationWindow
    * @param  {number} win
-   * @return {layer.Core.QueryBuilder} this
+   * @return {Layer.Core.QueryBuilder} this
    */
   paginationWindow(win) {
     this._query.paginationWindow = win;
@@ -196,7 +197,7 @@ class ConversationsQuery {
    * @method sortBy
    * @param  {string} fieldName  - field to sort by
    * @param  {boolean} asc - Is an ascending sort?
-   * @return {layer.Core.QueryBuilder} this
+   * @return {Layer.Core.QueryBuilder} this
    */
   sortBy(fieldName, asc = false) {
     this._query.sortBy = [{ [fieldName]: asc ? 'asc' : 'desc' }];
@@ -206,7 +207,7 @@ class ConversationsQuery {
   /**
    * Returns the built query object to send to the server.
    *
-   * Called by layer.Core.QueryBuilder. You should not need to call this.
+   * Called by Layer.Core.QueryBuilder. You should not need to call this.
    *
    * @method build
    */
@@ -218,7 +219,7 @@ class ConversationsQuery {
 /**
  * Query builder class generating queries for a set of Channels.
  *
- * Used in Creating and Updating layer.Core.Query instances.
+ * Used in Creating and Updating Layer.Core.Query instances.
  *
  * To get started:
  *
@@ -234,7 +235,7 @@ class ConversationsQuery {
  *       .paginationWindow(200);
  *      query.update(qBuilder);
  *
- * @class layer.Core.QueryBuilder.ChannelsQuery
+ * @class Layer.Core.QueryBuilder.ChannelsQuery
  */
 class ChannelsQuery {
 
@@ -273,7 +274,7 @@ class ChannelsQuery {
    *
    * @method paginationWindow
    * @param  {number} win
-   * @return {layer.Core.QueryBuilder} this
+   * @return {Layer.Core.QueryBuilder} this
    */
   paginationWindow(win) {
     this._query.paginationWindow = win;
@@ -283,7 +284,7 @@ class ChannelsQuery {
   /**
    * Returns the built query object to send to the server.
    *
-   * Called by layer.Core.QueryBuilder. You should not need to call this.
+   * Called by Layer.Core.QueryBuilder. You should not need to call this.
    *
    * @method build
    */
@@ -296,7 +297,7 @@ class ChannelsQuery {
 /**
  * Query builder class generating queries for getting members of a Channel.
  *
- * Used in Creating and Updating layer.Core.Query instances.
+ * Used in Creating and Updating Layer.Core.Query instances.
  *
  * To get started:
  *
@@ -314,7 +315,7 @@ class ChannelsQuery {
  *       .paginationWindow(200);
  *      query.update(qBuilder);
  *
- * @class layer.Core.QueryBuilder.MembersQuery
+ * @class Layer.Core.QueryBuilder.MembersQuery
  */
 class MembersQuery {
 
@@ -353,7 +354,7 @@ class MembersQuery {
    *
    * @method paginationWindow
    * @param  {number} win
-   * @return {layer.Core.QueryBuilder} this
+   * @return {Layer.Core.QueryBuilder} this
    */
   paginationWindow(win) {
     this._query.paginationWindow = win;
@@ -378,7 +379,7 @@ class MembersQuery {
   /**
    * Returns the built query object to send to the server.
    *
-   * Called by layer.Core.QueryBuilder. You should not need to call this.
+   * Called by Layer.Core.QueryBuilder. You should not need to call this.
    *
    * @method build
    */
@@ -391,7 +392,7 @@ class MembersQuery {
 /**
  * Query builder class generating queries for a set of Identities followed by this user.
  *
- * Used in Creating and Updating layer.Core.Query instances.
+ * Used in Creating and Updating Layer.Core.Query instances.
  *
  * To get started:
  *
@@ -400,7 +401,7 @@ class MembersQuery {
  *       .paginationWindow(100);
  *      var query = client.createQuery(qBuilder);
  *
- * @class layer.Core.QueryBuilder.IdentitiesQuery
+ * @class Layer.Core.QueryBuilder.IdentitiesQuery
  */
 class IdentitiesQuery {
 
@@ -437,7 +438,7 @@ class IdentitiesQuery {
    *
    * @method paginationWindow
    * @param  {number} win
-   * @return {layer.Core.QueryBuilder} this
+   * @return {Layer.Core.QueryBuilder} this
    */
   paginationWindow(win) {
     this._query.paginationWindow = win;
@@ -447,7 +448,7 @@ class IdentitiesQuery {
   /**
    * Returns the built query object to send to the server.
    *
-   * Called by layer.Core.QueryBuilder. You should not need to call this.
+   * Called by Layer.Core.QueryBuilder. You should not need to call this.
    *
    * @method build
    */
@@ -457,83 +458,83 @@ class IdentitiesQuery {
 }
 
 /**
- * Query builder class. Used with layer.Core.Query to specify what local/remote
- * data changes to subscribe to.  For examples, see layer.Core.QueryBuilder.MessagesQuery
- * and layer.Core.QueryBuilder.ConversationsQuery.  This static class is used to instantiate
+ * Query builder class. Used with Layer.Core.Query to specify what local/remote
+ * data changes to subscribe to.  For examples, see Layer.Core.QueryBuilder.MessagesQuery
+ * and Layer.Core.QueryBuilder.ConversationsQuery.  This static class is used to instantiate
  * MessagesQuery and ConversationsQuery Builder instances:
  *
  *      var conversationsQueryBuilder = QueryBuilder.conversations();
  *      var messagesQueryBuidler = QueryBuilder.messages();
  *
- * Should you use these instead of directly using the layer.Core.Query class?
+ * Should you use these instead of directly using the Layer.Core.Query class?
  * That is a matter of programming style and preference, there is no
  * correct answer.
  *
- * @class layer.Core.QueryBuilder
+ * @class Layer.Core.QueryBuilder
  */
 const QueryBuilder = {
 
   /**
-   * Create a new layer.MessagesQuery instance.
+   * Create a new Layer.Core.Core.MessagesQuery instance.
    *
    * @method messages
    * @static
-   * @returns {layer.Core.QueryBuilder.MessagesQuery}
+   * @returns {Layer.Core.QueryBuilder.MessagesQuery}
    */
   messages() {
     return new MessagesQuery();
   },
 
   /**
-   * Create a new layer.AnnouncementsQuery instance.
+   * Create a new Layer.Core.Core.AnnouncementsQuery instance.
    *
    * @method announcements
    * @static
-   * @returns {layer.Core.QueryBuilder.AnnouncementsQuery}
+   * @returns {Layer.Core.QueryBuilder.AnnouncementsQuery}
    */
   announcements() {
     return new AnnouncementsQuery();
   },
 
   /**
-   * Create a new layer.ConversationsQuery instance.
+   * Create a new Layer.Core.Core.ConversationsQuery instance.
    *
    * @method conversations
    * @static
-   * @returns {layer.Core.QueryBuilder.ConversationsQuery}
+   * @returns {Layer.Core.QueryBuilder.ConversationsQuery}
    */
   conversations() {
     return new ConversationsQuery();
   },
 
   /**
-   * Create a new layer.ChannelsQuery instance.
+   * Create a new Layer.Core.Core.ChannelsQuery instance.
    *
    * @method channels
    * @static
-   * @returns {layer.Core.QueryBuilder.ChannelsQuery}
+   * @returns {Layer.Core.QueryBuilder.ChannelsQuery}
    */
   channels() {
     return new ChannelsQuery();
   },
 
   /**
-   * Create a new layer.MembersQuery instance.
+   * Create a new Layer.Core.MembersQuery instance.
    *
    * @method members
    * @static
-   * @returns {layer.Core.QueryBuilder.MembersQuery}
+   * @returns {Layer.Core.QueryBuilder.MembersQuery}
    */
   members() {
     return new MembersQuery();
   },
 
   /**
-   * Create a new layer.IdentitiesQuery instance.
+   * Create a new Layer.Core.IdentitiesQuery instance.
    *
    * @method identities
    * @static
-   * @returns {layer.Core.QueryBuilder.IdentitiesQuery}
+   * @returns {Layer.Core.QueryBuilder.IdentitiesQuery}
    */
   identities() {
     return new IdentitiesQuery();
@@ -543,7 +544,7 @@ const QueryBuilder = {
    * Takes the return value of QueryBuilder.prototype.build and creates a
    * new QueryBuilder.
    *
-   * Used within layer.Core.Query.prototype.toBuilder.
+   * Used within Layer.Core.Query.prototype.toBuilder.
    *
    * @method fromQueryObject
    * @private
@@ -571,4 +572,4 @@ const QueryBuilder = {
 };
 
 module.exports = QueryBuilder;
-
+Core.QueryBuilder = QueryBuilder;

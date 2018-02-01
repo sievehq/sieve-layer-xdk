@@ -1,4 +1,5 @@
-import layerUI from '../base';
+import { ComponentsHash } from '../component-services';
+import { register } from './index';
 
 /**
  * Call this function to initialize all of the angular 1.x directives needed to handle the Layer UI for Web widgets.
@@ -14,25 +15,34 @@ import layerUI from '../base';
  *    <layer-file-upload-button></layer-file-upload-button>
  * ```
  *
- * Call this function to initialize angular 1.x Directives which will be part of the "layerUIControllers" controller:
+ * Call this function to initialize angular 1.x Directives which will be part of the "layerXDKControllers" controller:
  *
  * ```
- * layerUI.adapters.angular(angular); // Creates the layerUIControllers controller
- * angular.module('MyApp', ['layerUIControllers']);
+ * import '@layerhq/web-xdk/lib/ui/adapters/angular';
+ * Layer.UI.adapters.angular(angular); // Creates the layerXDKControllers controller
+ * angular.module('MyApp', ['layerXDKControllers']);
  * ```
  *
  *   Now you can put `<layer-conversation-view>` and other widgets into angular templates and expect them to work.
  *   Prefix ALL property names with `ng-` to insure that scope is evaluated prior to passing the value on to the webcomponent.
  *
- * @class layer.UI.adapters.angular
+ * ### Importing
+ *
+ * Not included with the standard build. To import:
+ *
+ * ```
+ * import '@layerhq/web-xdk/lib/ui/adapters/angular';
+ * ```
+ *
+ * @class Layer.UI.adapters.angular
  * @singleton
  * @param {Object} angular     Pass in the AngularJS library
  */
 
 function initAngular(angular) {
 
-  // Define the layerUIController
-  const controllers = angular.module('layerUIControllers', []);
+  // Define the layerXDKController
+  const controllers = angular.module('layerXDKControllers', []);
 
   // Setup the properties for the given widget that is being generated
   function setupProps(scope, elem, attrs, props) {
@@ -89,9 +99,9 @@ function initAngular(angular) {
   }
 
   // Gather all UI Components
-  Object.keys(layerUI.components)
+  Object.keys(ComponentsHash)
   .forEach((componentName) => {
-    const component = layerUI.components[componentName];
+    const component = ComponentsHash[componentName];
 
     // Get the camel case controller name
     const controllerName = componentName.replace(/-(.)/g, (str, value) => value.toUpperCase());
@@ -110,4 +120,4 @@ function initAngular(angular) {
 }
 
 module.exports = initAngular;
-layerUI.addAdapter('angular', initAngular);
+register('angular', initAngular);

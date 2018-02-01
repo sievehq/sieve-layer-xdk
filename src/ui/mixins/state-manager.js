@@ -1,7 +1,10 @@
 /**
  * A helper mixin for Lists that render alternate text in the event that the list is Empty.
  *
- * @class layer.UI.mixins.StateManager
+ * TODO: Investigate whether this property should be passed along, triggering setters,
+ * vs having the data retrieved from a single module and add change listeners.
+ *
+ * @class Layer.UI.mixins.StateManager
  */
 module.exports = {
   properties: {
@@ -47,7 +50,7 @@ module.exports = {
      * MIXIN HOOK: onRenderState is called whenever a new state object is assigned.
      *
      * This is for use sharing a state object across your entire app,
-     * or an entire set of LUI components.
+     * or an entire set of UI components.
      *
      * @method onRenderState
      */

@@ -1,0 +1,15 @@
+/* TODO: Refactor this so that group theme doesnt have chat bubbles */
+layer-text-message-view {
+  padding: 8px 12px;
+  overflow-y: auto;
+
+  p {
+    word-break: break-all; // Firefox
+    word-break: break-word;
+    word-wrap: break-word; // IE 11
+  }
+}
+
+layer-message-item-status layer-text-message-view p {
+  text-align: center;
+}

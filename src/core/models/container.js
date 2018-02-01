@@ -1,14 +1,16 @@
 /**
  * A Container is a parent class representing a container that manages a set of Messages.
  *
- * @class  layer.Container
+ * @class  Layer.Core.Container
  * @abstract
- * @extends layer.Syncable
+ * @extends Layer.Core.Syncable
  * @author  Michael Kantor
  */
+import { client as Client } from '../../settings';
+import Core from '../namespace';
 import Syncable from './syncable';
 import { ErrorDictionary } from '../layer-error';
-import Util from '../../util';
+import Util from '../../utils';
 import Constants from '../../constants';
 import Root from '../root';
 
@@ -17,31 +19,27 @@ class Container extends Syncable {
   /**
    * Create a new conversation.
    *
-   * The static `layer.Conversation.create()` method
+   * The static `Layer.Core.Conversation.create()` method
    * will correctly lookup distinct Conversations and
-   * return them; `new layer.Conversation()` will not.
+   * return them; `new Layer.Core.Conversation()` will not.
    *
-   * Developers should use `layer.Conversation.create()`.
+   * Developers should use `Layer.Core.Conversation.create()`.
    *
    * @method constructor
    * @protected
    * @param  {Object} options
-   * @param {string[]/layer.Core.Identity[]} options.participants - Array of Participant IDs or layer.Core.Identity instances
+   * @param {string[]/Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity instances
    * @param {boolean} [options.distinct=true] - Is the conversation distinct
    * @param {Object} [options.metadata] - An object containing Conversation Metadata.
-   * @return {layer.Conversation}
+   * @return {Layer.Core.Conversation}
    */
   constructor(options = {}) {
     // Make sure the ID from handle fromServer parameter is used by the Root.constructor
     if (options.fromServer) options.id = options.fromServer.id;
 
-    // Make sure we have an clientId property
-    if (options.client) options.clientId = options.client.appId;
     if (!options.metadata) options.metadata = {};
 
     super(options);
-
-    if (!this.clientId) throw new Error(ErrorDictionary.clientMissing);
     this.isInitializing = true;
 
     // If the options contains a full server definition of the object,
@@ -60,6 +58,13 @@ class Container extends Syncable {
   }
 
 
+  /**
+   * Send the Conversation/Channel/etc... to the server to be created there and shared with other participants.
+   *
+   * @method send
+   * @param {Layer.Core.Message} [message]  Message being sent while creating the new resource
+   * @returns this
+   */
   send(message) {
     if (this.isNew()) {
       this.createdAt = new Date();
@@ -67,13 +72,13 @@ class Container extends Syncable {
       // Update the syncState
       this._setSyncing();
 
-      this.getClient()._triggerAsync('state-change', {
+      Client._triggerAsync('state-change', {
         started: true,
         type: 'send_' + Util.typeFromID(this.id),
         telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
         id: this.id,
       });
-      this.getClient().sendSocketRequest({
+      Client.sendSocketRequest({
         method: 'POST',
         body: {}, // see _getSendData
         sync: {
@@ -97,8 +102,6 @@ class Container extends Syncable {
    * @param  {Object} container - Server representation of the container
    */
   _populateFromServer(container) {
-    const client = this.getClient();
-
     this._setSynced();
 
     const id = this.id;
@@ -106,7 +109,7 @@ class Container extends Syncable {
 
     // IDs change if the server returns a matching Container
     if (id !== this.id) {
-      client._updateContainerId(this, id);
+      Client._updateContainerId(this, id);
       this._triggerAsync(`${this.constructor.eventPrefix}:change`, {
         oldValue: id,
         newValue: this.id,
@@ -123,7 +126,7 @@ class Container extends Syncable {
    * Process result of send method.
    *
    * Note that we use _triggerAsync so that
-   * events reporting changes to the layer.Conversation.id can
+   * events reporting changes to the Layer.Core.Conversation.id can
    * be applied before reporting on it being sent.
    *
    * Example: Query will now have the resolved Distinct IDs rather than the proposed ID
@@ -134,7 +137,7 @@ class Container extends Syncable {
    * @param  {Object} result
    */
   _createResult({ success, data }) {
-    this.getClient()._triggerAsync('state-change', {
+    Client._triggerAsync('state-change', {
       ended: true,
       type: 'send_' + Util.typeFromID(this.id),
       telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
@@ -211,12 +214,12 @@ class Container extends Syncable {
    * 1. Updates the metadata property of the local object
    * 2. Triggers a conversations:change event
    * 3. Submits a request to be sent to the server to update the server's object
-   * 4. If there is an error, no errors are fired except by layer.SyncManager, but another
+   * 4. If there is an error, no errors are fired except by Layer.Core.SyncManager, but another
    *    conversations:change event is fired as the change is rolled back.
    *
    * @method setMetadataProperties
    * @param  {Object} properties
-   * @return {layer.Conversation} this
+   * @return {Layer.Core.Conversation} this
    *
    */
   setMetadataProperties(props) {
@@ -243,7 +246,6 @@ class Container extends Syncable {
       object: this,
       type: 'Conversation',
       operations: layerPatchOperations,
-      client: this.getClient(),
     });
     this._inLayerParser = false;
 
@@ -279,12 +281,12 @@ class Container extends Syncable {
    * 1. Updates the metadata property of the local object
    * 2. Triggers a conversations:change event
    * 3. Submits a request to be sent to the server to update the server's object
-   * 4. If there is an error, no errors are fired except by layer.SyncManager, but another
+   * 4. If there is an error, no errors are fired except by Layer.Core.SyncManager, but another
    *    conversations:change event is fired as the change is rolled back.
    *
    * @method deleteMetadataProperties
    * @param  {string[]} properties
-   * @return {layer.Conversation} this
+   * @return {Layer.Core.Conversation} this
    */
   deleteMetadataProperties(props) {
     const layerPatchOperations = [];
@@ -306,7 +308,6 @@ class Container extends Syncable {
       object: this,
       type: 'Conversation',
       operations: layerPatchOperations,
-      client: this.getClient(),
     });
     this._inLayerParser = false;
 
@@ -329,7 +330,7 @@ class Container extends Syncable {
    * Delete the Conversation from the server (internal version).
    *
    * This version of Delete takes a Query String that is packaged up by
-   * layer.Conversation.delete and layer.Conversation.leave.
+   * Layer.Core.Conversation.delete and Layer.Core.Conversation.leave.
    *
    * @method _delete
    * @private
@@ -348,7 +349,7 @@ class Container extends Syncable {
 
   _handleWebsocketDelete(data) {
     if (data.mode === Constants.DELETION_MODE.MY_DEVICES && data.from_position) {
-      this.getClient()._purgeMessagesByPosition(this.id, data.from_position);
+      Client._purgeMessagesByPosition(this.id, data.from_position);
     } else {
       super._handleWebsocketDelete();
     }
@@ -363,7 +364,7 @@ class Container extends Syncable {
   }
 
   /**
-   * Standard `on()` provided by layer.Root.
+   * Standard `on()` provided by Layer.Core.Root.
    *
    * Adds some special handling of 'conversations:loaded' so that calls such as
    *
@@ -380,13 +381,13 @@ class Container extends Syncable {
    * @param  {string} eventName
    * @param  {Function} callback
    * @param  {Object} context
-   * @return {layer.Conversation} this
+   * @return {Layer.Core.Conversation} this
    */
   on(name, callback, context) {
     const evtName = `${this.constructor.eventPrefix}:loaded`;
     const hasLoadedEvt = name === evtName || (name && typeof name === 'object' && name[evtName]);
 
-    if (hasLoadedEvt && !this.isLoading) {
+    if (hasLoadedEvt && !this.isLoading && (this.isSynced() || this.isSaving())) {
       const callNow = name === evtName ? callback : name[evtName];
       Util.defer(() => callNow.apply(context));
     }
@@ -402,7 +403,15 @@ class Container extends Syncable {
 
   trigger(evtName, args) {
     this._clearObject();
-    super.trigger(evtName, args);
+    return super.trigger(evtName, args);
+  }
+
+  __updateCreatedAt(newValue, oldValue) {
+    this._triggerAsync(`${this.constructor.eventPrefix}:change`, {
+      property: 'createdAt',
+      newValue,
+      oldValue,
+    });
   }
 
   /**
@@ -472,7 +481,7 @@ class Container extends Syncable {
 /**
  * Time that the conversation was created on the server.
  *
- * @type {Date}
+ * @property {Date}
  */
 Container.prototype.createdAt = null;
 
@@ -481,7 +490,7 @@ Container.prototype.createdAt = null;
  *
  * Metadata values can be plain objects and strings, but
  * no arrays, numbers, booleans or dates.
- * @type {Object}
+ * @property {Object}
  */
 Container.prototype.metadata = null;
 
@@ -498,7 +507,7 @@ Container.prototype.metadata = null;
  *
  * Read and Delivery receipts will fail on any Message in such a Conversation.
  *
- * @type {Boolean}
+ * @property {Boolean}
  */
 Container.prototype.isCurrentParticipant = true;
 
@@ -511,33 +520,23 @@ Container.prototype.isCurrentParticipant = true;
  * specific events detailing the results.  Results
  * may be determined locally or on the server, but same Event may be needed.
  *
- * @type {layer.Core.LayerEvent}
+ * @property {Layer.Core.LayerEvent}
  * @private
  */
 Container.prototype._sendDistinctEvent = null;
 
 /**
  * Caches last result of toObject()
- * @type {Object}
+ * @property {Object}
  * @private
  */
 Container.prototype._toObject = null;
-
-
-
-/**
- * Property to look for when bubbling up events.
- * @type {String}
- * @static
- * @private
- */
-Container.bubbleEventParent = 'getClient';
 
 /**
  * The Conversation/Channel that was requested has been created.
  *
  * Used in `conversations:sent` events.
- * @type {String}
+ * @property {String}
  * @static
  */
 Container.CREATED = 'Created';
@@ -548,7 +547,7 @@ Container.CREATED = 'Created';
  * This means that it did not need to be created.
  *
  * Used in `conversations:sent` events.
- * @type {String}
+ * @property {String}
  * @static
  */
 Container.FOUND = 'Found';
@@ -561,12 +560,11 @@ Container.FOUND = 'Found';
  * was returned but does not exactly match your request.
  *
  * Used in `conversations:sent` events.
- * @type {String}
+ * @property {String}
  * @static
  */
 Container.FOUND_WITHOUT_REQUESTED_METADATA = 'FoundMismatch';
 
-
-Root.initClass.apply(Container, [Container, 'Container']);
+Root.initClass.apply(Container, [Container, 'Container', Core]);
 Syncable.subclasses.push(Container);
 module.exports = Container;

@@ -1,0 +1,50 @@
+node_modules/babel-code-frame/package-lock.json:    "esutils": {
+node_modules/babel-code-frame/package-lock.json:      "resolved": "https://registry.npmjs.org/esutils/-/esutils-2.0.2.tgz",
+node_modules/babel-code-frame/package.json:    "esutils": "^2.0.2",
+node_modules/babel-plugin-transform-regenerator/package-lock.json:        "esutils": "2.0.2",
+node_modules/babel-plugin-transform-regenerator/package-lock.json:    "esutils": {
+node_modules/babel-plugin-transform-regenerator/package-lock.json:      "resolved": "https://registry.npmjs.org/esutils/-/esutils-2.0.2.tgz",
+node_modules/babel-runtime/package-lock.json:        "esutils": "2.0.2",
+node_modules/babel-runtime/package-lock.json:        "esutils": "2.0.2",
+node_modules/babel-runtime/package-lock.json:    "esutils": {
+node_modules/babel-runtime/package-lock.json:      "resolved": "https://registry.npmjs.org/esutils/-/esutils-2.0.2.tgz",
+node_modules/babel-types/package-lock.json:    "esutils": {
+node_modules/babel-types/package-lock.json:      "resolved": "https://registry.npmjs.org/esutils/-/esutils-2.0.2.tgz",
+node_modules/babel-types/package.json:    "esutils": "^2.0.2",
+node_modules/doctrine/CHANGELOG.md:* 8d9b3c7 Upgrade: Upgrade esutils to v2.0.2 (fixes #170) (#171) (Emeegeemee)
+node_modules/doctrine/package.json:    "esutils": "^2.0.2",
+node_modules/escodegen/escodegen.js:        esutils,
+node_modules/escodegen/escodegen.js:    esutils = require('esutils');
+node_modules/escodegen/escodegen.js:        return len && esutils.code.isLineTerminator(str.charCodeAt(len - 1));
+node_modules/escodegen/escodegen.js:        } else if (code === 0x0000 && !esutils.code.isDecimalDigit(next)) {
+node_modules/escodegen/escodegen.js:            } else if (esutils.code.isLineTerminator(code) || code === 0x5C  /* \ */) {
+node_modules/escodegen/escodegen.js:            } else if (!esutils.code.isIdentifierPartES5(code) && (json && code < 0x20  /* SP */ || !json && !escapeless && (code < 0x20  /* SP */ || code > 0x7E  /* ~ */))) {
+node_modules/escodegen/escodegen.js:            esutils.code.isIdentifierPartES5(leftCharCode) && esutils.code.isIdentifierPartES5(rightCharCode) ||
+node_modules/escodegen/escodegen.js:        } else if (esutils.code.isWhiteSpace(leftCharCode) || esutils.code.isLineTerminator(leftCharCode) ||
+node_modules/escodegen/escodegen.js:                esutils.code.isWhiteSpace(rightCharCode) || esutils.code.isLineTerminator(rightCharCode)) {
+node_modules/escodegen/escodegen.js:            if (esutils.code.isLineTerminator(str.charCodeAt(i))) {
+node_modules/escodegen/escodegen.js:            while (j < line.length && esutils.code.isWhiteSpace(line.charCodeAt(j))) {
+node_modules/escodegen/escodegen.js:                return code === 0x7B  /* '{' */ || esutils.code.isWhiteSpace(code) || esutils.code.isLineTerminator(code);
+node_modules/escodegen/escodegen.js:                return code === 0x28 /* '(' */ || esutils.code.isWhiteSpace(code) || code === 0x2A  /* '*' */ || esutils.code.isLineTerminator(code);
+node_modules/escodegen/escodegen.js:                if (!esutils.code.isWhiteSpace(fragment.charCodeAt(5))) {
+node_modules/escodegen/escodegen.js:                    if (!esutils.code.isWhiteSpace(fragment.charCodeAt(i))) {
+node_modules/escodegen/escodegen.js:                return code === 0x28 /* '(' */ || esutils.code.isWhiteSpace(code) || code === 0x2A  /* '*' */ || esutils.code.isLineTerminator(code);
+node_modules/escodegen/escodegen.js:            if (leftSource.charCodeAt(leftSource.length - 1) === 0x2F /* / */ && esutils.code.isIdentifierPartES5(expr.operator.charCodeAt(0))) {
+node_modules/escodegen/escodegen.js:                            esutils.code.isDecimalDigit(fragment.charCodeAt(fragment.length - 1)) &&
+node_modules/escodegen/escodegen.js:                            (esutils.code.isIdentifierPartES5(leftCharCode) && esutils.code.isIdentifierPartES5(rightCharCode))) {
+node_modules/escodegen/package.json:    "esutils": "^2.0.2",
+node_modules/eslint-plugin-import/package.json:    "esutils": "2.0.2",
+node_modules/eslint-plugin-react/package.json:    "esutils": "2.0.2",
+node_modules/eslint/package.json:    "esutils": "^2.0.2",
+node_modules/esrecurse/package-lock.json:        "esutils": {
+node_modules/esrecurse/package-lock.json:          "resolved": "https://registry.npmjs.org/esutils/-/esutils-1.1.6.tgz",
+node_modules/esrecurse/package-lock.json:    "esutils": {
+node_modules/esrecurse/package-lock.json:      "resolved": "https://registry.npmjs.org/esutils/-/esutils-2.0.2.tgz",
+node_modules/jsx-ast-utils/yarn.lock:    esutils "^2.0.2"
+node_modules/jsx-ast-utils/yarn.lock:    esutils "^2.0.2"
+node_modules/jsx-ast-utils/yarn.lock:    esutils "^2.0.2"
+node_modules/jsx-ast-utils/yarn.lock:    esutils "^2.0.2"
+node_modules/jsx-ast-utils/yarn.lock:    esutils "^2.0.2"
+node_modules/jsx-ast-utils/yarn.lock:    esutils "^2.0.2"
+node_modules/jsx-ast-utils/yarn.lock:esutils@^2.0.2:
+node_modules/jsx-ast-utils/yarn.lock:  resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.2.tgz#0abf4f1caa5bcb1f7a9d8acc6dea4faaa04bac9b"

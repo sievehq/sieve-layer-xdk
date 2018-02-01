@@ -1,7 +1,7 @@
 /**
  * The Layer Client; this is the top level component for any Layer based application.
 
-    var client = new layer.Core.Client({
+    var client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff',
       challenge: function(evt) {
         myAuthenticator({
@@ -16,7 +16,7 @@
  *
  * You can also initialize this as
 
-    var client = new layer.Core.Client({
+    var client = new Layer.Core.Client({
       appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff'
     });
 
@@ -40,18 +40,18 @@
  *
  * ### Properties:
  *
- * * layer.Core.Client.userId: User ID of the authenticated user
- * * layer.Core.Client.appId: The ID for your application
+ * * Layer.Core.Client.userId: User ID of the authenticated user
+ * * Layer.Core.Client.appId: The ID for your application
  *
  *
  * ### Methods:
  *
- * * layer.Core.Client.createConversation(): Create a new layer.Conversation.
- * * layer.Core.Client.createQuery(): Create a new layer.Core.Query.
- * * layer.Core.Client.getMessage(): Input a Message ID, and output a layer.Message or layer.Announcement from cache.
- * * layer.Core.Client.getConversation(): Input a Conversation ID, and output a layer.Conversation from cache.
- * * layer.Core.Client.on() and layer.Conversation.off(): event listeners
- * * layer.Core.Client.destroy(): Cleanup all resources used by this client, including all Messages and Conversations.
+ * * Layer.Core.Client.createConversation(): Create a new Layer.Core.Conversation.
+ * * Layer.Core.Client.createQuery(): Create a new Layer.Core.Query.
+ * * Layer.Core.Client.getMessage(): Input a Message ID, and output a Layer.Core.Message or Layer.Core.Announcement from cache.
+ * * Layer.Core.Client.getConversation(): Input a Conversation ID, and output a Layer.Core.Conversation from cache.
+ * * Layer.Core.Client.on() and Layer.Core.Conversation.off(): event listeners
+ * * Layer.Core.Client.destroy(): Cleanup all resources used by this client, including all Messages and Conversations.
  *
  * ### Events:
  *
@@ -63,55 +63,40 @@
  *
  * There are two ways to change the log level for Layer's logger:
  *
- *     layer.Core.Client.prototype.logLevel = layer.Constants.LOG.INFO;
+ *     Layer.Core.Client.prototype.logLevel = Layer.Constants.LOG.INFO;
  *
  * or
  *
- *     var client = new layer.Core.Client({
+ *     var client = new Layer.Core.Client({
  *        appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff',
- *        logLevel: layer.Constants.LOG.INFO
+ *        logLevel: Layer.Constants.LOG.INFO
  *     });
  *
- * @class  layer.Client
- * @extends layer.Core.ClientAuthenticator
- * @mixin layer.mixins.ClientIdentities
- * @mixin layer.mixins.ClientMembership
- * @mixin layer.mixins.ClientConversations
- * @mixin layer.mixins.ClientChannels
- * @mixin layer.mixins.ClientMessages
- * @mixin layer.mixins.ClientQueries
- * @mixin layer.mixin.WebsocketOperations
- * @mixin layer.mixins.ClientMessageModels
+ * @class  Layer.Core.Client
+ * @extends Layer.Core.ClientAuthenticator
+ * @mixin Layer.Core.mixins.ClientIdentities
+ * @mixin Layer.Core.mixins.ClientMembership
+ * @mixin Layer.Core.mixins.ClientConversations
+ * @mixin Layer.Core.mixins.ClientChannels
+ * @mixin Layer.Core.mixins.ClientMessages
+ * @mixin Layer.Core.mixins.ClientQueries
+ * @mixin Layer.Core.mixins.WebsocketOperations
+ * @mixin Layer.Core.mixins.ClientMessageTypeModels
  */
 
 import ClientAuth from './client-authenticator';
-import Conversation from './models/conversation';
-import Channel from './models/channel';
 import { ErrorDictionary } from './layer-error';
-import ConversationMessage from './models/conversation-message';
-import ChannelMessage from './models/channel-message';
-import Announcement from './models/announcement';
-import MessagePart from './models/message-part';
-import Identity from './models/identity';
-import Membership from './models/membership';
 import TypingIndicatorListener from './typing-indicators/typing-indicator-listener';
-import Util from '../util';
+import Util from '../utils';
 import version from '../version';
-import logger from '../util/logger';
+import logger from '../utils/logger';
 import Root from './root';
-import ClientRegistry from './client-registry';
 import TypingListener from './typing-indicators/typing-listener';
 import TypingPublisher from './typing-indicators/typing-publisher';
 import TelemetryMonitor from './telemetry-monitor';
-
-import ClientQueryMixin from './mixins/client-queries';
-import ClientIdentityMixin from './mixins/client-identities';
-import ClientMemberMixin from './mixins/client-members';
-import ClientConversationMixin from './mixins/client-conversations';
-import ClientChannelMixin from './mixins/client-channels';
-import ClientMessageMixin from './mixins/client-messages';
-import ClientOperationsMixin from './mixins/websocket-operations';
-import ClientMessageTypeModelMixin from './mixins/client-message-type-models';
+import Identity from './models/identity';
+import Core from './namespace';
+import Settings from '../settings';
 
 class Client extends ClientAuth {
 
@@ -121,7 +106,8 @@ class Client extends ClientAuth {
    */
   constructor(options) {
     super(options);
-    ClientRegistry.register(this);
+    Settings.client = this;
+
     this._models = {};
     this._runMixins('constructor', [options]);
 
@@ -139,11 +125,8 @@ class Client extends ClientAuth {
   _initComponents() {
     super._initComponents();
 
-    this._typingIndicators = new TypingIndicatorListener({
-      clientId: this.appId,
-    });
+    this._typingIndicators = new TypingIndicatorListener({});
     this.telemetryMonitor = new TelemetryMonitor({
-      client: this,
       enabled: this.telemetryEnabled,
     });
   }
@@ -174,14 +157,9 @@ class Client extends ClientAuth {
 
     this._destroyComponents();
 
-    ClientRegistry.unregister(this);
-
     super.destroy();
     this._inCleanup = false;
-  }
-
-  __adjustAppId() {
-    if (this.appId) throw new Error(ErrorDictionary.appIdImmutable);
+    Settings.client = null;
   }
 
   /**
@@ -191,7 +169,7 @@ class Client extends ClientAuth {
    * @method _fixIdentities
    * @private
    * @param {Mixed[]} identities - Something that tells us what Identity to return
-   * @return {layer.Core.Identity[]}
+   * @return {Layer.Core.Identity[]}
    */
   _fixIdentities(identities) {
     return identities.map((identity) => {
@@ -223,7 +201,7 @@ class Client extends ClientAuth {
    * @param  {string} id - Message, Conversation or Query id
    * @param  {boolean} [canLoad=false] - Pass true to allow loading a object from
    *                                     the server if not found (not supported for all objects)
-   * @return {layer.Message|layer.Conversation|layer.Core.Query}
+   * @return {Layer.Core.Message|Layer.Core.Conversation|Layer.Core.Query}
    */
   getObject(id, canLoad = false) {
     switch (Util.typeFromID(id || '')) {
@@ -262,41 +240,40 @@ class Client extends ClientAuth {
       return item;
     } else {
       switch (Util.typeFromID(obj.id)) {
-        case 'parts': {
-          return MessagePart._createFromServer(obj);
-        }
+        case 'parts':
+          return this._createMessagePartFromServer(obj);
         case 'messages':
           if (obj.conversation) {
-            return ConversationMessage._createFromServer(obj, this);
+            return this._createConversationMessageFromServer(obj);
           } else if (obj.channel) {
-            return ChannelMessage._createFromServer(obj, this);
+            return this._createChannelMessageFromServer(obj);
           }
           break;
         case 'announcements':
-          return Announcement._createFromServer(obj, this);
+          return this._createAnnouncementFromServer(obj);
         case 'conversations':
-          return Conversation._createFromServer(obj, this);
+          return this._createConversationFromServer(obj);
         case 'channels':
-          return Channel._createFromServer(obj, this);
+          return this._createChannelFromServer(obj);
         case 'identities':
-          return Identity._createFromServer(obj, this);
+          return this._createIdentityFromServer(obj);
         case 'members':
-          return Membership._createFromServer(obj, this);
+          return this._createMembershipFromServer(obj);
       }
     }
     return null;
   }
 
   /**
-   * When a layer.Container's ID changes, we need to update
+   * When a Layer.Core.Container's ID changes, we need to update
    * a variety of things and trigger events.
    *
    * @method _updateContainerId
-   * @param {layer.Container} container
+   * @param {Layer.Core.Container} container
    * @param {String} oldId
    */
   _updateContainerId(container, oldId) {
-    if (container instanceof Conversation) {
+    if (container.id.match(/\/conversations\//)) {
       this._updateConversationId(container, oldId);
     } else {
       this._updateChannelId(container, oldId);
@@ -338,7 +315,7 @@ class Client extends ClientAuth {
 
   trigger(eventName, evt) {
     this._triggerLogger(eventName, evt);
-    super.trigger(eventName, evt);
+    return super.trigger(eventName, evt);
   }
 
   /**
@@ -398,7 +375,7 @@ class Client extends ClientAuth {
    *
    * @method _checkAndPurgeCache
    * @private
-   * @param  {layer.Root[]} objects - Array of Messages or Conversations
+   * @param  {Layer.Core.Root[]} objects - Array of Messages or Conversations
    */
   _checkAndPurgeCache(objects) {
     this._inCheckAndPurgeCache = true;
@@ -421,7 +398,7 @@ class Client extends ClientAuth {
    *
    * @method _scheduleCheckAndPurgeCache
    * @private
-   * @param {layer.Root} object
+   * @param {Layer.Core.Root} object
    */
   _scheduleCheckAndPurgeCache(object) {
     if (object.isSaved()) {
@@ -440,6 +417,7 @@ class Client extends ClientAuth {
    * @private
    */
   _runScheduledCheckAndPurgeCache() {
+    if (this.isDestroyed) return; // Primarily triggers during unit tests
     const list = this._scheduleCheckAndPurgeCacheItems;
     this._scheduleCheckAndPurgeCacheItems = [];
     this._checkAndPurgeCache(list);
@@ -453,7 +431,7 @@ class Client extends ClientAuth {
    *
    * @method _isCachedObject
    * @private
-   * @param  {layer.Root} obj - A Message or Conversation Instance
+   * @param  {Layer.Core.Root} obj - A Message or Conversation Instance
    * @return {Boolean}
    */
   _isCachedObject(obj) {
@@ -468,10 +446,10 @@ class Client extends ClientAuth {
   /**
    * On restoring a connection, determine what steps need to be taken to update our data.
    *
-   * A reset boolean property is passed; set based on  layer.Core.ClientAuthenticator.ResetAfterOfflineDuration.
+   * A reset boolean property is passed; set based on  Layer.Core.ClientAuthenticator.ResetAfterOfflineDuration.
    *
    * Note it is possible for an application to have logic that causes queries to be created/destroyed
-   * as a side-effect of layer.Core.Query.reset destroying all data. So we must test to see if queries exist.
+   * as a side-effect of Layer.Core.Query.reset destroying all data. So we must test to see if queries exist.
    *
    * @method _connectionRestored
    * @private
@@ -480,65 +458,69 @@ class Client extends ClientAuth {
   _connectionRestored(evt) {
     if (evt.reset) {
       logger.debug('Client Connection Restored; Resetting all Queries');
-      this.dbManager.deleteTables(() => {
-        this.dbManager._open();
+      if (this.dbManager) {
+        this.dbManager.deleteTables(() => {
+          this.dbManager._open();
+          Object.keys(this._models.queries).forEach((id) => {
+            const query = this._models.queries[id];
+            if (query) query.reset();
+          });
+        });
+      } else {
         Object.keys(this._models.queries).forEach((id) => {
           const query = this._models.queries[id];
           if (query) query.reset();
         });
-      });
+      }
     }
   }
 
   /**
-   * Creates a layer.TypingIndicators.TypingListener instance
+   * Creates a Layer.Core.TypingIndicators.TypingListener instance
    * bound to the specified dom node.
    *
    *      var typingListener = client.createTypingListener(document.getElementById('myTextBox'));
    *      typingListener.setConversation(mySelectedConversation);
    *
    * Use this method to instantiate a listener, and call
-   * layer.TypingIndicators.TypingListener.setConversation every time you want to change which Conversation
+   * Layer.Core.TypingIndicators.TypingListener.setConversation every time you want to change which Conversation
    * it reports your user is typing into.
    *
    * @method createTypingListener
    * @param  {HTMLElement} inputNode - Text input to watch for keystrokes
-   * @return {layer.TypingIndicators.TypingListener}
+   * @return {Layer.Core.TypingIndicators.TypingListener}
    */
   createTypingListener(inputNode) {
     return new TypingListener({
-      clientId: this.appId,
       input: inputNode,
     });
   }
 
   /**
-   * Creates a layer.TypingIndicators.TypingPublisher.
+   * Creates a Layer.Core.TypingIndicators.TypingPublisher.
    *
    * The TypingPublisher lets you manage your Typing Indicators without using
-   * the layer.TypingIndicators.TypingListener.
+   * the Layer.Core.TypingIndicators.TypingListener.
    *
    *      var typingPublisher = client.createTypingPublisher();
    *      typingPublisher.setConversation(mySelectedConversation);
-   *      typingPublisher.setState(layer.TypingIndicators.STARTED);
+   *      typingPublisher.setState(Layer.Core.TypingIndicators.STARTED);
    *
    * Use this method to instantiate a listener, and call
-   * layer.TypingIndicators.TypingPublisher.setConversation every time you want to change which Conversation
+   * Layer.Core.TypingIndicators.TypingPublisher.setConversation every time you want to change which Conversation
    * it reports your user is typing into.
    *
-   * Use layer.TypingIndicators.TypingPublisher.setState to inform other users of your current state.
+   * Use Layer.Core.TypingIndicators.TypingPublisher.setState to inform other users of your current state.
    * Note that the `STARTED` state only lasts for 2.5 seconds, so you
    * must repeatedly call setState for as long as this state should continue.
    * This is typically done by simply calling it every time a user hits
    * a key.
    *
    * @method createTypingPublisher
-   * @return {layer.TypingIndicators.TypingPublisher}
+   * @return {Layer.Core.TypingIndicators.TypingPublisher}
    */
   createTypingPublisher() {
-    return new TypingPublisher({
-      clientId: this.appId,
-    });
+    return new TypingPublisher({});
   }
 
   /**
@@ -552,76 +534,13 @@ class Client extends ClientAuth {
   getTypingState(conversationId) {
     return this._typingIndicators.getState(conversationId);
   }
-
-  /**
-   * Accessor for getting a Client by appId.
-   *
-   * Most apps will only have one client,
-   * and will not need this method.
-   *
-   * @method getClient
-   * @static
-   * @param  {string} appId
-   * @return {layer.Client}
-   */
-  static getClient(appId) {
-    return ClientRegistry.get(appId);
-  }
-
-  static destroyAllClients() {
-    ClientRegistry.getAll().forEach(client => client.destroy());
-  }
-
-  /**
-   * Listen for a new Client to be registered.
-   *
-   * If your code needs a client, and it doesn't yet exist, you
-   * can use this to get called when the client exists.
-   *
-   * ```
-   * layer.Core.Client.addListenerForNewClient(function(client) {
-   *    mycomponent.setClient(client);
-   * });
-   * ```
-   *
-   * @method addListenerForNewClient
-   * @static
-   * @param {Function} listener
-   * @param {layer.Client} listener.client
-   */
-  static addListenerForNewClient(listener) {
-    ClientRegistry.addListener(listener);
-  }
-
-  /**
-   * Remove listener for a new Client.
-   *
-   *
-   * ```
-   * var f = function(client) {
-   *    mycomponent.setClient(client);
-   *    layer.Core.Client.removeListenerForNewClient(f);
-   * };
-   *
-   * layer.Core.Client.addListenerForNewClient(f);
-   * ```
-   *
-   * Calling with null will remove all listeners.
-   *
-   * @method removeListenerForNewClient
-   * @static
-   * @param {Function} listener
-   */
-  static removeListenerForNewClient(listener) {
-    ClientRegistry.removeListener(listener);
-  }
 }
 
 /**
  * Array of items to be checked to see if they can be uncached.
  *
  * @private
- * @type {layer.Root[]}
+ * @property {Layer.Core.Root[]}
  */
 Client.prototype._scheduleCheckAndPurgeCacheItems = null;
 
@@ -629,7 +548,7 @@ Client.prototype._scheduleCheckAndPurgeCacheItems = null;
  * Time that the next call to _runCheckAndPurgeCache() is scheduled for in ms since 1970.
  *
  * @private
- * @type {number}
+ * @property {number}
  */
 Client.prototype._scheduleCheckAndPurgeCacheAt = 0;
 
@@ -640,7 +559,7 @@ Client.prototype._scheduleCheckAndPurgeCacheAt = 0;
  * No content nor identifiable information is gathered, only
  * usage and performance metrics.
  *
- * @type {Boolean}
+ * @property {Boolean}
  */
 Client.prototype.telemetryEnabled = true;
 
@@ -659,7 +578,7 @@ Client.prototype.telemetryMonitor = null;
  * the object local for a little while.  Default is 2 hours before checking to see if
  * the object is part of a Query or can be uncached.  Value is in miliseconds.
  * @static
- * @type {number}
+ * @property {number}
  */
 
 Client.CACHE_PURGE_INTERVAL = 2 * 60 * 60 * 1000; // 2 hours * 60 minutes per hour * 60 seconds per minute * 1000 miliseconds/second
@@ -684,7 +603,7 @@ Client._supportedEvents = [
    *      });
    *
    * @event
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @param {string} conversationId - ID of the Conversation users are typing into
    * @param {string[]} typing - Array of user IDs who are currently typing
    * @param {string[]} paused - Array of user IDs who are currently paused;
@@ -694,16 +613,7 @@ Client._supportedEvents = [
 
 ].concat(ClientAuth._supportedEvents);
 
-Client.mixins = [
-  ClientQueryMixin,
-  ClientIdentityMixin,
-  ClientMemberMixin,
-  ClientConversationMixin,
-  ClientChannelMixin,
-  ClientMessageMixin,
-  ClientOperationsMixin,
-  ClientMessageTypeModelMixin,
-];
-Root.initClass.apply(Client, [Client, 'Client']);
-module.exports = Client;
+Client.mixins = Core.mixins.Client;
 
+Root.initClass.apply(Client, [Client, 'Client', Core]);
+module.exports = Client;

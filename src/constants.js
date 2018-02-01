@@ -1,13 +1,13 @@
 /**
  * Layer Constants are stored in two places:
  *
- * 1. As part of the layer.Constants singleton
+ * 1. As part of the Layer.Constants singleton
  * 2. As static properties on classes.
  *
  * Typically the static property constants are designed to be changed by developers to customize behaviors,
  * and tend to only be used by that single class.
  *
- * @class layer.Constants
+ * @class Layer.Constants
  * @singleton
  */
 module.exports = {
@@ -83,7 +83,7 @@ module.exports = {
    * @property {Object} [DELETION_MODE=]
    * @property {number} DELETION_MODE.ALL          Delete Message/Conversation for All users but remain in the Conversation;
    *                                               new Messages will restore this Conversation minus any Message History prior to deletion.
-   * @property {number} DELETION_MODE.MY_DEVICES   Delete Message or Conversation; but see layer.Conversation.leave if you want to delete
+   * @property {number} DELETION_MODE.MY_DEVICES   Delete Message or Conversation; but see Layer.Core.Conversation.leave if you want to delete
    *                                               a Conversation and not have it come back.
    */
   DELETION_MODE: {
@@ -91,6 +91,13 @@ module.exports = {
     MY_DEVICES: 'my_devices',
   },
 
+  /**
+   * Key MIME Types that should be globally available.
+   *
+   * * `Layer.UI.Constants.STANDARD_MIME_TYPES.TEXT`: 'application/vnd.layer.text+json'
+   *
+   * @property {Object} [STANDARD_MIME_TYPES=]
+   */
   STANDARD_MIME_TYPES: {
     TEXT: 'application/vnd.layer.text+json',
   },

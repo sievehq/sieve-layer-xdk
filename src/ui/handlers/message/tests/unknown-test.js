@@ -5,16 +5,15 @@ describe("Unknown Handler", function() {
   beforeEach(function() {
     jasmine.clock().install();
 
-    client = new layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
     client._clientAuthenticated();
     var conversation = client.createConversation({
@@ -22,31 +21,29 @@ describe("Unknown Handler", function() {
     });
     message = conversation.createMessage({parts: [{mimeType: "text/hat", body: "howdy ho"}]});
 
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({layer: layer});
-
     el = document.createElement('layer-message-unknown');
     el._contentTag = 'layer-message-unknown';
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(500);
   });
 
   afterEach(function() {
+    if (client) client.destroy();
     jasmine.clock().uninstall();
     el.onDestroy();
-    client.destroy();
-    layer.Core.Client.removeListenerForNewClient();
+
   });
 
   it("Should select unknown", function() {
-    var handler = layer.UI.getHandler(message);
+    var handler = Layer.UI.handlers.message.getHandler(message);
     expect(handler.tagName).toEqual('layer-message-unknown');
   });
 
   it("Should render something relevant", function() {
     el.message = message;
     CustomElements.takeRecords();
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     expect(el.innerHTML).toMatch(/has no renderer/);
   });
 });

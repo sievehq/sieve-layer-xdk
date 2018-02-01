@@ -14,26 +14,12 @@ layer-compose-bar {
         font-family: sans-serif;
     }
     .layer-compose-edit-panel {
+        /* Do not change left/right values or things will break */
         padding: 0px !important;
         /* Do not change left/right values or things will break */
         margin: 0px !important;
-        /* Do not change left/right values or things will break */
-        border-width: 0px 0px 1px 0px;
-        /* Do not change left/right values or things will break */
-        border-color: rgba(0, 0, 0, 0.42); // material design numbers
     }
     textarea {
-        color: rgba(0, 0, 0, 0.87);
-        border-bottom-width: 1px;
-        border-color: rgba(0, 0, 0, 0.42); // material design numbers
-    }
-    &.layer-is-disabled textarea,
-    textarea:disabled {
-        border-style: dotted;
-    }
-    textarea:focus {
-        border-bottom-width: 2px;
-        border-bottom-color: @composer-bottom-border-focus-color;
         color: rgba(0, 0, 0, 0.87);
     }
 
@@ -43,6 +29,9 @@ layer-compose-bar {
         .hidden-lineheighter {
             line-height: 34px;
         }
+    }
+    &.layer-is-disabled textarea {
+        color: @composer-send-button-disabled-color;
     }
     .layer-button-panel {
         /* Force all layer-replaceable-content to stay at the bottom of the panel */

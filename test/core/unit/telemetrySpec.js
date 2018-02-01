@@ -12,15 +12,14 @@ describe("The TelemetryMonitor class", function() {
         jasmine.clock().mockDate(today);
 
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             reset: true,
             url: "https://doh.com"
         });
         client.userId = "999";
 
-        client.user = new layer.Core.Identity({
-          clientId: client.appId,
+        client.user = new Layer.Core.Identity({
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -31,9 +30,9 @@ describe("The TelemetryMonitor class", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
 
@@ -62,13 +61,13 @@ describe("The TelemetryMonitor class", function() {
       });
 
       it("Should received enabled true/false", function() {
-        var c = new layer.Core.Client({
+        var c = new Layer.Core.Client({
           appId: appId,
           telemetryEnabled: false
         });
         expect(c.telemetryMonitor.enabled).toBe(false);
 
-        var c = new layer.Core.Client({
+        var c = new Layer.Core.Client({
           appId: appId,
           telemetryEnabled: true
         });
@@ -371,7 +370,7 @@ describe("The TelemetryMonitor class", function() {
       it("Should have some values", function() {
         expect(monitor.getEnvironment().platform).toEqual(jasmine.any(String));
         expect(monitor.getEnvironment().platform).toEqual(jasmine.any(String));
-        expect(monitor.getEnvironment().layer_sdk_version).toMatch(/^\d+\.\d+\.\d+$/);
+        expect(monitor.getEnvironment().layer_sdk_version).toMatch(/^\d+\.\d+\.\d/);
         expect(monitor.getEnvironment().platform).toEqual(jasmine.any(String));
       });
 
@@ -578,7 +577,7 @@ describe("The TelemetryMonitor class", function() {
         expect(monitor.telemetryUrl).toEqual(jasmine.any(String));
         expect(requests.mostRecent().method).toEqual("POST");
         expect(JSON.parse(requests.mostRecent().params)).toEqual({
-          id: layer.Util.uuid(monitor.id),
+          id: Layer.Utils.uuid(monitor.id),
           layer_app_id: client.appId,
           records: [
             monitor.convertRecord(monitor.state.records[0]),

@@ -1,33 +1,31 @@
 /**
- * Adds Identity handling to the layer.Core.Client.
+ * Adds Identity handling to the Layer.Core.Client.
  *
- * @class layer.mixins.ClientIdentities
+ * @class Layer.Core.mixins.ClientIdentities
  */
 
 import Identity from '../models/identity';
 import { ErrorDictionary } from '../layer-error';
-import Util from '../../util';
 import { WebsocketSyncEvent } from '../sync-event';
-
+import Core from '../namespace';
 
 module.exports = {
   events: [
     /**
-     * A call to layer.Core.Identity.load has completed successfully
+     * A call to Layer.Core.Identity.load has completed successfully
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Core.Identity} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Identity} evt.target
      */
     'identities:loaded',
 
     /**
-     * A call to layer.Core.Identity.load has failed
+     * A call to Layer.Core.Identity.load has failed
      *
      * @event
-     * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Core.LayerEvent} evt.error
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.LayerEvent} evt.error
      */
     'identities:loaded-error',
 
@@ -44,8 +42,8 @@ module.exports = {
      *      });
      *
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Core.Identity} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Identity} evt.target
      * @param {Object[]} evt.changes
      * @param {Mixed} evt.changes.newValue
      * @param {Mixed} evt.changes.oldValue
@@ -56,7 +54,7 @@ module.exports = {
     /**
      * Identities have been added to the Client.
      *
-     * This event is triggered whenever a new layer.Core.Identity (Full identity or not)
+     * This event is triggered whenever a new Layer.Core.Identity (Full identity or not)
      * has been received by the Client.
      *
             client.on('identities:add', function(evt) {
@@ -66,8 +64,8 @@ module.exports = {
             });
     *
     * @event
-    * @param {layer.Core.LayerEvent} evt
-    * @param {layer.Core.Identity[]} evt.identities
+    * @param {Layer.Core.LayerEvent} evt
+    * @param {Layer.Core.Identity[]} evt.identities
     */
     'identities:add',
 
@@ -83,8 +81,8 @@ module.exports = {
             });
     *
     * @event
-    * @param {layer.Core.LayerEvent} evt
-    * @param {layer.Core.Identity[]} evt.identities
+    * @param {Layer.Core.LayerEvent} evt
+    * @param {Layer.Core.Identity[]} evt.identities
     */
     'identities:remove',
 
@@ -95,8 +93,8 @@ module.exports = {
      * there are still Messages from these Identities to be rendered,
      * but we do downgrade them from Full Identity to Basic Identity.
      * @event
-     * @param {layer.Core.LayerEvent} evt
-     * @param {layer.Core.Identity} evt.target
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.Identity} evt.target
      */
     'identities:unfollow',
   ],
@@ -131,7 +129,7 @@ module.exports = {
      * This is only supported for User Identities, not Service Identities.
      *
      * If loading from the server, the method will return
-     * a layer.Core.Identity instance that has no data; the identities:loaded/identities:loaded-error events
+     * a Layer.Core.Identity instance that has no data; the identities:loaded/identities:loaded-error events
      * will let you know when the identity has finished/failed loading from the server.
      *
      *      var user = client.getIdentity('layer:///identities/123', true)
@@ -146,7 +144,7 @@ module.exports = {
      * @param  {string} id - Accepts full Layer ID (layer:///identities/frodo-the-dodo) or just the UserID (frodo-the-dodo).
      * @param  {boolean} [canLoad=false] - Pass true to allow loading an identity from
      *                                    the server if not found
-     * @return {layer.Core.Identity}
+     * @return {Layer.Core.Identity}
      */
     getIdentity(id, canLoad) {
       let result = null;
@@ -158,7 +156,7 @@ module.exports = {
       if (this._models.identities[id]) {
         result = this._models.identities[id];
       } else if (canLoad) {
-        result = Identity.load(id, this);
+        result = Identity.load(id);
       }
       if (canLoad) result._loadType = 'fetched';
       return result;
@@ -171,7 +169,7 @@ module.exports = {
      *
      * @method _addIdentity
      * @protected
-     * @param  {layer.Core.Identity} identity
+     * @param  {Layer.Core.Identity} identity
      *
      * TODO: It should be possible to add an Identity whose userId is populated, but
      * other values are not yet loaded from the server.  Should add to _models.identities now
@@ -185,7 +183,7 @@ module.exports = {
         this._triggerAsync('identities:add', { identities: [identity] });
 
         /* Bot messages from SAPI 1.0 generate an Identity that has no `id` */
-        if (identity.id && identity._presence.status === null && !identity.sessionOwner) {
+        if (identity.id && identity._presence.status === null && !identity.isMine) {
           this._loadPresenceIds.push(id);
           if (this._loadPresenceIds.length === 1) {
             setTimeout(() => {
@@ -206,7 +204,7 @@ module.exports = {
      *
      * @method _removeIdentity
      * @protected
-     * @param  {layer.Core.Identity} identity
+     * @param  {Layer.Core.Identity} identity
      */
     _removeIdentity(identity) {
       // Insure we do not get any events, such as message:remove
@@ -224,7 +222,7 @@ module.exports = {
      *
      * @method followIdentity
      * @param  {string} id - Accepts full Layer ID (layer:///identities/frodo-the-dodo) or just the UserID (frodo-the-dodo).
-     * @returns {layer.Core.Identity}
+     * @returns {Layer.Core.Identity}
      */
     followIdentity(id) {
       if (!Identity.isValidId(id)) {
@@ -234,7 +232,6 @@ module.exports = {
       if (!identity) {
         identity = new Identity({
           id,
-          clientId: this.appId,
           userId: id.substring(20),
         });
       }
@@ -247,7 +244,7 @@ module.exports = {
      *
      * @method unfollowIdentity
      * @param  {string} id - Accepts full Layer ID (layer:///identities/frodo-the-dodo) or just the UserID (frodo-the-dodo).
-     * @returns {layer.Core.Identity}
+     * @returns {Layer.Core.Identity}
      */
     unfollowIdentity(id) {
       if (!Identity.isValidId(id)) {
@@ -257,7 +254,6 @@ module.exports = {
       if (!identity) {
         identity = new Identity({
           id,
-          clientId: this.appId,
           userId: id.substring(20),
         });
       }
@@ -290,5 +286,11 @@ module.exports = {
         depends: [],
       }));
     },
+
+    _createIdentityFromServer(obj) {
+      return Identity._createFromServer(obj);
+    },
   },
 };
+
+Core.mixins.Client.push(module.exports);

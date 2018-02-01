@@ -8,14 +8,16 @@
  *
  * Applications typically do not interact with this component, but may subscribe
  * to the `message` event if they want richer event information than is available
- * through the layer.Client class.
+ * through the Layer.Core.Client class.
  *
- * @class  layer.Websockets.SocketManager
- * @extends layer.Root
+ * @class  Layer.Core.Websockets.SocketManager
+ * @extends Layer.Core.Root
  * @private
  */
+import { client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
-import Util, { logger } from '../../util';
+import Util, { logger } from '../../utils';
 import { ErrorDictionary } from '../layer-error';
 import { WEBSOCKET_PROTOCOL } from '../../constants';
 import version from '../../version';
@@ -24,18 +26,14 @@ class SocketManager extends Root {
   /**
    * Create a new websocket manager
    *
-   *      var socketManager = new layer.Websockets.SocketManager({
-   *          client: client,
-   *      });
+   *      var socketManager = new Layer.Core.Websockets.SocketManager({});
    *
    * @method
    * @param  {Object} options
-   * @param {layer.Client} client
-   * @return {layer.Websockets.SocketManager}
+   * @return {Layer.Core.Websockets.SocketManager}
    */
   constructor(options) {
     super(options);
-    if (!this.client) throw new Error('SocketManager requires a client');
 
     // Insure that on/off methods don't need to call bind, therefore making it easy
     // to add/remove functions as event listeners.
@@ -45,14 +43,14 @@ class SocketManager extends Root {
     this._onError = this._onError.bind(this);
 
     // If the client is authenticated, start it up.
-    if (this.client.isAuthenticated && this.client.onlineManager.isOnline) {
+    if (client.isAuthenticated && client.onlineManager.isOnline) {
       this.connect();
     }
 
-    this.client.on('online', this._onlineStateChange, this);
+    client.on('online', this._onlineStateChange, this);
 
     // Any time the Client triggers a ready event we need to reconnect.
-    this.client.on('authenticated', this.connect, this);
+    client.on('authenticated', this.connect, this);
 
     this._lastTimestamp = Date.now();
   }
@@ -79,10 +77,10 @@ class SocketManager extends Root {
    * If going offline, close the websocket as its no longer useful/relevant.
    * @method _onlineStateChange
    * @private
-   * @param {layer.Core.LayerEvent} evt
+   * @param {Layer.Core.LayerEvent} evt
    */
   _onlineStateChange(evt) {
-    if (!this.client.isAuthenticated) return;
+    if (!client.isAuthenticated) return;
     if (evt.isOnline) {
       this._reconnect(evt.reset);
     } else {
@@ -132,10 +130,10 @@ class SocketManager extends Root {
     ```
    *
    * @method connect
-   * @param  {layer.SyncEvent} evt - Ignored parameter
+   * @param  {Layer.Core.SyncEvent} evt - Ignored parameter
    */
   connect(evt) {
-    if (this.client.isDestroyed || !this.client.isOnline) return;
+    if (client.isDestroyed || !client.isOnline) return;
     if (this._socket) return this._reconnect();
 
     this._closing = false;
@@ -143,7 +141,7 @@ class SocketManager extends Root {
     this._lastCounter = -1;
 
     // Get the URL and connect to it
-    const url = `${this.client.websocketUrl}/?session_token=${this.client.sessionToken}`;
+    const url = `${client.websocketUrl}/?session_token=${client.sessionToken}`;
 
     logger.info('Websocket Connecting');
 
@@ -152,7 +150,16 @@ class SocketManager extends Root {
     //const WS = typeof WebSocket === 'undefined' ? require('websocket').w3cwebsocket : WebSocket;
     const WS = WebSocket;
 
-    this._socket = new WS(url, WEBSOCKET_PROTOCOL);
+    try {
+      this._socket = new WS(url, WEBSOCKET_PROTOCOL);
+    } catch (err) {
+      // Errors at this point tend to show up in IE11 during unit tests;
+      // slow things down a bit if this is throwing errors as the assumption is that
+      // unit tests are opening too many connections.
+      logger.error('Failed to establish websocket ', err);
+      setTimeout(() => this._onError(), 1000);
+      return;
+    }
 
      // If its the shim, set the event hanlers
     /* istanbul ignore if */
@@ -331,7 +338,7 @@ class SocketManager extends Root {
     }
 
     logger.debug('Websocket request: getCounter');
-    this.client.socketRequestManager.sendRequest({
+    client.socketRequestManager.sendRequest({
       data: {
         method: 'Counter.read',
       },
@@ -362,8 +369,8 @@ class SocketManager extends Root {
 
     // Cancel any prior operation; presumably we lost connection and they're dead anyways,
     // but the callback triggering on these could be disruptive.
-    this.client.socketRequestManager.cancelOperation('Event.replay');
-    this.client.socketRequestManager.cancelOperation('Presence.sync');
+    client.socketRequestManager.cancelOperation('Event.replay');
+    client.socketRequestManager.cancelOperation('Presence.sync');
     this._replayEvents(timestamp, () => {
       this._enablePresence(timestamp, () => {
         this.trigger('synced');
@@ -387,7 +394,7 @@ class SocketManager extends Root {
       this._needsReplayFrom = timestamp;
     } else {
       logger.info('Websocket request: _replayEvents');
-      this.client.socketRequestManager.sendRequest({
+      client.socketRequestManager.sendRequest({
         data: {
           method: 'Event.replay',
           data: {
@@ -452,7 +459,7 @@ class SocketManager extends Root {
    * @param  {Function} callback
    */
   _enablePresence(timestamp, callback) {
-    this.client.socketRequestManager.sendRequest({
+    client.socketRequestManager.sendRequest({
       data: {
         method: 'Presence.subscribe',
       },
@@ -460,8 +467,8 @@ class SocketManager extends Root {
       isChangesArray: false,
     });
 
-    if (this.client.isPresenceEnabled) {
-      this.client.socketRequestManager.sendRequest({
+    if (client.isPresenceEnabled) {
+      client.socketRequestManager.sendRequest({
         data: {
           method: 'Presence.update',
           data: [
@@ -483,7 +490,7 @@ class SocketManager extends Root {
   /**
    * Synchronize all presence data or catch up on missed presence data.
    *
-   * Typically this is called by layer.Websockets.SocketManager._enablePresence automatically,
+   * Typically this is called by {@link Layer.Core.Websockets.SocketManager#_enablePresence} automatically,
    * but there may be occasions where an app wants to directly trigger this action.
    *
    * @method syncPresence
@@ -494,7 +501,7 @@ class SocketManager extends Root {
   syncPresence(timestamp, callback) {
     if (timestamp) {
       // Return value for use in unit tests
-      return this.client.socketRequestManager.sendRequest({
+      return client.socketRequestManager.sendRequest({
         data: {
           method: 'Presence.sync',
           data: {
@@ -659,7 +666,7 @@ class SocketManager extends Root {
    * @private
    */
   _scheduleReconnect() {
-    if (this.isDestroyed || !this.client.isOnline || !this.client.isAuthenticated || this._isOpen()) return;
+    if (this.isDestroyed || !client.isOnline || !client.isAuthenticated || this._isOpen()) return;
 
     const delay = Util.getExponentialBackoffSeconds(this.maxDelaySecondsBetweenReconnect, Math.min(15, this._lostConnectionCount));
     logger.debug('Websocket Reconnect in ' + delay + ' seconds');
@@ -679,7 +686,7 @@ class SocketManager extends Root {
    * @private
    */
   _validateSessionBeforeReconnect() {
-    if (this.isDestroyed || !this.client.isOnline || !this.client.isAuthenticated || this._isOpen()) return;
+    if (this.isDestroyed || !client.isOnline || !client.isAuthenticated || this._isOpen()) return;
 
     const maxDelay = this.maxDelaySecondsBetweenReconnect * 1000;
     const diff = Date.now() - this._lastValidateSessionRequest - maxDelay;
@@ -693,7 +700,7 @@ class SocketManager extends Root {
       }
     } else {
       this._lastValidateSessionRequest = Date.now();
-      this.client.xhr({
+      client.xhr({
         url: '/?action=validateConnectionForWebsocket&client=' + version,
         method: 'GET',
         sync: false,
@@ -711,21 +718,21 @@ class SocketManager extends Root {
 
 /**
  * Is the websocket connection currently open?
- * @type {Boolean}
+ * @property {Boolean}
  */
 SocketManager.prototype.isOpen = false;
 
 /**
  * setTimeout ID for calling connect()
  * @private
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype._reconnectId = 0;
 
 /**
  * setTimeout ID for calling _connectionFailed()
  * @private
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype._connectionFailedId = 0;
 
@@ -743,7 +750,7 @@ SocketManager.prototype._lastGetCounterId = 0;
 
 /**
  * Time in miliseconds since the last call to _validateSessionBeforeReconnect
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype._lastValidateSessionRequest = 0;
 
@@ -751,39 +758,33 @@ SocketManager.prototype._lastValidateSessionRequest = 0;
  * Frequency with which the websocket checks to see if any websocket notifications
  * have been missed.  This test is done by calling `getCounter`
  *
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype.pingFrequency = 30000;
 
 /**
  * Delay between reconnect attempts
  *
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype.maxDelaySecondsBetweenReconnect = 30;
 
 /**
- * The Client that owns this.
- * @type {layer.Client}
- */
-SocketManager.prototype.client = null;
-
-/**
  * The Socket Connection instance
- * @type {Websocket}
+ * @property {Websocket}
  */
 SocketManager.prototype._socket = null;
 
 /**
  * Is the websocket connection being closed by a call to close()?
  * If so, we can ignore any errors that signal the socket as closing.
- * @type {Boolean}
+ * @property {Boolean}
  */
 SocketManager.prototype._closing = false;
 
 /**
  * Number of failed attempts to reconnect.
- * @type {Number}
+ * @property {Number}
  */
 SocketManager.prototype._lostConnectionCount = 0;
 
@@ -792,7 +793,7 @@ SocketManager._supportedEvents = [
   /**
    * A data packet has been received from the server.
    * @event message
-   * @param {layer.Core.LayerEvent} layerEvent
+   * @param {Layer.Core.LayerEvent} layerEvent
    * @param {Object} layerEvent.data - The data that was received from the server
    */
   'message',
@@ -823,5 +824,5 @@ SocketManager._supportedEvents = [
    */
   'synced',
 ].concat(Root._supportedEvents);
-Root.initClass.apply(SocketManager, [SocketManager, 'SocketManager']);
+Root.initClass.apply(SocketManager, [SocketManager, 'SocketManager', Core.Websockets]);
 module.exports = SocketManager;

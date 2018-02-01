@@ -13,13 +13,12 @@ describe("The Typing Indicator Classes", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
-        client.user = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = new Layer.Core.Identity({
             userId: "Frodo",
             id: "layer:///identities/" + "Frodo",
             firstName: "first",
@@ -30,21 +29,19 @@ describe("The Typing Indicator Classes", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
-            sessionOwner: true
+            isMine: true
         });
 
-        johnIdentity = new layer.Core.Identity({
-            client: client,
+        johnIdentity = new Layer.Core.Identity({
             userId: "JohnDoh",
             id: "layer:///identities/JohnDoh",
             displayName: "John Doh"
         });
         client._addIdentity(johnIdentity);
 
-        janeIdentity = new layer.Core.Identity({
-            client: client,
+        janeIdentity = new Layer.Core.Identity({
             userId: "JaneDoh",
             id: "layer:///identities/JaneDoh",
             displayName: "Jane Doh"
@@ -84,7 +81,7 @@ describe("The Typing Indicator Classes", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The TypingIndicatorListener class", function() {
@@ -127,7 +124,7 @@ describe("The Typing Indicator Classes", function() {
                 spyOn(listener, "_handleSocketEvent");
                 listener._clientReady(client);
                 client.socketManager.trigger("message", {data: {"hey": "ho"}});
-                expect(listener._handleSocketEvent).toHaveBeenCalledWith(jasmine.any(layer.Core.LayerEvent));
+                expect(listener._handleSocketEvent).toHaveBeenCalledWith(jasmine.any(Layer.Core.LayerEvent));
                 expect(listener._handleSocketEvent).toHaveBeenCalledWith(jasmine.objectContaining({
                   data: {
                     hey: "ho"
@@ -157,7 +154,7 @@ describe("The Typing Indicator Classes", function() {
                                 user_id: client.user.userId + "1",
                                 id: client.user.id + "1"
                             },
-                            action: layer.TypingIndicators.STARTED
+                            action: Layer.Core.TypingIndicators.STARTED
                         }
                     }
                 };
@@ -203,7 +200,7 @@ describe("The Typing Indicator Classes", function() {
                             id: conversation.id
                         },
                         data: {
-                            action: layer.TypingIndicators.STARTED,
+                            action: Layer.Core.TypingIndicators.STARTED,
                             sender: {
                                 user_id: "JohnDoh",
                                 id: "layer:///identities/JohnDoh"
@@ -224,7 +221,7 @@ describe("The Typing Indicator Classes", function() {
                         users: {
                             "layer:///identities/JohnDoh": {
                                 startTime: jasmine.any(Number),
-                                state: layer.TypingIndicators.STARTED,
+                                state: Layer.Core.TypingIndicators.STARTED,
                                 identity: johnIdentity
                             }
                         },
@@ -236,14 +233,14 @@ describe("The Typing Indicator Classes", function() {
 
             it("Should update state for a Conversation", function() {
                 listener._handleSocketEvent({data: evt});
-                evt.body.data.action = layer.TypingIndicators.PAUSED;
+                evt.body.data.action = Layer.Core.TypingIndicators.PAUSED;
                 listener._handleSocketEvent({data: evt});
                 expect(listener.state).toEqual({
                     "layer:///conversations/myconv": {
                         users: {
                             "layer:///identities/JohnDoh": {
                                 startTime: jasmine.any(Number),
-                                state: layer.TypingIndicators.PAUSED,
+                                state: Layer.Core.TypingIndicators.PAUSED,
                                 identity: johnIdentity
                             }
                         },
@@ -255,7 +252,7 @@ describe("The Typing Indicator Classes", function() {
 
             it("Should remove state for a Conversation", function() {
                 listener._handleSocketEvent({data: evt});
-                evt.body.data.action = layer.TypingIndicators.FINISHED;
+                evt.body.data.action = Layer.Core.TypingIndicators.FINISHED;
                 listener._handleSocketEvent({data: evt});
                 expect(listener.state).toEqual({
                     "layer:///conversations/myconv": {
@@ -316,12 +313,12 @@ describe("The Typing Indicator Classes", function() {
                         users: {
                             "layer:///identities/JohnDoh": {
                                 startTime: Date.now(),
-                                state: layer.TypingIndicators.PAUSED,
+                                state: Layer.Core.TypingIndicators.PAUSED,
                                 identity: johnIdentity
                             },
                             "layer:///identities/JaneDoh": {
                                 startTime: Date.now() - 1000000,
-                                state: layer.TypingIndicators.STARTED,
+                                state: Layer.Core.TypingIndicators.STARTED,
                                 identity: janeIdentity
                             }
                         },
@@ -332,12 +329,12 @@ describe("The Typing Indicator Classes", function() {
                         users: {
                             "layer:///identities/JohnMoh": {
                                 startTime: Date.now() - 1000000,
-                                state: layer.TypingIndicators.PAUSED,
+                                state: Layer.Core.TypingIndicators.PAUSED,
                                 identity: client.getIdentity('JohnMoh', true)
                             },
                             "layer:///identities/JaneMoh": {
                                 startTime: Date.now() - 1000000,
-                                state: layer.TypingIndicators.STARTED,
+                                state: Layer.Core.TypingIndicators.STARTED,
                                 identity: client.getIdentity('JaneMoh', true)
                             }
                         },
@@ -358,7 +355,7 @@ describe("The Typing Indicator Classes", function() {
                         users: {
                             "layer:///identities/JohnDoh": {
                                 startTime: jasmine.any(Number),
-                                state: layer.TypingIndicators.PAUSED,
+                                state: Layer.Core.TypingIndicators.PAUSED,
                                 identity: johnIdentity
                             }
                         },
@@ -404,12 +401,12 @@ describe("The Typing Indicator Classes", function() {
                         users: {
                             "layer:///identities/JohnDoh": {
                                 startTime: Date.now(),
-                                state: layer.TypingIndicators.PAUSED,
+                                state: Layer.Core.TypingIndicators.PAUSED,
                                 identity: johnIdentity
                             },
                             "layer:///identities/JaneDoh": {
                                 startTime: Date.now() - 1000000,
-                                state: layer.TypingIndicators.STARTED,
+                                state: Layer.Core.TypingIndicators.STARTED,
                                 identity: janeIdentity
                             }
                         },
@@ -420,12 +417,12 @@ describe("The Typing Indicator Classes", function() {
                         users: {
                             "layer:///identities/JohnDoh": {
                                 startTime: Date.now() - 1000000,
-                                state: layer.TypingIndicators.PAUSED,
+                                state: Layer.Core.TypingIndicators.PAUSED,
                                 identity: client.getIdentity('JohnDoh')
                             },
                             "layer:///identities/JaneDoh": {
                                 startTime: Date.now() - 1000000,
-                                state: layer.TypingIndicators.STARTED,
+                                state: Layer.Core.TypingIndicators.STARTED,
                                 identity: client.getIdentity('JaneDoh')
                             }
                         },
@@ -475,22 +472,18 @@ describe("The Typing Indicator Classes", function() {
                 expect(listener.input).toBe(input);
             });
 
-            it("Should have a clientId", function() {
-                expect(listener.clientId).toBe(client.appId);
-            });
-
             it("Should have a TypingPublisher", function() {
-                expect(listener.publisher).toEqual(jasmine.any(layer.TypingIndicators.TypingPublisher));
+                expect(listener.publisher).toEqual(jasmine.any(Layer.Core.TypingIndicators.TypingPublisher));
             });
 
             it("Should call setInput", function() {
-                var tmp = layer.TypingIndicators.TypingListener.prototype.setInput;
-                layer.TypingIndicators.TypingListener.prototype.setInput = jasmine.createSpy('setInput');
+                var tmp = Layer.Core.TypingIndicators.TypingListener.prototype.setInput;
+                Layer.Core.TypingIndicators.TypingListener.prototype.setInput = jasmine.createSpy('setInput');
                 var listener2 = client.createTypingListener(input);
-                expect(layer.TypingIndicators.TypingListener.prototype.setInput).toHaveBeenCalledWith(input);
+                expect(Layer.Core.TypingIndicators.TypingListener.prototype.setInput).toHaveBeenCalledWith(input);
 
                 // Cleanup
-                layer.TypingIndicators.TypingListener.prototype.setInput = tmp;
+                Layer.Core.TypingIndicators.TypingListener.prototype.setInput = tmp;
                 listener2.destroy();
             });
         });
@@ -609,7 +602,7 @@ describe("The Typing Indicator Classes", function() {
                 input.value = "fred";
                 listener._handleKeyPress();
                 jasmine.clock().tick(51);
-                expect(listener.send).toHaveBeenCalledWith(layer.TypingIndicators.STARTED);
+                expect(listener.send).toHaveBeenCalledWith(Layer.Core.TypingIndicators.STARTED);
             });
 
             it("Should send FINISHED if input is empty", function() {
@@ -617,7 +610,7 @@ describe("The Typing Indicator Classes", function() {
                 input.value = "";
                 listener._handleKeyPress();
                 jasmine.clock().tick(51);
-                expect(listener.send).toHaveBeenCalledWith(layer.TypingIndicators.FINISHED);
+                expect(listener.send).toHaveBeenCalledWith(Layer.Core.TypingIndicators.FINISHED);
             });
 
             it("Should call only once in 50ms", function() {
@@ -682,12 +675,9 @@ describe("The Typing Indicator Classes", function() {
         });
 
         describe("The constructor() method", function() {
-            it("Should have a clientId", function() {
-                expect(publisher.clientId).toBe(client.appId);
-            });
 
             it("Should start as FINISHED", function() {
-                expect(publisher.state).toEqual(layer.TypingIndicators.FINISHED);
+                expect(publisher.state).toEqual(Layer.Core.TypingIndicators.FINISHED);
             });
         });
 
@@ -714,29 +704,29 @@ describe("The Typing Indicator Classes", function() {
                 });
                 var conversation2 = client.createConversation({participants: ["f"]});
                 publisher.setConversation(conversation2);
-                expect(publisher.setState).toHaveBeenCalledWith(layer.TypingIndicators.FINISHED);
+                expect(publisher.setState).toHaveBeenCalledWith(Layer.Core.TypingIndicators.FINISHED);
                 expect(hadConversation).not.toBe(conversation2);
             });
 
             it("Should end with a FINISHED state", function() {
-                publisher.state = layer.TypingIndicators.STARTED;
+                publisher.state = Layer.Core.TypingIndicators.STARTED;
                 var conversation2 = client.createConversation({participants: ["f"]});
                 publisher.setConversation(conversation2);
-                expect(publisher.state).toEqual(layer.TypingIndicators.FINISHED);
+                expect(publisher.state).toEqual(Layer.Core.TypingIndicators.FINISHED);
             });
         });
 
         describe("The setState() method", function() {
 
             it("Should do nothing if state changed but no conversation", function() {
-                publisher.state = layer.TypingIndicators.PAUSED;
+                publisher.state = Layer.Core.TypingIndicators.PAUSED;
                 publisher.conversation = null;
                 spyOn(publisher, "_send");
                 spyOn(publisher, "_scheduleNextMessage");
                 spyOn(publisher, "_startPauseLoop");
 
                 // Run
-                publisher.setState(layer.TypingIndicators.STARTED);
+                publisher.setState(Layer.Core.TypingIndicators.STARTED);
 
                 // Posttest
                 expect(publisher._send).not.toHaveBeenCalled();
@@ -745,7 +735,7 @@ describe("The Typing Indicator Classes", function() {
             });
 
             it("Should schedule state to be resent if no state change and last send call was recent", function() {
-                publisher.state = layer.TypingIndicators.PAUSED;
+                publisher.state = Layer.Core.TypingIndicators.PAUSED;
                 publisher.conversation = conversation;
                 publisher._lastMessageTime = Date.now() - 500;
                 spyOn(publisher, "_scheduleNextMessage");
@@ -753,16 +743,16 @@ describe("The Typing Indicator Classes", function() {
                 spyOn(publisher, "_startPauseLoop");
 
                 // Run
-                publisher.setState(layer.TypingIndicators.PAUSED);
+                publisher.setState(Layer.Core.TypingIndicators.PAUSED);
 
                 // Posttest
                 expect(publisher._send).not.toHaveBeenCalled();
-                expect(publisher._scheduleNextMessage).toHaveBeenCalledWith(layer.TypingIndicators.PAUSED);
+                expect(publisher._scheduleNextMessage).toHaveBeenCalledWith(Layer.Core.TypingIndicators.PAUSED);
                 expect(publisher._startPauseLoop).toHaveBeenCalled();
             });
 
             it("Should call _send if no state change and last send call was old", function() {
-                publisher.state = layer.TypingIndicators.PAUSED;
+                publisher.state = Layer.Core.TypingIndicators.PAUSED;
                 publisher.conversation = conversation;
                 publisher._lastMessageTime = Date.now() - 50000;
                 spyOn(publisher, "_scheduleNextMessage");
@@ -770,16 +760,16 @@ describe("The Typing Indicator Classes", function() {
                 spyOn(publisher, "_send");
 
                 // Run
-                publisher.setState(layer.TypingIndicators.PAUSED);
+                publisher.setState(Layer.Core.TypingIndicators.PAUSED);
 
                 // Posttest
-                expect(publisher._send).toHaveBeenCalledWith(layer.TypingIndicators.PAUSED);
+                expect(publisher._send).toHaveBeenCalledWith(Layer.Core.TypingIndicators.PAUSED);
                 expect(publisher._scheduleNextMessage).not.toHaveBeenCalled();
                 expect(publisher._startPauseLoop).toHaveBeenCalled();
             });
 
             it("Should do nothing if no state change and last send call was old but state is FINISHED", function() {
-                publisher.state = layer.TypingIndicators.FINISHED;
+                publisher.state = Layer.Core.TypingIndicators.FINISHED;
                 publisher.conversation = conversation;
                 publisher._lastMessageTime = Date.now() - 50000;
                 spyOn(publisher, "_scheduleNextMessage");
@@ -787,7 +777,7 @@ describe("The Typing Indicator Classes", function() {
                 spyOn(publisher, "_startPauseLoop");
 
                 // Run
-                publisher.setState(layer.TypingIndicators.FINISHED);
+                publisher.setState(Layer.Core.TypingIndicators.FINISHED);
 
                 // Posttest
                 expect(publisher._send).not.toHaveBeenCalled();
@@ -797,10 +787,10 @@ describe("The Typing Indicator Classes", function() {
 
             it("Should clear the old pause loop", function() {
                 publisher._pauseLoopId = 500;
-                publisher.state = layer.TypingIndicators.PAUSED;
+                publisher.state = Layer.Core.TypingIndicators.PAUSED;
 
                 // Run
-                publisher.setState(layer.TypingIndicators.PAUSED);
+                publisher.setState(Layer.Core.TypingIndicators.PAUSED);
 
                 // Posttest
                 expect(publisher._pauseLoopId).not.toEqual(500);
@@ -810,7 +800,7 @@ describe("The Typing Indicator Classes", function() {
 
         describe("The _startPauseLoop() method", function() {
             it("Should degrade a STARTED state to PAUSED after sufficient delay", function() {
-                publisher.state = layer.TypingIndicators.STARTED;
+                publisher.state = Layer.Core.TypingIndicators.STARTED;
                 spyOn(publisher, "setState");
 
                 // Run
@@ -823,11 +813,11 @@ describe("The Typing Indicator Classes", function() {
 
                 // Posttest
                 jasmine.clock().tick(1000);
-                expect(publisher.setState).toHaveBeenCalledWith(layer.TypingIndicators.PAUSED);
+                expect(publisher.setState).toHaveBeenCalledWith(Layer.Core.TypingIndicators.PAUSED);
             });
 
             it("Should degrade a PAUSED state to FINISHED after sufficient delay", function() {
-                publisher.state = layer.TypingIndicators.PAUSED;
+                publisher.state = Layer.Core.TypingIndicators.PAUSED;
                 spyOn(publisher, "setState");
 
                 // Run
@@ -840,7 +830,7 @@ describe("The Typing Indicator Classes", function() {
 
                 // Posttest
                 jasmine.clock().tick(1000);
-                expect(publisher.setState).toHaveBeenCalledWith(layer.TypingIndicators.FINISHED);
+                expect(publisher.setState).toHaveBeenCalledWith(Layer.Core.TypingIndicators.FINISHED);
             });
         });
 
@@ -848,57 +838,57 @@ describe("The Typing Indicator Classes", function() {
 
             it("Should set a delay that is 2500 after last message sent and then send the message take 1", function() {
                 publisher._lastMessageTime = Date.now();
-                publisher.state = layer.TypingIndicators.STARTED;
+                publisher.state = Layer.Core.TypingIndicators.STARTED;
                 spyOn(publisher, "_send");
 
                 // Run
-                publisher._scheduleNextMessage(layer.TypingIndicators.STARTED);
+                publisher._scheduleNextMessage(Layer.Core.TypingIndicators.STARTED);
                 jasmine.clock().tick(2498);
 
                 expect(publisher._send).not.toHaveBeenCalled();
                 jasmine.clock().tick(5);
 
                 // Posttest
-                expect(publisher._send).toHaveBeenCalledWith(layer.TypingIndicators.STARTED);
+                expect(publisher._send).toHaveBeenCalledWith(Layer.Core.TypingIndicators.STARTED);
             });
 
             it("Should set a delay that is 2500 after last message sent and then send the message take 2", function() {
                 publisher._lastMessageTime = Date.now() - 2000;
-                publisher.state = layer.TypingIndicators.STARTED;
+                publisher.state = Layer.Core.TypingIndicators.STARTED;
                 spyOn(publisher, "_send");
 
                 // Run
-                publisher._scheduleNextMessage(layer.TypingIndicators.STARTED);
+                publisher._scheduleNextMessage(Layer.Core.TypingIndicators.STARTED);
                 jasmine.clock().tick(498);
                 expect(publisher._send).not.toHaveBeenCalled();
                 jasmine.clock().tick(5);
 
                 // Posttest
-                expect(publisher._send).toHaveBeenCalledWith(layer.TypingIndicators.STARTED);
+                expect(publisher._send).toHaveBeenCalledWith(Layer.Core.TypingIndicators.STARTED);
             });
 
             it("Should set a delay that is 2500 after last message sent and then send the message take 3", function() {
                 publisher._lastMessageTime = Date.now() - 2400;
-                publisher.state = layer.TypingIndicators.STARTED;
+                publisher.state = Layer.Core.TypingIndicators.STARTED;
                 spyOn(publisher, "_send");
 
                 // Run
-                publisher._scheduleNextMessage(layer.TypingIndicators.STARTED);
+                publisher._scheduleNextMessage(Layer.Core.TypingIndicators.STARTED);
                 jasmine.clock().tick(98);
                 expect(publisher._send).not.toHaveBeenCalled();
                 jasmine.clock().tick(5);
 
                 // Posttest
-                expect(publisher._send).toHaveBeenCalledWith(layer.TypingIndicators.STARTED);
+                expect(publisher._send).toHaveBeenCalledWith(Layer.Core.TypingIndicators.STARTED);
             });
 
             it("Should do nothing if the states no longer match", function() {
                 publisher._lastMessageTime = Date.now();
-                publisher.state = layer.TypingIndicators.STARTED;
+                publisher.state = Layer.Core.TypingIndicators.STARTED;
                 spyOn(publisher, "_send");
 
                 // Run
-                publisher._scheduleNextMessage(layer.TypingIndicators.PAUSED);
+                publisher._scheduleNextMessage(Layer.Core.TypingIndicators.PAUSED);
                 jasmine.clock().tick(2501);
 
                 // Posttest
@@ -907,19 +897,19 @@ describe("The Typing Indicator Classes", function() {
 
             it("Should cancel any existing scheduled sends", function() {
                 publisher._lastMessageTime = Date.now();
-                publisher.state = layer.TypingIndicators.STARTED;
+                publisher.state = Layer.Core.TypingIndicators.STARTED;
                 spyOn(publisher, "_send");
 
                 // Run
-                publisher._scheduleNextMessage(layer.TypingIndicators.STARTED);
+                publisher._scheduleNextMessage(Layer.Core.TypingIndicators.STARTED);
                 jasmine.clock().tick(2000);
                 jasmine.clock().mockDate(new Date(Date.now() + 2000));
 
-                publisher._scheduleNextMessage(layer.TypingIndicators.STARTED);
+                publisher._scheduleNextMessage(Layer.Core.TypingIndicators.STARTED);
                 jasmine.clock().tick(601);
 
                 // Posttest
-                expect(publisher._send).toHaveBeenCalledWith(layer.TypingIndicators.STARTED);
+                expect(publisher._send).toHaveBeenCalledWith(Layer.Core.TypingIndicators.STARTED);
                 expect(publisher._send.calls.count()).toEqual(1);
             });
         });
@@ -935,7 +925,7 @@ describe("The Typing Indicator Classes", function() {
             });
 
             it("Should send a message if there is a valid conversation, and open websocket", function() {
-                publisher._send(layer.TypingIndicators.STARTED);
+                publisher._send(Layer.Core.TypingIndicators.STARTED);
                 expect(client.socketManager._socket.send).toHaveBeenCalledWith(JSON.stringify({
                     'type': 'signal',
                     'body': {
@@ -944,7 +934,7 @@ describe("The Typing Indicator Classes", function() {
                         'id': conversation.id,
                       },
                       'data': {
-                        'action': layer.TypingIndicators.STARTED,
+                        'action': Layer.Core.TypingIndicators.STARTED,
                       }
                     }
                 }));
@@ -952,14 +942,14 @@ describe("The Typing Indicator Classes", function() {
 
             it("Should do nothing for a temp id", function() {
                 publisher.conversation = client.createConversation({participants: ["abc"]});
-                publisher._send(layer.TypingIndicators.STARTED);
+                publisher._send(Layer.Core.TypingIndicators.STARTED);
                 expect(client.socketManager._socket.send).not.toHaveBeenCalled();
             });
         });
 
         describe("The destroy() method", function() {
             it("Should cancel any _scheduleId tasks", function() {
-                publisher._scheduleNextMessage(layer.TypingIndicators.STARTED);
+                publisher._scheduleNextMessage(Layer.Core.TypingIndicators.STARTED);
                 spyOn(publisher, "_send");
                 publisher.destroy();
                 jasmine.clock().tick(5001);
@@ -967,7 +957,7 @@ describe("The Typing Indicator Classes", function() {
             });
 
             it("Should cancel any _pauseLoopId tasks", function() {
-                publisher.setState(layer.TypingIndicators.STARTED);
+                publisher.setState(Layer.Core.TypingIndicators.STARTED);
                 spyOn(publisher, "setState");
                 publisher.destroy();
                 jasmine.clock().tick(5001);

@@ -2,11 +2,12 @@ describe('Status Message Components', function() {
   var StatusModel;
   var conversation;
   var testRoot;
+  var client;
 
   beforeEach(function() {
     jasmine.clock().install();
-    restoreAnimatedScrollTo = layer.UI.animatedScrollTo;
-    spyOn(layer.UI, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
+    restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
+    spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
       var timeoutId = setTimeout(function() {
         node.scrollTop = position;
         if (callback) callback();
@@ -16,23 +17,20 @@ describe('Status Message Components', function() {
       };
     });
 
-    client = new layer.Core.Client({
+    client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
     });
-    client.user = new layer.Core.Identity({
-      client: client,
+    client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
       id: 'layer:///identities/FrodoTheDodo',
       isFullIdentity: true,
-      sessionOwner: true
+      isMine: true
     });
     client._clientAuthenticated();
     conversation = client.createConversation({
       participants: ['layer:///identities/FrodoTheDodo', 'layer:///identities/SaurumanTheMildlyAged']
     });
-
-    if (layer.UI.components['layer-conversation-view'] && !layer.UI.components['layer-conversation-view'].classDef) layer.UI.init({});
 
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
@@ -40,16 +38,16 @@ describe('Status Message Components', function() {
     testRoot.style.flexDirection = 'column';
     testRoot.style.height = '300px';
 
-    StatusModel = layer.Core.Client.getMessageTypeModelClass("StatusModel");
+    StatusModel = Layer.Core.Client.getMessageTypeModelClass("StatusModel");
 
-    layer.Util.defer.flush();
+    Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
   });
 
 
   afterEach(function() {
-    layer.UI.animatedScrollTo = restoreAnimatedScrollTo;
-    layer.Core.Client.removeListenerForNewClient();
+    Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
+
   });
 
   describe("Model Tests", function() {
@@ -58,9 +56,10 @@ describe('Status Message Components', function() {
         text: "a"
       });
       model.generateMessage(conversation, function(message) {
-        expect(message.parts.length).toEqual(1);
-        expect(message.parts[0].mimeType).toEqual('application/vnd.layer.status+json');
-        expect(JSON.parse(message.parts[0].body)).toEqual({
+        expect(message.parts.size).toEqual(1);
+        var rootPart = message.getRootPart();
+        expect(rootPart.mimeType).toEqual('application/vnd.layer.status+json');
+        expect(JSON.parse(rootPart.body)).toEqual({
           text: "a"
         });
       });
@@ -77,7 +76,7 @@ describe('Status Message Components', function() {
       });
       var m = new StatusModel({
         message: m,
-        part: m.parts[0]
+        part: m.getRootPart(),
       });
       expect(m.text).toEqual("a");
     });
@@ -94,12 +93,12 @@ describe('Status Message Components', function() {
   describe("View Tests", function() {
     var el;
     beforeEach(function() {
-      el = document.createElement('layer-status-view');
+      el = document.createElement('layer-status-message-view');
       testRoot.appendChild(el);
     });
     afterEach(function() {
       document.body.removeChild(testRoot);
-      layer.Core.Client.removeListenerForNewClient();
+
       if (el) el.onDestroy();
     });
 
@@ -108,9 +107,12 @@ describe('Status Message Components', function() {
         text: "hello"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p>hello</p>");
+      expect(el.firstChild.tagName).toEqual("P");
+      expect(el.firstChild.className).toEqual("layer-line-wrapping-paragraphs");
+      expect(el.firstChild.childNodes[0].textContent).toEqual("hello");
+
     });
 
     it("Should render newline characters", function() {
@@ -118,9 +120,15 @@ describe('Status Message Components', function() {
         text: "hello\nthere"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p>hello</p><p>there</p>");
+      expect(el.childNodes[0].tagName).toEqual("P");
+      expect(el.childNodes[0].className).toEqual("layer-line-wrapping-paragraphs");
+      expect(el.childNodes[0].childNodes[0].textContent).toEqual("hello");
+
+      expect(el.childNodes[1].tagName).toEqual("P");
+      expect(el.childNodes[1].className).toEqual("layer-line-wrapping-paragraphs");
+      expect(el.childNodes[1].childNodes[0].textContent).toEqual("there");
     });
 
     it("Should render links", function() {
@@ -128,9 +136,15 @@ describe('Status Message Components', function() {
         text: "hello from https://layer.com"
       });
       el.model = model;
-      layer.Util.defer.flush();
+      Layer.Utils.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p>hello from <a href=\"https://layer.com\" class=\"layer-parsed-url layer-parsed-url-url\" target=\"_blank\" rel=\"noopener noreferrer\">layer.com</a></p>");
+      expect(el.firstChild.tagName).toEqual("P");
+      expect(el.firstChild.className).toEqual("layer-line-wrapping-paragraphs");
+
+      expect(el.firstChild.childNodes[0].textContent).toEqual("hello from ");
+      expect(el.firstChild.childNodes[1].href).toEqual("https://layer.com/");
+      expect(el.firstChild.childNodes[1].innerHTML).toEqual("layer.com");
+      expect(el.firstChild.childNodes[1].className).toEqual("layer-parsed-url");
     });
   });
 });

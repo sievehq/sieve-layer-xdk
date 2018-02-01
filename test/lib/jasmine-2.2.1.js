@@ -1576,7 +1576,8 @@ getJasmineRequireObj().pp = function(j$) {
       } else if (typeof value === 'function') {
         this.emitScalar('Function');
       } else if (typeof value.nodeType === 'number') {
-        this.emitScalar('HTMLNode');
+        if (!value.id && !value.tmpid && window.Layer && Layer.Utils ) value.tmpid = Layer.Utils.generateUUID();
+        this.emitScalar('<' + value.tagName.toLowerCase() + ' id=' + (value.id || value.tmpid) + ' />');
       } else if (value instanceof Date) {
         this.emitScalar('Date(' + value + ')');
       } else if (j$.util.arrayContains(this.seen, value)) {
@@ -1635,8 +1636,9 @@ getJasmineRequireObj().pp = function(j$) {
     this.append('[ ');
     for (var i = 0; i < length; i++) {
       if (i > 0) {
-        this.append(', ');
+        this.append(',');
       }
+      this.append('\n' + new Array(this.ppNestLevel_).join('  ') + i + ': ');
       this.format(array[i]);
     }
     if(array.length > length){
@@ -1646,34 +1648,40 @@ getJasmineRequireObj().pp = function(j$) {
   };
 
   StringPrettyPrinter.prototype.emitObject = function(obj) {
-    var constructorName = obj.constructor ? j$.fnNameFor(obj.constructor) : 'null';
-    this.append(constructorName);
-
-    if (this.ppNestLevel_ > j$.MAX_PRETTY_PRINT_DEPTH) {
-      return;
-    }
-
     var self = this;
-    this.append('({ ');
-    var first = true;
 
-    this.iterateObject(obj, function(property, isGetter) {
-      if (first) {
-        first = false;
-      } else {
-        self.append(', ');
+    //if (obj && typeof obj.toObject === 'function') obj = obj.toObject();
+
+
+    if (obj.toString !== Object.prototype.toString) {
+      self.append(obj.toString());
+    } else {
+      var constructorName = obj.constructor ? j$.fnNameFor(obj.constructor) : 'null';
+      this.append(constructorName);
+
+      if (this.ppNestLevel_ > j$.MAX_PRETTY_PRINT_DEPTH) {
+        return;
       }
-
-      self.append(property);
-      self.append(': ');
-      if (isGetter) {
-        self.append('<getter>');
-      } else {
-        self.format(obj[property]);
-      }
-    });
-
-    this.append(' })');
+      this.append('({ ');
+      var first = true;
+      var counter = 0;
+      this.iterateObject(obj, function(property, isGetter) {
+        if (first) {
+          first = false;
+        } else {
+          self.append(', ');
+        }
+        self.append('\n' + new Array(self.ppNestLevel_).join('  '));
+        self.append(property);
+        self.append(': ');
+        if (isGetter) {
+          self.append('<getter>');
+        } else {
+          self.format(obj[property]);
+        }
+      });
+      this.append('\n' + new Array(self.ppNestLevel_ - 1).join('  ')  + '}) ');
+    }
   };
 
   StringPrettyPrinter.prototype.append = function(value) {
@@ -2333,6 +2341,7 @@ getJasmineRequireObj().matchersUtil = function(j$) {
         englishyPredicate = matcherName.replace(/[A-Z]/g, function(s) { return ' ' + s.toLowerCase(); });
 
       // LAYER MODIFIED LINE IS HERE; needed to remove circular references and simplify tests
+      /*
       if (actual) {
         if (Array.isArray(actual)) {
           actual = actual.map(function(actual) {
@@ -2346,17 +2355,17 @@ getJasmineRequireObj().matchersUtil = function(j$) {
       if (expected) {
         if (Array.isArray(expected)) {
           expected = expected.map(function(expected) {
-            if (typeof expected.toObject === 'function') return expected.toObject();
+            if (expected && typeof expected.toObject === 'function') return expected.toObject();
             return expected;
           });
          } else {
-            if (typeof expected.toObject === 'function') expected = expected.toObject();
+            if (expected && typeof expected.toObject === 'function') expected = expected.toObject();
          }
-      }
+      }*/
 
       var message = 'Expected ' +
-        j$.pp(actual) +
-        (isNot ? ' not ' : ' ') +
+        j$.pp(actual) + '\n' +
+        (isNot ? ' not ' : ' ') + '\n' +
         englishyPredicate;
 
       if (expected.length > 0) {
@@ -2366,7 +2375,7 @@ getJasmineRequireObj().matchersUtil = function(j$) {
           }
 
           // LAYER MODIFIED LINE IS HERE; needed to remove circular references and simplify tests
-          if (expected[i] && typeof expected[i].toObject === 'function') expected[i] = expected[i].toObject();
+          //if (expected[i] && typeof expected[i].toObject === 'function') expected[i] = expected[i].toObject();
           message += ' ' + j$.pp(expected[i]);
         }
       }
@@ -2779,7 +2788,7 @@ getJasmineRequireObj().toHaveBeenCalledWith = function(j$) {
           result.pass = true;
           result.message = function() { return 'Expected spy ' + actual.and.identity() + ' not to have been called with ' + j$.pp(expectedArgs) + ' but it was.'; };
         } else {
-          result.message = function() { return 'Expected spy ' + actual.and.identity() + ' to have been called with ' + j$.pp(expectedArgs) + ' but actual calls were ' + j$.pp(actual.calls.allArgs()).replace(/^\[ | \]$/g, '') + '.'; };
+          result.message = function() { return 'Expected spy ' + actual.and.identity() + ' to have been called with \n' + j$.pp(expectedArgs) + '\n but actual calls were \n' + j$.pp(actual.calls.allArgs()).replace(/^\[ | \]$/g, '') + '.'; };
         }
 
         return result;
@@ -2959,7 +2968,7 @@ getJasmineRequireObj().toThrowError = function(j$) {
         messageDescription: function() {
 
           // LAYER MODIFIED LINE IS HERE; needed to remove circular references and simplify tests
-          if (expected && typeof expected.toObject === 'function') expected = expected.toObject();
+          //if (expected && typeof expected.toObject === 'function') expected = expected.toObject();
 
 
           if (expected === null) {

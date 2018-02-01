@@ -232,7 +232,7 @@ var compareObj = function(a, b) {
 }
 
 var responseTest =  function(a, b) {
-        if (a instanceof layer.Core.LayerEvent && b instanceof layer.Core.LayerEvent) {
+        if (a instanceof Layer.Core.LayerEvent && b instanceof Layer.Core.LayerEvent) {
             if (a.code != b.code) {
                 debugger;
                 return false;
@@ -293,7 +293,24 @@ var testDbEnabled = function(callback) {
     function deleteTables(callback) {
         try {
             var request = window.indexedDB.deleteDatabase('layer-test');
-            request.onsuccess = request.onerror = callback;
+            request.onsuccess = callback;
+            request.onerror = function(err) {
+                console.error("Unable to delete tables");
+                debugger;
+                callback();
+            };
+            request.onupgradeneeded = function(err) {
+                console.error("Unable to delete tables; upgrade needed");
+                debugger;
+                callback();
+            }
+            request.onblocked = function(err) {
+                console.error("Unable to delete tables; BLOCKED; Close other tabs running these tests to unblock!");
+                debugger;
+                callback();
+            }
+
+            return request;
         } catch(e) {
             callback();
         }
@@ -331,7 +348,7 @@ var testDbEnabled = function(callback) {
         }
     }
 
-    deleteTables(function() {
+    var deleteTablesResult = deleteTables(function() {
         createTable(function() {
             queryTable(function(result) {
                 isDbEnabled = result;

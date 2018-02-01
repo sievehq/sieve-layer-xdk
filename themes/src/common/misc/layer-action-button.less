@@ -2,28 +2,29 @@
 layer-action-button, layer-url-button {
 
   button {
-    background-color: @card-button-background;
-    color: @card-button-text;
-    font-size: @card-button-size;
+    background-color: @button-message-type-background;
+    color: @button-message-type-text;
+    font-size: @button-message-type-size;
     border-radius: 0px;
     border-width: 0px;
     min-height: 44px;
+    margin: 0px;
   }
   button:focus, button:active {
-    background-color: @card-button-focus-background !important;
-    color: @card-button-focus-text;
+    background-color: @button-message-type-focus-background !important;
+    color: @button-message-type-focus-text;
   }
   button:hover {
-    background-color: @card-button-hover-background;
-    color: @card-button-hover-text;
+    background-color: @button-message-type-hover-background;
+    color: @button-message-type-hover-text;
   }
   button:disabled {
-    background-color: @card-button-disabled-background;
-    color: @card-button-disabled-text;
+    background-color: @button-message-type-disabled-background;
+    color: @button-message-type-disabled-text;
   }
 
   &.layer-action-button-selected button {
-    background-color: @card-button-selected-background;
-    color: @card-button-selected-text;
+    background-color: @button-message-type-selected-background;
+    color: @button-message-type-selected-text;
   }
 }

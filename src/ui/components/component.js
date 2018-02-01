@@ -6,12 +6,9 @@
  * * Provides getters/setters/defaults for all defined properties
  * * Read the widget's attributes on being initialized, copying them into properties and triggering property setters
  * * Provides created and destroyed callbacks
- * * Provides onReady and onAttach hooks for custom Mixins
+ * * Provides lifecycle methods that can be modified via custom Mixins
  * * Automate standard template-related tasks
  * * Automate standard event-related tasks
- *
- * Methods and properties defined here should only be needed by developers wishing to build new widgets or evolve existing widgets.
- * Note that widgets can be created using other frameworks based on the webcomponent polyfill and still work here.
  *
  * A new component is created using:
  *
@@ -59,8 +56,8 @@
  * A component defined this way can be registered as follows:
  *
  * ```
- * var layerUI = require('layer-ui-web');
- * layerUI.registerComponent(tagName, componentDefinition);
+ * import { UI } from '@layerhq/web-xdk';
+ * UI.registerComponent(tagName, componentDefinition);
  * ```
  *
  * ### Properties
@@ -68,7 +65,7 @@
  * A property definition can be as simple as:
  *
  * ```
- * layerUI.registerComponent(tagName, {
+ * UI.registerComponent(tagName, {
  *    properties: {
  *       prop1: {}
  *    }
@@ -81,20 +78,21 @@
  *
  * Property Definitions support the following keys:
  *
- * *  set: A setter function whose input is the new value.  Note that your setter function is called AFTER this.properties.propName
+ * *  `set`: A setter function whose inputs are the new value and the old value `set(newValue, oldValue) {...}`.
+ *    Note that your setter function is called AFTER this.properties.propName
  *    has been set with the new value; your setter is for any side effects, rendering updates, or additional processing and NOT
  *    for writing the value itself.
- * *  get: A getter is needed if getting the property value from `this.properties.propName` is not getting the latest value.
+ * *  `get`: A getter is needed if getting the property value from `this.properties.propName` is not getting the latest value.
  *    Perhaps you want to return `this.nodes.input.value` to get text typed in by a user.
- * *  value: If a `value` key is provided, then this will be the default value of your property, to be used if a value is
- *    not provided by the component creator.
- * *  type: Currently accepts `Boolean`, `Number`, `Function`.  Using a type makes the system
+ * *  `value`: If a `value` key is provided, then this will be the default value of your property, to be used if a value is
+ *    not provided when instantiating the component.
+ * *  `type`: Currently accepts `Boolean`, `Number`, `Function`.  Using a type makes the system
  *    more forgiving when processing strings.  This exists because attributes frequently arrive as strings due to the way HTML attributes work.
  *    For example:
- *    * if type is Boolean, and "false", "null", "undefined", "" and "0" are evaluated as `false`; all other values are `true`
+ *    * if type is Boolean, then "false", "null", "undefined", "" and "0" are evaluated as `false`; all other values are `true`
  *    * Using this with functions will cause your function string to be evaled, but will lose your function scope and `this` pointer.
  *    * Using this with a number will turn "1234" into `1234`
- * *  noGetterFromSetter: Do **not** use the getter function from within the setter.  Used for special cases where
+ * *  `noGetterFromSetter`: Do **not** use the getter function from within the setter.  Used for special cases where
  *    you have a getter that calculates the values, but where your setter should just make do with the last known value
  *    when determining if the value has changed.
  *
@@ -113,15 +111,22 @@
  * }
  * ```
  *
+ * This property definition:
+ *
+ * * Defaults to `true` unless a value is provided
+ * * Will interpret string values as Booleans, turning "false", "null", etc... into `false` and other words into `true`
+ * * Will set/get the "widget-enabled" CSS class
+ *
  * ### Events
  *
- * As part of your layer.UI.components.Component.registerComponents call you can pass in an `events` array; this is an array of strings representing events to listen for,
+ * As part of your {@link #registerComponent} call you can pass in an `events` array;
+ * this is an array of strings representing events to listen for,
  * and provide as property-based event listeners.
  *
  * Example:
  *
  * ```
- * layerUI.registerComponent(tagName, {
+ * UI.registerComponent(tagName, {
  *    events: ['layer-something-happening', 'layer-nothing-happening', 'your-custom-event']
  * });
  * ```
@@ -129,9 +134,9 @@
  * The above component definition will result in:
  *
  * 1. The component will listen for the 3 events listed, regardless of whether this component triggered the event,
- *    or its child components triggered the event.
+ *    or its child components triggered the event.  `this.addEventListener('your-custom-event')` to intercept this event (the event will still propagate up).
  * 2. The component will define the following properties: `onSomethingHappening`, `onNothingHappening` and `onYourCustomEvent`. These properties
- *    are defined for you, you do not need to do anything more than list the events in the events array.
+ *    are defined for you as a result of setting the `events` property.
  * 3. Your app can now use either event listeners or property callbacks as illustrated below:
  *
  * Event Listeners:
@@ -163,12 +168,14 @@
  * * `detachedCallback`
  * * `attributeChangedCallback`
  *
+ * Use of these is built into the webcomponents standard and should not be used.
+ *
  * ### Mixins
  *
  * Mixins can be added to a widget in two ways:
  *
- * * A Component may add a `mixins` array to its definition
- * * An Application, initializing the framework via `layer.UI.init()` may pass in mixins into the `init` call.
+ * * Component Developer: A Component may add a `mixins` array to its definition
+ * * App Developer: `Layer.init()` can be called with custom mixins
  *
  * #### Using Mixins from the Component
  *
@@ -182,7 +189,7 @@
  *   },
  *   methods: {
  *     method2: function() {
- *       alert("I two Met Hed; he was a little nerdy");
+ *       alert("Frodo is a Dodo");
  *     }
  *   }
  * });
@@ -199,7 +206,7 @@
  *   },
  *   methods: {
  *     method1: function() {
- *       alert("I Met Hed; he was nice");
+ *       alert("Live Long and Prosper Frodo the Dodo");
  *     }
  *   }
  * });
@@ -208,28 +215,18 @@
  * registerComponent(tagName, componentDefinition);
  * ```
  *
- * An app can modify an existing component by adding custom mixins to it using `layer.UI.init()`.  The `mixins` parameter
- * takes as keys, the tag-name for any widget you want to customize;
+ * An app can modify an existing component by adding custom mixins to it using `Layer.init()`.  The `mixins` parameter
+ * takes tag-names as keys;
  * (e.g `layer-message-item`, `layer-message-list`, `layer-conversation-view`, etc...)
  *
- * The following example adds a search bar to the Message List:
+ * The above Mixin can be added by the App Developer to the Layer Conversation View using the Layer Conversation View's tagName:
  *
  * ```
- * // Define a Mixin that can contains `properties`, `methods` and `events`:
- * var mixinObj = {
- *   properties: {
- *     prop2: {}
- *   },
- *   methods: {
- *     method2: function() {
- *       alert("I two Met Hed; he was a little nerdy");
- *     }
- * });
  *
- * layer.UI.init({
+ * Layer.init({
  *   appId: 'my-app-id',
  *   mixins: {
- *     'layer-messages-item': mixinObj
+ *     'layer-conversation-view': mixinObj
  *   }
  * });
  * ```
@@ -238,47 +235,47 @@
  *
  * Your mixin can be used to:
  *
- * * Add new Events to the widget's `events` array (presumably one of your new methods will call `this.trigger('my-event-name')`)
+ * * Add new Events to the widget's `events` array (presumably one of your new methods or subcomponents will call `this.trigger('my-event-name')`)
  * * Add new properties
  * * Add new methods
  * * Add new behaviors to existing properties
  * * Add new behaviors to existing methods
  * * Overwrite existing methods
  *
- * ##### Adding an Event
+ * #### Adding an Event
  *
  * ```
  * var mixinObj = {
- *   events: ['mycompany-button-click'],
+ *   events: ['my-button-click'],
  *   methods: {
  *     onCreate: function() {
  *       this.nodes.button = document.createElement('button');
  *       this.appendChild(this.nodes.button);
- *       this.nodes.button.addEventListener('click', this._onMyCompanyButtonClick.bind(this));
+ *       this.nodes.button.addEventListener('click', this._onMyButtonHandler.bind(this));
  *     },
- *     _onMyCompanyButtonClick: function(evt) {
- *       this.trigger('mycompany-button-click', { message: this.item.message });
+ *     _onMyButtonHandler: function(evt) {
+ *       this.trigger('my-button-click', { message: this.item.message });
  *     }
  *   }
  * });
  * ```
  *
- * When the user clicks on the `this.nodes.button`, it will trigger the `mycompany-button-click` event.  By listing
- * `mycompany-button-click` event in the `events` array, this will automatically add the `onMycompanyButtonClick` property
- * which you can set to your event handler (or you may just use `document.addEventListener('mycompany-button-click', callback)`).
+ * When the user clicks on the `this.nodes.button`, it will trigger the `my-button-click` event.  By listing
+ * `my-button-click` event in the `events` array, this will automatically add the `onMyButtonClick` property.
+ * Users of the component can set to their event handler using the `onMyButtonClick` property
+ * (or just use `document.addEventListener('my-button-click', callback)`).
  *
- * ##### Add new behaviors to existing properties
+ * #### Add new behaviors to existing properties
  *
  * If you are modifying a widget that has an existing property, and you want additional side effects to
  * trigger whenever that property is set, you can add your own `set` method to the property.
- * Other modifications to the property will be ignored (`value` and `get` from mixin will be ignored).
  *
  * ```
  * var mixinObj = {
  *   properties: {
- *     client: {
- *       set: function(client) {
- *         this.properties.user = client.user;
+ *     message: {
+ *       set: function(message) {
+ *         this.properties.user = message.sender;
  *       }
  *     }
  *   }
@@ -287,8 +284,8 @@
  *
  * The above mixin can be added to any widget;
  *
- * * If the widget already has a `client` property, both the widget's setter and your setter will be called; order of call is not predetermined.
- * * If the widget does *not* already have a `client`, your `client` setter will be called if/when the `client` is set.
+ * * If the widget already has a `message` property, both the widget's setter and your setter will be called; order of call is not predetermined.
+ * * If the widget does *not* already have a `message`, your `message` setter will be called if/when the `message` is set.
  *
  * You can use the Mixin to add any method your widget needs.
  *
@@ -309,16 +306,16 @@
  * The above mixin can be added to any widget; the widget's `onCreate` method will be called, AND your `onCreate` method will be called, in no
  * particular order.  You an also use the following `mode` values to change ordering:
  *
- * * `layerUI.registerComponent.MODES.BEFORE`: Call your mixin's method before the widget's method
- * * `layerUI.registerComponent.MODES.AFTER`: Call your mixin's method after the widget's method
- * * `layerUI.registerComponent.MODES.OVERWRITE`: Call only your mixin's method, *not* the widget's method
- * * `layerUI.registerComponent.MODES.DEFAULT`: Call your mixin's method in no particular order with regards to the widget's methods
+ * * `Layer.UI.registerComponent.MODES.BEFORE`: Call your mixin's method before the widget's method
+ * * `Layer.UI.registerComponent.MODES.AFTER`: Call your mixin's method after the widget's method
+ * * `Layer.UI.registerComponent.MODES.OVERWRITE`: Call only your mixin's method, *not* the widget's method
+ * * `Layer.UI.registerComponent.MODES.DEFAULT`: Call your mixin's method in no particular order with regards to the widget's methods
  *
  * ```
  * var mixinObj = {
  *   methods: {
  *     onCreate: {
- *       mode: layerUI.registerComponent.MODES.BEFORE,
+ *       mode: Layer.UI.registerComponent.MODES.BEFORE,
  *       value: function() {
  *         var div = document.createElement('div');
  *         this.appendChild(div);
@@ -337,7 +334,7 @@
  *       conditional: function() {
  *         return Boolean(this.item);
  *       },
- *       mode: layerUI.registerComponent.MODES.BEFORE,
+ *       mode: Layer.UI.registerComponent.MODES.BEFORE,
  *       value: function() {
  *         var div = document.createElement('div');
  *         this.appendChild(div);
@@ -347,67 +344,8 @@
  * });
  * ```
  *
- * For details on what methods to modify via mixins, see the Life Cycle methods
  *
- * #### Life Cycle Methods
- *
- * All widgets should execute the following life cycle methods:
- *
-
-1. `onCreate()`: Your widget has been created.
-    * Uses for `onCreate`:
-      * Setup event handlers
-      * Add custom nodes and properties that do not depend upon property values
-      * Setup local variables/state variables.
-    * Widget State when `onCreate` is called:
-      * If you have a template, it will have been loaded into your widget before `onCreate`, adding any neccessary child nodes
-      * `this.nodes` will be setup and point to any nodes in your template that specify a `layer-id`.
-      * If your widget was created with any attributes, they _may_ be available in `this.properties` but you should not depend upon them being set yet.
-      * No property setters will have been called yet
-      * Your widget will not have a `parentNode`
-1. Property Setters: Your property setters will be called with any attributes and/or properties that your widget was initialized with.
-   * The following widget `<my-widget prop1='frodo' prop2='dodo'></my-widget>` will call your setter for `prop1`
-     with `frodo`, and `prop2` with `dodo`
-   * Default property values will be set; a property defined like this: `properties: { prop1: { value: 55, set: function(newValue) {alert('Set!');} } }` will cause the `prop1` setter will be called with `55`
-   * Any properties set via `var element = document.createElement('widget'); element.prop1 = 'frodo';` will fire at this point as well.
-   * If no attribute value is passed in and no default value is set the `prop1` setter will *not* be called, and the value will be `null`
-1. `onAfterCreate()`: Your widget has been initialized.
-    * Uses for `onAfterCreate`:
-      * Setup and DOM manipulation that depends upon property values (else it would go in `onCreate`)
-      * One time DOM manipulation based on property values that never change.  Any DOM manipulation based on values that change
-        would typically go in `onRender` which can be called repeatedly.
-    * Widget state when `onAfterCreate` is called:
-      * `onCreate` has been called
-      * Property setters have all fired
-      * `onRender` has **not**  been called
-1. `onRender()`: DOM manipulation based on current property values.
-    * Uses for `onRender`:
-      * Typically called after a property value changes that would force the widget to rerender.  Note that for very specific and simple DOM changes,
-        the property setter may directly update the DOM rather than call `onRender`.
-      * Unlike `onAfterCreate`, `onRender` may be called multiple times
-      * Note that this is called immediately after `onAfterCreate`,
-      * Note that calls to `onRender` from your property setters will beo ignored until `onAfterCreate` has been called.
-    * Widget state when `onRender` is called:
-      * The first call will be before `onAttach`; subsequent calls may happen before or after this widget has a `parentNode`
-      * `onCreate`, all property setters, and `onAfterCreate` have been called.
-1. `onRerender()`: Widgets that render a Layer Web SDK Object listen for changes to the object and call `onRerender` to update rendering
-   of things that can change within those objects.  Unlike `onRender` which would let you render an entirely new Message or Conversation,
-   `onRerender` would handle changes within the existing Message or Conversation.  `onRerender` is also used when listening for events
-   rather than changes to properties.
-1. `onAttach()`: Your widget has been added to a document.
-    * Uses for `onAttach`:
-      * Your widget needs to know its `parentNode` to modify its rendering.
-      * Your widget needs some sizing information to modify its rendering.
-    * Widget state when `onAttach` is called:
-      * `onRender` will always be called before `onAttach`.
-      * `parentNode` should now have a value.
-      * Removing this widget from the DOM and then reinserting it _may_ refire this call.  It will Not refire `onRender`.
-1. `onDetach()`: Your widget has been removed from the html document.
-1. `onDestroy()`: Your widget was has been flagged as destroyed.  This happens if it was removed from the HTML Document, and remained out of
-   the document for more than a few moments. Use this function to unsubscribe from any custom event listeners you setup for your widget.
-
- *
- * #### Templates
+ * ### Templates
  *
  * There are a number of ways that a template can be registered to your component.
  *
@@ -415,73 +353,50 @@
  *
  * ```
  * var template = document.querySelector('template');
- * layerUI.registerComponent('my-widget', {
+ * Layer.UI.registerComponent('my-widget', {
  *     template: template
  * });
  * ```
  *
  * _Define a template string while registering Component_:
  *
- * Note that unless the `<template/>` node, the template string is assumed to be DOM nodes only, and no `<style/>` blocks.
+ * Note that if passing in a `template` string instead of a `<template/>` node, the template string is assumed to be DOM nodes only,
+ * and no `<style/>` blocks, nor the `<template>` tag.
  * If using a template string, you may separately provide a style string:
  *
  * ```
- * layerUI.registerComponent('my-widget', {
+ * Layer.UI.registerComponent('my-widget', {
  *     template: '<div><button />Click me</div>',
- *     styles: 'my-widget {display: block}'
+ *     style: 'my-widget {display: block}'
  * });
  * ```
  *
  * _Define a template after defining your component_:
  *
  * ```
- * layerUI.registerComponent('my-widget', {
- * });
+ * Layer.UI.registerComponent('my-widget', { });
  *
- * layerUI.registerTemplate('my-widget', document.querySelector('template'));
+ * Layer.UI.registerTemplate('my-widget', document.querySelector('template'));
  * ```
  *
  * _Define a template string after defining your component_:
  *
  * ```
- * layerUI.registerComponent('my-widget', {
- * });
+ * Layer.UI.registerComponent('my-widget', { });
  *
- * layerUI.buildAndRegisterTemplate('my-widget', '<div><button />Click me</div>');
+ * Layer.UI.buildAndRegisterTemplate('my-widget', '<div><button />Click me</div>');
  * ```
  *
- * @class layer.UI.components.Component
+ * @class Layer.UI.Component
  */
 
-
-/**
- * Register a component using the specified HTML tagName.
- *
- * Note that you may define your components and styles any way you like, you do not need to conform your
- * component structure to the expected input of this function.  This function Does however provide
- * many simplifying capabilities including
- *
- *  * Auto-generation of setters/getters removing unneccessary boilerplate
- *  * Automatic mapping of hyphen-cased properties to camel-case attributes used within your component
- *  * Automatic applying of any property values passed in before your setters could trigger; gaurentees setters trigger after initialization
- *  * Automatic detection and copying of attribute values into properties
- *  * Utilities for managing templates and styles that are seen within `layerUI` all depend upon this structure.
- *
- * @method registerComponent
- * @static
- * @param {String} tagName    Tag name that is being defined (`layer-avatar`)
- * @param {Object} classDef    Definition of your class
- * @param {Object} classDef.properties    Definition of your class properties
- * @param {Object} classDef.methods    Definition of your class methods
- * @param {String[]} classDef.events    Array of events to listen for and repackage as event handler properties
- * @param {Mixed} template     A `<template />` node or a template string such as `<div><button /></div>`
- * @param {String} style       A String with CSS styles for this widget
- */
 import Layer from '../../core';
-import Util from '../../util';
-import layerUI from '../base';
+import Util from '../../utils';
+import { ComponentsHash, buildAndRegisterTemplate, registerTemplate } from '../component-services';
 import stateManagerMixin from '../mixins/state-manager';
+import Settings from '../../settings';
 
+const logger = Util.logger;
 /*
  * Setup the Real structure needed for the `methods` object, not a hash of functions,
  * but a hash of functions with a `mode` parameter
@@ -494,25 +409,28 @@ function setupMethods(classDef, methodsIn) {
     const methodInDef = methodsIn[methodName];
     if (!methodDef.methodsBefore) {
       methodDef.methodsBefore = [];
+      methodDef.methodLast = [];
       methodDef.methodsAfter = [];
       methodDef.methodsMiddle = [];
       methodDef.conditional = [];
     }
+
     if (typeof methodInDef === 'function') {
-      methodDef.methodsMiddle.push(methodsIn[methodName]);
+      methodDef.methodsMiddle.push(methodInDef);
     } else if (methodInDef.mode === registerComponent.MODES.BEFORE) {
-      methodDef.methodsBefore.push(methodsIn[methodName].value);
+      methodDef.methodsBefore.push(methodInDef.value);
     } else if (methodInDef.mode === registerComponent.MODES.AFTER) {
-      methodDef.methodsAfter.push(methodsIn[methodName].value);
+      methodDef.methodsAfter.push(methodInDef.value);
     } else if (methodInDef.mode === registerComponent.MODES.OVERWRITE) {
       methodDef.lock = methodInDef.value;
-    } else if (methodInDef.mode === registerComponent.MODES.DEFAULT) {
-      methodDef.methodsMiddle.push(methodsIn[methodName].value);
+    } else if (methodInDef.mode === registerComponent.MODES.DEFAULT || methodInDef.value && !methodInDef.mode) {
+      methodDef.methodsMiddle.push(methodInDef.value);
+    } else if (methodInDef.mode === registerComponent.MODES.LAST) {
+      methodDef.methodLast.push(methodInDef.value);
     }
     if (methodInDef.conditional) methodDef.conditional.push(methodInDef.conditional);
   });
 }
-
 
 /*
  * Provides a basic mixin mechanism.
@@ -520,7 +438,7 @@ function setupMethods(classDef, methodsIn) {
  * Provide an array of objects with a `properties` key and a `methods` key,
  * and all property defintions and method defintions will be copied into your classDef UNLESS your classDef
  * has provided its own definition.
- * If your mixin provides a created() method, it will be called after the classDef created() method is called;
+ * If your mixin provides a onCreated() method, it will be called after the classDef onCreated() method is called;
  * this will be called for any number of mixins.
  *
  * If your mixin provides a property that is also defined by your component,
@@ -541,7 +459,8 @@ function setupMixin(classDef, mixin) {
     // Make sure that this becomes a part of the properties definition of the class if the prop
     // isn't already defined.  used by the props array.
     if (!classDef.properties[name]) {
-      classDef.properties[name] = mixin.properties[name];
+      // Object.assign would be nice, but IE11 doesn't yet support it, and don't need another polyfill
+      classDef.properties[name] = Util.shallowClone(mixin.properties[name]);
     } else {
       if (mixin.properties[name].order !== undefined && classDef.properties[name].order === undefined) {
         classDef.properties[name].order = mixin.properties[name].order;
@@ -549,14 +468,15 @@ function setupMixin(classDef, mixin) {
       if ('value' in mixin.properties[name]) {
         classDef.properties[name].value = mixin.properties[name].value;
       }
+
+      if ('type' in mixin.properties[name]) {
+        classDef.properties[name].type = mixin.properties[name].type;
+      }
+
       if (mixin.properties[name].propagateToChildren !== undefined &&
           classDef.properties[name].propagateToChildren === undefined) {
         classDef.properties[name].propagateToChildren = mixin.properties[name].propagateToChildren;
       }
-      // if (mixin.properties[name].mixinWithChildren !== undefined &&
-      //     classDef.properties[name].mixinWithChildren === undefined) {
-      //   classDef.properties[name].mixinWithChildren = mixin.properties[name].mixinWithChildren;
-      // }
     }
   });
 
@@ -594,29 +514,35 @@ function finalizeMixinMerge(classDef) {
 
   methodNames.forEach((methodName) => {
     const methodDef = classDef.methods[methodName];
-    let methodList = [...methodDef.methodsBefore, ...methodDef.methodsMiddle, ...methodDef.methodsAfter];
-    if (methodDef.lock) methodList = [methodDef.lock];
+    let methodList = [...methodDef.methodsBefore, ...methodDef.methodsMiddle, ...methodDef.methodsAfter, ...methodDef.methodLast];
+    if (methodDef.lock) methodList = [methodDef.lock, ...methodDef.methodLast];
+
+    // For each method, either set the method to be the function, or set it to be the
+    // getTheMethod function which assembles all of the conditionals and mixins into a single function.
     if (methodList.length === 1 && !methodDef.conditional.length) {
       classDef.methods[methodName] = methodList[0];
     } else {
       classDef['__method_' + methodName] = methodList;
-      classDef.methods[methodName] = getMethod(classDef, methodDef.conditional, classDef['__method_' + methodName]);
+      classDef.methods[methodName] = getTheMethod(classDef, methodDef.conditional, classDef['__method_' + methodName]);
     }
   });
 }
 
-
-function getMethod(classDef, conditionals, methods) {
-  return function runMethod(...args) {
+/*
+ * This function returns a function that keeps the conditionals and methods in scope
+ * so that they can be run at any time as our new method definition.
+ */
+function getTheMethod(classDef, conditionals, methods) {
+  return function runMixinMethods(...args) {
     let result;
     for (let i = 0; i < conditionals.length; i++) {
       if (!conditionals[i].apply(this, args)) return;
     }
 
-    methods.forEach((method) => {
+    methods.forEach(function runMixinMethodsIterator(method) {
       const resultTmp = method.apply(this, args);
       if (resultTmp !== undefined) result = resultTmp;
-    });
+    }, this);
     return result;
   };
 }
@@ -683,7 +609,6 @@ function getPropArray(classDef) {
       order: classDef.properties[propertyName].order,
       noGetterFromSetter: classDef.properties[propertyName].noGetterFromSetter,
       propagateToChildren: classDef.properties[propertyName].propagateToChildren,
-      //mixinWithChildren: classDef.properties[propertyName].mixinWithChildren,
       value: classDef.properties[propertyName].value,
     };
   }).sort((a, b) => {
@@ -763,7 +688,7 @@ function setupProperty(classDef, prop, propertyDefHash) {
   // The property setter will set this.properties[name] and then if there is a custom setter, it will be invoked.
   // This means that the setter does NOT need to write to this.properties, but can handle side effects, transformations, etc...
   newDef.set = function propertySetter(value) {
-    if (layerUI.debug) console.log(`Set property ${this.tagName}.${name} to `, value);
+    logger.debug(`Set property ${this.tagName}.${name} to `, value);
     if (this.properties._internalState.onDestroyCalled) return;
 
     if (propDef.type) value = castProperty(propDef.type, value);
@@ -779,7 +704,9 @@ function setupProperty(classDef, prop, propertyDefHash) {
 
       this.properties[name] = value;
       if (classDef['__set_' + name] && !this.properties._internalState.disableSetters) {
-        classDef['__set_' + name].forEach(setter => setter.call(this, value, wasInit ? null : oldValue));
+        classDef['__set_' + name].forEach(function propertySetterIterator(setter) {
+          setter.call(this, value, wasInit ? null : oldValue);
+        }, this);
       }
 
       if (propDef.propagateToChildren) {
@@ -806,44 +733,31 @@ function setupProperty(classDef, prop, propertyDefHash) {
 
 let registerAllCalled = false;
 function registerComponent(tagName, classDef) {
-  if (!layerUI.components[tagName]) layerUI.components[tagName] = {};
-  layerUI.components[tagName].def = classDef;
+  if (!ComponentsHash[tagName]) ComponentsHash[tagName] = {};
+  ComponentsHash[tagName].def = classDef;
 
   if (classDef.template) {
-    layerUI.components[tagName].template = classDef.template;
+    ComponentsHash[tagName].template = classDef.template;
   }
   delete classDef.template; // deletes templates that are empty and fail the above test
 
   if (classDef.style) {
-    layerUI.components[tagName].style = classDef.style;
+    ComponentsHash[tagName].style = classDef.style;
     delete classDef.style;
   }
 
   if (registerAllCalled) _registerComponent(tagName);
 }
 
-// Docs in layer-ui.js
-function unregisterComponent(tagName) {
-  delete layerUI.components[tagName];
-}
-
-// Docs in layer-ui.js
-function registerAll() {
-  registerAllCalled = true;
-  Object.keys(layerUI.components)
-    .filter(tagName => typeof layerUI.components[tagName] !== 'function')
-    .forEach(tagName => _registerComponent(tagName));
-}
-
 function _registerComponent(tagName) {
-  const classDef = layerUI.components[tagName].def;
-  const { template } = layerUI.components[tagName];
+  const classDef = ComponentsHash[tagName].def;
+  const { template } = ComponentsHash[tagName];
 
   if (template) {
     if (typeof template === 'string') {
-      layerUI.buildAndRegisterTemplate(tagName, template);
+      buildAndRegisterTemplate(tagName, template);
     } else if (template.getAttribute('layer-template-registered') !== 'true') {
-      layerUI.registerTemplate(tagName, template);
+      registerTemplate(tagName, template);
     }
   }
 
@@ -854,9 +768,9 @@ function _registerComponent(tagName) {
   if (!classDef.mixins) classDef.mixins = [];
   classDef.mixins.push(stateManagerMixin);
 
-  // Add in custom mixins specified via layerUI.settings
-  if (layerUI.settings.mixins[tagName]) {
-    classDef.mixins = classDef.mixins.concat(layerUI.settings.mixins[tagName]);
+  // Add in custom mixins specified via Layer.UI.settings
+  if (Settings.mixins[tagName]) {
+    classDef.mixins = classDef.mixins.concat(Settings.mixins[tagName]);
   }
 
   // Setup all events specified in the `events` property.  This adds properties,
@@ -925,24 +839,26 @@ function _registerComponent(tagName) {
    * createdCallback is part of the Webcomponent lifecycle and drives this framework's lifecycle.
    *
    * It is called after the widget has been created.  We use this to initialize properties, nodes,
-   * templates, wait for more properties, call property setters, call `onAfterCreate`, etc.
+   * templates, and setup the delay that will call `onAfterCreate`
    *
    * @method createdCallback
    * @private
    */
   classDef.createdCallback = {
     value: function createdCallback() {
-      if (!layerUI.components[tagName]) return;
+      if (!ComponentsHash[tagName]) return;
 
       this._initializeProperties();
       this.nodes = {};
 
 
       // If a template has been assigned for this class, append it to this node, and parse for layer-ids
-      // TODO: Rearchitect layer-message-item to be a place holder for a layer-message-sent-item or layer-message-received-item so that
-      // we don't need this hokey stuff here
       const templateNode = this.getTemplate();
       if (templateNode) {
+        // If there is a template, then replace any current DOM nodes with that template,
+        // but cache those DOM nodes for use by <layer-replaceable-content />
+        // Note that those DOM nodes that are children prior to processing the template were
+        // generated by the app most commonly, using something like <widget-with-template><div /></widget-with-template>
         if (this.childNodes.length) {
           this.properties.originalChildNodes = Array.prototype.slice.call(this.childNodes);
           while (this.firstChild) this.removeChild(this.firstChild);
@@ -962,6 +878,13 @@ function _registerComponent(tagName) {
     },
   };
 
+  /**
+   * Any listeners defined in the Component's definition (the `listeners` key of the definition) should wire up an
+   * event handler that calls {@link #_handleListenerEvent}
+   *
+   * @method _setupListeners
+   * @private
+   */
   classDef._setupListeners = {
     value: function _setupListeners() {
       this._listeners.forEach((eventName) => {
@@ -970,6 +893,14 @@ function _registerComponent(tagName) {
     },
   };
 
+  /**
+   * When an event we are listening for as specfied by the Component's `listeners` key, this method receives and dispatches it to the specified `listener` handler.
+   *
+   * @method _handleListenerEvent
+   * @private
+   * @param {String} methodName    __listener-${eventName}
+   * @param {Layer.Core.LayerEvent} evt   The event that triggered this listener
+   */
   classDef._handleListenerEvent = {
     value: function _handleListenerEvent(methodName, evt) {
       if (this.properties.listenTo.indexOf(evt.target.id) !== -1) {
@@ -978,25 +909,63 @@ function _registerComponent(tagName) {
     },
   };
 
+  /**
+   * After the component has been created, and after the creator has had time to initialize properties, finish creation.
+   *
+   * This method takes care of:
+   *
+   * * Adding Replaceable Content into the Component (to be reviewed...)
+   * * Initializing all properties with value from the instantiator or default values
+   * * Calling property setters with initial values
+   * * Setup of listeners specified in the Component definition's `listeners` key
+   * * Call all of the {@link Layer.UI.Component#onAfterCreate} methods
+   *
+   * This method can only be called once; and will be blocked on any subsequent call.
+   *
+   * @method _onAfterCreate
+   * @private
+   */
   classDef._onAfterCreate = {
     value: function _onAfterCreate() {
-      // Happens during unit tests
-      if (this.properties._internalState.onDestroyCalled) return;
+      // Allow Adapters to call _onAfterCreate... and then insure its not run a second time
+      // This scneario happens during unit tests; not clear if it happens elsewhere
+      if (this.properties._internalState.onAfterCreateCalled ||
+        this.properties._internalState.onDestroyCalled) return;
 
+
+      // TODO: Test if this should be built into <layer-replaceable-content /> and moved out of the root class of all Components.
+      // NOTE: This is setup prior to property getters and setters because those getters/setters may need access to the `layer-id` defined nodes added via replaceable content
+      // HOWEVER: This means that functions for generating dom structures cannot access properties
+      // reliably
       this._onProcessReplaceableContent();
 
-      // Allow Adapters to call _onAfterCreate... and then insure its not run a second time
-      if (this.properties._internalState.onAfterCreateCalled) return;
+      // Before we start initializing all of our properties, enable setters and getters
       this.properties._internalState.disableSetters = false;
       this.properties._internalState.disableGetters = false;
-      this.properties._internalState.inPropInit =
-      layerUI.components[tagName].properties.map(propDef => propDef.propertyName);
 
+      // Maintain a list of which properties are still needing to be initialized; those still being intitialized
+      // may behave a little differently than those that are fully initialized.  Any property that has its value
+      // set via our setter is immediately removed from this list.
+      this.properties._internalState.inPropInit =
+      ComponentsHash[tagName].properties.map(propDef => propDef.propertyName);
+
+      // Initialize each property
       props.forEach((prop) => {
+
+        // Get the currently assigned value put onto the `properties` property.  This may happen
+        // if a prior property initialization sets it, or one of the Framework Adaptor (react)
+        // directly sets the properties object.
         const value = this.properties[prop.propertyName];
+
         // UNIT TEST: This line is primarily to keep unit tests from throwing errors
         if (value instanceof Layer.Root && value.isDestroyed) return;
-        if (value !== undefined && value !== null && prop.propertyName !== 'replaceableContent') {
+
+        // replaceable content has special handling and is a "unique" property. This will be ignored until a `<layer-replaceable-content />` component is initialized
+        if (prop.propertyName === 'replaceableContent') return;
+
+        // If the property has a value, set it, triggering its setter, and optionally propagating its value to all child components
+        const isValueUnset = value === undefined || value === null;
+        if (!isValueUnset) {
           // Force the setter to trigger; this will force the value to be converted to the correct type,
           // and call all setters
           this[prop.propertyName] = value;
@@ -1007,20 +976,28 @@ function _registerComponent(tagName) {
         }
 
 
-        // If there is no value, but the parent component has the same property name, presume it to also be
-        // propagateToChildren, and copy its value; useful for allowing list-items to automatically grab
+        // If there is no value, but the parent component has the same property name, and is set to propagateToChildren,
+        // copy its value into this property. Useful for allowing list-items to automatically grab
         // all parent propagateToChildren properties.
-        else if ((prop.propagateToChildren/* || prop.mixinWithChildren*/) && this.parentComponent) {
-          const parentValue = this.parentComponent.properties[prop.propertyName];
-          if (parentValue) this[prop.propertyName] = parentValue;
+        if ((isValueUnset || value === prop.value) && this.parentComponent) {
+          // Get the parentComponent's Property Definition
+          const parentComponentProps = ComponentsHash[this.parentComponent.tagName.toLocaleLowerCase()].properties;
+          const parentComponentPropDef = parentComponentProps.filter(p => p.propertyName === prop.propertyName)[0];
+
+          // If we found the definition and its propagateToChildren, copy its value
+          if (parentComponentPropDef && parentComponentPropDef.propagateToChildren) {
+            const parentValue = this.parentComponent.properties[prop.propertyName];
+            if (parentValue) this[prop.propertyName] = parentValue;
+          }
         }
       });
       this.properties._internalState.inPropInit = [];
 
       // Warning: these listeners may miss events triggered while initializing properties
-      // only way around this is to add another Layer.Util.defer() to our lifecycle
+      // only way around this is to add another Layer.Utils.defer() to our lifecycle which we are not doing at this time.
       this._setupListeners();
 
+      // Call all onAfterCreate methods from all mixins
       this.onAfterCreate();
     },
   };
@@ -1042,12 +1019,14 @@ function _registerComponent(tagName) {
    *
    * ```
    * {
-   *     link: anchorObject,
-   *     image: imageObject
+   *   nodes: {
+   *     link: anchorDOMNode,
+   *     image: imageDOMNode
+   *   }
    * }
    * ```
    *
-   * And then allow me to have code such as:
+   * And then allows for code such as:
    *
    * ```
    * render: function() {
@@ -1061,13 +1040,14 @@ function _registerComponent(tagName) {
   /**
    * attachedCallback is part of the Webcomponent lifecycle and drives this framework's lifecycle.
    *
-   * This calls `onAttach`.
+   * This calls `onAttach` which is where custom components can customize and mixins can add behaviors.
+   *
    * @method
    * @private
    */
   classDef.attachedCallback = {
     value: function onAttach() {
-      this.onAttach();
+      if (this.parentNode) this.onAttach();
     },
   };
 
@@ -1077,9 +1057,9 @@ function _registerComponent(tagName) {
    * This Fixes a bug in webcomponents polyfil that clobbers property getter/setter.
    *
    * The webcomponent polyfil copies in properties before the property getter/setter is applied to the object.
-   * As a result, we might have a property of `this.appId` that is NOT accessed via `this.properties.appId`.
+   * As a result, we might have a property of `this.xxxx` that is NOT accessed via `this.properties.xxxx`.
    * Further, the getter and setter functions will not invoke as long as this value is perceived as the definition
-   * for this Object. So we delete the property `appId` from the object so that the getter/setter up the prototype chain can
+   * for this Object. So we delete the property `xxxx` from the object so that the getter/setter up the prototype chain can
    * once again function.
    *
    * @method _initializeProperties
@@ -1095,11 +1075,13 @@ function _registerComponent(tagName) {
        * All properties are stored in `this.properties`; any property defined in the class definition's `properties` hash
        * are read and written here.
        *
-       * Properties may have already been setup by a UI Framework adapter for caching properties passed from the app; if properties
-       * exists, they may still need to be setup.
+       * `this.properties` may have been created and populated prior to this method being called.
+       * This typically happens when a UI Framework adapter (React Adaptor) needs to setup initial properties; if properties
+       * exists, they may still need to be setup and their setters called.
        *
        * @property {Object} properties
        * @protected
+       * @readonly
        */
       if (this.properties && this.properties._internalState) return;
       if (!this.properties) this.properties = {};
@@ -1107,7 +1089,6 @@ function _registerComponent(tagName) {
       this.properties._internalState = {
         onCreateCalled: false,
         onAfterCreateCalled: false,
-        //onProcessReplaceableContentCalled: false,
         onRenderCalled: false,
         onAttachCalled: false,
         onDetachCalled: false,
@@ -1117,15 +1098,7 @@ function _registerComponent(tagName) {
         propertyListeners: {},
       };
 
-      // props.forEach((prop) => {
-      //   const value = this[prop.propertyName];
-      //   if (value !== undefined) {
-      //     this.properties[prop.propertyName] = castProperty(prop.type, value);
-      //     delete this[prop.propertyName];
-      //   }
-      //   this._copyInAttribute(prop);
-      // });
-
+      // Copy any attribute values into the property, or default property definition values if no attribute found
       props.forEach(prop => this._copyInAttribute(prop));
     },
   };
@@ -1133,6 +1106,8 @@ function _registerComponent(tagName) {
   /**
    * Handle some messy post-create copying of attribute values over to property
    * values where property setters can fire.
+   *
+   * Also handles default property values if no attributes are found.
    *
    * @method _copyInAttribute
    * @private
@@ -1147,27 +1122,30 @@ function _registerComponent(tagName) {
       let value = prop.propertyName in this.properties ? this.properties[prop.propertyName] : this.getAttribute(prop.attributeName);
 
 
-      // Firefox seems to need this alternative to getAttribute().
-      // TODO: Verify this and determine if it uses the getter here.
-      if (value === null && this[prop.attributeName] !== undefined) {
-        value = this[prop.attributeName];
+      // Firefox 57 requires this alternative to getAttribute() for cases where properties are directly set on the DOM
+      if (value === null && (this[prop.attributeName] !== undefined || this[prop.propertyName] !== undefined)) {
+        value = this[prop.attributeName] || this[prop.propertyName];
+
+        // If this has a value, it clobbers the property definition, and getters/setters cannot be called.
+        // Deleting it enables the property definition to once more surface from the prototype.
+        delete this[prop.propertyName];
       }
 
+      // If we have found an attribute value to set our property to, use it.
       if (value !== null) {
         finalValue = value;
-      } else if (this[prop.propertyName] !== undefined) {
-        // this only happens in firefox; somehow the property rather than the attribute is set, but
-        // the setter is never called; so properties isn't correctly setup
-        // TODO: Verify this -- also redundant with initialize properties
-        finalValue = this[prop.propertyName];
-        delete this[prop.propertyName];
-      } else if ('value' in propertyDefHash[prop.propertyName]) {
+      }
+
+      // If there is no value set for this property, see if there is a default value defined in the property definition
+      else if ('value' in propertyDefHash[prop.propertyName]) {
         finalValue = propertyDefHash[prop.propertyName].value;
 
-        // Don't treat a default value of [] as a static value shared among all instances
+        // Don't treat a default value of [] as a static value shared among all instances; instead create a copy
+        // Note that we have not yet handled this case for Objects (see `replaceableContent` which often has default values that are Hashes of replacements)
         if (Array.isArray(finalValue)) finalValue = finalValue.concat([]);
       }
 
+      // Cast the property and set it
       this.properties[prop.propertyName] = prop.type ? castProperty(prop.type, finalValue) : finalValue;
     },
   };
@@ -1201,7 +1179,7 @@ function _registerComponent(tagName) {
         if (!document.body.contains(this) && !document.head.contains(this) && this.trigger('layer-widget-destroyed')) {
           this.onDestroy();
         }
-      }, 10000);
+      }, Settings.destroyAfterDetachDelay);
     },
   };
 
@@ -1216,7 +1194,7 @@ function _registerComponent(tagName) {
    */
   classDef.attributeChangedCallback = {
     value: function attributeChangedCallback(name, oldValue, newValue) {
-      if (layerUI.debug) console.log(`Attribute Change on ${this.tagName}.${name} from ${oldValue} to `, newValue);
+      logger.debug(`Attribute Change on ${this.tagName}.${name} from ${oldValue} to `, newValue);
       this[Util.camelCase(name)] = newValue;
     },
   };
@@ -1224,7 +1202,7 @@ function _registerComponent(tagName) {
   // Register the component with our components hash as well as with the document.
   // WARNING: Calling this in some browsers may cause immediate registeration of the component prior
   // to reaching the next line of code; putting code after this line may be problematic.
-  layerUI.components[tagName].classDef = document.registerElement(tagName, {
+  ComponentsHash[tagName].classDef = document.registerElement(tagName, {
     prototype: Object.create(HTMLElement.prototype, classDef),
   });
 
@@ -1232,38 +1210,53 @@ function _registerComponent(tagName) {
   /**
    * Identifies the properties exposed by this component.
    *
-   * Used by adapters.  Each element of the array consists of:
+   * Used by adapters.  See getPropArray for the structure of each item of the props array
    *
-   * ```
-   * {
-   *    propertyName: 'onReadThisDoc',
-   *    attributeName: 'on-read-this-doc',
-   *    type: Boolean
-   * }
-   * ```
-   *
-   * @type {Object[]}
+   * @property {Object[]} properties
    * @static
    */
-  layerUI.components[tagName].properties = props;
+  ComponentsHash[tagName].properties = props;
 };
 
 /**
-   * A `<template />` dom node
-   *
-   * These templates are used during Component initializations.
-   *
-   * @type {HTMLTemplateElement}
-   * @private
-   * @static
-   */
+ * A `<template />` dom node OR a string containing DOM nodes, but no `<style>` or `<template>` tags.
+ *
+ * These templates are used during Component initializations.
+ *
+ * @property {String | HTMLTemplateElement} template
+ * @private
+ * @static
+ */
+
+ /**
+  * Stylesheet string.
+  *
+  * A stylesheet string can be added to the document via `styleNode.innerHTML = value` assignment.
+  *
+  * @property {String} style
+  * @private
+  * @static
+  */
 
   /**
-   * Stylesheet string.
+   * Event definitions.
    *
-   * A stylesheet string can be added to the document via `styleNode.innerHTML = value` assignment.
+   * ```
+   * UI.registerComponent(tagName, {
+   *    events: ['layer-something-happening', 'layer-nothing-happening', 'your-custom-event']
+   * });
+   * ```
    *
-   * @type {String}
+   * The above component definition will result in:
+   *
+   * 1. The component will listen for the 3 events listed, regardless of whether this component triggered the event,
+   *    or its child components triggered the event.  `this.addEventListener('your-custom-event')` to intercept this event (the event will still propagate up).
+   * 2. The component will define the following properties: `onSomethingHappening`, `onNothingHappening` and `onYourCustomEvent`. These properties
+   *    are defined for you as a result of setting the `events` property.
+   * 3. Your app can now use either event listeners or property callbacks as illustrated below:
+   *
+   *
+   * @property {String[]} events
    * @private
    * @static
    */
@@ -1275,11 +1268,15 @@ function _registerComponent(tagName) {
  * * AFTER: Run your method after other methods of the same name
  * * OVERWRITE: Run only your method, no other methods of the same name
  * * DEFAULT: Run your method in normal ordering.
+ * * LAST: For internal use only; this runs after `AFTER` and should not be used in Mixins,
+ *         only in the design of Components that may have mixins added to them.  This is *not* prevented
+ *         by use of the `OVERWRITE` mode.
  *
  * @static
  * @property {Object} MODES
  * @property {String} MODES.BEFORE
  * @property {String} MODES.AFTER
+ * @property {String} MODES.LAST
  * @property {String} MODES.OVERWRITE
  * @property {String} MODES.DEFAULT
  */
@@ -1288,21 +1285,112 @@ registerComponent.MODES = {
   AFTER: 'AFTER',
   OVERWRITE: 'OVERWRITE',
   DEFAULT: 'DEFAULT',
+  LAST: 'LAST',
 };
 
 
 const standardClassProperties = {
+  /**
+   * Provide a hash of DOM generation functions and/or DOM nodes to insert custom content into.
+   *
+   * ```
+   * var emptyNode = document.createElement("div");
+   * emptyNode.innerHTML = "I feel empty";
+   * widget.replaceableContent = {
+   *    emptyNode: emptyNode,
+   *    loadingIndicator: function(component) {
+   *      var indicator = document.createElement("div");
+   *      indicator.classList.add('loading-indicator');
+   *      return indicator;
+   *    }
+   * };
+   * ```
+   *
+   * @property {Object} replaceableContent
+   */
   replaceableContent: {},
+
+  /**
+   * Used to track event handlers to subclasses of Layer.Core.Root.
+   *
+   * Layer.Core.Root will automatically add any event subscription to this array:
+   *
+   * ```
+   * conversation.on(eventName, fn, this);
+   * ```
+   * will insert the resulting handler into this array.
+   *
+   * This array makes it easy to unsubscribe to all event subscriptions when {@link Layer.UI.Component#destroy} is called.
+   *
+   * @property {Object[]} _layerEventSubscriptions
+   * @private
+   */
   _layerEventSubscriptions: {
     value: [],
   },
+
+  /**
+   * Object that the Root Class of all UI Components uses for managing the internal state of the component.
+   *
+   * > *Note*
+   * >
+   * > A UI Component may have its own internal state; this should be done as regular properties, and
+   * > not as part of the `_internalState` property. This is solely for things that the root component class
+   * > uses for managing Lifecycle for ALL UI Components.
+   *
+   * @private
+   * @property {Object} _internalState
+   * @property {Boolean} _internalState.onCreateCalled
+   * @property {Boolean} _internalState.onAfterCreateCalled
+   * @property {Boolean} _internalState.onRenderCalled
+   * @property {Boolean} _internalState.onAttachCalled
+   * @property {Boolean} _internalState.onDetachCalled
+   * @property {Boolean} _internalState.disableSetters     Setters are no longer called; `this.properties[propName]` is still set however.
+   * @property {Boolean} _internalState.disableGetters     Getters are no longer called; values returned directly from `this.properties[propName]`
+   * @property {String[]} _internalState.inPropInit        Array of property names for properties that have not yet been initialized
+   * @property {Object} _internalState.propertyListeners   Property Change Listeners
+   */
+  _internalState: {},
+
+  /**
+   * Set an array of CSS Classes; replaces any previous CSS classes that were part of this array.
+   *
+   * Typically used to intiialize a component with initial classes rather than for maintaining the set of classes.
+   *
+   * Why use it? Makes it easier to initialize UI Components:
+   *
+   * ```
+   * UI.registerComponent('my-custom-tag', {
+   *    cssClassList: {
+   *      value: ['my-css-class1', 'my-css-class2']
+   *    }
+   * });
+   * ```
+   *
+   * or:
+   *
+   * ```
+   * var widget = document.createElement('my-custom-tag');
+   * widget.cssClassList = ['my-css-class1', 'my-css-class2'];
+   * ```
+   *
+   * > *Note*
+   * >
+   * > Do *not* try manipulating the array; only setting the `cssClassList` property with a *new* array
+   * > will cause a rendering update,
+   * > manipulating the array will not trigger any setters.
+   *
+   * @property {String[]} cssClassList
+   */
   cssClassList: {
     set(newValue, oldValue) {
       if (newValue) {
-        if (!Array.isArray(newValue)) newValue = [newValue];
+        if (!Array.isArray(newValue)) {
+          this.properties.cssClassList = newValue = [newValue];
+        }
         newValue.forEach(cssClass => this.classList.add(cssClass));
-        this.properties.cssClassList = newValue;
       } else {
+        // Revert cssClassList; provide an empty array if trying to clear all classes.
         this.properties.cssClassList = oldValue;
       }
 
@@ -1313,7 +1401,30 @@ const standardClassProperties = {
       }
     },
   },
+
+  /**
+   * Refers to the parent Layer.UI.Component that contains this Component in its template.
+   *
+   * Note that if the parent does not contain this component in its template, then the developer
+   * who created it is responsible for setting this property directly:
+   *
+   * ```
+   * var newComp = document.createElement("layer-avatar");
+   * this.nodes.mySubNode.appendChild(newComp);
+   * newComp.parentComponent = this;
+   * ```
+   *
+   * @property {Layer.UI.Component} parentComponent
+   */
   parentComponent: {},
+
+  /**
+   * Refers to the top level containing Component that contains this Component.
+   *
+   * This is not set; its instead derived from the {@link #parentComponent} tree
+   *
+   * @property {Layer.UI.Component} mainComponent
+   */
   mainComponent: {
     get() {
       if (!this.properties.parentComponent) return this;
@@ -1323,9 +1434,20 @@ const standardClassProperties = {
       return this.properties.mainComponent;
     },
   },
-  client: {
-    propagateToChildren: true,
-  },
+
+  /**
+   * Set an array of DOM IDs that this widget will listen to events from.
+   *
+   * Each Component has specific events that it listens to; typically these are only generated by a few other widgets.
+   *
+   * ```
+   * <layer-notifier id='nodeA'></layer-notifier>
+   * <layer-notifier id='nodeB'></layer-notifier>
+   * <layer-conversation-list listen-to="nodeA,nodeB"></layer-conversation-list>
+   * ```
+   *
+   * @property {String[]} listenTo
+   */
   listenTo: {
     value: [],
     set(value) {
@@ -1335,6 +1457,15 @@ const standardClassProperties = {
 };
 
 const standardClassMethods = {
+  /**
+   * Whever {@link #replaceableContent} is added to a Component, its `onReplaceableContentAdded` method will be called.
+   *
+   * This method does setup on the `layer-id` of all components in the newly added nodes.
+   *
+   * @method onReplaceableContentAdded
+   * @param {String} name     Name of the replaceable content node `<layer-replaceable-content name='frodo' />`; the name `frodo` will be the parameter value here
+   * @param {HTMLElement}     Top level node of the nodes that have been added
+   */
   onReplaceableContentAdded: function onReplaceableContentAdded(name, node) {
     this._findNodesWithin(node, (currentNode) => {
       if (!currentNode.properties) currentNode.properties = {};
@@ -1350,6 +1481,22 @@ const standardClassMethods = {
     });
   },
 
+
+  /**
+   * Add a change listener for the specified property
+   *
+   * ```
+   * widget.addPropertyListener('conversationId', function(newValue, oldValue) {
+   *    console.log("The new conversation id is ", newValue);
+   * });
+   * ```
+   *
+   * @method addPropertyListener
+   * @param {String} name     Name of the property
+   * @param {Function} fn     Function to call when the property changes
+   * @param {Mixed} fn.newValue
+   * @param {Mixed} fn.oldValue
+   */
   addPropertyListener(name, fn) {
     const propertyListeners = this.properties._internalState.propertyListeners;
     if (!propertyListeners[name]) propertyListeners[name] = [];
@@ -1384,31 +1531,38 @@ const standardClassMethods = {
   /**
    * Iterate over all child nodes generated by the template; skip all subcomponent's child nodes.
    *
+   * If callback returns a value, then what is sought has been found; stop searching.  The returned value is the return value
+   * for this function.
+   *
+   * If searching for ALL matches, do not return a value in your callback.
+   *
    * @method _findNodesWithin
    * @private
    * @param {HTMLElement} node    Node whose subtree should be called with the callback
    * @param {Function} callback   Function to call on each node in the tree
    * @param {HTMLElement} callback.node   Node that the callback is called on
-   * @param {Boolean} isComponent         Is the node a Component from this framework
+   * @param {Boolean} callback.isComponent   Is the node a Component from this framework
    */
   _findNodesWithin: function _findNodesWithin(node, callback) {
     const children = node.childNodes;
     for (let i = 0; i < children.length; i++) {
       const innerNode = children[i];
       if (innerNode instanceof HTMLElement) {
-        const isLUIComponent = Boolean(layerUI.components[innerNode.tagName.toLowerCase()]);
-        callback(innerNode, isLUIComponent);
+        const isLUIComponent = Boolean(ComponentsHash[innerNode.tagName.toLowerCase()]);
+        const result = callback(innerNode, isLUIComponent);
+        if (result) return result;
 
         // If its not a custom webcomponent with children that it manages and owns, iterate on it
         if (!isLUIComponent) {
-          this._findNodesWithin(innerNode, callback);
+          const innerResult = this._findNodesWithin(innerNode, callback);
+          if (innerResult) return innerResult;
         }
       }
     }
   },
 
   /**
-   * Return the default template or the named template for this Component.
+   * Return the template for this Component.
    *
    * Get the default template:
    *
@@ -1433,14 +1587,14 @@ const standardClassMethods = {
   getTemplate: function getTemplate() {
     const tagName = this.tagName.toLocaleLowerCase();
 
-    if (layerUI.components[tagName].style) {
+    if (ComponentsHash[tagName].style) {
       const styleNode = document.createElement('style');
       styleNode.id = 'style-' + this.tagName.toLowerCase();
-      styleNode.innerHTML = layerUI.components[tagName].style;
+      styleNode.innerHTML = ComponentsHash[tagName].style;
       document.getElementsByTagName('head')[0].appendChild(styleNode);
-      layerUI.components[tagName].style = ''; // insure it doesn't get added to head a second time
+      ComponentsHash[tagName].style = ''; // insure it doesn't get added to head a second time
     }
-    return layerUI.components[tagName].template;
+    return ComponentsHash[tagName].template;
   },
 
   /**
@@ -1464,13 +1618,23 @@ const standardClassMethods = {
    * });
    * ```
    *
-   * layer.UI.components.Component.events can be used to generate properties to go with your events, allowing
+   * {@link Layer.UI.Component#events} can be used to generate properties to go with your events, allowing
    * the following widget property to be used:
    *
    * ```
-   * this.onSomethingHappened = function(detail) {
-   *   console.log(detail.someSortOf);
+   * this.onSomethingHappened = function(evt) {
+   *   console.log(evt.detail.someSortOf);
    * });
+   * ```
+   *
+   * Note that events may be canceled via `evt.preventDefault()` and your code may need to handle this:
+   *
+   * ```
+   * if (this.trigger('something-is-happening')) {
+   *    doSomething();
+   * } else {
+   *    cancelSomething();
+   * }
    * ```
    *
    * @method trigger
@@ -1478,7 +1642,7 @@ const standardClassMethods = {
    * @param {String} eventName
    * @param {Object} detail
    * @returns {Boolean} True if process should continue with its actions, false if application has canceled
-   *                    the default action using `evt.preventDefault()` (perhaps an event listener wanted to handle the action itself)
+   *                    the default action using `evt.preventDefault()`
    */
   trigger: function trigger(eventName, details) {
     const evt = new CustomEvent(eventName, {
@@ -1520,6 +1684,32 @@ const standardClassMethods = {
     this.classList[enable ? 'add' : 'remove'](cssClass);
   },
 
+  /**
+   * Shorthand for `document.createElement` followed by a bunch of standard setup.
+   *
+   * ```
+   * var avatar = this.createElement({
+   *   name: "myavatar",
+   *   size: "large",
+   *   users: [client.user],
+   *   parentNode: this.nodes.avatarContainer
+   * });
+   * console.log(avatar === this.nodes.myavatar); // returns true
+   * ```
+   *
+   * TODO: Most `document.createElement` calls in this UI Framework should be updated to use this.
+   *
+   * Note that because all properties are initialized by this call, there is no need for asynchronous initialization,
+   * so unless suppressed with the `noCreate` parameter, all initialization is completed synchronously.
+   *
+   * @method createElement
+   * @param {String} tagName           The type of HTMLElement to create (includes Layer.UI.Component instances)
+   * @param {Object} properties        The properties to initialize the HTMLElement with
+   * @param {HTMLElement} [properties.parentNode]  The node to setup as the `parentNode` of our new UI Component
+   * @param {String} [properties.name]   Set `this.nodes[name] = newUIElement`
+   * @param {String[]} [properties.classList]  Array of CSS Class names to add to the new UI Component
+   * @param {Boolean} [properties.noCreate=false]    Do not call `_onAfterCreate()`; allow the lifecycle to flow asyncrhonously instead of rush it through synchronously.
+   */
   createElement: function createElement(tagName, properties) {
     const node = document.createElement(tagName);
     node.parentComponent = this;
@@ -1533,7 +1723,7 @@ const standardClassMethods = {
     if (properties.name) this.nodes[properties.name] = node;
 
     if (!properties.noCreate) {
-      CustomElements.takeRecords();
+      CustomElements.upgradeAll(node);
       if (node._onAfterCreate) node._onAfterCreate();
     }
     return node;
@@ -1543,7 +1733,36 @@ const standardClassMethods = {
    * MIXIN HOOK: Each time a Component is initialized, its onCreate methods will be called.
    *
    * This is called before any properties have been set; use this for initialization that does not
-   * depend upon properties, including creating dom nodes, event handlers and initial values for state variables.
+   * depend upon properties.
+   *
+   * What can be setup here:
+   *
+   * * The UI Component's template has already been imported, so all DOM Nodes have been setup, and this is
+   *   a good place to wire up event handlers for those nodes
+   * * This is a good place to initialize state variables that need initial values
+   * * If there are DOM Nodes not in the template that need to be added (and which are not generated conditionally
+   *   based on some property values), this is a good place to create and insert them.
+   *
+   * Note that for any given Component there may be many `onCreate` methods, and using Mixins, you may
+   * add more.  All of them will be called.
+   *
+   * ```
+   * Layer.init({
+   *   mixins: {
+   *     'some-component-tag-name': {
+   *       methods: {
+   *         onCreate: function() {
+   *           var button = document.createElement('button');
+   *           button.innerText = "Help";
+   *           button.addEventListener("click", myHelpFunc);
+   *           this.appendChild(button);
+   *           this.nodes.myButton = button;
+   *         }
+   *       }
+   *     }
+   *   }
+   * });
+   * ```
    *
    * @method onCreate
    */
@@ -1558,6 +1777,7 @@ const standardClassMethods = {
    * As part of the lifecycle, this must fire before onAfterCreate because onAfterCreate assumes that all dom have loaded via templates/elsewhere.
    *
    * TODO: Need to test against raw JS and various frameworks to insure we always have a css class 'layer-replaceable-content' div
+   *
    * @method
    * @private
    */
@@ -1566,17 +1786,40 @@ const standardClassMethods = {
   /**
    * MIXIN HOOK: Each time a Component is initialized, its onAfterCreate methods will be called.
    *
-   * While one could use layerUI.Components.Component.onCreate, this handler allows you to wait for all
-   * properties to be set before your intialization code is run.
+   * While one could use {@link #onCreate}, this handler allows you to wait for all
+   * properties to be set before your intialization code is run, making this ideal for any setup that
+   * depends upon initial property values.
+   *
+   * {@link #onRender} is automatically called once `onAfterCreate` has completed.
+   *
+   * ```
+   * Layer.init({
+   *   mixins: {
+   *     'some-component-tag-name': {
+   *       methods: {
+   *         onAfterCreate: function() {
+   *           // Conditionally generated DOM handled in onAfterCreate
+   *           if (this.showHelpButton) {
+   *             var button = document.createElement('button');
+   *             button.innerText = "Help";
+   *             button.addEventListener("click", myHelpFunc);
+   *             this.appendChild(button);
+   *             this.nodes.myButton = button;
+   *           }
+   *         }
+   *       }
+   *     }
+   *   }
+   * });
+   * ```
    *
    * @method onAfterCreate
    */
   onAfterCreate: {
-    mode: registerComponent.MODES.AFTER,
+    mode: registerComponent.MODES.LAST,
     value: function onAfterCreate() {
       this.properties._internalState.onAfterCreateCalled = true;
       this.onRender();
-      this.properties._internalState.onRenderCalled = true;
       if (this.properties._callOnAttachAfterCreate) {
         this.properties._callOnAttachAfterCreate = false;
         this.onAttach();
@@ -1587,17 +1830,80 @@ const standardClassMethods = {
   /**
    * MIXIN HOOK: Called when rendering the widget.
    *
+   * This is called when:
+   *
+   * 1. Initializing the UI Component, after {@link Layer.UI.Component#onAfterCreate} and before
+   *    {@link Layer.UI.Component#onAttach}
+   * 2. A property that is key to rendering has been replaced with a new value
+   *
+   * This will call {@link #onRerender} on completion.
+   *
+   * ```
+   * Layer.init({
+   *   mixins: {
+   *     'some-component-tag-name': {
+   *       properties: {
+   *         buttonText: {
+   *           set: function(newValue) {
+   *             this.onRender();
+   *           }
+   *         }
+   *       },
+   *       methods: {
+   *         onRender: function() {
+   *           this.nodes.myButton.innerText = this.buttonText;
+   *         }
+   *       }
+   *     }
+   *   }
+   * });
+   * ```
+   *
    * @method onRender
    */
   onRender: {
     conditional: function onCanRender() {
       return this.properties._internalState.onAfterCreateCalled;
     },
+    mode: registerComponent.MODES.LAST,
+    value: function onRender() {
+      this.properties._internalState.onRenderCalled = true;
+      this.onRerender();
+    },
   },
 
   /**
-   * MIXIN HOOK: Called after any Query events cause the list
-   * to have rerendered.
+   * MIXIN HOOK: Called any time a property that is key to rendering has emited a `change` event.
+   *
+   * Typically, this is called:
+   *
+   * 1. During initialization, after {@link #onRender}, to initialize the more dynamic content
+   * 2. Any time a key property value emits a `change` event
+   * 3. Any time a very minor property has changed that does not justify rerendering the whole Component
+   *
+   * Typically the {@link #onRender} method is called instead if core data for the rendering has changed.
+   *
+   * ```
+   * Layer.init({
+   *   mixins: {
+   *     'some-component-tag-name': {
+   *       properties: {
+   *         disabled: {
+   *           set: function(newValue) {
+   *             this.onRerender();
+   *           }
+   *         }
+   *       },
+   *       methods: {
+   *         onRerender: function() {
+   *           this.nodes.mybutton.disabled = this.disabled;
+   *           this.toggleClass('is-disabled-component', this.disabled);
+   *         }
+   *       }
+   *     }
+   *   }
+   * });
+   * ```
    *
    * @method onRerender
    */
@@ -1610,9 +1916,33 @@ const standardClassMethods = {
   /**
    * MIXIN HOOK: Each time a Component is inserted into a Document, its onAttach methods will be called.
    *
-   * Note that prior to this, `parentNode` might have been `null`; at this point,
-   * you should be able to see all information about its parent nodes.  Some rendering
-   * may need to wait for this.
+   * This call always happens:
+   *
+   * * After {@link #onAfterCreate}
+   * * After the first call to {@link #onRender} but there may be subsequent calls to {@link #onRender}
+   * * After `this.parentNode` has a value
+   * * After the node is within the Document's `<body/>`
+   *
+   * Any rendering that depends upon knowing the size of the UI component (assuming the size is flexible)
+   * must wait until this point to find that size.
+   *
+   * ```
+   * Layer.init({
+   *   mixins: {
+   *     'some-component-tag-name': {
+   *       methods: {
+   *         onAttach: function() {
+   *           if (this.clientWidth > 500) {
+   *              this.nodes.bigNode.style.display = 'block';
+   *           } else {
+   *              this.nodes.bigNode.style.display = 'none';
+   *           }
+   *         }
+   *       }
+   *     }
+   *   }
+   * });
+   * ```
    *
    * @method onAttach
    */
@@ -1625,7 +1955,7 @@ const standardClassMethods = {
         return true;
       }
     },
-    mode: registerComponent.MODES.AFTER,
+    mode: registerComponent.MODES.BEFORE,
     value: function onAttach() {
       this.properties._internalState.onAttachCalled = true;
     },
@@ -1634,8 +1964,31 @@ const standardClassMethods = {
   /**
    * MIXIN HOOK: Each time a Component is removed from document.body, its onDetach methods will be called.
    *
-   * Note that the `layer-widget-destroyed` event will still trigger even if you provide this, so be aware of
+   * Note that the {@link Layer.UI.Component#event-layer-widget-destroyed} event will still trigger even if you provide this, so be aware of
    * what that event will do and that your widget may be destroyed a few seconds after this function is called.
+   *
+   * ```
+   * Layer.init({
+   *   mixins: {
+   *     'some-component-tag-name': {
+   *       methods: {
+   *         onAttach: function() {
+   *           this.properties.intervalId = setInterval(function() {
+   *              if (this.clientWidth > 500) {
+   *                 this.nodes.bigNode.style.display = 'block';
+   *              } else {
+   *                 this.nodes.bigNode.style.display = 'none';
+   *              }
+   *            }, 2000);
+   *         },
+   *         onDetach: fuunction() {
+   *            clearInterval(this.properties.intervalId);
+   *         }
+   *       }
+   *     }
+   *   }
+   * });
+   * ```
    *
    * @method onDetach
    */
@@ -1656,15 +2009,15 @@ const standardClassMethods = {
   /**
    * MIXIN HOOK: Add a `onDestroy` method to your component which will be called when your component has been removed fromt the DOM.
    *
-   * Use this instead of the WebComponents `detachedCallback` as some
-   * boilerplate code needs to be run (this code will shut off all event listeners the widget has setup).
+   * Use this instead of the WebComponents reserved `detachedCallback`.  The reserved method
+   * takes care of unsubscribing from events from all Layer.Core.Root instances before calling `onDestroy`.
    *
    * Your `onDestroy` callback will run after the node has been removed from the document
-   * for at least 10 seconds.  See the `layer-widget-destroyed` event to prevent the widget from being destroyed after removing
+   * for at least 10 seconds, or after a call to {@link #destroy}.
+   * See the {@link #event-layer-widget-destroyed} event to prevent the widget from being destroyed after removing
    * it from the document.
    *
    * @method onDestroy
-   * @private
    */
   onDestroy: function onDestroy() {
     this.properties._internalState.propertyListeners = null;
@@ -1675,31 +2028,91 @@ const standardClassMethods = {
     this.properties._layerEventSubscriptions = [];
     this.classList.add('layer-node-destroyed');
   },
-  destroy: function() {
+
+  /**
+   * Call this to destroy the UI Component.
+   *
+   * Destroying will cause it to be removed from its parent node, it will call destroy on all child nodes,
+   * and then call the {@link #onDestroy} method.
+   *
+   * > *Note*
+   * >
+   * > destroy is called to remove a component, but it is not a lifecycle method; a component that has been removed
+   * > from the DOM some otherway will cause {@link #onDestroy} to be called but `destroy()` will _not_ be called.
+   *
+   * @method destroy
+   */
+  destroy: function destroy() {
+    if (this.properties._internalState.onDestroyCalled) return;
     if (this.parentNode) {
       this.parentNode.removeChild(this);
     }
+    Object.keys(this.nodes || {}).forEach((name) => {
+      if (this.nodes[name].destroy) this.nodes[name].destroy();
+    });
     this.onDestroy();
   },
 };
 
-function registerMessageComponent(tagName, componentDefinition) {
-  const handlesMessage = componentDefinition.methods.handlesMessage;
-  const label = componentDefinition.properties.label.value;
-  const order = componentDefinition.properties.order;
-  registerComponent(tagName, componentDefinition);
-  layerUI.registerMessageHandler({
-    handlesMessage,
-    tagName,
-    label,
-    order,
-  });
+/**
+ * @class Layer.UI
+ */
+
+/**
+ * Register a component using the specified HTML tagName.
+ *
+ * See Layer.UI.Component for details on using this.
+ *
+ * @method registerComponent
+ * @static
+ * @param {String} tagName    Tag name that is being defined (`layer-avatar`)
+ * @param {Object} classDef    Definition of your class
+ * @param {Object} classDef.properties    Definition of your class properties
+ * @param {Object} classDef.methods    Definition of your class methods
+ * @param {String[]} classDef.events    Array of events to listen for and repackage as event handler properties
+ * @param {Mixed} classDef.template     A `<template />` node or a template string such as `<div><button /></div>`
+ * @param {String} classDef.style       A String with CSS styles for this widget
+ */
+
+/**
+ * Unregister a component.  Must be called before Layer.init().
+ *
+ * Use this call to prevent a component from being registered with the document.
+ * Currently this works only on components that have been already called with `Layer.UI.registerComponent`
+ * but which have not yet been completed via a call to `Layer.init()`.
+ *
+ * This is not typically needed, but allows you to defer creation of a widget, and then at some point later in your application lifecycle
+ * define a replacement for that widget. You can not redefine an html tag that is registered with the document... but this prevents it from
+ * being registered yet.
+ *
+ * After calling `unregisterComponent`, you *may* register a replacement component _after_ `Layer.init()` has been called.
+ *
+ * @method unregisterComponent
+ */
+function unregisterComponent(tagName) {
+  delete ComponentsHash[tagName];
+}
+
+/**
+ * Registers all defined components with the browser as WebComponents.
+ *
+ * This is called by `Layer.init()` and should not be called directly.
+ *
+ * @private
+ * @method _registerAll
+ */
+function _registerAll() {
+  if (!registerAllCalled) {
+    registerAllCalled = true;
+    Object.keys(ComponentsHash)
+      .filter(tagName => typeof ComponentsHash[tagName] !== 'function')
+      .forEach(tagName => _registerComponent(tagName));
+  }
 }
 
 module.exports = {
   registerComponent,
-  registerMessageComponent,
-  registerAll,
+  _registerAll,
   unregisterComponent,
 };
 

@@ -5,7 +5,7 @@
  *  2. Insure that the server is not flooded with repeated state changes of the same value
  *  3. Automatically transition states when no new states or old states are requested.
  *
- * Who is the Typing Publisher for?  Its used by the layer.TypingIndicators.TypingListener; if your using
+ * Who is the Typing Publisher for?  Its used by the Layer.Core.TypingIndicators.TypingListener; if your using
  * the TypingListener, you don't need this.  If you want to provide your own logic for when to send typing
  * states, then you need the TypingPublisher.
  *
@@ -19,9 +19,9 @@
  *
  * To then use the instance:
  *
- *        publisher.setState(layer.TypingIndicators.STARTED);
- *        publisher.setState(layer.TypingIndicators.PAUSED);
- *        publisher.setState(layer.TypingIndicators.FINISHED);
+ *        publisher.setState(Layer.Core.TypingIndicators.STARTED);
+ *        publisher.setState(Layer.Core.TypingIndicators.PAUSED);
+ *        publisher.setState(Layer.Core.TypingIndicators.FINISHED);
  *
  * Note that the `STARTED` state only lasts for 2.5 seconds, so you
  * must repeatedly call setState for as long as this state should continue.
@@ -31,7 +31,7 @@
  * A few rules for how the *publisher* works internally:
  *
  *  - it maintains an indicator state for the current conversation
- *  - if app calls  `setState(layer.TypingIndicators.STARTED);` publisher sends the event immediately
+ *  - if app calls  `setState(Layer.Core.TypingIndicators.STARTED);` publisher sends the event immediately
  *  - if app calls the same method under _2.5 seconds_ with the same typing indicator state (`started`), publisher waits
  *    for those 2.5 seconds to pass and then publishes the ephemeral event
  *  - if app calls the same methods multiple times within _2.5 seconds_ with the same value,
@@ -41,19 +41,20 @@
  *  - if 2.5 seconds passes without any events, state transitions from 'started' to 'paused'
  *  - if 2.5 seconds passes without any events, state transitions from 'paused' to 'finished'
  *
- * @class layer.TypingIndicators.TypingPublisher
+ * @class Layer.Core.TypingIndicators.TypingPublisher
  * @protected
  */
+import { client as Client } from '../../settings';
+import Core from '../namespace';
+import { STARTED, PAUSED, FINISHED } from './typing-indicators';
 
 const INTERVAL = 2500;
-import { STARTED, PAUSED, FINISHED } from './typing-indicators';
-import ClientRegistry from '../client-registry';
 
 class TypingPublisher {
 
 
   /**
-   * Create a Typing Publisher.  See layer.Core.Client.createTypingPublisher.
+   * Create a Typing Publisher.  See Layer.Core.Client.createTypingPublisher.
    *
    * The TypingPublisher needs
    * to know what Conversation its publishing changes for...
@@ -61,12 +62,10 @@ class TypingPublisher {
    *
    * @method constructor
    * @param {Object} args
-   * @param {string} clientId - The ID for the client from which we will get access to the websocket
    * @param {Object} [conversation=null] - The Conversation Object or Instance that messages are being typed to.
    */
   constructor(args) {
-    this.clientId = args.clientId;
-    if (args.conversation) this.conversation = this._getClient().getObject(args.conversation.id);
+    if (args.conversation) this.conversation = Client.getObject(args.conversation.id);
     this.state = FINISHED;
     this._lastMessageTime = 0;
   }
@@ -82,7 +81,7 @@ class TypingPublisher {
    */
   setConversation(conv) {
     this.setState(FINISHED);
-    this.conversation = conv ? this._getClient().getObject(conv.id) : null;
+    this.conversation = conv ? Client.getObject(conv.id) : null;
     this.state = FINISHED;
   }
 
@@ -91,9 +90,9 @@ class TypingPublisher {
    *
    * @method setState
    * @param  {string} state - One of
-   * * layer.TypingIndicators.STARTED
-   * * layer.TypingIndicators.PAUSED
-   * * layer.TypingIndicators.FINISHED
+   * * Layer.Core.TypingIndicators.STARTED
+   * * Layer.Core.TypingIndicators.PAUSED
+   * * Layer.Core.TypingIndicators.FINISHED
    */
   setState(state) {
     // We have a fresh state; whatever our pauseLoop was doing
@@ -164,9 +163,9 @@ class TypingPublisher {
    * @method _scheduleNextMessage
    * @private
    * @param  {string} state - One of
-   * * layer.TypingIndicators.STARTED
-   * * layer.TypingIndicators.PAUSED
-   * * layer.TypingIndicators.FINISHED
+   * * Layer.Core.TypingIndicators.STARTED
+   * * Layer.Core.TypingIndicators.PAUSED
+   * * Layer.Core.TypingIndicators.FINISHED
    */
   _scheduleNextMessage(state) {
     if (this._scheduleId) clearTimeout(this._scheduleId);
@@ -184,14 +183,14 @@ class TypingPublisher {
    * @method send
    * @private
    * @param  {string} state - One of
-   * * layer.TypingIndicators.STARTED
-   * * layer.TypingIndicators.PAUSED
-   * * layer.TypingIndicators.FINISHED
+   * * Layer.Core.TypingIndicators.STARTED
+   * * Layer.Core.TypingIndicators.PAUSED
+   * * Layer.Core.TypingIndicators.FINISHED
    */
   _send(state) {
     if (!this.conversation.isSaved()) return;
     this._lastMessageTime = Date.now();
-    const ws = this._getClient().socketManager;
+    const ws = Client.socketManager;
     ws.sendSignal({
       type: 'typing_indicator',
       object: {
@@ -203,18 +202,6 @@ class TypingPublisher {
     });
   }
 
-  /**
-   * Get the Client associated with this layer.Message.
-   *
-   * Uses the clientId property.
-   *
-   * @method getClient
-   * @return {layer.Client}
-   */
-  _getClient() {
-    return ClientRegistry.get(this.clientId);
-  }
-
   destroy() {
     delete this.conversation;
     this.isDestroyed = true;
@@ -222,5 +209,5 @@ class TypingPublisher {
     clearInterval(this._pauseLoopId);
   }
 }
-module.exports = TypingPublisher;
+module.exports = Core.TypingIndicators.TypingPublisher = TypingPublisher;
 

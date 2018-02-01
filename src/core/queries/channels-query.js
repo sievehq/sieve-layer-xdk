@@ -2,7 +2,7 @@
  * Query class for running a Query on Channels
  *
  *      var channelQuery = client.createQuery({
- *        model: layer.Core.Query.Channel
+ *        model: Layer.Core.Query.Channel
  *      });
  *
  *
@@ -16,9 +16,11 @@
  *
  *      query.destroy();
  *
- * @class  layer.ChannelsQuery
- * @extends layer.Core.Query
+ * @class  Layer.Core.ChannelsQuery
+ * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
 import { SYNC_STATE } from '../../constants';
 import Query from './query';
@@ -27,9 +29,11 @@ import ConversationsQuery from './conversations-query';
 class ChannelsQuery extends ConversationsQuery {
 
   _fetchData(pageSize) {
-    this.client.dbManager.loadChannels(this._nextDBFromId, pageSize, (channels) => {
-      if (channels.length) this._appendResults({ data: channels }, true);
-    });
+    if (client.dbManager) {
+      client.dbManager.loadChannels(this._nextDBFromId, pageSize, (channels) => {
+        if (channels.length) this._appendResults({ data: channels }, true);
+      });
+    }
 
     const newRequest = `channels?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -37,7 +41,7 @@ class ChannelsQuery extends ConversationsQuery {
     if (newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'channel_query_time',
         },
@@ -256,6 +260,6 @@ ChannelsQuery.MaxPageSize = 100;
 
 ChannelsQuery.prototype.model = Query.Channel;
 
-Root.initClass.apply(ChannelsQuery, [ChannelsQuery, 'ChannelsQuery']);
+Root.initClass.apply(ChannelsQuery, [ChannelsQuery, 'ChannelsQuery', Core.Query]);
 
 module.exports = ChannelsQuery;

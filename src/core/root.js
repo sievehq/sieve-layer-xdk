@@ -1,7 +1,8 @@
-import Util, { logger } from '../util';
+import Events from 'backbone-events-standalone/backbone-events-standalone';
+import Core from './namespace';
+import Util, { logger } from '../utils';
 import LayerEvent from './layer-event';
 import { ErrorDictionary } from './layer-error';
-import Events from 'backbone-events-standalone/backbone-events-standalone';
 
 /*
  * Provides a system bus that can be accessed by all components of the system.
@@ -119,7 +120,7 @@ const eventSplitter = /\s+/;
  *     C. Updating the UI to match the new property value
  *
  *
- * @class layer.Root
+ * @class Layer.Core.Root
  * @abstract
  * @author Michael Kantor
  */
@@ -130,7 +131,7 @@ class Root extends EventClass {
    *
    * @method constructor
    * @param  {Object} options - a hash of properties and event handlers
-   * @return {layer.Root}
+   * @return {Layer.Core.Root}
    */
   constructor(options = {}) {
     super();
@@ -140,7 +141,7 @@ class Root extends EventClass {
     this._events = {};
 
     // Generate an internalId
-    const name = this.constructor.name;
+    const name = this.constructor.altName || this.constructor.name;
     if (!uniqueIds[name]) uniqueIds[name] = 0;
     this.internalId = name + uniqueIds[name]++;
 
@@ -338,9 +339,9 @@ class Root extends EventClass {
    * @method on
    * @param  {String} name - Name of the event
    * @param  {Function} handler - Event handler
-   * @param  {layer.Core.LayerEvent} handler.event - Event object delivered to the handler
+   * @param  {Layer.Core.LayerEvent} handler.event - Event object delivered to the handler
    * @param  {Object} context - This pointer AND link to help with cleanup
-   * @return {layer.Root} this
+   * @return {Layer.Core.Root} this
    */
   on(name, handler, context) {
     this._prepareOn(name, handler, context);
@@ -352,7 +353,7 @@ class Root extends EventClass {
    * Subscribe to the first occurance of the specified event.
    *
    * @method once
-   * @return {layer.Root} this
+   * @return {Layer.Core.Root} this
    */
   once(name, handler, context) {
     this._prepareOn(name, handler, context);
@@ -379,7 +380,7 @@ class Root extends EventClass {
    * @param  {String} name - Name of the event; null for all event names
    * @param  {Function} handler - Event handler; null for all functions
    * @param  {Object} context - The context from the `on()` call to search for; null for all contexts
-   * @return {layer.Root} this
+   * @return {Layer.Core.Root} this
    */
 
 
@@ -390,11 +391,11 @@ class Root extends EventClass {
    *
    * @method trigger
    * @param {string} eventName    Name of the event that one should subscribe to in order to receive this event
-   * @param {Mixed} arg           Values that will be placed within a layer.Core.LayerEvent
-   * @return {layer.Root} this
+   * @param {Mixed} arg           Values that will be placed within a Layer.Core.LayerEvent
+   * @return {Layer.Core.LayerEvent} evt
    */
   trigger(...args) {
-    if (this._disableEvents) return this;
+    if (this._disableEvents) return null;
     return this._trigger(...args);
   }
 
@@ -404,7 +405,8 @@ class Root extends EventClass {
    * @method trigger
    * @private
    * @param {string} eventName    Name of the event that one should subscribe to in order to receive this event
-   * @param {Mixed} arg           Values that will be placed within a layer.Core.LayerEvent
+   * @param {Mixed} arg           Values that will be placed within a Layer.Core.LayerEvent
+   * @return {Layer.Core.LayerEvent} evt
    */
   _trigger(...args) {
     if (!Util.includes(this.constructor._supportedEvents, args[0])) {
@@ -418,25 +420,25 @@ class Root extends EventClass {
 
     Events.trigger.apply(this, computedArgs);
 
-    const parentProp = this.constructor.bubbleEventParent;
-    if (parentProp && args[0] !== 'destroy') {
-      let parentValue = this[parentProp];
-      parentValue = (typeof parentValue === 'function') ? parentValue.apply(this) : parentValue;
-      if (parentValue) parentValue.trigger(...computedArgs);
+    const parent = this._getBubbleEventsTo && this._getBubbleEventsTo();
+    if (parent && args[0] !== 'destroy') {
+      parent.trigger(...computedArgs);
     }
+
+    return computedArgs[1];
   }
 
   /**
-   * Generates a layer.Core.LayerEvent from a trigger call's arguments.
+   * Generates a Layer.Core.LayerEvent from a trigger call's arguments.
    *
-   * * If parameter is already a layer.Core.LayerEvent, we're done.
+   * * If parameter is already a Layer.Core.LayerEvent, we're done.
    * * If parameter is an object, a `target` property is added to that object and its delivered to all subscribers
    * * If the parameter is non-object value, it is added to an object with a `target` property, and the value is put in
    *   the `data` property.
    *
    * @method _getTriggerArgs
    * @private
-   * @return {Mixed[]} - First element of array is eventName, second element is layer.Core.LayerEvent.
+   * @return {Mixed[]} - First element of array is eventName, second element is Layer.Core.LayerEvent.
    */
   _getTriggerArgs(...args) {
     const computedArgs = Array.prototype.slice.call(args);
@@ -479,8 +481,8 @@ class Root extends EventClass {
    * @method _triggerAsync
    * @private
    * @param {string} eventName    Name of the event that one should subscribe to in order to receive this event
-   * @param {Mixed} arg           Values that will be placed within a layer.Core.LayerEvent
-   * @return {layer.Root} this
+   * @param {Mixed} arg           Values that will be placed within a Layer.Core.LayerEvent
+   * @return {Layer.Core.Root} this
    */
   _triggerAsync(...args) {
     const computedArgs = this._getTriggerArgs(...args);
@@ -536,9 +538,9 @@ class Root extends EventClass {
    *
    * @method _foldEvents
    * @private
-   * @param  {layer.Core.LayerEvent[]} events
+   * @param  {Layer.Core.LayerEvent[]} events
    * @param  {string} name      Name of the property (i.e. 'customName')
-   * @param  {layer.Root}    newTarget Value of the target for the folded resulting event
+   * @param  {Layer.Core.Root}    newTarget Value of the target for the folded resulting event
    */
   _foldEvents(events, name, newTarget) {
     const firstEvt = events.length ? events[0][1] : null;
@@ -557,7 +559,7 @@ class Root extends EventClass {
    *
    * Given a set change events on this component,
    * fold all change events into a single event via
-   * the layer.Core.LayerEvent's changes array.
+   * the Layer.Core.LayerEvent's changes array.
    *
    * @method _foldChangeEvents
    * @private
@@ -591,7 +593,7 @@ class Root extends EventClass {
 
   _runMixins(mixinName, argArray) {
     this.constructor.mixins.forEach((mixin) => {
-      if (mixin.lifecycle[mixinName]) mixin.lifecycle[mixinName].apply(this, argArray);
+      if (mixin.lifecycle && mixin.lifecycle[mixinName]) mixin.lifecycle[mixinName].apply(this, argArray);
     });
   }
 
@@ -603,7 +605,7 @@ class Root extends EventClass {
    * @return {String}
    */
   toString() {
-    return this.internalId;
+    return '[' + this.internalId + (this.isDestroyed ? ' .destroyed' : '') + ']';
   }
 }
 
@@ -642,9 +644,13 @@ function defineProperty(newClass, propertyName) {
   }
 }
 
-function initClass(newClass, className) {
+function initClass(newClass, className, namespace) {
   // Make sure our new class has a name property
-  if (!newClass.name) newClass.name = className;
+  // Throws errors when run in production
+  try {
+    if (newClass.name !== className) newClass.altName = className;
+  } catch (e) {
+  }
 
   // Make sure our new class has a _supportedEvents, _ignoredEvents, _inObjectIgnore and EVENTS properties
   if (!newClass._supportedEvents) newClass._supportedEvents = Root._supportedEvents;
@@ -653,7 +659,8 @@ function initClass(newClass, className) {
   if (newClass.mixins) {
     newClass.mixins.forEach((mixin) => {
       if (mixin.events) newClass._supportedEvents = newClass._supportedEvents.concat(mixin.events);
-      Object.keys(mixin.staticMethods || {}).forEach(methodName => (newClass[methodName] = mixin.staticMethods[methodName]));
+      Object.keys(mixin.staticMethods || {})
+        .forEach(methodName => (newClass[methodName] = mixin.staticMethods[methodName]));
 
       if (mixin.properties) {
         Object.keys(mixin.properties).forEach((key) => {
@@ -669,7 +676,7 @@ function initClass(newClass, className) {
   }
 
   // Generate a list of properties for this class; we don't include any
-  // properties from layer.Root
+  // properties from Layer.Core.Root
   const keys = Object.keys(newClass.prototype).filter(key =>
     newClass.prototype.hasOwnProperty(key) &&
     !Root.prototype.hasOwnProperty(key) &&
@@ -677,6 +684,8 @@ function initClass(newClass, className) {
 
   // Define getters/setters for any property that has __adjust or __update methods defined
   keys.forEach(name => defineProperty(newClass, name));
+
+  if (namespace) namespace[className] = newClass;
 }
 
 /**
@@ -685,7 +694,7 @@ function initClass(newClass, className) {
  * A destroyed object will likely cause errors in any attempt
  * to call methods on it, and will no longer trigger events.
  *
- * @type {boolean}
+ * @property {boolean}
  * @readonly
  */
 Root.prototype.isDestroyed = false;
@@ -697,7 +706,7 @@ Root.prototype.isDestroyed = false;
  * The internal ID is gaurenteed not to change within the lifetime of the Object/session;
  * it is possible, on creating a new object, for its `id` property to change.
  *
- * @type {string}
+ * @property {string}
  * @readonly
  */
 Root.prototype.internalId = '';
@@ -705,7 +714,7 @@ Root.prototype.internalId = '';
 /**
  * True while we are in the constructor.
  *
- * @type {boolean}
+ * @property {boolean}
  * @readonly
  */
 Root.prototype.isInitializing = true;
@@ -713,14 +722,14 @@ Root.prototype.isInitializing = true;
 /**
  * Objects that this object is listening for events from.
  *
- * @type {layer.Root[]}
+ * @property {Layer.Core.Root[]}
  * @private
  */
 Root.prototype._layerEventSubscriptions = null;
 
 /**
  * Disable all events triggered on this object.
- * @type {boolean}
+ * @property {boolean}
  * @private
  */
 Root.prototype._disableEvents = false;
@@ -730,3 +739,4 @@ Root._supportedEvents = ['destroy', 'all'];
 Root._ignoredEvents = [];
 module.exports = Root;
 module.exports.initClass = initClass;
+Core.Root = Root;

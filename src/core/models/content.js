@@ -8,18 +8,19 @@
  * That means for the most part, you should never need to
  * instantiate one of these directly.
  *
- *      var content = new layer.Content({
+ *      var content = new Layer.Core.Content({
  *          id: 'layer:///content/8c839735-5f95-439a-a867-30903c0133f2'
  *      });
  *
- * @class  layer.Content
+ * @class  Layer.Core.Content
  * @private
- * @extends layer.Root
+ * @extends Layer.Core.Root
  * @author Michael Kantor
  */
-
+import { client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
-import xhr from '../xhr';
+import { xhr } from '../../utils';
 
 class Content extends Root {
 
@@ -33,7 +34,7 @@ class Content extends Root {
    * @param  {Date} [options.expiration] - Expiration date for the url
    * @param  {string} [options.refreshUrl] - Url to access to get a new downloadUrl after it has expired
    *
-   * @return {layer.Content}
+   * @return {Layer.Core.Content}
    */
   constructor(options) {
     if (typeof options === 'string') {
@@ -47,7 +48,7 @@ class Content extends Root {
    *
    * Data is provided via callback.
    *
-   * Note that typically one should use layer.MessagePart.fetchContent() rather than layer.Content.loadContent()
+   * Note that typically one should use Layer.Core.MessagePart.fetchContent() rather than Layer.Core.Content.loadContent()
    *
    * @method loadContent
    * @param {string} mimeType - Mime type for the Blob
@@ -77,10 +78,9 @@ class Content extends Root {
    * Refreshes the URL, which updates the URL and resets the expiration time for the URL
    *
    * @method refreshContent
-   * @param {layer.Client} client
    * @param {Function} [callback]
    */
-  refreshContent(client, callback) {
+  refreshContent(callback) {
     client.xhr({
       url: this.refreshUrl,
       method: 'GET',
@@ -127,39 +127,34 @@ class Content extends Root {
 
 /**
  * Server generated identifier
- * @type {string}
+ * @property {string}
  */
 Content.prototype.id = '';
 
-Content.prototype.blob = null;
-
 /**
  * Server generated url for downloading the content
- * @type {string}
+ * @property {string}
  */
 Content.prototype.downloadUrl = '';
 
 /**
  * Url for refreshing the downloadUrl after it has expired
- * @type {string}
+ * @property {string}
  */
 Content.prototype.refreshUrl = '';
 
 /**
  * Size of the content.
  *
- * This property only has a value when in the process
- * of Creating the rich content and sending the Message.
- *
- * @type {number}
+ * @property {number}
  */
 Content.prototype.size = 0;
 
 /**
  * Expiration date for the downloadUrl
- * @type {Date}
+ * @property {Date}
  */
 Content.prototype.expiration = null;
 
-Root.initClass.apply(Content, [Content, 'Content']);
+Root.initClass.apply(Content, [Content, 'Content', Core]);
 module.exports = Content;

@@ -1,15 +1,15 @@
 /**
- * For purposes of API consistency across SDKs, this class is not exposed.
- * Instead, customers will see only the layer.Message class.
+ * @inheritdoc Layer.Core.Message
  *
- * @class layer.Message.ChannelMessage
- * @extends layer.Message
+ * @class Layer.Core.Message.ChannelMessage
+ * @extends Layer.Core.Message
  */
+import { client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
 import Message from './message';
-import ClientRegistry from '../client-registry';
 import Constants from '../../constants';
-import { logger } from '../../util';
+import { logger } from '../../utils';
 import { ErrorDictionary } from '../layer-error';
 
 class ChannelMessage extends Message {
@@ -17,23 +17,24 @@ class ChannelMessage extends Message {
     if (options.channel) options.conversationId = options.channel.id;
     super(options);
 
-    const client = this.getClient();
     this.isInitializing = false;
     if (options && options.fromServer) {
       client._addMessage(this);
+    } else {
+      this.parts.forEach((part) => { part._message = this; });
     }
   }
 
   /**
-   * Get the layer.Channel associated with this layer.Message.ChannelMessage.
+   * Get the Layer.Core.Channel associated with this Layer.Core.Message.ChannelMessage.
    *
    * @method getConversation
-   * @param {Boolean} load       Pass in true if the layer.Channel should be loaded if not found locally
-   * @return {layer.Channel}
+   * @param {Boolean} load       Pass in true if the Layer.Core.Channel should be loaded if not found locally
+   * @return {Layer.Core.Channel}
    */
   getConversation(load) {
     if (this.conversationId) {
-      return ClientRegistry.get(this.clientId).getChannel(this.conversationId, load);
+      return client.getChannel(this.conversationId, load);
     }
     return null;
   }
@@ -42,8 +43,8 @@ class ChannelMessage extends Message {
    * Send a Read or Delivery Receipt to the server; not supported yet.
    *
    * @method sendReceipt
-   * @param {string} [type=layer.Constants.RECEIPT_STATE.READ] - One of layer.Constants.RECEIPT_STATE.READ or layer.Constants.RECEIPT_STATE.DELIVERY
-   * @return {layer.Message.ChannelMessage} this
+   * @param {string} [type=Layer.Constants.RECEIPT_STATE.READ] - One of Layer.Constants.RECEIPT_STATE.READ or Layer.Constants.RECEIPT_STATE.DELIVERY
+   * @return {Layer.Core.Message.ChannelMessage} this
    */
   sendReceipt(type = Constants.RECEIPT_STATE.READ) {
     logger.warn('Receipts not supported for Channel Messages yet');
@@ -63,13 +64,12 @@ class ChannelMessage extends Message {
     if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
 
     const id = this.id;
-    const client = this.getClient();
     this._xhr({
       url: '',
       method: 'DELETE',
     }, (result) => {
       if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
-        Message.load(id, client);
+        Message.load(id);
       }
     });
 
@@ -86,7 +86,7 @@ class ChannelMessage extends Message {
    */
   _loaded(data) {
     this.conversationId = data.channel.id;
-    this.getClient()._addMessage(this);
+    client._addMessage(this);
   }
 
 
@@ -101,10 +101,9 @@ class ChannelMessage extends Message {
    * @protected
    * @static
    * @param  {Object} message - Server's representation of the message
-   * @param  {layer.Client} client
-   * @return {layer.Message.ChannelMessage}
+   * @return {Layer.Core.Message.ChannelMessage}
    */
-  static _createFromServer(message, client) {
+  static _createFromServer(message) {
     const fromWebsocket = message.fromWebsocket;
     let conversationId;
     if (message.channel) {
@@ -116,7 +115,6 @@ class ChannelMessage extends Message {
     return new ChannelMessage({
       conversationId,
       fromServer: message,
-      clientId: client.appId,
       _fromDB: message._fromDB,
       _notify: fromWebsocket && message.is_unread && message.sender.user_id !== client.user.userId,
     });
@@ -131,11 +129,11 @@ class ChannelMessage extends Message {
  *      m.isRead = true;
  *
  * This will automatically notify the server that the message was read by your user.
- * @type {Boolean}
+ * @property {Boolean}
  */
 ChannelMessage.prototype.isRead = false;
 
 ChannelMessage.inObjectIgnore = Message.inObjectIgnore;
 ChannelMessage._supportedEvents = [].concat(Message._supportedEvents);
-Root.initClass.apply(ChannelMessage, [ChannelMessage, 'ChannelMessage']);
+Root.initClass.apply(ChannelMessage, [ChannelMessage, 'ChannelMessage', Core.Message]);
 module.exports = ChannelMessage;

@@ -13,14 +13,13 @@ describe("The Client Members Mixin", function() {
         jasmine.addCustomEqualityTester(mostRecentEqualityTest);
         jasmine.addCustomEqualityTester(responseTest);
 
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
 
-        client.user = userIdentity = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = userIdentity = new Layer.Core.Identity({
             id: "layer:///identities/Frodo",
             displayName: "Frodo",
             userId: "Frodo"
@@ -46,7 +45,7 @@ describe("The Client Members Mixin", function() {
     });
 
     afterAll(function() {
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
@@ -96,7 +95,7 @@ describe("The Client Members Mixin", function() {
             var m1 = client.getMember(membership.id, true);
 
             // Posttest
-            expect(m1 instanceof layer.Membership).toBe(true);
+            expect(m1 instanceof Layer.Core.Membership).toBe(true);
             expect(m1.id).toEqual(responses.membership1.id);
             expect(requests.mostRecent().url).toEqual(responses.membership1.url);
         });
@@ -104,8 +103,8 @@ describe("The Client Members Mixin", function() {
         it("Should fail without id", function() {
             expect(function() {
                 client.getMember(5);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.idParamRequired);
-            expect(layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.idParamRequired);
+            expect(Layer.Core.LayerError.ErrorDictionary.idParamRequired.length > 0).toBe(true);
         });
     });
 
@@ -122,22 +121,6 @@ describe("The Client Members Mixin", function() {
 
             // Posttest
             expect(client.getMember(membership.id)).toBe(membership);
-        });
-
-        it("Should set the clientId property", function() {
-            // Setup
-            var m = new layer.Core.Membership({
-                client: client
-            });
-
-            // Pretest
-            expect(m.clientId).toEqual(client.appId);
-
-            // Run
-            client._addMembership(m);
-
-            // Posttest
-            expect(m.clientId).toEqual(client.appId);
         });
 
         it("Should fire members:add", function() {
@@ -200,6 +183,7 @@ describe("The Client Members Mixin", function() {
 
         it("Should trigger event on removing membership", function() {
             // Setup
+            var membership = client._createObject(responses.membership1);
             client._addMembership(membership);
             spyOn(client, "_triggerAsync");
 

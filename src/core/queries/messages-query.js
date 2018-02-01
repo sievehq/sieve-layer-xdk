@@ -2,7 +2,7 @@
  * Query class for running a Query on Messages
  *
  *      var messageQuery = client.createQuery({
- *        model: layer.Core.Query.Message,
+ *        model: Layer.Core.Query.Message,
  *        predicate: 'conversation.id = "layer:///conversations/UUID"'
  *      });
  *
@@ -18,18 +18,20 @@
  *
  * #### predicate
  *
- * Note that the `predicate` property is only supported for Messages and layer.Membership, and only supports
+ * Note that the `predicate` property is only supported for Messages and Layer.Core.Membership, and only supports
  * querying by Conversation or Channel:
  *
  * * `conversation.id = 'layer:///conversations/UUIUD'`
  * * `channel.id = 'layer:///channels/UUIUD'`
  *
- * @class  layer.MessagesQuery
- * @extends layer.Core.Query
+ * @class  Layer.Core.MessagesQuery
+ * @extends Layer.Core.Query
  */
+import { client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import Util, { logger } from '../../util';
+import Util, { logger } from '../../utils';
 import Query from './query';
 
 const findConvIdRegex = new RegExp(
@@ -126,12 +128,14 @@ class MessagesQuery extends Query {
   _fetchConversationMessages(pageSize, predicateIds) {
     const conversationId = 'layer:///conversations/' + predicateIds.uuid;
     if (!this._predicate) this._predicate = predicateIds.id;
-    const conversation = this.client.getConversation(conversationId);
+    const conversation = client.getConversation(conversationId);
 
     // Retrieve data from db cache in parallel with loading data from server
-    this.client.dbManager.loadMessages(conversationId, this._nextDBFromId, pageSize, (messages) => {
-      if (messages.length) this._appendResults({ data: messages }, true);
-    });
+    if (client.dbManager) {
+      client.dbManager.loadMessages(conversationId, this._nextDBFromId, pageSize, (messages) => {
+        if (messages.length) this._appendResults({ data: messages }, true);
+      });
+    }
 
     const newRequest = `conversations/${predicateIds.uuid}/messages?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -141,7 +145,7 @@ class MessagesQuery extends Query {
     if ((!conversation || conversation.isSaved()) && newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         telemetry: {
           name: 'message_query_time',
         },
@@ -164,7 +168,7 @@ class MessagesQuery extends Query {
           type: 'data',
           data: [this._getData(conversation.lastMessage)],
           query: this,
-          target: this.client,
+          target: client,
         });
       }
     }
@@ -173,12 +177,14 @@ class MessagesQuery extends Query {
   _fetchChannelMessages(pageSize, predicateIds) {
     const channelId = 'layer:///channels/' + predicateIds.uuid;
     if (!this._predicate) this._predicate = predicateIds.id;
-    const channel = this.client.getChannel(channelId);
+    const channel = client.getChannel(channelId);
 
     // Retrieve data from db cache in parallel with loading data from server
-    this.client.dbManager.loadMessages(channelId, this._nextDBFromId, pageSize, (messages) => {
-      if (messages.length) this._appendResults({ data: messages }, true);
-    });
+    if (client.dbManager) {
+      client.dbManager.loadMessages(channelId, this._nextDBFromId, pageSize, (messages) => {
+        if (messages.length) this._appendResults({ data: messages }, true);
+      });
+    }
 
     const newRequest = `channels/${predicateIds.uuid}/messages?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -187,7 +193,7 @@ class MessagesQuery extends Query {
     if ((!channel || channel.isSaved()) && newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      this.client.xhr({
+      client.xhr({
         url: newRequest,
         method: 'GET',
         sync: false,
@@ -245,7 +251,7 @@ class MessagesQuery extends Query {
    * If this Query's Conversation's ID has changed, update the predicate.
    *
    * @method _handleConvIdChangeEvent
-   * @param {layer.Core.LayerEvent} evt - A Message Change Event
+   * @param {Layer.Core.LayerEvent} evt - A Message Change Event
    * @private
    */
   _handleConvIdChangeEvent(evt) {
@@ -267,7 +273,7 @@ class MessagesQuery extends Query {
    *
    * @method _handlePositionChange
    * @private
-   * @param {layer.Core.LayerEvent} evt  A Message Change event
+   * @param {Layer.Core.LayerEvent} evt  A Message Change event
    * @param {number} index  Index of the message in the current data array
    * @return {boolean} True if a data was changed and a change event was emitted
    */
@@ -430,6 +436,6 @@ MessagesQuery.MaxPageSize = 100;
 
 MessagesQuery.prototype.model = Query.Message;
 
-Root.initClass.apply(MessagesQuery, [MessagesQuery, 'MessagesQuery']);
+Root.initClass.apply(MessagesQuery, [MessagesQuery, 'MessagesQuery', Core.Query]);
 
 module.exports = MessagesQuery;

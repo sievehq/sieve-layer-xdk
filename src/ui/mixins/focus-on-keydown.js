@@ -1,12 +1,13 @@
 /**
  * A helper mixin for any widget that wants to refocus when keyboard input is received.
  *
- * Any class using this mixin must provide an `onKeyDown` method.
+ * Any class using this mixin must provide an {@link #onKeyDown} method that takes no parameters.
  *
- * @class layer.UI.mixins.FocusOnKeydown
+ * @class Layer.UI.mixins.FocusOnKeydown
  */
 module.exports = {
   methods: {
+    // Wire up the event listener, and make sure that this DOM node can have focus, but is _not_ reachable via Tabbing (only inputs should do that)
     onCreate() {
       this.addEventListener('keydown', this._onKeyDown.bind(this));
 
@@ -20,9 +21,9 @@ module.exports = {
     },
 
     /**
-     * Focus on compose bar if key is pressed within this panel.
+     * If the user types text, trigger the {@link #onKeyDown} method
      *
-     * Unless the focus is on an input or textarea, in which case, let the user type.
+     * Try to ignore keystrokes that are _not_ text
      *
      * @method _onKeyDown
      * @param {Event} evt
@@ -44,6 +45,14 @@ module.exports = {
           this.onKeyDown();
         }
       }
-    }
+    },
+
+    /**
+     * Mixin Hook: When the user hits a relevant key that isn't delivered to an input,
+     * this method is called to handle it.
+     *
+     * @method onKeyDown
+     */
+    onKeyDown() {},
   },
 };

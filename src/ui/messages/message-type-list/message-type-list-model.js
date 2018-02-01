@@ -1,6 +1,6 @@
 /*
-TextModel = layer.Core.Client.getMessageTypeModelClass('TextModel');
-MessageTypeListModel = layer.Core.Client.getMessageTypeModelClass('MessageTypeListModel');
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+MessageTypeListModel = Layer.Core.Client.getMessageTypeModelClass('MessageTypeListModel');
   model = new MessageTypeListModel({
     items: [
       new TextModel({text: "Hello world", "title": "This is a Welcome"}),
@@ -11,11 +11,11 @@ MessageTypeListModel = layer.Core.Client.getMessageTypeModelClass('MessageTypeLi
   model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 
 
-* @class layer.UI.cards.MessageTypeListModel
+* @class Layer.UI.cards.MessageTypeListModel
 * @extends layer.model
 */
-import { Client, MessagePart, MessageTypeModel } from '../../../core';
-import Util from '../../../util';
+import Core, { MessagePart, MessageTypeModel } from '../../../core';
+import Util from '../../../utils';
 
 class MessageTypeListModel extends MessageTypeModel {
   _generateParts(callback) {
@@ -46,7 +46,7 @@ class MessageTypeListModel extends MessageTypeModel {
     // Gather all of the parts that represent a high level list element (ignoring any subparts they may bring with them)
     // Exclucde our main list part that defines the list rather than its list items
     const parts = this.childParts.filter(part => part.mimeAttributes.role === 'message-item');
-    this.items = parts.map(part => this.getClient().createMessageTypeModel(this.message, part));
+    this.items = parts.map(part => part.createModel());
     this.items.forEach(item => item._mergeAction(this.action));
   }
 
@@ -63,7 +63,7 @@ MessageTypeListModel.messageRenderer = 'layer-message-type-list-view';
 MessageTypeListModel.MIMEType = 'application/x.layer.message-type-list+json';
 
 // Register the Message Model Class with the Client
-Client.registerMessageTypeModelClass(MessageTypeListModel, 'MessageTypeListModel');
+Core.Client.registerMessageTypeModelClass(MessageTypeListModel, 'MessageTypeListModel');
 
 module.exports = MessageTypeListModel;
 

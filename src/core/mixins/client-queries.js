@@ -1,18 +1,16 @@
 /**
  *
- * Adds Query handling to the layer.Core.Client.
+ * Adds Query handling to the Layer.Core.Client.
  *
- * @class layer.mixins.ClientQueries
+ * @class Layer.Core.mixins.ClientQueries
  */
 
 import Query from '../queries/query';
 import IdentitiesQuery from '../queries/identities-query';
 import ConversationsQuery from '../queries/conversations-query';
-import ChannelsQuery from '../queries/channels-query';
-import MembersQuery from '../queries/members-query';
 import MessagesQuery from '../queries/messages-query';
-import AnnouncementsQuery from '../queries/announcements-query';
 import { ErrorDictionary } from '../layer-error';
+import Core from '../namespace';
 
 module.exports = {
   events: [
@@ -44,7 +42,7 @@ module.exports = {
      *
      * @method getQuery
      * @param  {string} id              - layer:///queries/uuid
-     * @return {layer.Core.Query}
+     * @return {Layer.Core.Query}
      */
     getQuery(id) {
       if (typeof id !== 'string') throw new Error(ErrorDictionary.idParamRequired);
@@ -52,12 +50,12 @@ module.exports = {
     },
 
     /**
-     * There are two options to create a new layer.Core.Query instance.
+     * There are two options to create a new Layer.Core.Query instance.
      *
      * The direct way:
      *
      *     var query = client.createQuery({
-     *         model: layer.Core.Query.Message,
+     *         model: Layer.Core.Query.Message,
      *         predicate: 'conversation.id = '' + conv.id + ''',
      *         paginationWindow: 50
      *     });
@@ -71,8 +69,8 @@ module.exports = {
      *     var query = client.createQuery(qBuilder);
      *
      * @method createQuery
-     * @param  {layer.Core.QueryBuilder|Object} options - Either a layer.Core.QueryBuilder instance, or parameters for the layer.Core.Query constructor
-     * @return {layer.Core.Query}
+     * @param  {Layer.Core.QueryBuilder|Object} options - Either a Layer.Core.QueryBuilder instance, or parameters for the Layer.Core.Query constructor
+     * @return {Layer.Core.Query}
      */
     createQuery(options) {
       let query;
@@ -80,7 +78,6 @@ module.exports = {
       if (typeof options.build === 'function') {
         options = options.build();
       }
-      options.client = this;
       switch (options.model) {
         case Query.Identity:
           query = new IdentitiesQuery(options);
@@ -89,16 +86,16 @@ module.exports = {
           query = new ConversationsQuery(options);
           break;
         case Query.Channel:
-          query = new ChannelsQuery(options);
+          query = this._createChannelsQuery(options);
           break;
         case Query.Membership:
-          query = new MembersQuery(options);
+          query = this._createMembersQuery(options);
           break;
         case Query.Message:
           query = new MessagesQuery(options);
           break;
         case Query.Announcement:
-          query = new AnnouncementsQuery(options);
+          query = this._createAnnouncementsQuery(options);
           break;
 
         default:
@@ -109,22 +106,22 @@ module.exports = {
     },
 
     /**
-     * Register the layer.Core.Query.
+     * Register the Layer.Core.Query.
      *
      * @method _addQuery
      * @private
-     * @param  {layer.Core.Query} query
+     * @param  {Layer.Core.Query} query
      */
     _addQuery(query) {
       this._models.queries[query.id] = query;
     },
 
     /**
-     * Deregister the layer.Core.Query.
+     * Deregister the Layer.Core.Query.
      *
      * @method _removeQuery
      * @private
-     * @param  {layer.Core.Query} query [description]
+     * @param  {Layer.Core.Query} query [description]
      */
     _removeQuery(query) {
       if (query) {
@@ -140,3 +137,5 @@ module.exports = {
     },
   },
 };
+
+Core.mixins.Client.push(module.exports);

@@ -24,14 +24,13 @@ describe("The Websocket Socket Manager Class", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new layer.Core.Client({
+        client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
         });
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
-        client.user = new layer.Core.Identity({
-            clientId: client.appId,
+        client.user = new Layer.Core.Identity({
             userId: client.userId,
             id: "layer:///identities/" + client.userId,
             firstName: "first",
@@ -42,9 +41,9 @@ describe("The Websocket Socket Manager Class", function() {
             publicKey: "public",
             avatarUrl: "avatar",
             displayName: "display",
-            syncState: layer.Constants.SYNC_STATE.SYNCED,
+            syncState: Layer.Constants.SYNC_STATE.SYNCED,
             isFullIdentity: true,
-            sessionOwner: true
+            isMine: true
         });
 
 
@@ -78,54 +77,45 @@ describe("The Websocket Socket Manager Class", function() {
 
     afterAll(function() {
         window.WebSocket = nativeWebsocket;
-        layer.Core.Client.destroyAllClients();
+
     });
 
     describe("The constructor() method", function() {
         it("Should return a WebsocketManager", function() {
-            expect(new layer.Core.Websockets.SocketManager({
-                client: client
-            })).toEqual(jasmine.any(layer.Websockets.SocketManager));
-        });
-
-        it("Should throw an error if no client", function() {
-            expect(function() {
-                new layer.Core.Websockets.SocketManager({});
-            }).toThrow();
+            expect(new Layer.Core.Websockets.SocketManager({
+            })).toEqual(jasmine.any(Layer.Core.Websockets.SocketManager));
         });
 
         it("Should call connect if client is authenticated", function() {
-            var tmp = layer.Websockets.SocketManager.prototype.connect;
-            spyOn(layer.Websockets.SocketManager.prototype, "connect");
+            var tmp = Layer.Core.Websockets.SocketManager.prototype.connect;
+            spyOn(Layer.Core.Websockets.SocketManager.prototype, "connect");
             client.isAuthenticated = true;
 
             // Run
-            new layer.Core.Websockets.SocketManager({
-                client: client
+            new Layer.Core.Websockets.SocketManager({
             });
 
             // Posttest
-            expect(layer.Websockets.SocketManager.prototype.connect).toHaveBeenCalledWith();
+            expect(Layer.Core.Websockets.SocketManager.prototype.connect).toHaveBeenCalledWith();
 
             // Cleanup
-            layer.Websockets.SocketManager.prototype.connect = tmp;
+            Layer.Core.Websockets.SocketManager.prototype.connect = tmp;
         });
 
         it("Should skip connect if client is not authenticated", function() {
-            var tmp = layer.Websockets.SocketManager.prototype.connect;
-            spyOn(layer.Websockets.SocketManager.prototype, "connect");
+            var tmp = Layer.Core.Websockets.SocketManager.prototype.connect;
+            spyOn(Layer.Core.Websockets.SocketManager.prototype, "connect");
             client.isAuthenticated = false;
 
             // Run
-            new layer.Core.Websockets.SocketManager({
-                client: client
+            new Layer.Core.Websockets.SocketManager({
             });
 
             // Posttest
-            expect(layer.Websockets.SocketManager.prototype.connect).not.toHaveBeenCalled();
+            expect(Layer.Core.Websockets.SocketManager.prototype.connect).not.toHaveBeenCalled();
 
             // Cleanup
-            layer.Websockets.SocketManager.prototype.connect = tmp;
+            Layer.Core.Websockets.SocketManager.prototype.connect = tmp;
         });
 
         it("Should subscribe to call connect on client authenticated", function() {
@@ -562,11 +552,11 @@ describe("The Websocket Socket Manager Class", function() {
         it("Should require a timestamp", function() {
             expect(function() {
                 websocketManager.resync(false);
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
             expect(function() {
                 websocketManager.resync();
-            }).toThrowError(layer.Core.LayerError.ErrorDictionary.valueNotSupported);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.valueNotSupported);
 
             expect(function() {
                 websocketManager.resync(new Date().toISOString());
@@ -1092,7 +1082,7 @@ describe("The Websocket Socket Manager Class", function() {
 
     describe("The destroy() method", function() {
         afterEach(function() {
-          websocketManager = client.socketManager = new layer.Core.Websockets.SocketManager({client: client});
+          websocketManager = client.socketManager = new Layer.Core.Websockets.SocketManager({});
         });
         it("Should call close", function() {
             spyOn(websocketManager, "close");
@@ -1165,11 +1155,12 @@ describe("The Websocket Socket Manager Class", function() {
 
     describe("The _scheduleReconnect() method", function() {
       it("Should schedule _validateSessionBeforeReconnect to be called using exponential backoff", function() {
-        var tmp = layer.Util.getExponentialBackoffSeconds;
-        layer.Util.getExponentialBackoffSeconds = function() {return 100;}
+        var tmp = Layer.Utils.getExponentialBackoffSeconds;
+        Layer.Utils.getExponentialBackoffSeconds = function() {return 100;}
         websocketManager._lostConnectionCount = 10;
         spyOn(websocketManager, "_validateSessionBeforeReconnect");
         expect(websocketManager._reconnectId).toEqual(0);
+        spyOn(websocketManager, "_isOpen").and.returnValue(false);
 
         // Run
         websocketManager._scheduleReconnect();
@@ -1177,7 +1168,7 @@ describe("The Websocket Socket Manager Class", function() {
         expect(websocketManager._validateSessionBeforeReconnect).not.toHaveBeenCalled();
 
         // Midtest
-        jasmine.clock().tick(1000 * layer.Util.getExponentialBackoffSeconds(100, 10) - 1);
+        jasmine.clock().tick(1000 * Layer.Utils.getExponentialBackoffSeconds(100, 10) - 1);
         expect(websocketManager._validateSessionBeforeReconnect).not.toHaveBeenCalled();
 
         // Posttest
@@ -1185,7 +1176,7 @@ describe("The Websocket Socket Manager Class", function() {
         expect(websocketManager._validateSessionBeforeReconnect).toHaveBeenCalled();
 
         // Cleanup
-        layer.Util.getExponentialBackoffSeconds = tmp;
+        Layer.Utils.getExponentialBackoffSeconds = tmp;
       });
 
       it("Should abort if destroyed or if offline", function() {
@@ -1198,9 +1189,11 @@ describe("The Websocket Socket Manager Class", function() {
     describe("The _validateSessionBeforeReconnect() method", function() {
        it("Should validate the session", function() {
           spyOn(client, "xhr");
+          spyOn(websocketManager, "_isOpen").and.returnValue(false);
+
           websocketManager._validateSessionBeforeReconnect();
           expect(client.xhr).toHaveBeenCalledWith({
-              url: "/?action=validateConnectionForWebsocket&client=" + client.constructor.version,
+              url: "/?action=validateConnectionForWebsocket&client=" + Layer.version,
               sync: false,
               method: "GET"
             }, jasmine.any(Function));
@@ -1208,6 +1201,8 @@ describe("The Websocket Socket Manager Class", function() {
 
        it("Should only call once every 30 seconds and ignore extra calls", function() {
             spyOn(client, "xhr");
+            spyOn(websocketManager, "_isOpen").and.returnValue(false);
+
             websocketManager._validateSessionBeforeReconnect();
             websocketManager._validateSessionBeforeReconnect();
             websocketManager._validateSessionBeforeReconnect();
@@ -1224,6 +1219,8 @@ describe("The Websocket Socket Manager Class", function() {
 
        it("Should call connect if successful", function() {
           spyOn(websocketManager, "connect");
+          spyOn(websocketManager, "_isOpen").and.returnValue(false);
+
           websocketManager._validateSessionBeforeReconnect();
           requests.mostRecent().response({
               status: 200
@@ -1233,6 +1230,8 @@ describe("The Websocket Socket Manager Class", function() {
 
        it("Should not call connect if unsuccessful", function() {
           spyOn(websocketManager, "connect");
+          spyOn(websocketManager, "_isOpen").and.returnValue(false);
+
           websocketManager._validateSessionBeforeReconnect();
           requests.mostRecent().response({
               status: 400

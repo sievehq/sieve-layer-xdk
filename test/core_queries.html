@@ -42,7 +42,9 @@
     reporter.jasmineDone = function(a, b, c) {
       jasmineDone.call(reporter);
       if (jasmine.jsReport.passed) {
-        window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'core_services.html');
+        if (!location.search.match(/stop=true/)) {
+          window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'core_services.html');
+        }
       }
     };
     jasmineEnv.addReporter(reporter);

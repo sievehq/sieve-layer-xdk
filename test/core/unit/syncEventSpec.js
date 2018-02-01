@@ -4,14 +4,13 @@ describe("The SyncEvent Classes", function() {
     var appId = "Fred's App";
     beforeEach(function() {
       jasmine.clock().install();
-      client = new layer.Core.Client({
+      client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
       });
 
       client.userId = 'Frodo';
-      client.user = new layer.Core.Identity({
-          clientId: client.appId,
+      client.user = new Layer.Core.Identity({
           userId: client.userId,
           id: "layer:///identities/" + client.userId,
           firstName: "first",
@@ -22,9 +21,9 @@ describe("The SyncEvent Classes", function() {
           publicKey: "public",
           avatarUrl: "avatar",
           displayName: "display",
-          syncState: layer.Constants.SYNC_STATE.SYNCED,
+          syncState: Layer.Constants.SYNC_STATE.SYNCED,
           isFullIdentity: true,
-          sessionOwner: true
+          isMine: true
         });
 
         client._clientAuthenticated();
@@ -38,50 +37,50 @@ describe("The SyncEvent Classes", function() {
     describe("The SyncEvent Class", function() {
         describe("The constructor() method", function() {
             it("Should return a SyncEvent instance", function() {
-                expect(new layer.Core.SyncEvent({})).toEqual(jasmine.any(layer.SyncEvent));
+                expect(new Layer.Core.SyncEvent({})).toEqual(jasmine.any(Layer.Core.SyncEvent));
             });
 
             it("Should initialize the operation", function() {
-                expect(new layer.Core.SyncEvent({operation: "PATCH"}).operation).toEqual("PATCH");
+                expect(new Layer.Core.SyncEvent({operation: "PATCH"}).operation).toEqual("PATCH");
             });
 
             it("Should initialize depends", function() {
-                expect(new layer.Core.SyncEvent({depends: "DEPENDS"}).depends).toEqual("DEPENDS");
+                expect(new Layer.Core.SyncEvent({depends: "DEPENDS"}).depends).toEqual("DEPENDS");
             });
 
             it("Should initialize target", function() {
-                expect(new layer.Core.SyncEvent({target: "target"}).target).toEqual("target");
+                expect(new Layer.Core.SyncEvent({target: "target"}).target).toEqual("target");
             });
 
             it("Should initialize data", function() {
-                expect(new layer.Core.SyncEvent({data: "data"}).data).toEqual("data");
+                expect(new Layer.Core.SyncEvent({data: "data"}).data).toEqual("data");
             });
 
             it("Should initialize callback", function() {
-                expect(new layer.Core.SyncEvent({callback: "callback"}).callback).toEqual("callback");
+                expect(new Layer.Core.SyncEvent({callback: "callback"}).callback).toEqual("callback");
             });
 
             it("Should initialize an ID", function() {
-              expect(new layer.Core.SyncEvent({data: "data"}).id).toMatch(/layer:\/\/\/syncevents\/.*/);
+              expect(new Layer.Core.SyncEvent({data: "data"}).id).toMatch(/layer:\/\/\/syncevents\/.*/);
             });
 
             it("Should accept an ID", function() {
-              expect(new layer.Core.SyncEvent({id: "id"}).id).toEqual("id");
+              expect(new Layer.Core.SyncEvent({id: "id"}).id).toEqual("id");
             });
 
             it("Should generate a createdAt", function() {
-              expect(new layer.Core.SyncEvent({id: "id"}).createdAt > 0).toBe(true);
+              expect(new Layer.Core.SyncEvent({id: "id"}).createdAt > 0).toBe(true);
             });
 
             it("Should accept a createdAt", function() {
-              expect(new layer.Core.SyncEvent({createdAt: 5}).createdAt).toEqual(5);
+              expect(new Layer.Core.SyncEvent({createdAt: 5}).createdAt).toEqual(5);
             });
         });
 
         describe("The destroy() method", function() {
             var evt;
             beforeEach(function() {
-                evt = new layer.Core.SyncEvent({
+                evt = new Layer.Core.SyncEvent({
                     depends: "a",
                     target: "b",
                     callback: function() {},
@@ -113,7 +112,7 @@ describe("The SyncEvent Classes", function() {
         describe("The _updateData() method", function() {
             it("Should call target._getSendData if there is a target", function() {
                 var c = client.createConversation({participants: ["hey"]});
-                var evt = new layer.Core.SyncEvent({
+                var evt = new Layer.Core.SyncEvent({
                     data: "hey",
                     target: c.id,
                     operation: "POST"
@@ -129,7 +128,7 @@ describe("The SyncEvent Classes", function() {
         describe("The _getRequestData() method", function() {
             var evt;
             beforeEach(function() {
-                evt = new layer.Core.XHRSyncEvent({
+                evt = new Layer.Core.XHRSyncEvent({
                     url: "url",
                     depends: "a",
                     target: "b",
@@ -142,18 +141,18 @@ describe("The SyncEvent Classes", function() {
 
             it("Should call _updateData", function() {
                 spyOn(evt, "_updateData");
-                evt._getRequestData(client);
-                expect(evt._updateData).toHaveBeenCalledWith(client);
+                evt._getRequestData();
+                expect(evt._updateData).toHaveBeenCalledWith();
             });
 
             it("Should call _updateUrl", function() {
                 spyOn(evt, "_updateUrl");
-                evt._getRequestData(client);
-                expect(evt._updateUrl).toHaveBeenCalledWith(client);
+                evt._getRequestData();
+                expect(evt._updateUrl).toHaveBeenCalledWith();
             });
 
             it("Should return expected properties", function() {
-                expect(evt._getRequestData(client)).toEqual({
+                expect(evt._getRequestData()).toEqual({
                     url: "url",
                     data: "data",
                     headers: "headers",
@@ -165,7 +164,7 @@ describe("The SyncEvent Classes", function() {
 
         describe("The _updateUrl() method", function() {
             it("Should leave data alone if no target", function() {
-                var evt = new layer.Core.XHRSyncEvent({
+                var evt = new Layer.Core.XHRSyncEvent({
                     url: "hey"
                 });
                 evt._updateUrl();
@@ -175,7 +174,7 @@ describe("The SyncEvent Classes", function() {
             it("Should update url if its a function", function() {
                 var c = client.createConversation({participants: ['abc']});
                 spyOn(c, "_getUrl").and.returnValue("ho");
-                var evt = new layer.Core.XHRSyncEvent({
+                var evt = new Layer.Core.XHRSyncEvent({
                     url: "hey",
                     target: c.id
                 });
@@ -187,7 +186,7 @@ describe("The SyncEvent Classes", function() {
 
         describe("The _getCreateId() method", function() {
           it("Should get the requested ID for the new object", function() {
-            var evt = new layer.Core.XHRSyncEvent({
+            var evt = new Layer.Core.XHRSyncEvent({
                 url: function() {return "hey"},
                 operation: "POST",
                 data: {
@@ -202,7 +201,7 @@ describe("The SyncEvent Classes", function() {
     describe("The WebsocketSyncEvent Class", function() {
       describe("The _getCreateId() method", function() {
         it("Should get the requested ID for the new object", function() {
-          var evt = new layer.Core.WebsocketSyncEvent({
+          var evt = new Layer.Core.WebsocketSyncEvent({
               url: function() {return "hey"},
               operation: "POST",
               data: {
@@ -219,7 +218,7 @@ describe("The SyncEvent Classes", function() {
 
     describe("The firing property", function() {
       it("Should reset to false after 15 seconds", function() {
-        var evt = new layer.Core.XHRSyncEvent({
+        var evt = new Layer.Core.XHRSyncEvent({
             url: "hey"
         });
         expect(evt.isFiring).toBe(false);
@@ -244,7 +243,7 @@ describe("The SyncEvent Classes", function() {
 
     describe("The _isValidating property", function() {
       it("Should reset to false after half a second", function() {
-        var evt = new layer.Core.XHRSyncEvent({
+        var evt = new Layer.Core.XHRSyncEvent({
             url: "hey"
         });
         expect(evt._isValidating).toBe(false);

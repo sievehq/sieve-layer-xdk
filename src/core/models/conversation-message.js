@@ -1,15 +1,16 @@
 /**
- * A layer.Message instance for use within layer.Conversation.
+ * @inheritdoc Layer.Core.Message
  *
- * @class layer.Message.ConversationMessage
- * @extends layer.Message
+ * @class Layer.Core.Message.ConversationMessage
+ * @extends Layer.Core.Message
  */
+import { client as Client } from '../../settings';
+import Core from '../namespace';
 import Root from '../root';
 import Message from './message';
-import ClientRegistry from '../client-registry';
 import { ErrorDictionary } from '../layer-error';
 import Constants from '../../constants';
-import Util from '../../util';
+import Util from '../../utils';
 
 class ConversationMessage extends Message {
   constructor(options) {
@@ -21,27 +22,28 @@ class ConversationMessage extends Message {
     else this.__updateRecipientStatus(this.recipientStatus);
     this._disableEvents = false;
 
-    const client = this.getClient();
     this.isInitializing = false;
     if (options && options.fromServer) {
-      client._addMessage(this);
-      const status = this.recipientStatus[client.user.id];
+      Client._addMessage(this);
+      const status = this.recipientStatus[Client.user.id];
       if (status && status !== Constants.RECEIPT_STATE.READ && status !== Constants.RECEIPT_STATE.DELIVERED) {
         Util.defer(() => this._sendReceipt('delivery'));
       }
+    } else {
+      this.parts.forEach((part) => { part._message = this; });
     }
   }
 
   /**
-   * Get the layer.Conversation associated with this layer.Message.ConversationMessage.
+   * Get the Layer.Core.Conversation associated with this Layer.Core.Message.ConversationMessage.
    *
    * @method getConversation
-   * @param {Boolean} load       Pass in true if the layer.Conversation should be loaded if not found locally
-   * @return {layer.Conversation}
+   * @param {Boolean} load       Pass in true if the Layer.Core.Conversation should be loaded if not found locally
+   * @return {Layer.Core.Conversation}
    */
   getConversation(load) {
     if (this.conversationId) {
-      return ClientRegistry.get(this.clientId).getConversation(this.conversationId, load);
+      return Client.getConversation(this.conversationId, load);
     }
     return null;
   }
@@ -55,13 +57,13 @@ class ConversationMessage extends Message {
    */
   _loaded(data) {
     this.conversationId = data.conversation.id;
-    this.getClient()._addMessage(this);
+    Client._addMessage(this);
   }
 
   /**
    * Accessor called whenever the app accesses `message.recipientStatus`.
    *
-   * Insures that participants who haven't yet been sent the Message are marked as layer.Constants.RECEIPT_STATE.PENDING
+   * Insures that participants who haven't yet been sent the Message are marked as Layer.Constants.RECEIPT_STATE.PENDING
    *
    * @method __getRecipientStatus
    * @param {string} pKey - The actual property key where the value is stored
@@ -70,24 +72,19 @@ class ConversationMessage extends Message {
    */
   __getRecipientStatus(pKey) {
     const value = this[pKey] || {};
-    const client = this.getClient();
-    if (client) {
-      const id = client.user.id;
-      const conversation = this.getConversation(false);
-      if (conversation) {
-        conversation.participants.forEach((participant) => {
-          if (!value[participant.id]) {
-            value[participant.id] = participant.id === id ?
-              Constants.RECEIPT_STATE.READ : Constants.RECEIPT_STATE.PENDING;
-          }
-        });
-      }
+    const id = Client.user.id;
+    const conversation = this.getConversation(false);
+    if (conversation) {
+      conversation.participants.forEach((participant) => {
+        if (!value[participant.id]) {
+          value[participant.id] = participant.id === id ?
+            Constants.RECEIPT_STATE.READ : Constants.RECEIPT_STATE.PENDING;
+        }
+      });
     }
     return value;
   }
-__updateParts(parts) {
-    this._regenerateMimeAttributesMap();
-  }
+
   /**
    * Handle changes to the recipientStatus property.
    *
@@ -105,12 +102,11 @@ __updateParts(parts) {
    */
   __updateRecipientStatus(status, oldStatus) {
     const conversation = this.getConversation(false);
-    const client = this.getClient();
 
     if (!conversation || Util.doesObjectMatch(status, oldStatus)) return;
 
-    const id = client.user.id;
-    const isSender = this.sender.sessionOwner;
+    const id = Client.user.id;
+    const isSender = this.sender.isMine;
     const userHasRead = status[id] === Constants.RECEIPT_STATE.READ;
 
     try {
@@ -180,7 +176,7 @@ __updateParts(parts) {
   }
 
   /**
-   * Sets the layer.Message.ConversationMessage.readStatus and layer.Message.ConversationMessage.deliveryStatus properties.
+   * Sets the Layer.Core.Message.ConversationMessage.readStatus and Layer.Core.Message.ConversationMessage.deliveryStatus properties.
    *
    * @method _setReceiptStatus
    * @private
@@ -210,7 +206,7 @@ __updateParts(parts) {
    *
    * If someone called m.isRead = true, AND
    * if it was previously false, AND
-   * if the call didn't come from layer.Message.ConversationMessage.__updateRecipientStatus,
+   * if the call didn't come from Layer.Core.Message.ConversationMessage.__updateRecipientStatus,
    * Then notify the server that the message has been read.
    *
    *
@@ -261,12 +257,12 @@ __updateParts(parts) {
    * You can retract a Delivery or Read Receipt; once marked as Delivered or Read, it can't go back.
    *
    * ```
-   * messsage.sendReceipt(layer.Constants.RECEIPT_STATE.READ);
+   * messsage.sendReceipt(Layer.Constants.RECEIPT_STATE.READ);
    * ```
    *
    * @method sendReceipt
-   * @param {string} [type=layer.Constants.RECEIPT_STATE.READ] - One of layer.Constants.RECEIPT_STATE.READ or layer.Constants.RECEIPT_STATE.DELIVERY
-   * @return {layer.Message.ConversationMessage} this
+   * @param {string} [type=Layer.Constants.RECEIPT_STATE.READ] - One of Layer.Constants.RECEIPT_STATE.READ or Layer.Constants.RECEIPT_STATE.DELIVERY
+   * @return {Layer.Core.Message.ConversationMessage} this
    */
   sendReceipt(type = Constants.RECEIPT_STATE.READ) {
     if (type === Constants.RECEIPT_STATE.READ) {
@@ -297,7 +293,7 @@ __updateParts(parts) {
    *
    * @method _sendReceipt
    * @private
-   * @param {string} [type=read] - One of layer.Constants.RECEIPT_STATE.READ or layer.Constants.RECEIPT_STATE.DELIVERY
+   * @param {string} [type=read] - One of Layer.Constants.RECEIPT_STATE.READ or Layer.Constants.RECEIPT_STATE.DELIVERY
    */
   _sendReceipt(type) {
     // This little test exists so that we don't send receipts on Conversations we are no longer
@@ -326,9 +322,9 @@ __updateParts(parts) {
    *
    * Deletion Modes:
    *
-   * * layer.Constants.DELETION_MODE.ALL: This deletes the local copy immediately, and attempts to also
+   * * Layer.Constants.DELETION_MODE.ALL: This deletes the local copy immediately, and attempts to also
    *   delete the server's copy.
-   * * layer.Constants.DELETION_MODE.MY_DEVICES: Deletes this Message from all of my devices; no effect on other users.
+   * * Layer.Constants.DELETION_MODE.MY_DEVICES: Deletes this Message from all of my devices; no effect on other users.
    *
    * @method delete
    * @param {String} deletionMode
@@ -350,13 +346,12 @@ __updateParts(parts) {
     }
 
     const id = this.id;
-    const client = this.getClient();
     this._xhr({
       url: '?' + queryStr,
       method: 'DELETE',
     }, (result) => {
       if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
-        Message.load(id, client);
+        Message.load(id);
       }
     });
 
@@ -384,10 +379,9 @@ __updateParts(parts) {
    * @protected
    * @static
    * @param  {Object} message - Server's representation of the message
-   * @param  {layer.Client} client
-   * @return {layer.Message.ConversationMessage}
+   * @return {Layer.Core.Message.ConversationMessage}
    */
-  static _createFromServer(message, client) {
+  static _createFromServer(message) {
     const fromWebsocket = message.fromWebsocket;
     let conversationId;
     if (message.conversation) {
@@ -399,9 +393,8 @@ __updateParts(parts) {
     return new ConversationMessage({
       conversationId,
       fromServer: message,
-      clientId: client.appId,
       _fromDB: message._fromDB,
-      _notify: fromWebsocket && message.is_unread && message.sender.user_id !== client.user.userId,
+      _notify: message.notification && fromWebsocket && message.is_unread && message.sender.user_id !== Client.user.userId ? message.notification : null,
     });
   }
 }
@@ -414,7 +407,7 @@ __updateParts(parts) {
  *      m.isRead = true;
  *
  * This will automatically notify the server that the message was read by your user.
- * @type {Boolean}
+ * @property {Boolean}
  */
 ConversationMessage.prototype.isRead = false;
 
@@ -424,12 +417,12 @@ ConversationMessage.prototype.isRead = false;
  * This is an object containing keys for each participant,
  * and a value of:
  *
- * * layer.RECEIPT_STATE.SENT
- * * layer.RECEIPT_STATE.DELIVERED
- * * layer.RECEIPT_STATE.READ
- * * layer.RECEIPT_STATE.PENDING
+ * * Layer.Constants.RECEIPT_STATE.SENT
+ * * Layer.Constants.RECEIPT_STATE.DELIVERED
+ * * Layer.Constants.RECEIPT_STATE.READ
+ * * Layer.Constants.RECEIPT_STATE.PENDING
  *
- * @type {Object}
+ * @property {Object}
  */
 ConversationMessage.prototype.recipientStatus = null;
 
@@ -438,15 +431,15 @@ ConversationMessage.prototype.recipientStatus = null;
  *
  * This value is one of:
  *
- *  * layer.Constants.RECIPIENT_STATE.ALL
- *  * layer.Constants.RECIPIENT_STATE.SOME
- *  * layer.Constants.RECIPIENT_STATE.NONE
+ *  * Layer.Constants.RECIPIENT_STATE.ALL
+ *  * Layer.Constants.RECIPIENT_STATE.SOME
+ *  * Layer.Constants.RECIPIENT_STATE.NONE
  *
  *  This value is updated any time recipientStatus changes.
  *
- * See layer.Message.ConversationMessage.recipientStatus for a more detailed report.
+ * See Layer.Core.Message.ConversationMessage.recipientStatus for a more detailed report.
  *
- * @type {String}
+ * @property {String}
  */
 ConversationMessage.prototype.readStatus = Constants.RECIPIENT_STATE.NONE;
 
@@ -455,20 +448,20 @@ ConversationMessage.prototype.readStatus = Constants.RECIPIENT_STATE.NONE;
  *
   * This value is one of:
  *
- *  * layer.Constants.RECIPIENT_STATE.ALL
- *  * layer.Constants.RECIPIENT_STATE.SOME
- *  * layer.Constants.RECIPIENT_STATE.NONE
+ *  * Layer.Constants.RECIPIENT_STATE.ALL
+ *  * Layer.Constants.RECIPIENT_STATE.SOME
+ *  * Layer.Constants.RECIPIENT_STATE.NONE
  *
  *  This value is updated any time recipientStatus changes.
  *
- * See layer.Message.ConversationMessage.recipientStatus for a more detailed report.
+ * See Layer.Core.Message.ConversationMessage.recipientStatus for a more detailed report.
  *
  *
- * @type {String}
+ * @property {String}
  */
 ConversationMessage.prototype.deliveryStatus = Constants.RECIPIENT_STATE.NONE;
 
 ConversationMessage.inObjectIgnore = Message.inObjectIgnore;
 ConversationMessage._supportedEvents = [].concat(Message._supportedEvents);
-Root.initClass.apply(ConversationMessage, [ConversationMessage, 'ConversationMessage']);
+Root.initClass.apply(ConversationMessage, [ConversationMessage, 'ConversationMessage', Core.Message]);
 module.exports = ConversationMessage;

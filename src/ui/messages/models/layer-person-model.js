@@ -1,16 +1,17 @@
 /**
  * TODO: Location Model should be able to use one of these
  * TODO: Look at vcard fields
+ * @ignore
  */
 
-import { Client, MessagePart, MessageTypeModel, Util }  from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Util }  from '../../../core';
 
 class PersonModel extends MessageTypeModel {
 
   _parseMessage(payload) {
     super._parseMessage(payload);
 
-    this.addressModels = this.getModelsFromPart('address');
+    this.addressModels = this.getModelsByRole('address');
   }
 }
 
@@ -24,6 +25,6 @@ PersonModel.prototype.identityId = '';
 PersonModel.MIMEType = 'application/vnd.layer.person+json';
 
 // Register the Card Model Class with the Client
-Client.registerMessageTypeModelClass(PersonModel, 'PersonModel');
+Core.Client.registerMessageTypeModelClass(PersonModel, 'PersonModel');
 
 module.exports = PersonModel;

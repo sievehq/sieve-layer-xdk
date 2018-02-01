@@ -1,20 +1,19 @@
 /**
- * A helper mixin for Lists that want an indicator to render when paging through data, that data is currently loading.
+ * A helper mixin for Lists that want an indicator to render when an indicator when fetching another page of data from the server.
  *
  * This is not a necessary feature, but is nicer than just reaching the end of the list and waiting.
  *
- *
  * This mixin requires "layer-id=loadIndicator" to exist in the template for any component using this mixin.
  *
- * @class layer.UI.mixins.ListLoadIndicator
+ * @class Layer.UI.mixins.ListLoadIndicator
  */
-import '../components/layer-loading-indicator/layer-loading-indicator';
+import '../components/layer-loading-indicator';
 
 module.exports = {
   properties: {
     isDataLoading: {
       set(value) {
-        this.classList[value ? 'add' : 'remove']('layer-loading-data');
+        this.toggleClass('layer-loading-data', value);
       },
     },
 

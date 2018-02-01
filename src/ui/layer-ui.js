@@ -1,58 +1,166 @@
 /**
- * Import this if you want just a basic setup without any built-in widgets.
- *
- * Import index.js instead of you want a standard setup with standard widgets installed.
- *
- * @class layer.UI
+ * @class Layer.UI
  * @static
+ *
+ * The layerUI contains utilities for working with the layerUI components.
+ *
+ * The key method to know here is the `init()` method.  Any use of the library will need a call:
+ *
+ * ```
+ * Layer.UI.init({
+ *   appId: 'layer:///apps/staging/my-app-id'
+ * });
+ * ```
+ *
+ * Or
+ *
+ * Layer.UI.init({
+ *   appId: 'layer:///apps/staging/my-app-id'
+ * });
+ * ```
+ *
+ * See layerUI.settings for more options to Layer.UI.init.
+ *
+ * One other property deserving special mention: layerUI.adapters.  Adapters help you to use these widgets within other UI frameworks.
+ * It is not required to use an adapter, but it solves many inconsistencies in how these frameworks handle webcomponents built using this framework.
+ *
+ * While there are many other methods defined here, for new projects ignore everything except layerUI.settings, Layer.UI.init and layerUI.adapters.
  */
 
 import 'webcomponents.js/webcomponents-lite';
-import layerUI from './base';
-import { registerComponent, registerAll, unregisterComponent, registerMessageComponent } from './components/component';
+import { registerComponent, _registerAll, unregisterComponent } from './components/component';
 import './handlers/message/layer-message-unknown';
+import Constants from './constants';
+import ComponentServices, { ComponentsHash } from './component-services';
+import Settings from '../settings';
+import MessageHandlers from './handlers/message/message-handlers';
+import TextHandlers from './handlers/text/text-handlers';
+import ListSeparatorManager from './ui-utils/list-separator-manager';
+import Adapters from './adapters';
+import MessageActions from './message-actions';
+import UIUtils from './ui-utils/index';
 
-layerUI.registerComponent = registerComponent;
-layerUI.registerMessageComponent = registerMessageComponent;
+const LayerUI = {
+  Constants,
+  settings: Settings,
+  registerComponent,
+  _registerAll,
+  unregisterComponent,
+  buildStyle: ComponentServices.buildStyle,
+  buildAndRegisterTemplate: ComponentServices.buildAndRegisterTemplate,
+  registerTemplate: ComponentServices.registerTemplate,
+  handlers: {
+    message: MessageHandlers,
+    text: TextHandlers,
+  },
+  components: ComponentsHash,   // backwards compatability
+  ComponentsHash,
+  ListSeparatorManager,
+  adapters: Adapters,
+  UIUtils,
+  MessageActions,
+};
 
 /**
- * Unregister a component.  Must be called before layerUI.init().
+ * Call init with any custom settings, and to register all components with the dom.
  *
- * Use this call to prevent a component from being registered with the document.
- * Currently this works only on components that have been already called with `layerUI.registerComponent`
- * but which have not yet been completed via a call to `layerUI.init()`.
+ * Note that `init()` must be called prior to putting any webcomponents into a document.
  *
- * This is not typically needed, but allows you to defer creation of a widget, and then at some point later in your application lifecycle
- * define a replacement for that widget. You can not redefine an html tag that is registered with the document... but this prevents it from
- * being registered yet.
+ * Note as well that if passing in your appId, you must have instantiated a Layer.Core.Client with that appId
+ * prior to putting any webcomponents into your document.
  *
- * @method
+ * ```javascript
+ * Layer.UI.init({
+ *   appId: 'layer:///apps/staging/my-app-id'
+ * });
+ * ```
+ *
+ * See layerUI.settings for more options to Layer.UI.init.
+ *
+ * @method init
+ * @static
  */
-layerUI.unregisterComponent = unregisterComponent;
-
-layerUI.init = function init(settings = {}) {
-  Object.keys(settings).forEach((name) => {
-    if (name !== 'mixins') {
-      layerUI.settings[name] = settings[name];
-    }
-  });
-
-  layerUI.setupMixins(settings.mixins || {});
+LayerUI.init = function init() {
+  LayerUI.setupMixins(Settings.mixins || {});
 
   // Register all widgets
-  registerAll();
+  _registerAll();
 
   // Enable the text handlers
-  layerUI.settings.textHandlers.forEach((handlerName) => {
-    layerUI.registerTextHandler({ name: handlerName });
+  Settings.textHandlers.forEach((handlerName) => {
+    TextHandlers.register({ name: handlerName });
   });
 };
 
-layerUI.setupMixins = function setupMixins(mixins) {
-  if (!layerUI.settings.mixins) layerUI.settings.mixins = {};
+/**
+ * Provide additional mixins; must be used prior to calling `Layer.init()`.
+ *
+ * ```
+ * var mixins = {
+ *   'my-tag-name1': {
+ *      properties: {
+ *        prop1: {}
+ *      },
+ *      methods: {
+ *        onCreate() {
+ *          console.log("Created");
+ *        }
+ *      }
+ *    }
+ * };
+ * Layer.UI.setupMixins(mixins);
+ * Layer.init({ appId });
+ * ```
+ *
+ * * `setupMixins` may be called multiple times, and can add multiple mixins to the same class.
+ *
+ * `setupMixins` can also take an array of mixins:
+ *
+ * ```
+ * var mixins = {
+ *   'my-tag-name1': [
+ *     {
+ *        properties: {
+ *          prop1: {}
+ *        }
+ *      },
+ *      {
+ *        properties: {
+ *          prop2: {}
+ *        }
+ *      }
+ *    }]
+ * };
+ * Layer.UI.setupMixins(mixins);
+ * Layer.init({ appId });
+ * ```
+ *
+ * Why use it?  If you have multiple places in your code that specify mixins,
+ * they may each separately call this method to setup your mixin instead of
+ * having to do it all in one big `Layer.init()` call.
+ *
+ * @method setupMixins
+ * @param {Object} mixins
+ */
+LayerUI.setupMixins = function setupMixins(mixins) {
+  if (!LayerUI.settings.mixins) LayerUI.settings.mixins = {};
   Object.keys(mixins).forEach((componentName) => {
-    layerUI.settings.mixins[componentName] = Object.assign({}, layerUI.settings[componentName] || {}, mixins[componentName]);
+    if (!LayerUI.settings.mixins[componentName]) {
+      LayerUI.settings.mixins[componentName] = [];
+    } else if (!Array.isArray(LayerUI.settings.mixins[componentName])) {
+      LayerUI.settings.mixins[componentName] = [LayerUI.settings.mixins[componentName]];
+    }
+    LayerUI.settings.mixins[componentName] = LayerUI.settings.mixins[componentName].concat(mixins[componentName]);
   });
 };
 
-module.exports = layerUI;
+if (global && global.document) {
+  global.document.addEventListener('DOMContentLoaded', function() {
+    const useSafariCss = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
+    if (useSafariCss) document.body.classList.add('safari');
+  });
+}
+
+
+module.exports = LayerUI;
+
