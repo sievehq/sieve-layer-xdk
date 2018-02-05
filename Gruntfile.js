@@ -140,6 +140,7 @@ module.exports = function (grunt) {
       npm: {
         files: [
           {src: ['**'], cwd: 'themes/build/', dest: 'npm/themes/', expand: true},
+          {src: ['**'], cwd: 'themes/src/', dest: 'npm/themes/src/', expand: true},
           {src: ['**'], cwd: 'lib/', dest: 'npm/', expand: true},
           {src: 'package.json', dest: 'npm/package.json'}
         ]

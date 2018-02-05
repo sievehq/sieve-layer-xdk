@@ -1,5 +1,9 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.2
+
+* NPM repo now contains missing theme source files, and not just theme build files
+
 ## 1.0.0-pre2.1
 
 * Marks npm repo as public rather than private

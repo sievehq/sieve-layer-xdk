@@ -265,19 +265,6 @@ class MessagePart extends Root {
 
     this.trigger('content-loaded');
 
-    this._triggerAsync('messageparts:change', {
-      oldValue: '',
-      newValue: body,
-      property: 'body',
-    });
-
-    // TODO: This event is now deprecated, and should be removed for WebSDK 4.0
-    message._triggerAsync('messages:change', {
-      oldValue: message.parts,
-      newValue: message.parts,
-      property: 'parts',
-    });
-
     if (callback) callback(this.body);
   }
 
@@ -334,12 +321,6 @@ class MessagePart extends Root {
       property: 'url',
     });
 
-    // TODO: This event is now deprecated, and should be removed for WebSDK 4.0
-    message._triggerAsync('messages:change', {
-      oldValue: message.parts,
-      newValue: message.parts,
-      property: 'parts',
-    });
     if (callback) callback(url);
   }
 

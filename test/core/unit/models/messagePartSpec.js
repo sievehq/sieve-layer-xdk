@@ -310,16 +310,20 @@ describe("The MessageParts class", function() {
             expect(part.trigger).toHaveBeenCalledWith("content-loaded");
         });
 
-        it("Should trigger messages:change event", function() {
+        it("Should trigger messages:change event", function(done) {
             spyOn(message, "_triggerAsync");
             part._fetchContentComplete("Hey Ho");
+            setTimeout(function() {
 
-            // Posttest
-            expect(message._triggerAsync).toHaveBeenCalledWith("messages:change", {
-                property: "parts",
-                oldValue: message.parts,
-                newValue: message.parts
-            });
+                // Posttest
+                expect(message._triggerAsync).toHaveBeenCalledWith("messages:change", {
+                    property: "parts.body",
+                    oldValue: null,
+                    newValue: 'Hey Ho',
+                    part: part
+                });
+                done();
+            }, 100);
         });
 
         it("Should trigger messageparts:change event", function() {
@@ -412,18 +416,25 @@ describe("The MessageParts class", function() {
         expect(part.trigger).toHaveBeenCalledWith("url-loaded");
       });
 
-      it("Should trigger messages:change", function() {
-        spyOn(message, "_triggerAsync");
+      it("Should trigger messages:change", function(done) {
+        setTimeout(function() {
 
-        // Run
-        part._fetchStreamComplete("hey");
+            spyOn(message, "_triggerAsync");
 
-        // Posttest
-        expect(message._triggerAsync).toHaveBeenCalledWith("messages:change", {
-          oldValue: message.parts,
-          newValue: message.parts,
-          property: "parts"
-        })
+            // Run
+            part._fetchStreamComplete("hey");
+
+            setTimeout(function() {
+                // Posttest
+                expect(message._triggerAsync).toHaveBeenCalledWith("messages:change", {
+                    oldValue: '',
+                    newValue: "hey",
+                    property: "parts.url",
+                    part: part
+                })
+                done();
+            }, 100);
+        }, 100);
       });
 
       it("Should trigger messageparts:change event", function() {
