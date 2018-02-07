@@ -1,8 +1,13 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.3
+
+* Automated tests setup with travis + saucelabs
+
 ## 1.0.0-pre2.2
 
 * NPM repo now contains missing theme source files, and not just theme build files
+* Removes redundant `messages:change` and `messageparts:change` events on loading external content
 
 ## 1.0.0-pre2.1
 

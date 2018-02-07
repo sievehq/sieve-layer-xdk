@@ -644,6 +644,38 @@ function defineProperty(newClass, propertyName) {
   }
 }
 
+/**
+ * Initialize a class definition that is a subclass of Root.
+ *
+ * ```
+ * class myClass extends Root {
+ * }
+ * Root.initClass(myClass, 'myClass');
+ * console.log(Layer.Core.myClass);
+ * ```
+ *
+ * With namespace:
+ * ```
+ * const MyNameSpace = {};
+ * class myClass extends Root {
+ * }
+ * Root.initClass(myClass, 'myClass', MyNameSpace);
+ * console.log(MyNameSpace.myClass);
+ * ```
+ *
+ * Defining a class without calling this method means
+ *
+ * * none of the property getters/setters/adjusters will work;
+ * * Mixins won't be used
+ * * _supportedEvents won't be setup which means no events can be subscribed to on this class
+ *
+ *
+ * @method initClass
+ * @static
+ * @param {Function} newClass    Class definition
+ * @param {String} className     Class name
+ * @param {Object} [namespace=]  Object to write this class definition to
+ */
 function initClass(newClass, className, namespace) {
   // Make sure our new class has a name property
   // Throws errors when run in production

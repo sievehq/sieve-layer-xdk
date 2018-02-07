@@ -941,6 +941,25 @@ MessageTypeModel.prototype.messageSentAt = null;
  */
 MessageTypeModel.prototype.messageRecipientStatus = null;
 
+
+/**
+ * The MIME Type that this Model generates and for which this model will be instantiated.
+ *
+ * @static
+ * @property {String} [MIMEType=]
+ * @abstract
+ */
+MessageTypeModel.MIMEType = '';
+
+/**
+ * The UI Component to render this model
+ *
+ * @static
+ * @property {String} [messageRenderer=]
+ * @abstract
+ */
+MessageTypeModel.messageRenderer = '';
+
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = [
   'message-type-model:change',

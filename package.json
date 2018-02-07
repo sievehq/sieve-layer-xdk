@@ -11,7 +11,8 @@
     "build": "grunt build",
     "samplebuild": "grunt samples",
     "watch": "grunt develop",
-    "prepare": "grunt prepublish"
+    "prepare": "grunt prepublish",
+    "test": "grunt test"
   },
   "author": "Layer developers <helpdesk@layer.com> (https://layer.com)",
   "license": "Apache-2.0",

@@ -29,24 +29,20 @@ var supportedBrowsers = {
   },
   'safari-1': {
     browserName: 'safari',
-    version: '9.0',
-    platform: 'OS X 10.11'
+    version: 'latest-1'
   },
   'safari-0': {
     browserName: 'safari',
-    version: '10.0',
-    platform: 'macOS 10.12'
+    version: 'latest'
   },
-/*  'ios-1': {
+ 'ios-1': {
     browserName: 'iphone',
-    version: 'latest-1',
-    platform: 'OS X 10.9'
+    version: 'latest-1'
   },
   'ios-0': {
     browserName: 'iphone',
     version: 'latest',
-    platform: 'OS X 10.9'
-  },*/
+  },
   'chrome-1': {
     browserName: 'chrome',
     platform: 'OSX 10.9',
@@ -64,10 +60,18 @@ var supportedBrowsers = {
   },
   'firefox-0': {
     browserName: 'firefox',
-    version: 'latest',
-    platform: 'OS X 10.9'
+    version: 'latest'
   }
 };
+
+var quickTestBrowsers = [
+  supportedBrowsers['edge-0'],
+  supportedBrowsers['ie11'],
+  supportedBrowsers['ios-0'],
+  supportedBrowsers['safari-0'],
+  supportedBrowsers['firefox-0'],
+  supportedBrowsers['chrome-0']
+];
 
 // These do not support websockets, so are not supported by layer-websdk
 var unsupportedBrowsers = {
@@ -90,8 +94,10 @@ var unsupportedBrowsers = {
       if (unsupportedBrowsers[name]) return unsupportedBrowsers[name];
       throw new Error(name + ' not found');
     });
-  } else {
+  } else if (grunt.option('all')) {
     browsers = Object.keys(supportedBrowsers).map(function(key) {return supportedBrowsers[key]});
+  } else {
+    browsers = quickTestBrowsers;
   }
 
   // Why this? Travis tunnel to saucelabs only sometimes survives long
@@ -121,7 +127,19 @@ var unsupportedBrowsers = {
         tunnelArgs: ["-B all"],
         browsers: browsers,
         build: "Layer Web XDK <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
-        urls: ["http://localhost:9999/test/SpecRunner.html"],
+        urls: [
+          "http://localhost:9999/test/core_client.html?stop=true",
+          "http://localhost:9999/test/core_models.html?stop=true",
+          "http://localhost:9999/test/core_queries.html?stop=true",
+          "http://localhost:9999/test/core_services.html?stop=true",
+          "http://localhost:9999/test/core_dbmanager.html?stop=true",
+          "http://localhost:9999/test/ui_components_nested.html?stop=true",
+          "http://localhost:9999/test/ui_messages.html.html?stop=true",
+          "http://localhost:9999/test/ui_components.html?stop=true",
+          "http://localhost:9999/test/ui_components-lists.html?stop=true",
+          "http://localhost:9999/test/ui_handlers.html?stop=true",
+          "http://localhost:9999/test/ui_mixins.html?stop=true"
+        ],
         /*urls: [
           "core_client",
           "core_models_queries",
@@ -140,21 +158,22 @@ var unsupportedBrowsers = {
         tags: ["master", 'Unit Test', 'Web'],
 
         // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
-        pollInterval: 5000, // Check for test results every 5 seconds (miliseconds)
-        statusCheckAttempts: 360, // Allow up to 30 minutes (presumed to be 30 from start of first browser to end of last)
+        //pollInterval: 5000, // Check for test results every 5 seconds (miliseconds)
+        //statusCheckAttempts: 360, // Allow up to 30 minutes (presumed to be 30 from start of first browser to end of last)
         // max-duration should insure that the tunnel stays alive for the specified period.  Large values however cause
         // saucelabs to just hang and not start any jobs on their servers.  This time appears to be per-job, not total
         // runtime
         "max-duration": 400,
         maxRetries: 2,
         onTestComplete: function(result, callback) {
-          console.log("----------------------------------------\nSaucelabs Results:" + result.passed);
+          var testPage = result.testPageUrl.replace(/^.*\//, '').replace(/\?.*$/, '');
+          console.log("----------------------------------------\nSaucelabs Results for " + testPage + ":" + result.passed);
           require("request").put({
               url: ['https://saucelabs.com/rest/v1', process.env.SAUCE_USERNAME, 'jobs', result.job_id].join('/'),
               auth: { user: process.env.SAUCE_USERNAME, pass: process.env.SAUCE_ACCESS_KEY },
               json: {
                 passed: Boolean(result.passed),
-                name: "Completed Layer Web XDK " + version + " Unit Test"
+                name: "Completed Layer Web XDK " + version + " " + testPage,
               }
             }, function (error, response, body) {
               if (response.statusCode != 200) {

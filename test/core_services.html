@@ -34,7 +34,6 @@
   <script type="text/javascript" src="core/unit/websockets/websocketRequestSpec.js"></script>
   <script type="text/javascript" src="core/integration/websocketManagerSpec.js"></script>
   <script type="text/javascript" src="core/unit/typingIndicatorSpec.js"></script>
-  <script type="text/javascript" src="core/unit/dbManagerSpec.js"></script>
   <script type="text/javascript" src="core/unit/telemetrySpec.js"></script>
 
   <!-- Integration Tests -->
@@ -50,7 +49,7 @@
         jasmineDone.call(reporter);
         if (jasmine.jsReport.passed) {
           if (!location.search.match(/stop=true/)) {
-            window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'ui_components_nested.html');
+            window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'core_dbmanager.html');
           }
         }
       };

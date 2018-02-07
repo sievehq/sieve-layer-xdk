@@ -628,6 +628,9 @@ module.exports = function (grunt) {
             folderName += '-lists';
           }
         }
+
+        if (folderName === 'ui-utils' || folderName === 'handlers') folderName = 'mixins';
+
         if (!scripts[folderName]) scripts[folderName] = [];
         scripts[folderName].push(scriptTag);
         scripts.all.push(scriptTag);
@@ -707,7 +710,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   //grunt.registerTask('phantomtest', ['debug', 'jasmine:debug']);
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
-  grunt.registerTask("test", ["generate-tests", "connect:saucelabs", "saucelabs-jasmine"]);
+  grunt.registerTask("test", ["debug", "generate-tests", "connect:saucelabs", "saucelabs-jasmine"]);
 
 
   grunt.registerTask('docs', ['debug', /*'jsducktemplates',*/ 'jsduck', 'jsduckfixes']);
