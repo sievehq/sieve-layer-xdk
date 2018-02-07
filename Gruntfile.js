@@ -244,7 +244,7 @@ module.exports = function (grunt) {
       debug: {
         files: [
           {
-            src: ['src/ui/**/test.js', 'src/ui/**/tests/**.js']
+            src: ['src/ui/components/test.js', 'src/ui/**/test.js', 'src/ui/**/tests/**.js']
           }
         ],
       }
@@ -618,6 +618,7 @@ module.exports = function (grunt) {
     // Iterate over each file set and generate the build file specified for that set
     this.files.forEach(function(fileGroup) {
       fileGroup.src.forEach(function(file, index) {
+        console.log(file);
         var scriptTag = '<script src="../' + file + '" type="text/javascript"></script>';
         var folderName = file.replace(/src\/ui\/?(.*?)\/.*$/, "$1");
         var componentFolderName = file.replace(/src\/ui\/components\/?(.*?)\/.*$/, "$1");
@@ -712,8 +713,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   //grunt.registerTask('phantomtest', ['debug', 'jasmine:debug']);
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
-  grunt.registerTask("test", ["debug", "generate-tests", "connect:saucelabs", "saucelabs-jasmine"]);
+  grunt.registerTask("test", ["debug", "generate-tests", "connect:saucelabs", "saucelabs-jasmine:test1", "saucelabs-jasmine:test2", "saucelabs-jasmine:test3"]);
 
+  grunt.registerTask("quicktest", ["saucelabs-jasmine:test1", "saucelabs-jasmine:test2", "saucelabs-jasmine:test3"]);
 
   grunt.registerTask('docs', ['debug', /*'jsducktemplates',*/ 'jsduck', 'jsduckfixes']);
 

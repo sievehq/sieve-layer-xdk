@@ -17,7 +17,7 @@
   </script>
 
   <!-- include source files here... -->
-  <script type='text/javascript' src='/build/layer-xdk.js'></script>
+  <script type='text/javascript' src='../build/layer-xdk.js'></script>
   <script type='text/javascript' src='core/responses.js'></script>
 
   <!-- include spec files here... -->
@@ -37,7 +37,7 @@
         jasmineDone.call(reporter);
         if (jasmine.jsReport.passed) {
           if (!location.search.match(/stop=true/)) {
-            window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'ui_components_nested.html');
+            window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'ui_messages.html');
           }
         }
       };

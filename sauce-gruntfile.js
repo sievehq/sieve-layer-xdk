@@ -60,7 +60,8 @@ var supportedBrowsers = {
   },
   'firefox-0': {
     browserName: 'firefox',
-    version: 'latest'
+    version: 'latest',
+    'platform': 'Windows 10'
   }
 };
 
@@ -119,80 +120,146 @@ var unsupportedBrowsers = {
     browsers.forEach(function(item) {
       item['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER;
     });
+
+    console.dir(process.env);
+  }
+
+  function onTestComplete(result, callback) {
+    var testPage = result.testPageUrl.replace(/^.*\//, '').replace(/\?.*$/, '');
+    console.log("----------------------------------------\nSaucelabs Results for " + testPage + ":" + result.passed);
+    require("request").put({
+      url: ['https://saucelabs.com/rest/v1', process.env.SAUCE_USERNAME, 'jobs', result.job_id].join('/'),
+      auth: { user: process.env.SAUCE_USERNAME, pass: process.env.SAUCE_ACCESS_KEY },
+      json: {
+        passed: Boolean(result.passed),
+        name: "Completed Layer Web XDK " + version + " " + testPage,
+      }
+    }, function (error, response, body) {
+      if (response.statusCode != 200) {
+        console.error("Error updating sauce results: " + body.error  + '/' + response.statusCode);
+      }
+    });
+
+    if (result.passed) {
+      callback();
+    } else if (!result.result || !result.result.errors) {
+      console.error("Unexpected result passed from server");
+      console.error(JSON.stringify(result, null, 4));
+      callback(false);
+    } else {
+      console.error("Unit Test Errors for " + result.platform.join(', ') + "\n •", result.result.errors.join("\n • "));
+      callback(false);
+    }
   }
 
   result.tasks.saucelabs = {
-    all: {
+    test1: {
       options: {
-        tunnelArgs: ["-B all"],
-        browsers: browsers,
-        build: "Layer Web XDK <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
         urls: [
-          "http://localhost:9999/test/core_client.html?stop=true",
-          "http://localhost:9999/test/core_models.html?stop=true",
-          "http://localhost:9999/test/core_queries.html?stop=true",
-          "http://localhost:9999/test/core_services.html?stop=true",
-          "http://localhost:9999/test/core_dbmanager.html?stop=true",
-          "http://localhost:9999/test/ui_components_nested.html?stop=true",
-          "http://localhost:9999/test/ui_messages.html.html?stop=true",
-          "http://localhost:9999/test/ui_components.html?stop=true",
-          "http://localhost:9999/test/ui_components-lists.html?stop=true",
-          "http://localhost:9999/test/ui_handlers.html?stop=true",
-          "http://localhost:9999/test/ui_mixins.html?stop=true"
-        ],
-        /*urls: [
-          "core_client",
-          "core_models_queries",
-          "core_services",
-          "ui_components",
-          "ui_handlers",
-          "ui_messages",
-          "ui_mixins",
-        "ui_utils"].map(function(testName) {
-            return  "http://127.0.0.1:9999/test/" + testName + ".html?stop=true";
-          }),*/
-        tunneled: true,
-        concurrency: 1,
-        throttled: 1,
-        testname: "Running Layer Web XDK <%= pkg.version %> Unit Test",
-        tags: ["master", 'Unit Test', 'Web'],
-
-        // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
-        //pollInterval: 5000, // Check for test results every 5 seconds (miliseconds)
-        //statusCheckAttempts: 360, // Allow up to 30 minutes (presumed to be 30 from start of first browser to end of last)
-        // max-duration should insure that the tunnel stays alive for the specified period.  Large values however cause
-        // saucelabs to just hang and not start any jobs on their servers.  This time appears to be per-job, not total
-        // runtime
-        "max-duration": 400,
-        maxRetries: 2,
-        onTestComplete: function(result, callback) {
-          var testPage = result.testPageUrl.replace(/^.*\//, '').replace(/\?.*$/, '');
-          console.log("----------------------------------------\nSaucelabs Results for " + testPage + ":" + result.passed);
-          require("request").put({
-              url: ['https://saucelabs.com/rest/v1', process.env.SAUCE_USERNAME, 'jobs', result.job_id].join('/'),
-              auth: { user: process.env.SAUCE_USERNAME, pass: process.env.SAUCE_ACCESS_KEY },
-              json: {
-                passed: Boolean(result.passed),
-                name: "Completed Layer Web XDK " + version + " " + testPage,
-              }
-            }, function (error, response, body) {
-              if (response.statusCode != 200) {
-                console.error("Error updating sauce results: " + body.error  + '/' + response.statusCode);
-              }
-            });
-
-            if (result.passed) {
-              callback();
-            } else if (!result.result || !result.result.errors) {
-              console.error("Unexpected result passed from server");
-              console.error(JSON.stringify(result, null, 4));
-              callback(false);
-            } else {
-              console.error("Unit Test Errors for " + result.platform.join(', ') + "\n •", result.result.errors.join("\n • "));
-              callback(false);
-            }
-        }
+          "http://static.layer.com/test/test/core_client.html?stop=true"
+        ]
       }
+    },
+    test2: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/core_models.html?stop=true"
+        ]
+      }
+    },
+    test3: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/core_queries.html?stop=true",
+          "http://static.layer.com/test/test/core_services.html?stop=true"
+        ]
+      }
+    },
+    test4: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/core_services.html?stop=true"
+        ]
+      }
+    },
+    test5: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/core_dbmanager.html?stop=true"
+        ]
+      }
+    },
+    test6: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/ui_messages.html?stop=true"
+        ]
+      }
+    },
+    test7: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/ui_components.html?stop=true"
+        ]
+      }
+    },
+    test8: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/ui_components-lists.html?stop=true"
+        ]
+      }
+    },
+    test9: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/ui_handlers.html?stop=true",
+        ]
+      }
+    },
+    allurls: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/core_client.html?stop=true",
+          "http://static.layer.com/test/test/core_models.html?stop=true",
+          "http://static.layer.com/test/test/core_queries.html?stop=true",
+          "http://static.layer.com/test/test/core_services.html?stop=true",
+          "http://static.layer.com/test/test/core_dbmanager.html?stop=true",
+          "http://static.layer.com/test/test/ui_messages.html?stop=true",
+          "http://static.layer.com/test/test/ui_components.html?stop=true",
+          "http://static.layer.com/test/test/ui_components-lists.html?stop=true",
+          "http://static.layer.com/test/test/ui_handlers.html?stop=true",
+          "http://static.layer.com/test/test/ui_mixins.html?stop=true"
+        ]
+      }
+    },
+    oneurl: {
+      options: {
+        urls: [
+          "http://static.layer.com/test/test/SpecRunner.html"
+        ]
+      }
+    },
+    options: {
+      //tunnelArgs: ["-B all"],
+      tunneled: false,
+      browsers: browsers,
+      build: "Layer Web XDK <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
+
+      concurrency: 1,
+      throttled: 1,
+      testname: "Running Layer Web XDK <%= pkg.version %> Unit Test",
+      tags: ["master", 'Unit Test', 'Web'],
+
+      // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
+      //pollInterval: 5000, // Check for test results every 5 seconds (miliseconds)
+      statusCheckAttempts: 1200 / 2, // Allow up to maxDuration(seconds) / pollInterval (seconds) status checks
+      // max-duration should insure that the tunnel stays alive for the specified period.  Large values however cause
+      // saucelabs to just hang and not start any jobs on their servers.  This time appears to be per-job, not total
+      // runtime
+      "max-duration": 1200,
+      maxRetries: 2,
+      onTestComplete: onTestComplete
     }
   };
   return result;
