@@ -688,7 +688,9 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('refuse-to-publish', function() {
-    throw new Error('cd into the npm folder to complete publishing');
+    if (!process.env.TRAVIS_JOB_NUMBER) {
+      throw new Error('cd into the npm folder to complete publishing');
+    }
   });
 
 
