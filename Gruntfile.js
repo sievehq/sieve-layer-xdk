@@ -711,7 +711,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   //grunt.registerTask('phantomtest', ['debug', 'jasmine:debug']);
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
-  grunt.registerTask("test", ["debug", "generate-tests", "connect:saucelabs", "saucelabs-jasmine:oneurl"]);
+
+  grunt.registerTask("test", ["debug", "generate-tests", "connect:saucelabs",
+    "saucelabs-jasmine:ie11",  "saucelabs-jasmine:edge0",  "saucelabs-jasmine:edge1",  "saucelabs-jasmine:safari0",  "saucelabs-jasmine:safari1",  "saucelabs-jasmine:ios0",  "saucelabs-jasmine:ios1",  "saucelabs-jasmine:firefox0",  "saucelabs-jasmine:firefox1",  "saucelabs-jasmine:chrome0",  "saucelabs-jasmine:chrome1"]);
 
   grunt.registerTask('docs', ['debug', /*'jsducktemplates',*/ 'jsduck', 'jsduckfixes']);
 

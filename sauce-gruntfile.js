@@ -101,7 +101,7 @@ var unsupportedBrowsers = {
   } else {
     browsers = quickTestBrowsers;
   }
-
+/*
   // Why this? Travis tunnel to saucelabs only sometimes survives long
   // enough for all 11 tests to run.  So randomly test 3 browsers each run.
   function getRandomThree() {
@@ -126,6 +126,19 @@ var unsupportedBrowsers = {
     ipaddress = IP.address();
     console.log("IP ADDRESS: " + ipaddress);
   }
+*/
+  var allUrls = [
+    "http://" + ipaddress + ":9999/test/core_client.html?stop=true",
+    "http://" + ipaddress + ":9999/test/core_models.html?stop=true",
+    "http://" + ipaddress + ":9999/test/core_queries.html?stop=true",
+    "http://" + ipaddress + ":9999/test/core_services.html?stop=true",
+    "http://" + ipaddress + ":9999/test/core_dbmanager.html?stop=true",
+    "http://" + ipaddress + ":9999/test/ui_messages.html?stop=true",
+    "http://" + ipaddress + ":9999/test/ui_components.html?stop=true",
+    "http://" + ipaddress + ":9999/test/ui_components-lists.html?stop=true",
+    "http://" + ipaddress + ":9999/test/ui_handlers.html?stop=true",
+    "http://" + ipaddress + ":9999/test/ui_mixins.html?stop=true"
+  ];
 
   function onTestComplete(result, callback) {
     var testPage = result.testPageUrl.replace(/^.*\//, '').replace(/\?.*$/, '');
@@ -156,97 +169,76 @@ var unsupportedBrowsers = {
   }
 
   result.tasks.saucelabs = {
-    /*
-    test1: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/core_client.html?stop=true"
-        ]
+    ie11: {
+      options:{
+        browsers: [supportedBrowsers['ie11']],
+        urls: allUrls
       }
     },
-    test2: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/core_models.html?stop=true"
-        ]
+    edge0: {
+      options:{
+        browsers: [supportedBrowsers['edge-0']],
+        urls: allUrls
       }
     },
-    test3: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/core_queries.html?stop=true",
-          "http://static.layer.com/test/test/core_services.html?stop=true"
-        ]
+    edge1: {
+      options:{
+        browsers: [supportedBrowsers['edge-1']],
+        urls: allUrls
       }
     },
-    test4: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/core_services.html?stop=true"
-        ]
+    safari1: {
+      options:{
+        browsers: [supportedBrowsers['safari-1']],
+        urls: allUrls
       }
     },
-    test5: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/core_dbmanager.html?stop=true"
-        ]
+    safari0: {
+      options:{
+        browsers: [supportedBrowsers['safari-0']],
+        urls: allUrls
       }
     },
-    test6: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/ui_messages.html?stop=true"
-        ]
+    safari1: {
+      options:{
+        browsers: [supportedBrowsers['safari-1']],
+        urls: allUrls
       }
     },
-    test7: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/ui_components.html?stop=true"
-        ]
+    ios0: {
+      options:{
+        browsers: [supportedBrowsers['ios-0']],
+        urls: allUrls
       }
     },
-    test8: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/ui_components-lists.html?stop=true"
-        ]
+    firefox1: {
+      options:{
+        browsers: [supportedBrowsers['firefox-1']],
+        urls: allUrls
       }
     },
-    test9: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/ui_handlers.html?stop=true",
-        ]
-      }
-    },*/
-    allurls: {
-      options: {
-        urls: [
-          "http://" + ipaddress + ":9999/test/core_client.html?stop=true",
-          "http://" + ipaddress + ":9999/test/core_models.html?stop=true",
-          "http://" + ipaddress + ":9999/test/core_queries.html?stop=true",
-          "http://" + ipaddress + ":9999/test/core_services.html?stop=true",
-          "http://" + ipaddress + ":9999/test/core_dbmanager.html?stop=true",
-          "http://" + ipaddress + ":9999/test/ui_messages.html?stop=true",
-          "http://" + ipaddress + ":9999/test/ui_components.html?stop=true",
-          "http://" + ipaddress + ":9999/test/ui_components-lists.html?stop=true",
-          "http://" + ipaddress + ":9999/test/ui_handlers.html?stop=true",
-          "http://" + ipaddress + ":9999/test/ui_mixins.html?stop=true"
-        ]
+    firefox0: {
+      options:{
+        browsers: [supportedBrowsers['firefox-0']],
+        urls: allUrls
       }
     },
-    oneurl: {
-      options: {
-        urls: [
-          "http://static.layer.com/test/test/SpecRunner.html"
-        ]
+    chrome1: {
+      options:{
+        browsers: [supportedBrowsers['chrome-1']],
+        urls: allUrls
       }
     },
+    chrome0: {
+      options:{
+        browsers: [supportedBrowsers['chrome-0']],
+        urls: allUrls
+      }
+    },
+
     options: {
-      //tunnelArgs: ["-B all"],
-      tunneled: false,
+      tunnelArgs: ["-B all"],
+      tunneled: true,
       browsers: browsers,
       build: "Layer Web XDK <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
 
@@ -266,5 +258,6 @@ var unsupportedBrowsers = {
       onTestComplete: onTestComplete
     }
   };
+
   return result;
 };
