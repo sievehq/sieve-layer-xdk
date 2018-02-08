@@ -115,6 +115,9 @@ var unsupportedBrowsers = {
     return browserArray;
   }
 
+console.log("PROCESS ENV::::::::");
+console.dir(process.env);
+
   if (process.env.TRAVIS_JOB_NUMBER) {
     browsers = getRandomThree();
     browsers.forEach(function(item) {
