@@ -6,4 +6,4 @@ addons:
     username: layer-ui-web
   jwt:
     secure: bC2/GHogeLyM4NJLU8buiY9kL561EBalObCituQsWO1KMudQSz+mw6g67K3Q+MOdsnxmwnjBJx6p9auZRAQyZLUrK6/DCgcuDqBa65vW7UdjeVf13ye3zeasr4k7mDav9Q+rNYTXX3/q0tJbaeWqsMo/YPVPP2RX4lMI0n1ArrMVTp2Bt0i/i7Txa1U8r1t6bC8DmdR048XXkw/6Vukl6bOAjSP6zGtu548okHAg2+HrryLRFqra2/fV53uZ8NY07FzBAoDsIF7NMpUK49RpBUDZJlTYz7vC7u/nR6jhnk6tUIVpStGqguwE1iEnpkvvlxa7MHCdGYZyQYXfs6PnVPLDqDIo1vCulapLEmoZkepn8g5yIyIJwJ0a3M/Qz8/QUXTfBk4bjj3fCfjebLZkJQ9W7GWXMOfZ4UHNlAWtjkYC5OLZaT+W8u5I+YdrVvqz58qJXVKF+Ejhu+wW18v5nZdyemdXqdX3VboEBPesfqeA9YOqhk9HOOU0p0IGHqCzPzqqN12QG3g48K/tAii9t1BwGyg+2syo4YoT+pTFpi5JFI4rMYeENF/gRnIOed7mcnuZv/vyTvq3idInk0ANh7xBboQgTzULe8zay1fQCj1AYTnA3unhJaqbwPROzeBf++FgCYfhGCMH715peBrPkKVpHMUL1EAEm3tiNojJg1s=
-script: export TRAVIS_IP_ADDRESS=`curl ipecho.net/plain`; grunt test;
+script: export TRAVIS_IP_ADDRESS=`ipconfig getifaddr eth0`; grunt test;
