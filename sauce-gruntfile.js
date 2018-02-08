@@ -115,9 +115,6 @@ var unsupportedBrowsers = {
     return browserArray;
   }
 
-console.log("PROCESS ENV::::::::");
-console.dir(process.env);
-
   if (process.env.TRAVIS_JOB_NUMBER) {
     browsers = getRandomThree();
     browsers.forEach(function(item) {
@@ -156,6 +153,7 @@ console.dir(process.env);
   }
 
   result.tasks.saucelabs = {
+    /*
     test1: {
       options: {
         urls: [
@@ -219,7 +217,7 @@ console.dir(process.env);
           "http://static.layer.com/test/test/ui_handlers.html?stop=true",
         ]
       }
-    },
+    },*/
     allurls: {
       options: {
         urls: [
