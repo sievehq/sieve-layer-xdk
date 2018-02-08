@@ -21,6 +21,7 @@
     "backbone-events-standalone": "^0.2.7",
     "base64-js": "^1.2.0",
     "blueimp-load-image": "^2.9.0",
+    "ip": "^1.1.5",
     "layer-patch": "^1.2.1",
     "notifyjs": "^2.0.3",
     "remarkable-emoji": "^0.1.3",

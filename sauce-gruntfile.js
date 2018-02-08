@@ -89,6 +89,7 @@ var unsupportedBrowsers = {
 };
 
   var browsers;
+  var ipaddress = "localhost";
   if (grunt.option('browsers')) {
     browsers = grunt.option('browsers').split(/\s*,\s*/).map(function(name) {
       if (supportedBrowsers[name]) return supportedBrowsers[name];
@@ -121,7 +122,8 @@ var unsupportedBrowsers = {
       item['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER;
     });
 
-    console.dir(process.env);
+    var IP = require('ip');
+    ipaddress = IP.address();
   }
 
   function onTestComplete(result, callback) {
@@ -221,16 +223,16 @@ var unsupportedBrowsers = {
     allurls: {
       options: {
         urls: [
-          "http://static.layer.com/test/test/core_client.html?stop=true",
-          "http://static.layer.com/test/test/core_models.html?stop=true",
-          "http://static.layer.com/test/test/core_queries.html?stop=true",
-          "http://static.layer.com/test/test/core_services.html?stop=true",
-          "http://static.layer.com/test/test/core_dbmanager.html?stop=true",
-          "http://static.layer.com/test/test/ui_messages.html?stop=true",
-          "http://static.layer.com/test/test/ui_components.html?stop=true",
-          "http://static.layer.com/test/test/ui_components-lists.html?stop=true",
-          "http://static.layer.com/test/test/ui_handlers.html?stop=true",
-          "http://static.layer.com/test/test/ui_mixins.html?stop=true"
+          "http://" + ipaddress + ":9999/test/core_client.html?stop=true",
+          "http://" + ipaddress + ":9999/test/core_models.html?stop=true",
+          "http://" + ipaddress + ":9999/test/core_queries.html?stop=true",
+          "http://" + ipaddress + ":9999/test/core_services.html?stop=true",
+          "http://" + ipaddress + ":9999/test/core_dbmanager.html?stop=true",
+          "http://" + ipaddress + ":9999/test/ui_messages.html?stop=true",
+          "http://" + ipaddress + ":9999/test/ui_components.html?stop=true",
+          "http://" + ipaddress + ":9999/test/ui_components-lists.html?stop=true",
+          "http://" + ipaddress + ":9999/test/ui_handlers.html?stop=true",
+          "http://" + ipaddress + ":9999/test/ui_mixins.html?stop=true"
         ]
       }
     },
