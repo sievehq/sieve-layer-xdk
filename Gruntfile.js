@@ -653,7 +653,7 @@ module.exports = function (grunt) {
             if (index < allScripts.length - 1) {
               testFile = testFile.replace(/next_file_name_here\.html/, specFiles[i].destName + allScripts[index + 1] + '.html');
             } else {
-              testFile = testFile.replace(/next_file_name_here\.html/, 'tests_done.html');
+              testFile = testFile.replace(/window.location.pathname/, '//window.location.pathname');
             }
             console.log("WRITE " + specFiles[i].destName + testName + '.html');
             grunt.file.write(filePath.replace(/[^/]*$/, specFiles[i].destName + testName + '.html'), testFile);
