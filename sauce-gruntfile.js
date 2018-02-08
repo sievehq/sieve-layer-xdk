@@ -124,6 +124,7 @@ var unsupportedBrowsers = {
 
     var IP = require('ip');
     ipaddress = IP.address();
+    console.log("IP ADDRESS: " + ipaddress);
   }
 
   function onTestComplete(result, callback) {

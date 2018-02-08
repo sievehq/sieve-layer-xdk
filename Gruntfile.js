@@ -618,7 +618,6 @@ module.exports = function (grunt) {
     // Iterate over each file set and generate the build file specified for that set
     this.files.forEach(function(fileGroup) {
       fileGroup.src.forEach(function(file, index) {
-        console.log(file);
         var scriptTag = '<script src="../' + file + '" type="text/javascript"></script>';
         var folderName = file.replace(/src\/ui\/?(.*?)\/.*$/, "$1");
         var componentFolderName = file.replace(/src\/ui\/components\/?(.*?)\/.*$/, "$1");
@@ -655,7 +654,6 @@ module.exports = function (grunt) {
             } else {
               testFile = testFile.replace(/window.location.pathname/, '//window.location.pathname');
             }
-            console.log("WRITE " + specFiles[i].destName + testName + '.html');
             grunt.file.write(filePath.replace(/[^/]*$/, specFiles[i].destName + testName + '.html'), testFile);
           });
         }
