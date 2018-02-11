@@ -433,7 +433,7 @@ registerComponent('layer-message-list', {
       if (UIUtils.isInBackground() || this.disable) return;
 
       const children = Array.prototype.slice.call(this.childNodes);
-      children.forEach((child) => {
+      children.filter(item => item.tagName !== 'DIV').forEach((child, index) => {
         if (child.properties && child.properties.item && !child.properties.item.isRead && this._shouldMarkAsRead(child)) {
           // TODO: Use a scheduler rather than many setTimeout calls
           setTimeout(() => this._markAsRead(child), Settings.markReadDelay);
@@ -476,6 +476,7 @@ registerComponent('layer-message-list', {
      * @param {Layer.UI.components.MessageListPanel.Item} child
      */
     _markAsRead(child) {
+      console.log("Should mark as read");
       if (this._shouldMarkAsRead(child)) {
         child.properties.item.isRead = true;
       }

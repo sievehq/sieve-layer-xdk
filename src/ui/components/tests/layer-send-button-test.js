@@ -13,6 +13,20 @@ describe('layer-send-button', function() {
 
   });
 
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
+
   it("Should use the text property", function() {
     el.text = "hey ho";
     expect(el.firstChild.innerHTML).toEqual("hey ho");
@@ -23,7 +37,7 @@ describe('layer-send-button', function() {
     document.body.addEventListener('layer-send-click', eventSpy);
 
     // Run
-    el.click();
+    click(el);
 
     // Posttest
     expect(eventSpy).toHaveBeenCalledWith(jasmine.any(Event));

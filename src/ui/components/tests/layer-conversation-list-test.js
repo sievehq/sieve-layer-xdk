@@ -57,6 +57,20 @@ describe('layer-conversation-list', function() {
     } catch(e) {}
   });
 
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
+
   describe('Event Handling', function() {
     it("Should call onConversationSelected when layer-conversation-selected is triggered", function() {
       var spy = jasmine.createSpy('callback');
@@ -110,7 +124,7 @@ describe('layer-conversation-list', function() {
     it("Should wire up onClick", function() {
       var selectSpy = jasmine.createSpy('click');
       el.addEventListener('layer-conversation-selected', selectSpy);
-      el.childNodes[10].click();
+      click(el.childNodes[10]);
       expect(selectSpy).toHaveBeenCalled();
     });
   });

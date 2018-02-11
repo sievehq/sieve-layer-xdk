@@ -266,9 +266,9 @@ module.exports = function (grunt) {
     watch: {
       js: {
         files: ['package.json', 'Gruntfile.js', 'samples/index-all.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
-        tasks: ['debug', 'notify:watch'],
+        tasks: ['notify:start', 'debug', 'notify:watch'],
         options: {
-          interrupt: true
+          interrupt: false
         }
       },
       themes: {
@@ -277,13 +277,22 @@ module.exports = function (grunt) {
         options: {
           interrupt: true
         }
+      },
+      options: {
+        atBegin: true
       }
     },
     notify: {
       watch: {
         options: {
           title: 'Watch Build',  // optional
-          message: 'Build Complete', //required
+          message: 'Build Complete' //required
+        }
+      },
+      start: {
+        options: {
+          title: 'Start Build',
+          message: 'Starting Build'
         }
       }
     },
@@ -466,7 +475,7 @@ module.exports = function (grunt) {
       var endIndex = contents.indexOf('`', startIndex);
       if (endIndex === -1) return contents;
 
-      var stringToOptimize = contents.substring(startIndex, endIndex).replace(commentExpr, '').split(/\n/).map(line => line.trim()).filter(line => line).join('\n');
+      var stringToOptimize = contents.substring(startIndex, endIndex).replace(commentExpr, '').split(/\n/).map(line => line.trim()).filter(line => line).join('\n').replace(/>\n</g, '><');
       return contents.substring(0, startIndex) + stringToOptimize + contents.substring(endIndex);
     }
 
@@ -618,6 +627,15 @@ module.exports = function (grunt) {
     // Iterate over each file set and generate the build file specified for that set
     this.files.forEach(function(fileGroup) {
       fileGroup.src.forEach(function(file, index) {
+
+        // If we don't validate that the unit test file compiles, it will simply be skipped during a test run.
+        // Do not allow grunt to complete if any unit tests fail to compile
+        try {
+          var f = new Function(grunt.file.read(file));
+        } catch(e) {
+          console.error(e);
+          throw new Error("Test file " + file + " has a compilation error");
+        }
         var scriptTag = '<script src="../' + file + '" type="text/javascript"></script>';
         var folderName = file.replace(/src\/ui\/?(.*?)\/.*$/, "$1");
         var componentFolderName = file.replace(/src\/ui\/components\/?(.*?)\/.*$/, "$1");
@@ -652,31 +670,14 @@ module.exports = function (grunt) {
             if (index < allScripts.length - 1) {
               testFile = testFile.replace(/next_file_name_here\.html/, specFiles[i].destName + allScripts[index + 1] + '.html');
             } else {
-              testFile = testFile.replace(/window.location.pathname/, '//window.location.pathname');
+              //testFile = testFile.replace(/window.location.pathname/, '//window.location.pathname');
+              testFile = testFile.replace(/next_file_name_here\.html/, 'tests_done.html');
             }
             grunt.file.write(filePath.replace(/[^/]*$/, specFiles[i].destName + testName + '.html'), testFile);
           });
         }
       }
     }
-  });
-
-  grunt.registerTask('wait', 'Waiting for files to appear', function() {
-    console.log('Waiting...');
-    var done = this.async();
-
-    // There is an inexplicable delay between when grunt writes a file (and confirms it as written) and when it shows up in the file system.
-    // This has no affect on subsequent grunt tasks but can severely impact npm publish
-    // Note that we can't test if a file exists because grunt reports that it exists even if it hasn't yet been flushed to the file system.
-    setTimeout(function() {
-      console.log("Waiting...");
-      setTimeout(function() {
-        console.log("Waiting...");
-        setTimeout(function() {
-          done();
-        }, 1500);
-      }, 1500);
-    }, 1500);
   });
 
   grunt.registerTask('fix-npm-package', function() {
@@ -729,5 +730,5 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['build']);
 
   // Open a port for running tests and rebuild whenever anything interesting changes
-  grunt.registerTask("develop", ["debug", "connect:develop", "watch"]);
+  grunt.registerTask("develop", ["connect:develop", "watch"]);
 };

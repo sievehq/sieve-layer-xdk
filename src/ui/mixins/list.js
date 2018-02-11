@@ -105,6 +105,7 @@ module.exports = {
      * @private
      */
     _onScroll(evt) {
+      console.log("_onScroll: isSelfScrolling " + this.properties.isSelfScrolling);
       if (this.properties.isSelfScrolling) {
         evt.preventDefault();
       } else {

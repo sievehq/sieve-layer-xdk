@@ -8,9 +8,8 @@ describe("Conversation Integration Tests", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new Layer.Core.Client({
+        client = Layer.init({
             appId: appId,
-            url: "https://huh.com",
             isTrustedDevice: false
         });
         client.sessionToken = "sessionToken";

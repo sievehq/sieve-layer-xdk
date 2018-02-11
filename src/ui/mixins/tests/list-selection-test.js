@@ -51,6 +51,22 @@ describe("List Selection Mixin", function() {
     } catch(e) {}
   });
 
+
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.click();
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
+
   describe("The selectedId property", function() {
     it("Should set isSelected for the specified item", function() {
       expect(el.childNodes[5].isSelected).toBe(false);
@@ -99,7 +115,7 @@ describe("List Selection Mixin", function() {
   describe("User Selection Handling", function() {
     it("Should wire up _onClick and onClick", function() {
       spyOn(el, "onClick");
-      el.click();
+      click(el);
       expect(el.onClick).toHaveBeenCalled();
     });
 
@@ -110,18 +126,18 @@ describe("List Selection Mixin", function() {
           item: el.childNodes[5].item,
         });
       });
-      el.childNodes[5].click();
+      click(el.childNodes[5]);
       expect(el.childNodes[5].isSelected).toBe(false);
     });
 
     it("Should select the item if not canceled", function() {
-      el.childNodes[5].click();
+      click(el.childNodes[5]);
       expect(el.childNodes[5].isSelected).toBe(true);
     });
 
     it("Should call onClick", function() {
       spyOn(el, "onClick");
-      el.click();
+      click(el);
       expect(el.onClick).toHaveBeenCalledWith(jasmine.any(Event));
     });
   });

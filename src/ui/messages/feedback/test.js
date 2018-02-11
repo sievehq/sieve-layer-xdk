@@ -61,8 +61,21 @@ describe('Feedback Message Components', function() {
   afterEach(function() {
     if (client) client.destroy();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
-
   });
+
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
 
   describe("Model Tests", function() {
     it("Should create an appropriate Message", function() {
@@ -249,7 +262,7 @@ describe('Feedback Message Components', function() {
       spyOn(model, "isEditable").and.returnValue(true);
 
       // Run
-      el.nodes.ui.childNodes[3].click();
+      click(el.nodes.ui.childNodes[3]);
 
       // Posttest
       expect(model.rating).toEqual(4);
@@ -262,7 +275,7 @@ describe('Feedback Message Components', function() {
       model.rating = 2;
 
       // Run
-      el.nodes.ui.childNodes[3].click();
+      click(el.nodes.ui.childNodes[3]);
 
       // Posttest
       expect(model.rating).toEqual(2);
@@ -336,7 +349,7 @@ describe('Feedback Message Components', function() {
       spyOn(model, "isEditable").and.returnValue(true);
 
       // Run
-      ui.nodes.ratings.childNodes[3].click();
+      click(ui.nodes.ratings.childNodes[3]);
 
       // Posttest
       expect(model.rating).toEqual(4);
@@ -346,7 +359,7 @@ describe('Feedback Message Components', function() {
       spyOn(model, "isEditable").and.returnValue(false);
 
       // Run
-      ui.nodes.ratings.childNodes[3].click();
+      click(el.nodes.ui.childNodes[3]);
 
       // Posttest
       expect(model.rating).toEqual(0);
@@ -372,7 +385,7 @@ describe('Feedback Message Components', function() {
       spyOn(model, "sendFeedback");
 
       // Run
-      ui.nodes.button.click();
+      click(ui.nodes.button);
 
       // Posttest
       expect(el.onDestroy).toHaveBeenCalledWith();

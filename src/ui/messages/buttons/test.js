@@ -64,6 +64,16 @@ describe('Button Message Components', function() {
 
   });
 
+  function click(el) {
+    var evt = new Event('touchstart');
+    evt.touches = [{screenX: 400, screenY: 400}];
+    el.dispatchEvent(evt);
+
+    var evt = new Event('touchend');
+    evt.touches = [{screenX: 400, screenY: 400}];
+    el.dispatchEvent(evt);
+  }
+
   describe("Model Tests", function() {
     it("Should create an appropriate Action Buttons Model", function() {
       var model = new ButtonsModel({
@@ -543,7 +553,11 @@ describe('Button Message Components', function() {
 
       expect(model.choices.isstarred.selectedAnswer).toEqual("");
 
-      buttons.childNodes[0].childNodes[0].click();
+      if (Layer.Utils.isIOS) {
+        click(buttons.childNodes[0].childNodes[0]);
+      } else {
+        buttons.childNodes[0].childNodes[0].click();
+      }
       Layer.Utils.defer.flush();
       jasmine.clock().tick(1);
 
@@ -630,7 +644,11 @@ describe('Button Message Components', function() {
 
       var buttons = el.nodes.ui.nodes.buttons;
 
-      buttons.childNodes[0].childNodes[0].click();
+      if (Layer.Utils.isIOS) {
+        click(buttons.childNodes[0].childNodes[0]);
+      } else {
+        buttons.childNodes[0].childNodes[0].click();
+      }
 
 
       expect(spy).toHaveBeenCalled();
@@ -681,7 +699,11 @@ describe('Button Message Components', function() {
 
       var buttons = el.nodes.ui.nodes.buttons;
 
-      buttons.childNodes[0].childNodes[0].click();
+      if (Layer.Utils.isIOS) {
+        click(buttons.childNodes[0].childNodes[0]);
+      } else {
+        buttons.childNodes[0].childNodes[0].click();
+      }
 
       var responseMessage = model.choices.isstarred._sendResponse.calls.allArgs()[0][0];
       var responsePart = responseMessage.getRootPart();

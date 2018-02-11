@@ -16,8 +16,18 @@ describe('layer-action-button', function() {
     if (client) client.destroy();
 
     document.body.removeChild(testRoot);
-  })
-  ;
+  });
+
+  function click(el) {
+    var evt = new Event('touchstart', { bubbles: true });
+    evt.touches = [{screenX: 400, screenY: 400}];
+    el.dispatchEvent(evt);
+
+    var evt = new Event('touchend', { bubbles: true });
+    evt.touches = [{screenX: 400, screenY: 400}];
+    el.dispatchEvent(evt);
+  }
+
   it("Should set the button text", function() {
     el.text = "hey ho";
     expect(el.nodes.button.innerHTML).toEqual("hey ho");
@@ -32,7 +42,11 @@ describe('layer-action-button', function() {
     el.event = "kill-frodo-the-dodo";
     var spy = jasmine.createSpy('callback');
     el.addEventListener("kill-frodo-the-dodo", spy);
-    el.click();
+    if (Layer.Utils.isIOS) {
+      click(el);
+    } else {
+      el.click();
+    }
     expect(spy).toHaveBeenCalledWith(jasmine.any(Event));
   });
 
@@ -43,7 +57,11 @@ describe('layer-action-button', function() {
     el.addEventListener("kill-frodo-the-dodo", function(evt) {
       eventData = evt.detail;
     });
-    el.click();
+    if (Layer.Utils.isIOS) {
+      click(el);
+    } else {
+      el.click();
+    }
     expect(eventData).toEqual({howdy: "ho"});
   });
 

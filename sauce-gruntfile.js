@@ -249,7 +249,7 @@ var unsupportedBrowsers = {
 
       // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
       //pollInterval: 5000, // Check for test results every 5 seconds (miliseconds)
-      statusCheckAttempts: 1200 / 2, // Allow up to maxDuration(seconds) / pollInterval (seconds) status checks
+      statusCheckAttempts: 1200,// / 2, // Allow up to maxDuration(seconds) / pollInterval (seconds) status checks
       // max-duration should insure that the tunnel stays alive for the specified period.  Large values however cause
       // saucelabs to just hang and not start any jobs on their servers.  This time appears to be per-job, not total
       // runtime

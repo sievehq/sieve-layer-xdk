@@ -22,20 +22,33 @@ describe('layer-menu-button', function() {
   afterEach(function() {
     if (client) client.destroy();
     document.body.removeChild(testRoot);
-
   });
+
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
 
   it("Should wire up the button to call onButtonClick", function() {
     var menus = document.querySelectorAll('layer-menu');
     for (var i = 0; i < menus.length; i++) menus[i].parentNode.removeChild(menus[i]);
     expect(document.querySelectorAll('layer-menu').length).toEqual(0);
-    el.click();
+    click(el);
     expect(document.querySelectorAll('layer-menu').length).toEqual(1);
   });
 
   it("Should apply menuWidth", function() {
     el.menuWidth = 345;
-    el.click();
+    click(el);
     expect(document.querySelector('layer-menu').style.minWidth).toEqual('345px');
   });
 
@@ -45,14 +58,14 @@ describe('layer-menu-button', function() {
     el.getMenuOptions = function(item) {
       calledWith = item;
     };
-    el.click();
+    click(el);
     expect(calledWith).toEqual("Frodo");
   });
 
   it("Should apply menu options to the menu", function() {
     var options = [];
     el.getMenuOptions = function() {return options;};
-    el.click();
+    click(el);
     expect(document.querySelector('layer-menu').items).toBe(options);
   });
 });
