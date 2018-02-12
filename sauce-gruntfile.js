@@ -140,15 +140,20 @@ var unsupportedBrowsers = {
     "http://" + ipaddress + ":9999/test/ui_mixins.html?stop=true"
   ];
 
+  var totalRuns = Object.keys(supportedBrowsers).length * allUrls.length;
+  var currentRuns = 0;
+
   function onTestComplete(result, callback) {
+    currentRuns++;
     var testPage = result.testPageUrl.replace(/^.*\//, '').replace(/\?.*$/, '');
     console.log("----------------------------------------\nSaucelabs Results for " + testPage + ":" + result.passed);
+    console.log("Completed: " + currentRuns + " of " + totalRuns);
     require("request").put({
       url: ['https://saucelabs.com/rest/v1', process.env.SAUCE_USERNAME, 'jobs', result.job_id].join('/'),
       auth: { user: process.env.SAUCE_USERNAME, pass: process.env.SAUCE_ACCESS_KEY },
       json: {
         passed: Boolean(result.passed),
-        name: "Completed Layer Web XDK " + version + " " + testPage,
+        name: currentRuns + "/" + totalRuns + ": Completed Layer Web XDK " + version + " " + testPage,
       }
     }, function (error, response, body) {
       if (response.statusCode != 200) {
@@ -242,18 +247,18 @@ var unsupportedBrowsers = {
       browsers: browsers,
       build: "Layer Web XDK <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
 
-      concurrency: 1,
-      throttled: 1,
+      concurrency: 2,
+      throttled: 2,
       testname: "Running Layer Web XDK <%= pkg.version %> Unit Test",
       tags: ["master", 'Unit Test', 'Web'],
 
       // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
       //pollInterval: 5000, // Check for test results every 5 seconds (miliseconds)
-      statusCheckAttempts: 1200,// / 2, // Allow up to maxDuration(seconds) / pollInterval (seconds) status checks
+      statusCheckAttempts: 1800 / 2, // Allow up to maxDuration(seconds) / pollInterval (seconds) status checks
       // max-duration should insure that the tunnel stays alive for the specified period.  Large values however cause
       // saucelabs to just hang and not start any jobs on their servers.  This time appears to be per-job, not total
       // runtime
-      "max-duration": 1200,
+      "max-duration": 1800,
       maxRetries: 2,
       onTestComplete: onTestComplete
     }
