@@ -47,6 +47,7 @@ describe('layer-conversation-view', function() {
 
     el.query = query;
     jasmine.clock().tick(1);
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {

@@ -43,6 +43,7 @@ describe("Size Property Mixin", function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
 
+    if (el) el.destroy();
     if (client) client.destroy();
   });
 

@@ -1,6 +1,6 @@
 import Events from 'backbone-events-standalone/backbone-events-standalone';
 import Core from './namespace';
-import Util, { logger } from '../utils';
+import Util, { logger, defer } from '../utils';
 import LayerEvent from './layer-event';
 import { ErrorDictionary } from './layer-error';
 
@@ -12,14 +12,14 @@ import { ErrorDictionary } from './layer-error';
 function EventClass() { }
 EventClass.prototype = Events;
 
-const SystemBus = new EventClass();
-if (typeof postMessage === 'function') {
-  addEventListener('message', (event) => {
-    if (event.data.type === 'layer-delayed-event') {
-      SystemBus.trigger(event.data.internalId + '-delayed-event');
-    }
-  });
-}
+// const SystemBus = new EventClass();
+// if (typeof postMessage === 'function') {
+//   addEventListener('message', (event) => {
+//     if (event.data.type === 'layer-delayed-event') {
+//       SystemBus.trigger(event.data.internalId + '-delayed-event');
+//     }
+//   });
+// }
 
 // Used to generate a unique internalId for every Root instance
 const uniqueIds = {};
@@ -146,7 +146,7 @@ class Root extends EventClass {
     this.internalId = name + uniqueIds[name]++;
 
     // Every component listens to the SystemBus for postMessage (triggerAsync) events
-    SystemBus.on(this.internalId + '-delayed-event', this._processDelayedTriggers, this);
+    //SystemBus.on(this.internalId + '-delayed-event', this._processDelayedTriggers, this);
 
     // Generate a temporary id if there isn't an id
     if (!this.id && !options.id && this.constructor.prefixUUID) {
@@ -181,7 +181,7 @@ class Root extends EventClass {
 
     // Cleanup pointers to SystemBus. Failure to call destroy
     // will have very serious consequences...
-    SystemBus.off(this.internalId + '-delayed-event', null, this);
+    //SystemBus.off(this.internalId + '-delayed-event', null, this);
 
     // Remove all events, and all pointers passed to this object by other objects
     this.off();
@@ -495,20 +495,21 @@ class Root extends EventClass {
       (this._delayedTriggers.length && this._lastDelayedTrigger + 500 < Date.now());
     if (shouldScheduleTrigger) {
       this._lastDelayedTrigger = Date.now();
-      if (typeof postMessage === 'function' && typeof jasmine === 'undefined') {
-        const messageData = {
-          type: 'layer-delayed-event',
-          internalId: this.internalId,
-        };
-        if (typeof document !== 'undefined') {
-          window.postMessage(messageData, '*');
-        } else {
-          // React Native reportedly lacks a document, and throws errors on the second parameter
-          window.postMessage(messageData);
-        }
-      } else {
-        setTimeout(() => this._processDelayedTriggers(), 0);
-      }
+      defer(() => this._processDelayedTriggers());
+      // if (typeof postMessage === 'function' && typeof jasmine === 'undefined') {
+      //   const messageData = {
+      //     type: 'layer-delayed-event',
+      //     internalId: this.internalId,
+      //   };
+      //   if (typeof document !== 'undefined') {
+      //     window.postMessage(messageData, '*');
+      //   } else {
+      //     // React Native reportedly lacks a document, and throws errors on the second parameter
+      //     window.postMessage(messageData);
+      //   }
+      // } else {
+      //   setTimeout(() => this._processDelayedTriggers(), 0);
+      // }
     }
   }
 

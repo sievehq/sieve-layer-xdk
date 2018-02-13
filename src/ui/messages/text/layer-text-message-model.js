@@ -41,7 +41,6 @@ import { register } from '../../handlers/message/message-handlers';
 import { STANDARD_MIME_TYPES } from '../../../constants';
 
 class TextModel extends MessageTypeModel {
-
   /**
    * Generate all of the Layer.Core.MessagePart needed to represent this Model.
    *
@@ -69,6 +68,10 @@ class TextModel extends MessageTypeModel {
   // Used to render Last Message in the Conversation List
   getOneLineSummary() {
     return this.title || this.text;
+  }
+
+  destroy() {
+    super.destroy();
   }
 }
 

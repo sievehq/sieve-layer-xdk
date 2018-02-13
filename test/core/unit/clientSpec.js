@@ -121,11 +121,13 @@ describe("The Client class", function() {
             expect(client.appId).toEqual("Doh!");
         });
 
-        it("Should not allow appId to be reset", function() {
+        it("Should not allow appId to be reset unless not yet connecting", function() {
+            client.appId = "Ray!";
+            client._wantsToBeAuthenticated = true;
             expect(function() {
-                client.appId = "Ray!";
-            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.appIdImmutable);
-            expect(Layer.Core.LayerError.ErrorDictionary.appIdImmutable.length > 0).toBe(true);
+                client.appId = "Ray2!";
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);
+            expect(Layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected.length > 0).toBe(true);
         });
     });
 
@@ -522,7 +524,7 @@ describe("The Client class", function() {
                         ["conversations:add", jasmine.objectContaining({
                             conversations: [c2]
                         })]
-                    ], "conversations");
+                    ], "conversations", client);
             });
 
             it("Should call _foldEvents on all conversations:remove events", function() {
@@ -550,7 +552,7 @@ describe("The Client class", function() {
                         ["conversations:remove", jasmine.objectContaining({
                             conversations: [c2]
                         })]
-                    ], "conversations);
+                    ], "conversations", client);
             });
 
             it("Should call _foldEvents on all messages:add events", function() {
@@ -578,7 +580,7 @@ describe("The Client class", function() {
                         ["messages:add", jasmine.objectContaining({
                             messages: [m2]
                         })]
-                    ], "messages");
+                    ], "messages", client);
             });
 
             it("Should call _foldEvents on all messages:remove events", function() {
@@ -606,7 +608,7 @@ describe("The Client class", function() {
                         ["messages:remove", jasmine.objectContaining({
                             messages: [m2]
                         })]
-                    ], "messages");
+                    ], "messages", client);
             });
 
             it("Should call _foldEvents on all identities:add events", function() {
@@ -633,7 +635,7 @@ describe("The Client class", function() {
                         ["identities:add", jasmine.objectContaining({
                             identities: [i2]
                         })]
-                    ], "identities");
+                    ], "identities", client);
             });
 
             it("Should call _foldEvents on all identities:remove events", function() {
@@ -660,7 +662,7 @@ describe("The Client class", function() {
                         ["identities:remove", jasmine.objectContaining({
                             identities: [i2]
                         })]
-                    ], "identities");
+                    ], "identities", client);
             });
         });
 
@@ -820,6 +822,7 @@ describe("The Client class", function() {
                 var m2 = c.createMessage("b").send();
                 var m3 = c.createMessage("c").send();
                 jasmine.clock().tick(1);
+                Layer.Utils.defer.flush();
 
                 // Pretest
                 expect(query.data).toEqual([m3, m2, m1]);

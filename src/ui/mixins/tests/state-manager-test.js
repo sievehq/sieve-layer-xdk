@@ -35,6 +35,9 @@ describe("State property", function() {
 
     el.state = {hey: "ho"};
     expect(el.onRenderState).toHaveBeenCalledWith();
+
+    // Cleanup
+    el.destroy();
   });
 
   it("Should not call onRenderState if no state is set", function() {
@@ -50,5 +53,8 @@ describe("State property", function() {
     Layer.Utils.defer.flush();
     expect(el.state).toEqual(null);
     expect(el.onRenderState).not.toHaveBeenCalled();
+
+    // Cleanup
+    el.destroy();
   });
 });

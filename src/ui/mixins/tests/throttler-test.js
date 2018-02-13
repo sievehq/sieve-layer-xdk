@@ -34,7 +34,9 @@ describe("The Throttler Mixin", function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
 
+    if (el) el.destroy();
     if (client) client.destroy();
+    client = null;
   });
   it("Should call once to start and once more after the timeout", function() {
     el._throttlerTimeout = 1000;

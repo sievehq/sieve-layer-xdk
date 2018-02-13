@@ -53,10 +53,9 @@ describe("List Load Mixin", function() {
 
   afterEach(function() {
     document.body.removeChild(testRoot);
-    if (el) el.onDestroy();
-    jasmine.clock().uninstall();
-
+    if (el) el.destroy();
     if (client) client.destroy();
+    jasmine.clock().uninstall();
   });
 
   describe("The isDataLoading property", function() {

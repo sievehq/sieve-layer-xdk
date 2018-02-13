@@ -39,7 +39,9 @@ describe("The File Drop Mixin", function() {
   });
 
   afterEach(function() {
-    el.destroy();
+    if (el) el.destroy();
+    if (client) client.destroy();
+    jasmine.clock().uninstall();
   });
 
   it("Should send a File Message", function() {

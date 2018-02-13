@@ -4,7 +4,7 @@ describe("Focus On Keydown Mixin", function() {
     Layer.UI.registerComponent('focus-on-keydown-test', {
       mixins: [Layer.UI.mixins.FocusOnKeydown],
       methods: {
-        onKeyDown() {
+        onKeyDown: function() {
 
         }
       }
@@ -37,8 +37,10 @@ describe("Focus On Keydown Mixin", function() {
   });
 
   afterEach(function() {
+    if (el) el.destroy();
+    if (client) client.destroy();
+    client = null;
     jasmine.clock().uninstall();
-    client.destroy();
     document.body.removeChild(testRoot);
 
   });

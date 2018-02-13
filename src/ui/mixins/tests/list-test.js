@@ -56,13 +56,12 @@ describe("List Mixin", function() {
     Layer.Utils.defer.flush();
     jasmine.clock().tick(500);
     Layer.Utils.defer.flush();
-    jasmine.clock().uninstall();
 
-    // ios browser failed "Should wire up the scroll event handler" without this
+    jasmine.clock().uninstall();
     setTimeout(function() {
       jasmine.clock().install();
       done();
-    }, 1000);
+    }, 100);
   });
 
   afterEach(function() {
@@ -176,7 +175,7 @@ describe("List Mixin", function() {
       setTimeout(function() {
         jasmine.clock().install();
         done();
-      }, 1000);
+      }, 100);
     });
 
     it("Should wire up the scroll event handler", function(done) {
@@ -193,7 +192,7 @@ describe("List Mixin", function() {
         });
         //debugger;
         el.scrollTop = 500;
-      }, 2000);
+      }, 200);
     });
 
     it("Should initialize listData", function() {

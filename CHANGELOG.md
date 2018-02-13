@@ -3,6 +3,8 @@
 ## 1.0.0-pre2.3
 
 * Automated tests setup with travis + saucelabs
+* Removes SystemBus from `root.js`; uses `Layer.Utils.defer` instead
+* Memory leaks removed from unit tests
 
 ## 1.0.0-pre2.2
 

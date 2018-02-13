@@ -36,6 +36,7 @@ describe('layer-identity-item', function() {
   });
 
   afterEach(function() {
+    if (el) el.destroy();
     if (client) client.destroy();
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);

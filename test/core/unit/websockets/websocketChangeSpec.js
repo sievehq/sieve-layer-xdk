@@ -47,6 +47,7 @@ describe("The Websocket Change Manager Class", function() {
     });
 
     afterEach(function() {
+        if (client && !client.isDestroyed) client.destroy();
         jasmine.Ajax.uninstall();
         jasmine.clock().uninstall();
     });

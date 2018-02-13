@@ -30,6 +30,7 @@ if (window.Notification) {
       Layer.Utils.defer.flush();
     });
     afterEach(function() {
+      if (el) el.destroy();
       if (client) client.destroy();
       Layer.Utils.defer.reset();
       document.body.removeChild(testRoot);

@@ -156,6 +156,7 @@ class Client extends ClientAuth {
     this._cleanup();
 
     this._destroyComponents();
+    this.telemetryMonitor.destroy();
 
     super.destroy();
     this._inCleanup = false;

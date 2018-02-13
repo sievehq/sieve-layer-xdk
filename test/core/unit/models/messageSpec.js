@@ -434,6 +434,7 @@ describe("The Message class", function() {
             // Run
             part.body = "howdy";
             jasmine.clock().tick(100);
+            Layer.Utils.defer.flush();
 
             // Posttest
             expect(message._onMessagePartChange).toHaveBeenCalled();
@@ -511,6 +512,7 @@ describe("The Message class", function() {
             // Run
             part.body = "howdy";
             jasmine.clock().tick(100);
+            Layer.Utils.defer.flush();
 
             // Posttest
             expect(message._onMessagePartChange).toHaveBeenCalled();
@@ -541,6 +543,7 @@ describe("The Message class", function() {
             // Run
             part.body = "howdy";
             jasmine.clock().tick(100);
+            Layer.Utils.defer.flush();
 
             // Posttest
             expect(message._triggerAsync).toHaveBeenCalledWith('messages:change', {
@@ -951,6 +954,7 @@ describe("The Message class", function() {
             m = conversation.createMessage("hello");
             m.isRead = false;
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
         });
 
         afterEach(function() {
@@ -967,6 +971,7 @@ describe("The Message class", function() {
           // Run
           m._triggerMessageRead();
           jasmine.clock().tick(10);
+          Layer.Utils.defer.flush();
 
           // Posttest
           expect(result).toEqual(jasmine.objectContaining({
@@ -990,6 +995,7 @@ describe("The Message class", function() {
             m = conversation.createMessage("hello");
             m.isRead = false;
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
         });
 
         afterEach(function() {
@@ -1837,6 +1843,7 @@ describe("The Message class", function() {
                 "messages:loaded": spy
             });
             jasmine.clock().tick(10);
+            Layer.Utils.defer.flush();
 
             // Posttest
             expect(spy).toHaveBeenCalled();

@@ -38,6 +38,13 @@ describe("The Clickable Mixin", function() {
     Layer.Utils.defer.flush();
   });
 
+  afterEach(function() {
+    if (el) el.destroy();
+    if (client) client.destroy();
+    client = null;
+    jasmine.clock().uninstall();
+  });
+
   function click(el) {
     if (Layer.Utils.isIOS) {
       var evt = new Event('touchstart', { bubbles: true });

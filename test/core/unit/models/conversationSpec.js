@@ -2000,6 +2000,8 @@ describe("The Conversation Class", function() {
 
             // Posttest
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
+
             expect(spy).toHaveBeenCalled();
         });
 
@@ -2019,6 +2021,7 @@ describe("The Conversation Class", function() {
 
             // Posttest
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
             expect(spy).toHaveBeenCalled();
         });
     });
