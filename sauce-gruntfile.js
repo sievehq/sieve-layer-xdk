@@ -128,15 +128,10 @@ var unsupportedBrowsers = {
   }
 */
   var allUrls = [
-    "http://" + ipaddress + ":9999/test/core_client.html?stop=true",
-    "http://" + ipaddress + ":9999/test/core_models.html?stop=true",
-    "http://" + ipaddress + ":9999/test/core_queries.html?stop=true",
-    "http://" + ipaddress + ":9999/test/core_services.html?stop=true",
-    "http://" + ipaddress + ":9999/test/core_dbmanager.html?stop=true",
+    "http://" + ipaddress + ":9999/test/SpecRunner.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_messages.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_components.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_components-lists.html?stop=true",
-    "http://" + ipaddress + ":9999/test/ui_handlers.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_mixins.html?stop=true"
   ];
 

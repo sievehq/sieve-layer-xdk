@@ -49,7 +49,15 @@ describe('Product Message Components', function() {
 
   afterEach(function() {
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
-
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (testRoot.parentNode) {
+      testRoot.parentNode.removeChild(testRoot);
+      if (testRoot.firstChild && testRoot.firstChild.destroy) testRoot.firstChild.destroy();
+    }
+    jasmine.clock().uninstall();
   });
 
   describe("Model Tests", function() {

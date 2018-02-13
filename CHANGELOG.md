@@ -5,6 +5,7 @@
 * Automated tests setup with travis + saucelabs
 * Removes SystemBus from `root.js`; uses `Layer.Utils.defer` instead
 * Memory leaks removed from unit tests
+* Upgrade to jasmine 3.0.0
 
 ## 1.0.0-pre2.2
 

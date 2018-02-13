@@ -36,10 +36,13 @@ describe('layer-typing-indicator', function() {
   });
 
   afterEach(function() {
-    if (client) client.destroy();
-    document.body.removeChild(testRoot);
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
     jasmine.clock().uninstall();
-
+    document.body.removeChild(testRoot);
   });
 
   describe('The conversation property', function() {
@@ -170,10 +173,11 @@ describe('layer-typing-indicator', function() {
 
     it("Should trigger layer-typing-indicator-change and not render typing users if prevented", function() {
       var called = false;
-      document.body.addEventListener('layer-typing-indicator-change', function(evt) {
+      var fn = function(evt) {
         called = true;
         evt.preventDefault();
-      });
+      };
+      document.body.addEventListener('layer-typing-indicator-change', fn);
       el.onRerender({
         conversationId: conversation.id,
         typing: [user1]
@@ -181,6 +185,9 @@ describe('layer-typing-indicator', function() {
 
       expect(called).toBe(true);
       expect(el.nodes.panel.innerHTML).toEqual("");
+
+      // Cleanup
+      document.body.removeEventListener('layer-typing-indicator-change', fn);
     });
 
     it("Should ignore typing users if typing into anohter conversation", function() {

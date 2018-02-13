@@ -20,7 +20,12 @@ describe('layer-menu-button', function() {
   });
 
   afterEach(function() {
-    if (client) client.destroy();
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
+
     document.body.removeChild(testRoot);
   });
 
@@ -43,12 +48,14 @@ describe('layer-menu-button', function() {
     for (var i = 0; i < menus.length; i++) menus[i].parentNode.removeChild(menus[i]);
     expect(document.querySelectorAll('layer-menu').length).toEqual(0);
     click(el);
+    Layer.Utils.defer.flush();
     expect(document.querySelectorAll('layer-menu').length).toEqual(1);
   });
 
   it("Should apply menuWidth", function() {
     el.menuWidth = 345;
     click(el);
+    Layer.Utils.defer.flush();
     expect(document.querySelector('layer-menu').style.minWidth).toEqual('345px');
   });
 
@@ -59,6 +66,7 @@ describe('layer-menu-button', function() {
       calledWith = item;
     };
     click(el);
+    Layer.Utils.defer.flush();
     expect(calledWith).toEqual("Frodo");
   });
 
@@ -66,6 +74,7 @@ describe('layer-menu-button', function() {
     var options = [];
     el.getMenuOptions = function() {return options;};
     click(el);
+    Layer.Utils.defer.flush();
     expect(document.querySelector('layer-menu').items).toBe(options);
   });
 });

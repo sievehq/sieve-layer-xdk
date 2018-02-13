@@ -57,12 +57,17 @@ describe('layer-membership-list', function() {
 
   afterEach(function() {
     try {
+      if (client) {
+        client.destroy();
+        client = null;
+      }
+      if (el) {
+        el.destroy();
+        el = null;
+      }
       jasmine.clock().uninstall();
-      if (client) client.destroy();
       Layer.UI.settings.appId = null;
       document.body.removeChild(testRoot);
-
-      if (el) el.onDestroy();
     } catch(e) {}
   });
 

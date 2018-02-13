@@ -2048,7 +2048,7 @@ const standardClassMethods = {
       this.parentNode.removeChild(this);
     }
     Object.keys(this.nodes || {}).forEach((name) => {
-      if (this.nodes[name].destroy) this.nodes[name].destroy();
+      if (this.nodes[name] && this.nodes[name].destroy) this.nodes[name].destroy();
     });
     this.onDestroy();
   },

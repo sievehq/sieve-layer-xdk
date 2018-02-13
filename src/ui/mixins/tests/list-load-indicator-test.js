@@ -53,8 +53,11 @@ describe("List Load Mixin", function() {
 
   afterEach(function() {
     document.body.removeChild(testRoot);
+    if (client) {
+      client.destroy();
+      client = null;
+    }
     if (el) el.destroy();
-    if (client) client.destroy();
     jasmine.clock().uninstall();
   });
 

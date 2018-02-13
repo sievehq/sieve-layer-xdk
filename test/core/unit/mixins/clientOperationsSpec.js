@@ -70,7 +70,7 @@ describe("The Client Operations Mixin", function() {
             m3 = c1.createMessage("m3");
             m4 = c2.createMessage("m4");
             m5 = c2.createMessage("m5");
-            [m1, m2, m3, m4, m5].forEach((m, index) => {
+            [m1, m2, m3, m4, m5].forEach(function(m, index) {
                 m.sender = userIdentity2;
                 m.position = index + 1;
                 m.isRead = false;

@@ -106,6 +106,7 @@ class Client extends ClientAuth {
    */
   constructor(options) {
     super(options);
+    console.log("Created " + this.internalId);
     Settings.client = this;
 
     this._models = {};
@@ -152,6 +153,7 @@ class Client extends ClientAuth {
   }
 
   destroy() {
+    console.log("Destroyed " + this.internalId);
     // Cleanup all resources (Conversations, Messages, etc...)
     this._cleanup();
 
@@ -160,6 +162,8 @@ class Client extends ClientAuth {
 
     super.destroy();
     this._inCleanup = false;
+
+    console.log("Nulled " + this.internalId);
     Settings.client = null;
   }
 

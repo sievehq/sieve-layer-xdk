@@ -123,7 +123,7 @@ registerComponent('layer-image-message-view', {
         ratio = this.model.previewWidth / this.model.previewHeight;
       }
 
-      if (this.parentComponent.isShowingMetadata) {
+      if (this.parentComponent && this.parentComponent.isShowingMetadata) {
         newHeight = this.heightWithMetadata;
         if (ratio) newWidth = newHeight * ratio;
       } else if (this.model.previewHeight) {
@@ -180,7 +180,7 @@ registerComponent('layer-image-message-view', {
     },
 
     onRerender() {
-      if (this.nodes.image.naturalWidth && this.model.part.body && this.parentComponent.isShowingMetadata) {
+      if (this.nodes.image.naturalWidth && this.model.part.body && this.parentComponent && this.parentComponent.isShowingMetadata) {
         // 10 margin for error in case custom stylesheets add margins borders and padding to skew results
         if (this.nodes.image.naturalWidth + 10 < this.parentComponent.clientWidth) {
           this.nodes.image.style.width = 'inherit';
@@ -198,6 +198,7 @@ registerComponent('layer-image-message-view', {
      * @param {HTMLElement} img
      */
     _imageLoaded() {
+      if (this.onDestroyCalled) return;
       const img = this.nodes.image;
       if (!this.properties.sizes.height) {
         this.properties.sizes = this._getBestDimensions({ width: img.naturalWidth, height: img.naturalHeight });
@@ -208,7 +209,7 @@ registerComponent('layer-image-message-view', {
         }
       }
 
-      const minWidth = this.parentComponent.getPreferredMinWidth();
+      const minWidth = this.parentComponent ? this.parentComponent.getPreferredMinWidth() : 292;
       const width = this.properties.sizes.width;
       // maxWidth has already been used to constrain img.width and can be ignored for this calculation
       if (width > minWidth) this.messageViewer.style.width = (width + 2) + 'px';

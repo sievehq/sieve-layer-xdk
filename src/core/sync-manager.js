@@ -746,11 +746,6 @@ SyncManager.prototype.queue = null;
 SyncManager.prototype.receiptQueue = null;
 
 /**
- * Reference to the Client so that we can pass it to SyncEvents  which may need to lookup their targets
- */
-SyncManager.prototype.client = null;
-
-/**
  * Maximum exponential backoff wait.
  *
  * If the server is returning 502, 503 or 504 errors, exponential backoff

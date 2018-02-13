@@ -70,18 +70,23 @@ describe('layer-message-list', function() {
     setTimeout(function() {
       jasmine.clock().install();
       done();
-    }, 1000);
+    }, 100);
   });
 
   afterEach(function() {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
 
-    if (client) client.destroy();
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) {
+      el.destroy();
+      el = null;
+    }
+    jasmine.clock().uninstall();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     document.body.removeChild(testRoot);
-    if (el) el.onDestroy();
-    jasmine.clock().uninstall();
-
   });
 
 
@@ -140,6 +145,7 @@ describe('layer-message-list', function() {
       var tmp = window.Layer.UI.UIUtils.isInBackground;
       window.Layer.UI.UIUtils.isInBackground = function() {return false;}
       el.query = query;
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(150);
 
       // Run
@@ -353,71 +359,50 @@ describe('layer-message-list', function() {
       });
     });
 
-    it("Should mark visible messages as read part 2", function(done) {
-      jasmine.clock().uninstall();
-      setTimeout(function() {
-        try  {
-          var items = el.querySelectorAllArray('layer-message-item-sent');
-          expect(items.length > 0).toBe(true);
-          spyOn(el, "_shouldMarkAsRead").and.callThrough();
-          el.scrollTo(100);
+    it("Should mark visible messages as read part 2", function() {
+      var items = el.querySelectorAllArray('layer-message-item-sent');
+      expect(items.length > 0).toBe(true);
+      spyOn(el, "_shouldMarkAsRead").and.callThrough();
+      el.scrollTo(100);
+      jasmine.clock().tick(3000);
 
-          setTimeout(function() {
-            try {
-              expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[0]);
-              expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[1]);
-              expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[2]);
-              expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[3]);
-              expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[4]);
-              expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[5]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[0]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[1]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[2]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[3]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[4]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[5]);
 
-              expect(el._shouldMarkAsRead(items[0])).toBe(false);
-              expect(el._shouldMarkAsRead(items[1])).toBe(true);
-              expect(el._shouldMarkAsRead(items[2])).toBe(true);
-              expect(el._shouldMarkAsRead(items[3])).toBe(true);
-              expect(el._shouldMarkAsRead(items[4])).toBe(false);
-              expect(el._shouldMarkAsRead(items[5])).toBe(false);
+      expect(el._shouldMarkAsRead(items[0])).toBe(false);
+      expect(el._shouldMarkAsRead(items[1])).toBe(true);
+      expect(el._shouldMarkAsRead(items[2])).toBe(true);
+      expect(el._shouldMarkAsRead(items[3])).toBe(true);
+      expect(el._shouldMarkAsRead(items[4])).toBe(false);
+      expect(el._shouldMarkAsRead(items[5])).toBe(false);
 
-              expect(items[0].item.isRead).toBe(false);
-              expect(items[1].item.isRead).toBe(true);
-              expect(items[2].item.isRead).toBe(true);
-              expect(items[3].item.isRead).toBe(true);
-              expect(items[4].item.isRead).toBe(false);
-              expect(items[5].item.isRead).toBe(false);
-              done();
-
-            } catch(e) {
-              done(e);
-            }
-          }, 3000);
-        } catch(e) {
-          done(e);
-        }
-      }, 2000);
+      expect(items[0].item.isRead).toBe(false);
+      expect(items[1].item.isRead).toBe(true);
+      expect(items[2].item.isRead).toBe(true);
+      expect(items[3].item.isRead).toBe(true);
+      expect(items[4].item.isRead).toBe(false);
+      expect(items[5].item.isRead).toBe(false);
     });
 
 
-    it("Should mark visible messages as read part 3", function(done) {
-      jasmine.clock().uninstall();
+    it("Should mark visible messages as read part 3", function() {
       el.scrollTo(10000);
-      setTimeout(function() {
-        try {
-          var items = el.querySelectorAllArray('layer-message-item-sent');
-          expect(items.length > 0).toBe(true);
-          items.forEach(function(messageRow) {
-            if (messageRow.offsetTop - el.offsetTop < el.scrollTop + errorMargin) {
-              expect(messageRow.item.isRead).toBe(false);
-            } else if (messageRow.offsetTop + messageRow.clientHeight <= el.clientHeight + el.offsetTop + el.scrollTop + errorMargin) {
-              expect(messageRow.item.isRead).toBe(true);
-            } else {
-              expect(messageRow.item.isRead).toBe(false);
-            }
-          });
-          done();
-        } catch(e) {
-          done(e);
+      jasmine.clock().tick(3000);
+      var items = el.querySelectorAllArray('layer-message-item-sent');
+      expect(items.length > 0).toBe(true);
+      items.forEach(function(messageRow) {
+        if (messageRow.offsetTop - el.offsetTop < el.scrollTop + errorMargin) {
+          expect(messageRow.item.isRead).toBe(false);
+        } else if (messageRow.offsetTop + messageRow.clientHeight <= el.clientHeight + el.offsetTop + el.scrollTop + errorMargin) {
+          expect(messageRow.item.isRead).toBe(true);
+        } else {
+          expect(messageRow.item.isRead).toBe(false);
         }
-      }, 4000);
+      });
     });
 
     it("Should mark nothing if disabled", function() {
@@ -692,6 +677,7 @@ describe('layer-message-list', function() {
 
     it("Should empty the list of items, but still contain a loadingIndicator, emptyList, and endOfListIndicator node", function() {
       el.onRender();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(150);
       expect(el.childNodes.length > 2).toBe(true);
       el._renderResetData();
@@ -725,6 +711,7 @@ describe('layer-message-list', function() {
 
       // Run
       queryData[5].destroy();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1);
       queryData = query.data.reverse();
 
@@ -741,6 +728,7 @@ describe('layer-message-list', function() {
 
       // Run
       queryData[5].destroy();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1);
 
       // Posttest
@@ -761,6 +749,7 @@ describe('layer-message-list', function() {
 
       // Run
       queryData[5].destroy();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1);
 
       // Posttest
@@ -958,6 +947,7 @@ describe('layer-message-list', function() {
     it("Should insure only the last message sent has this class set", function() {
       query.data[0].sender = user1;
       el.onRender();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(150);
 
       el.querySelectorAllArray('.layer-last-message-sent').forEach(function(node) {
@@ -1009,6 +999,7 @@ describe('layer-message-list', function() {
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var affectedItems = [messages[1], messages[0], el.childNodes[1].item, el.childNodes[2].item, el.childNodes[3].item];
       el._renderPagedData({type: 'data', data: messages});
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1000);
       expect(el._renderPagedDataDone).toHaveBeenCalledWith(affectedItems, jasmine.any(DocumentFragment), {type: 'data', data: messages});
     });
@@ -1017,6 +1008,7 @@ describe('layer-message-list', function() {
       el.properties.lastPagedAt = 0;
       spyOn(el, "_renderPagedDataDone");
       el._renderPagedData({type: 'data', data: []});
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1000);
       expect(el._renderPagedDataDone).toHaveBeenCalledWith([], null, {type: 'data', data: []});
       expect(el.properties.lastPagedAt).toBe(0);

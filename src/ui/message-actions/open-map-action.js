@@ -10,8 +10,8 @@ import { showFullScreen } from '../ui-utils';
 import { logger } from '../../utils';
 
 const openMapHandler = ({ data, model }) => {
-  const mergedData = {};
-  Object.assign(mergedData, {
+  // It sure would be nice to have Object.assign here...
+  const mergedData = {
     street1: model.street1,
     street2: model.street2,
     city: model.city,
@@ -21,7 +21,10 @@ const openMapHandler = ({ data, model }) => {
     latitude: model.latitude,
     longitude: model.longitude,
     zoom: model.zoom,
-  }, data);
+  };
+  Object.keys(data).forEach(keyName => (mergedData[keyName] = data[keyName]));
+
+
   let url;
   if (mergedData.street1 && (mergedData.postalCode || mergedData.city)) {
     url = 'http://www.google.com/maps/?q=' +

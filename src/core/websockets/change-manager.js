@@ -161,10 +161,4 @@ class WebsocketChangeManager {
   }
 }
 
-/**
- * The Client that owns this.
- * @property {Layer.Core.Client}
- */
-WebsocketChangeManager.prototype.client = null;
-
 module.exports = Core.Websockets.ChangeManager = WebsocketChangeManager;

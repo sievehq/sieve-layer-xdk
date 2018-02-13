@@ -266,7 +266,7 @@ module.exports = function (grunt) {
     watch: {
       js: {
         files: ['package.json', 'Gruntfile.js', 'samples/index-all.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
-        tasks: ['notify:start', 'debug', 'notify:watch'],
+        tasks: ['debug', 'notify:watch'],
         options: {
           interrupt: false
         }
@@ -648,7 +648,7 @@ module.exports = function (grunt) {
         }
 
         if (folderName === 'ui-utils' || folderName === 'handlers') folderName = 'mixins';
-
+console.log("FOLDER NAME: " + folderName);
         if (!scripts[folderName]) scripts[folderName] = [];
         scripts[folderName].push(scriptTag);
         scripts.all.push(scriptTag);

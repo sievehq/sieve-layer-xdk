@@ -61,6 +61,11 @@ describe('Feedback Message Components', function() {
   afterEach(function() {
     if (client) client.destroy();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
+    if (testRoot.parentNode) {
+      testRoot.parentNode.removeChild(testRoot);
+      if (testRoot.firstChild && testRoot.firstChild.destroy) testRoot.firstChild.destroy();
+    }
+    jasmine.clock().uninstall();
   });
 
   function click(el) {
@@ -179,7 +184,9 @@ describe('Feedback Message Components', function() {
         var args = Layer.Core.Conversation.prototype.send.calls.allArgs()[0];
 
         var responsePart = args[0].getRootPart();
-        var textPart = args[0].findPart(part => part.mimeType === 'application/vnd.layer.status+json');
+        var textPart = args[0].findPart(function(part) {
+          return part.mimeType === 'application/vnd.layer.status+json';
+        });
 
         expect(responsePart.mimeType).toEqual(ResponseModel.MIMEType);
         expect(responsePart.mimeAttributes.role).toEqual("root");

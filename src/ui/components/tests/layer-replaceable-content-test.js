@@ -24,7 +24,11 @@ describe('layer-replaceable-content', function() {
   });
   afterEach(function() {
     document.body.removeChild(testRoot);
-
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
   });
 
   it('Should accept a replaceableContent DOM node', function() {

@@ -71,6 +71,7 @@ describe("The Message class", function() {
         channel = Layer.Core.Channel._createFromServer(responses.channel1);
 
         jasmine.clock().tick(1);
+        Layer.Utils.defer.flush();
         requests.reset();
         client.syncManager.queue = [];
     });
@@ -1429,6 +1430,7 @@ describe("The Message class", function() {
             // Run
             m.send();
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
 
             // Posttest
             expect(m.trigger).toHaveBeenCalledWith("messages:sending");
@@ -1856,6 +1858,7 @@ describe("The Message class", function() {
             m = conversation.createMessage("hello");
             m.syncState = Layer.Constants.SYNC_STATE.SYNCED;
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
         });
 
         afterEach(function() {
@@ -2006,6 +2009,7 @@ describe("The Message class", function() {
             });
             m.send();
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
         });
 
         afterEach(function() {
@@ -2528,6 +2532,7 @@ describe("The Message class", function() {
             // Run,
             var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
 
             // Posttest
             expect(Layer.Core.Message.ConversationMessage.prototype._sendReceipt).toHaveBeenCalledWith('delivery');

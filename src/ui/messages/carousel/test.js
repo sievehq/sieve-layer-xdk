@@ -61,7 +61,11 @@ describe('Carousel Message Components', function() {
   afterEach(function() {
     if (client) client.destroy();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
-
+    if (testRoot.parentNode) {
+      testRoot.parentNode.removeChild(testRoot);
+      if (testRoot.firstChild && testRoot.firstChild.destroy) testRoot.firstChild.destroy();
+    }
+    jasmine.clock().uninstall();
   });
 
   describe("Model Tests", function() {
@@ -79,7 +83,9 @@ describe('Carousel Message Components', function() {
       });
 
       var rootPart = message.getRootPart();
-      var textParts = message.filterParts(part => part.mimeType === 'application/vnd.layer.text+json');
+      var textParts = message.filterParts(function(part) {
+        return part.mimeType === 'application/vnd.layer.text+json';
+      });
 
       expect(message.parts.size).toEqual(4);
       expect(textParts.length).toEqual(3);
@@ -109,7 +115,9 @@ describe('Carousel Message Components', function() {
         message = m;
       });
 
-      var textParts = message.filterParts(part => part.mimeType === 'application/vnd.layer.text+json');
+      var textParts = message.filterParts(function(part) {
+        return part.mimeType === 'application/vnd.layer.text+json';
+      });
 
       expect(model.items[0].actionEvent).toEqual("fff");
       expect(model.items[1].actionEvent).toEqual("f");

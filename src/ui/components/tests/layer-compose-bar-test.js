@@ -7,8 +7,12 @@ describe('layer-compose-bar', function() {
   });
 
   afterEach(function() {
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
     jasmine.clock().uninstall();
-
   });
 
   beforeEach(function() {

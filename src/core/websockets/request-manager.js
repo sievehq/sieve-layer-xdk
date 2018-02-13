@@ -303,12 +303,6 @@ class WebsocketRequestManager {
 
 WebsocketRequestManager.prototype._nextRequestId = 1;
 
-/**
- * The Client that owns this.
- * @property {Layer.Core.Client}
- */
-WebsocketRequestManager.prototype.client = null;
-
 WebsocketRequestManager.prototype._requestCallbacks = null;
 
 WebsocketRequestManager.prototype._callbackCleanupId = 0;

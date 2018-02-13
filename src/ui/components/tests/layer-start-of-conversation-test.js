@@ -28,7 +28,11 @@ describe('layer-start-of-conversation', function() {
   });
 
   afterEach(function() {
-    if (client) client.destroy();
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
 
     document.body.removeChild(testRoot);
   });

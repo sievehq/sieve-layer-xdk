@@ -48,7 +48,14 @@ describe('layer-membership-item', function() {
   });
 
   afterEach(function() {
-    if (client) client.destroy();
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) {
+      el.destroy();
+      el = null;
+    }
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
 

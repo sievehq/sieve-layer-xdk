@@ -552,6 +552,7 @@ getJasmineRequireObj().Spec = function(j$) {
     var onStart = {
       fn: function(done) {
 	self.result.startTime = Date.now(); // Layer
+	if (self.result && self.result.fullName) console.log('Starting: ' + self.result.fullName); // Layer
         self.onStart(self, done);
       }
     };

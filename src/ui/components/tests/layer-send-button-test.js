@@ -10,7 +10,7 @@ describe('layer-send-button', function() {
   });
 
   afterEach(function() {
-
+    if (el) el.destroy();
   });
 
   function click(el) {
@@ -41,5 +41,8 @@ describe('layer-send-button', function() {
 
     // Posttest
     expect(eventSpy).toHaveBeenCalledWith(jasmine.any(Event));
+
+    // Cleanup
+    document.body.removeEventListener('layer-send-click', eventSpy);
   });
 });
