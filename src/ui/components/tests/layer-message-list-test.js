@@ -345,7 +345,7 @@ describe('layer-message-list', function() {
       window.Layer.UI.UIUtils.isInBackground = restoreFunc;
     });
 
-    it("Should mark visible messages as read", function() {
+    it("Should mark visible messages as read at start of list", function() {
       var items = el.querySelectorAllArray('layer-message-item-sent');
       expect(items.length > 0).toBe(true);
       items.forEach(function(messageRow) {
@@ -359,7 +359,7 @@ describe('layer-message-list', function() {
       });
     });
 
-    it("Should mark visible messages as read part 2", function() {
+    it("Should mark visible messages in middle of list", function() {
       var items = el.querySelectorAllArray('layer-message-item-sent');
       expect(items.length > 0).toBe(true);
       spyOn(el, "_shouldMarkAsRead").and.callThrough();
@@ -389,13 +389,17 @@ describe('layer-message-list', function() {
     });
 
 
-    it("Should mark visible messages as read part 3", function() {
+    it("Should mark visible messages at end of list", function() {
+      spyOn(el, "_checkVisibility").and.callThrough();
       el.scrollTo(10000);
+      jasmine.clock().tick(300); // allow _checkVisibility to be called
+      expect(el._checkVisibility).toHaveBeenCalled();
+
       jasmine.clock().tick(3000);
       var items = el.querySelectorAllArray('layer-message-item-sent');
       expect(items.length > 0).toBe(true);
-      items.forEach(function(messageRow) {
-        if (messageRow.offsetTop - el.offsetTop < el.scrollTop + errorMargin) {
+      items.forEach(function(messageRow, index, allRows) {
+        if (messageRow.offsetTop - el.offsetTop < el.scrollTop - errorMargin) {
           expect(messageRow.item.isRead).toBe(false);
         } else if (messageRow.offsetTop + messageRow.clientHeight <= el.clientHeight + el.offsetTop + el.scrollTop + errorMargin) {
           expect(messageRow.item.isRead).toBe(true);

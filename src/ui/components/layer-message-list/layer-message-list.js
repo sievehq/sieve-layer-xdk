@@ -318,6 +318,7 @@ registerComponent('layer-message-list', {
     _handleScroll: {
       mode: registerComponent.MODES.OVERWRITE,
       value() {
+        // Calls to scrollTo() are automatically followed by calls to _checkVisibility() so skip this
         if (this.properties.isSelfScrolling) return;
 
         // If the user has scrolled within screenFullsBeforePaging of the top of the page...
