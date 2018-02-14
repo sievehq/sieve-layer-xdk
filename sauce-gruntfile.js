@@ -129,7 +129,6 @@ var unsupportedBrowsers = {
 */
   var allUrls = [
     "http://" + ipaddress + ":9999/test/SpecRunner.html?stop=true",
-    "http://" + ipaddress + ":9999/test/ui_messages.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_components.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_components-lists.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_mixins.html?stop=true"

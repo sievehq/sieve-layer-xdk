@@ -648,6 +648,7 @@ module.exports = function (grunt) {
         }
 
         if (folderName === 'ui-utils' || folderName === 'handlers') folderName = 'mixins';
+        if (folderName === 'messages') folderName = 'components';
 
         if (!scripts[folderName]) scripts[folderName] = [];
         scripts[folderName].push(scriptTag);
