@@ -66,7 +66,7 @@ describe("The File Drop Mixin", function() {
         preventDefault: function() {},
         stopPropagation: function() {},
         dataTransfer: {
-          files: [new Blob([atob(imgBase64)], {type: "image/png"})]
+          files: [Layer.Utils.base64ToBlob(imgBase64, "image/png")]
         }
       },
       function(message) {
@@ -112,8 +112,8 @@ describe("The File Drop Mixin", function() {
         stopPropagation: function() {},
         dataTransfer: {
           files: [
-            new Blob([atob(imgBase64)], {type: "image/png"}),
-            new Blob([atob(imgBase64)], {type: "image/png"})
+            Layer.Utils.base64ToBlob(imgBase64, "image/png"),
+            Layer.Utils.base64ToBlob(imgBase64, "image/png")
           ]
         }
       },
