@@ -34,6 +34,15 @@ var dbIt = it;
           var MAX_SAFE_INTEGER = 9007199254740991;
 
       function deleteTables(done) {
+        var result = indexedDB.deleteDatabase(appId);
+        result.onsuccess = function() {
+          done();
+        }
+        result.onerror = function(err) {
+          done(err);
+        }
+      }
+      function deleteTableData(done) {
         client.dbManager._loadAll('messages', function(results) {
           client.dbManager.deleteObjects('messages', results, function() {
             client.dbManager._loadAll('identities', function(results) {
@@ -53,15 +62,25 @@ var dbIt = it;
         });
       }
 
+      var originalTimeout;
       beforeAll(function(done) {
-        testDbEnabled(function(result) {
-            dbIsTestable = result;
-            done();
-        });
+        debugger;
+        originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+        setTimeout(function() {
+          testDbEnabled(function(result) {
+              dbIsTestable = result;
+              done();
+          });
+        }, 2000);
+      });
+      afterAll(function() {
+        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
       });
 
       // NOTE: beforeEach finishes by deleting everything from the database. You must insert before you can query.
       beforeEach(function(done) {
+        deleteTables(function() {
           client = new Layer.init({
               appId: appId,
               url: "https://huh.com",
@@ -107,7 +126,7 @@ var dbIt = it;
             // The above commands are going to write stuff to db
             // if we deleteTables before then they will wind up in our result data
             setTimeout(function() {
-              deleteTables(function() {
+              deleteTableData(function() {
                 setTimeout(function() {
                   done();
                 }, 100);
@@ -116,6 +135,7 @@ var dbIt = it;
           });
 
           client._clientAuthenticated();
+        });
       });
 
       afterEach(function() {
