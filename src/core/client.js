@@ -106,7 +106,6 @@ class Client extends ClientAuth {
    */
   constructor(options) {
     super(options);
-    console.log("Created " + this.internalId);
     Settings.client = this;
 
     this._models = {};

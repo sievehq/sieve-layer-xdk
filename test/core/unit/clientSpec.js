@@ -40,6 +40,7 @@ describe("The Client class", function() {
     });
 
     afterEach(function() {
+        if (client && !client.isDestroyed) client.destroy();
         jasmine.clock().uninstall();
         jasmine.Ajax.uninstall();
     });

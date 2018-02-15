@@ -65,14 +65,6 @@ var supportedBrowsers = {
   }
 };
 
-var quickTestBrowsers = [
-  supportedBrowsers['edge-0'],
-  supportedBrowsers['ie11'],
-  supportedBrowsers['ios-0'],
-  supportedBrowsers['safari-0'],
-  supportedBrowsers['firefox-0'],
-  supportedBrowsers['chrome-0']
-];
 
 // These do not support websockets, so are not supported by layer-websdk
 var unsupportedBrowsers = {
@@ -96,37 +88,10 @@ var unsupportedBrowsers = {
       if (unsupportedBrowsers[name]) return unsupportedBrowsers[name];
       throw new Error(name + ' not found');
     });
-  } else if (grunt.option('all')) {
+  } else  {
     browsers = Object.keys(supportedBrowsers).map(function(key) {return supportedBrowsers[key]});
-  } else {
-    browsers = quickTestBrowsers;
-  }
-/*
-  // Why this? Travis tunnel to saucelabs only sometimes survives long
-  // enough for all 11 tests to run.  So randomly test 3 browsers each run.
-  function getRandomThree() {
-    var browsersHash = {};
-    while(Object.keys(browsersHash).length < 3) {
-      var randomIndex = Math.floor(Math.random() * Object.keys(supportedBrowsers).length);
-      var key = Object.keys(supportedBrowsers)[randomIndex];
-      browsersHash[key] = supportedBrowsers[key];
-    }
-    var browserArray = Object.keys(browsersHash).map(function(key) {return browsersHash[key]});;
-    console.dir(browserArray);
-    return browserArray;
   }
 
-  if (process.env.TRAVIS_JOB_NUMBER) {
-    browsers = getRandomThree();
-    browsers.forEach(function(item) {
-      item['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER;
-    });
-
-    var IP = require('ip');
-    ipaddress = IP.address();
-    console.log("IP ADDRESS: " + ipaddress);
-  }
-*/
   var allUrls = [
     "http://" + ipaddress + ":9999/test/SpecRunner.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_components.html?stop=true",
@@ -168,69 +133,39 @@ var unsupportedBrowsers = {
   }
 
   result.tasks.saucelabs = {
-    ie11: {
+    ie: {
       options:{
         browsers: [supportedBrowsers['ie11']],
         urls: allUrls
       }
     },
-    edge0: {
+    edge: {
       options:{
-        browsers: [supportedBrowsers['edge-0']],
+        browsers: [supportedBrowsers['edge-0'], supportedBrowsers['edge-1']],
         urls: allUrls
       }
     },
-    edge1: {
+    safari: {
       options:{
-        browsers: [supportedBrowsers['edge-1']],
+        browsers: [supportedBrowsers['safari-1'], supportedBrowsers['safari-0']],
         urls: allUrls
       }
     },
-    safari1: {
+    ios: {
       options:{
-        browsers: [supportedBrowsers['safari-1']],
+        browsers: [supportedBrowsers['ios-0'], supportedBrowsers['ios-1']],
         urls: allUrls
       }
     },
-    safari0: {
+    firefox: {
       options:{
-        browsers: [supportedBrowsers['safari-0']],
+        browsers: [supportedBrowsers['firefox-1'], supportedBrowsers['firefox-0']],
         urls: allUrls
       }
     },
-    safari1: {
+    chrome: {
       options:{
-        browsers: [supportedBrowsers['safari-1']],
-        urls: allUrls
-      }
-    },
-    ios0: {
-      options:{
-        browsers: [supportedBrowsers['ios-0']],
-        urls: allUrls
-      }
-    },
-    firefox1: {
-      options:{
-        browsers: [supportedBrowsers['firefox-1']],
-        urls: allUrls
-      }
-    },
-    firefox0: {
-      options:{
-        browsers: [supportedBrowsers['firefox-0']],
-        urls: allUrls
-      }
-    },
-    chrome1: {
-      options:{
-        browsers: [supportedBrowsers['chrome-1']],
-        urls: allUrls
-      }
-    },
-    chrome0: {
-      options:{
-        browsers: [supportedBrowsers['chrome-0']],
+        browsers: [supportedBrowsers['chrome-1'], supportedBrowsers['chrome-0']],
         urls: allUrls
       }
     },

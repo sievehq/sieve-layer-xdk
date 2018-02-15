@@ -175,19 +175,6 @@ module.exports = function (grunt) {
       }
     },
 
-
-    // Testing and Coverage tasks
-    jasmine: {
-      options: {
-        helpers: ['test/lib/mock-ajax.js', 'test/core/specs/responses.js'],
-        specs: ['test/core/specs/unit/*Spec.js', 'test/core/specs/unit/**/*Spec.js'],
-        summary: true
-      },
-      debug: {
-        src: ["build/layer-xdk-core.js"]
-      }
-    },
-
     // Documentation
     jsduck: {
       build: {
@@ -709,13 +696,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-remove');
   grunt.loadNpmTasks('grunt-move');
 
-  // Testing
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
-  //grunt.registerTask('phantomtest', ['debug', 'jasmine:debug']);
+
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
 
   grunt.registerTask("test", ["debug", "generate-tests", "connect:saucelabs",
-    "saucelabs-jasmine:ie11",  "saucelabs-jasmine:edge0",  "saucelabs-jasmine:edge1",  "saucelabs-jasmine:safari0",  "saucelabs-jasmine:safari1",  "saucelabs-jasmine:ios0",  "saucelabs-jasmine:ios1",  "saucelabs-jasmine:firefox0",  "saucelabs-jasmine:firefox1",  "saucelabs-jasmine:chrome0",  "saucelabs-jasmine:chrome1"]);
+    "saucelabs-jasmine:ie",  "saucelabs-jasmine:edge", "saucelabs-jasmine:safari",
+    "saucelabs-jasmine:ios", "saucelabs-jasmine:firefox", "saucelabs-jasmine:chrome"]);
 
   grunt.registerTask('docs', ['debug', /*'jsducktemplates',*/ 'jsduck', 'jsduckfixes']);
 
