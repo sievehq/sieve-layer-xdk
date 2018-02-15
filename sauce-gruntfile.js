@@ -141,7 +141,7 @@ var unsupportedBrowsers = {
     },
     edge: {
       options:{
-        browsers: [supportedBrowsers['edge-0'], supportedBrowsers['edge-1']],
+        browsers: [supportedBrowsers['edge-0']/*, supportedBrowsers['edge-1']*/],
         urls: allUrls
       }
     },
