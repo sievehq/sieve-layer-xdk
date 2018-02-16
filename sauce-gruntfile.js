@@ -93,10 +93,11 @@ var unsupportedBrowsers = {
   }
 
   var allUrls = [
-    "http://" + ipaddress + ":9999/test/SpecRunner.html?stop=true",
+    "http://" + ipaddress + ":9999/test/ui_components.html",
+    /*"http://" + ipaddress + ":9999/test/SpecRunner.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_components.html?stop=true",
     "http://" + ipaddress + ":9999/test/ui_components-lists.html?stop=true",
-    "http://" + ipaddress + ":9999/test/ui_mixins.html?stop=true"
+    "http://" + ipaddress + ":9999/test/ui_mixins.html?stop=true"*/
   ];
 
   var totalRuns = Object.keys(supportedBrowsers).length * allUrls.length;
