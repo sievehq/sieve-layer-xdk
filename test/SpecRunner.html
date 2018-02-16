@@ -25,7 +25,7 @@
 
     <script type="text/javascript">
     var args = {};
-    location.search.substring(1).split(/&/).forEach(nameValue => {
+    location.search.substring(1).split(/&/).forEach(function(nameValue) {
       if (nameValue) {
         var pair = nameValue.split(/=/);
         args[pair[0]] = pair[1];
@@ -141,7 +141,9 @@
         var search = "";
         debugger;
         args.index = scriptIndex + 1;
-        Object.keys(args).forEach(argName => (search += `${argName}=${args[argName]}`));
+        Object.keys(args).forEach(function(argName) {
+          return (search += `${argName}=${args[argName]}`);
+        });
         window.location.search = search;
       }
     };
