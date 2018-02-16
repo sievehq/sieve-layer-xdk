@@ -227,6 +227,15 @@ module.exports = function (grunt) {
         version: "<%= pkg.version %>"
       }
     },
+    'generate-specrunner': {
+      debug: {
+        files: [
+          {
+            src: ['src/ui/components/test.js', 'src/ui/**/test.js', 'src/ui/**/tests/**.js', 'test/core/unit/**.js', 'test/core/integration/**.js']
+          }
+        ]
+      }
+    },
     'generate-tests': {
       debug: {
         files: [
@@ -592,11 +601,43 @@ module.exports = function (grunt) {
   });
 
 
+  grunt.registerMultiTask('generate-specrunner', 'Building SpecRunner.html', function() {
+    var options = this.options();
+    var scripts = [];
+
+    var contents = grunt.file.read('test/SpecRunner.html');
+    var startNameStr = "myspecs = [";
+
+    var startNameIndex = contents.indexOf(startNameStr);
+    var endIndex = contents.indexOf(']', startNameIndex) + 1;
+
+    // Iterate over each file set and generate the build file specified for that set
+    this.files.forEach(function(fileGroup) {
+      fileGroup.src.forEach(function(file, index) {
+
+        // If we don't validate that the unit test file compiles
+        try {
+          var f = new Function(grunt.file.read(file));
+        } catch(e) {
+          console.error(e);
+          throw new Error("Test file " + file + " has a compilation error");
+        }
+        scripts.push('../' + file);
+      });
+    });
+
+
+    contents = contents.substring(0, startNameIndex) + "myspecs = ['" +
+      scripts.join("',\n'") + "']" +
+      contents.substring(endIndex);
+    grunt.file.write('test/SpecRunner.html', contents);
+  });
+
+
   grunt.registerMultiTask('generate-tests', 'Building SpecRunner.html', function() {
     var options = this.options();
     var specFiles = [
       {file: 'test/SpecRunnerTemplate.html', contents: grunt.file.read('test/SpecRunnerTemplate.html'), template: true, destName: 'ui_'},
-      {file: 'test/SpecRunnerTemplate.html', contents: grunt.file.read('test/SpecRunnerTemplate.html'), template: false},
       {file: 'test/CoverageRunner.html', contents: grunt.file.read('test/CoverageRunner.html'), template: false}
     ];
     var startStr = "<!-- START GENERATED SPEC LIST -->";
@@ -668,6 +709,7 @@ module.exports = function (grunt) {
     }
   });
 
+
   grunt.registerTask('fix-npm-package', function() {
     var contents = JSON.parse(grunt.file.read('npm/package.json'));
     contents.main = 'index.js'
@@ -699,7 +741,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
 
-  grunt.registerTask("test", ["debug", "generate-tests", "connect:saucelabs",
+  grunt.registerTask("test", ["debug", "generate-tests", "generate-specrunner", "connect:saucelabs",
     "saucelabs-jasmine:ie",  "saucelabs-jasmine:edge", "saucelabs-jasmine:safari",
     "saucelabs-jasmine:ios", "saucelabs-jasmine:firefox", "saucelabs-jasmine:chrome"]);
 
