@@ -169,7 +169,7 @@ module.exports = {
       this._models.conversations = {};
     },
     cleanup() {
-      Object.keys(this._models.conversations).forEach((id) => {
+      Object.keys(this._models.conversations || {}).forEach((id) => {
         const conversation = this._models.conversations[id];
         if (conversation && !conversation.isDestroyed) {
           conversation.destroy();

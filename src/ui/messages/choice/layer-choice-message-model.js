@@ -147,11 +147,6 @@ class ChoiceModel extends MessageTypeModel {
     // Generate the data for an Action Button from our Choices
     this._buildActionButtonProps();
 
-    // If there are any responses to this Message, process them (may set selectedAnswer)
-    if (this.responses) {
-      this._processNewResponses();
-    }
-
     if (this.__selectedAnswer === null && this.preselectedChoice) this.selectedAnswer = this.preselectedChoice;
 
     // Trigger a change event if there was a prior answer

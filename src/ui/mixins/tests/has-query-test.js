@@ -208,7 +208,6 @@ describe("Has Query Mixin", function() {
         expect(el.hasGeneratedQuery).toBe(false);
 
         // Alt test 2, no client
-        debugger;
         Layer.UI.settings.client = null;
         Layer.UI.appId = '';
         testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';

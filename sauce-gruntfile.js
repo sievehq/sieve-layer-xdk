@@ -112,7 +112,7 @@ var unsupportedBrowsers = {
       auth: { user: process.env.SAUCE_USERNAME, pass: process.env.SAUCE_ACCESS_KEY },
       json: {
         passed: Boolean(result.passed),
-        name: currentRuns + "/" + totalRuns + ": Completed Layer Web XDK " + version + " " + testPage,
+        name: currentRuns + "/" + totalRuns + ": " + (!result.result || !result.result.errors ? " Failed to Complete" : " Completed") + " Layer Web XDK " + version + " " + testPage,
       }
     }, function (error, response, body) {
       if (response.statusCode != 200) {

@@ -2436,6 +2436,7 @@ getJasmineRequireObj().Expectation = function() {
       var result = matcherCompare.apply(null, args);
 
       if (!result.pass) {
+debugger;
         if (!result.message) {
           args.unshift(this.isNot);
           args.unshift(name);

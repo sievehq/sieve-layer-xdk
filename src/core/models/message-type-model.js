@@ -342,6 +342,7 @@ class MessageTypeModel extends Root {
           newValue: responseData,
         });
         this.responses = responseData;
+        if (this.isInitializing) this.__updateResponses(responseData, null);
       }
     }
 

@@ -21,7 +21,7 @@ module.exports = {
       this._models.queries = {};
     },
     cleanup() {
-      Object.keys(this._models.queries).forEach((id) => {
+      Object.keys(this._models.queries || {}).forEach((id) => {
         const query = this._models.queries[id];
         if (query && !query.isDestroyed) {
           query.destroy();

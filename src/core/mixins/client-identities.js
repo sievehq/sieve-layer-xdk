@@ -104,7 +104,7 @@ module.exports = {
       this._loadPresenceIds = [];
     },
     cleanup() {
-      Object.keys(this._models.identities).forEach((id) => {
+      Object.keys(this._models.identities || {}).forEach((id) => {
         const identity = this._models.identities[id];
         if (identity && !identity.isDestroyed) {
           identity.destroy();

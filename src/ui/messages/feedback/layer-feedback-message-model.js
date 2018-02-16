@@ -53,9 +53,6 @@ class FeedbackModel extends MessageTypeModel {
     const comment = this.comment;
     super._parseMessage(payload);
 
-    if (this.responses) {
-      this._processNewResponses();
-    }
     if (this.rating !== rating) {
       this._triggerAsync('message-type-model:change', {
         property: 'rating',
