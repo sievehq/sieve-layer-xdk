@@ -29,9 +29,10 @@
 */
 (function (jasmine) {
 
-  if (!jasmine) {
-    throw new Error("[Jasmine JSReporter] 'Jasmine' library not found");
-  }
+    if (!jasmine) {
+      throw new Error("[Jasmine JSReporter] 'Jasmine' library not found");
+    }
+
 
   // ------------------------------------------------------------------------
   // Jasmine JSReporter for Jasmine 1.x
@@ -104,15 +105,6 @@
           suiteData.durationSec += suiteData.specs[i].durationSec;
       }
 
-      // Loop over all the Suite's sub-Suites
-      for (i = 0, ilen = suites.length; i < ilen; ++i) {
-          suiteData.suites[i] = getSuiteData(suites[i]); //< recursive population
-          suiteData.passed = !suiteData.suites[i].passed ? false : suiteData.passed;
-          suiteData.durationSec += suiteData.suites[i].durationSec;
-      }
-
-      // Rounding duration numbers to 3 decimal digits
-      suiteData.durationSec = round(suiteData.durationSec, 4);
 
       return suiteData;
   }

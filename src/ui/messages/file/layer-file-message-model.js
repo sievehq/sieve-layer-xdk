@@ -40,7 +40,7 @@
 
 
 import Core, { MessagePart, MessageTypeModel, Root } from '../../../core';
-
+import { xhr } from '../../../utils';
 
 class FileModel extends MessageTypeModel {
 
@@ -124,6 +124,32 @@ class FileModel extends MessageTypeModel {
       }
     } else {
       callback('');
+    }
+  }
+
+  /**
+   * Get the raw file data in a non-expiring form; this does involve download costs not paid using {@link #getSourceUrl}
+   *
+   * ```
+   * fileModel.getSourceBody(body => (this.innerHTML = body));
+   * ```
+   *
+   * @method getSourceBody
+   * @param {Function} callback
+   * @param {String} callback.body
+   */
+  getSourceBody(callback) {
+    if (this.source && this.source.body) {
+      callback(this.source.body);
+    } else if (this.source) {
+      this.source.fetchContent(body => callback(body));
+    } else if (this.sourceUrl) {
+      xhr({
+        method: 'GET',
+        url: this.sourceUrl,
+      }, body => callback(body));
+    } else {
+      callback("");
     }
   }
 

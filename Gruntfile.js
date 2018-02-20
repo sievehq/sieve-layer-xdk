@@ -742,8 +742,14 @@ module.exports = function (grunt) {
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
 
   grunt.registerTask("test", ["debug", "generate-tests", "generate-specrunner", "connect:saucelabs",
-    "saucelabs-jasmine:ie",  "saucelabs-jasmine:edge", "saucelabs-jasmine:safari",
-    "saucelabs-jasmine:ios", "saucelabs-jasmine:firefox", "saucelabs-jasmine:chrome"]);
+     "saucelabs-jasmine:safari",
+    "saucelabs-jasmine:ios", "saucelabs-jasmine:firefox", "saucelabs-jasmine:chrome",
+    "saucelabs-jasmine:ie",  "saucelabs-jasmine:edge"]);
+
+  grunt.registerTask("retest", ["connect:saucelabs","saucelabs-jasmine:chrome",
+    "saucelabs-jasmine:safari",
+   "saucelabs-jasmine:ios", "saucelabs-jasmine:firefox",
+   "saucelabs-jasmine:ie",  "saucelabs-jasmine:edge"]);
 
   grunt.registerTask('docs', ['debug', /*'jsducktemplates',*/ 'jsduck', 'jsduckfixes']);
 

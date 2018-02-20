@@ -864,11 +864,11 @@ MessageTypeModel.prototype.role = null;
 //MessageTypeModel.prototype.locked = false;
 
 /**
- * Stores all user responses indexed by Identity ID within the `participant_data` subproperty
+ * Stores all user responses indexed by Identity ID within the `participantData` subproperty
  *
  * ```
  * {
- *     participant_data: {
+ *     participantData: {
  *         'layer:///identities/user_a': {
  *            selection: 'item1'
  *          },
