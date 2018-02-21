@@ -835,6 +835,9 @@ describe("The Typing Indicator Classes", function() {
         });
 
         describe("The _scheduleNextMessage() method", function() {
+            beforeEach(function() {
+                jasmine.clock().mockDate();
+            });
 
             it("Should set a delay that is 2500 after last message sent and then send the message take 1", function() {
                 publisher._lastMessageTime = Date.now();
