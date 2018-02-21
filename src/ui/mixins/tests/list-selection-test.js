@@ -23,7 +23,7 @@ describe("List Selection Mixin", function() {
       model: Layer.Core.Query.Conversation
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(
         new Layer.Core.Conversation({
               participants: [client.user],

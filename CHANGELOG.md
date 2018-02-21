@@ -6,6 +6,8 @@
 * Removes SystemBus from `root.js`; uses `Layer.Utils.defer` instead
 * Memory leaks removed from unit tests
 * Upgrade to jasmine 3.0.0
+* Refactored tests and CI with Saucelabs
+
 
 ## 1.0.0-pre2.2
 

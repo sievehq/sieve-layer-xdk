@@ -30,7 +30,7 @@ describe('layer-conversation-list', function() {
       sortBy: [{ 'lastMessage.sentAt': 'desc' }]
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(
         new Layer.Core.Conversation({
               participants: [client.user],
@@ -262,8 +262,8 @@ describe('layer-conversation-list', function() {
     it("Should call _runFilter on all children", function() {
       el.childNodes[1].classList.add('layer-item-filtered');
       el.childNodes[2].classList.add('layer-item-filtered');
-      el.filter = 'C 50';
-      expect(el.querySelectorAllArray('layer-conversation-item:not(.layer-item-filtered)')).toEqual([el.childNodes[50]]);
+      el.filter = 'C 25';
+      expect(el.querySelectorAllArray('layer-conversation-item:not(.layer-item-filtered)')).toEqual([el.childNodes[25]]);
     });
   });
 });

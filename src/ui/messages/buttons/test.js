@@ -1,5 +1,5 @@
 describe('Button Message Components', function() {
-  var ButtonsModel, TextModel, ChoiceModel, client;
+  var ButtonsModel, TextModel, ChoiceModel, client, message;
   var conversation;
   var testRoot;
 

@@ -41,7 +41,7 @@ describe('layer-conversation-view', function() {
       model: Layer.Core.Query.Message
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(conversation.createMessage("M " + i).send());
     }
 

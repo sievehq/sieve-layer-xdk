@@ -60,6 +60,17 @@ jasmineRequire.HtmlReporter = function(j$) {
   };
 
   ResultsStateBuilder.prototype.specStarted = function(result) {
+    var floater = document.getElementById('layerfloater');
+    if (!floater) {
+        floater = document.createElement('div');
+	floater.style.position = 'absolute';
+	floater.style.top = '0px';
+	floater.style.left = '0px';
+	floater.style.zIndex = 10;
+	floater.id = 'layerfloater';
+	document.body.appendChild(floater);
+    }
+    floater.innerHTML = result.fullName;
   };
 
   ResultsStateBuilder.prototype.specDone = function(result) {

@@ -29,7 +29,7 @@ var supportedBrowsers = {
   },
   'safari-1': {
     browserName: 'safari',
-    version: 'latest-1'
+    version: '10.0'
   },
   'safari-0': {
     browserName: 'safari',
@@ -37,7 +37,7 @@ var supportedBrowsers = {
   },
  'ios-1': {
     browserName: 'iphone',
-    version: 'latest-1'
+    version: '10.0'
   },
   'ios-0': {
     browserName: 'iphone',
@@ -92,15 +92,31 @@ var unsupportedBrowsers = {
     browsers = Object.keys(supportedBrowsers).map(function(key) {return supportedBrowsers[key]});
   }
 
-  var allUrls = [
-    "http://" + ipaddress + ":9999/test/SpecRunner.html",
-    /*"http://" + ipaddress + ":9999/test/SpecRunner.html?stop=true",
-    "http://" + ipaddress + ":9999/test/ui_components.html?stop=true",
-    "http://" + ipaddress + ":9999/test/ui_components-lists.html?stop=true",
-    "http://" + ipaddress + ":9999/test/ui_mixins.html?stop=true"*/
+  var quickTestUrls = [
+    "http://localhost:9999/test/ui_tests.html?stop=true",
+    "http://localhost:9999/test/core_tests.html?stop=true"
+  ];
+  var quickTestBrowsers = [
+    supportedBrowsers['safari-1'],
+    supportedBrowsers['safari-0'],
+    supportedBrowsers['edge-0'],
+    supportedBrowsers['edge-1'],
+    supportedBrowsers['ie11'],
+    supportedBrowsers['chrome-1'],
+    supportedBrowsers['chrome-0'],
+    supportedBrowsers['firefox-1'],
+    supportedBrowsers['firefox-0']
   ];
 
-  var totalRuns = Object.keys(supportedBrowsers).length * allUrls.length;
+  var smallTestUrls = grunt.file.expand("test/smalltest*.html").map(file => "http://localhost:9999/" + file + "?stop=true").reverse();
+
+
+  var smallTestBrowsers = [
+    supportedBrowsers['ios-0'],
+    supportedBrowsers['ios-1']
+  ];
+
+  var totalRuns = smallTestUrls.length * smallTestBrowsers.length + quickTestBrowsers.length * quickTestUrls.length;
   var currentRuns = 0;
 
   function onTestComplete(result, callback) {
@@ -134,43 +150,18 @@ var unsupportedBrowsers = {
   }
 
   result.tasks.saucelabs = {
-    ie: {
-      options:{
-        browsers: [supportedBrowsers['ie11']],
-        urls: allUrls
+    quicktests: {
+      options: {
+        browsers: quickTestBrowsers,
+        urls: quickTestUrls
       }
     },
-    edge: {
-      options:{
-        browsers: [supportedBrowsers['edge-0']/*, supportedBrowsers['edge-1']*/],
-        urls: allUrls
+    smalltests: {
+      options: {
+        browsers: smallTestBrowsers,
+        urls: smallTestUrls
       }
     },
-    safari: {
-      options:{
-        browsers: [supportedBrowsers['safari-1'], supportedBrowsers['safari-0']],
-        urls: allUrls
-      }
-    },
-    ios: {
-      options:{
-        browsers: [supportedBrowsers['ios-0'], supportedBrowsers['ios-1']],
-        urls: allUrls
-      }
-    },
-    firefox: {
-      options:{
-        browsers: [supportedBrowsers['firefox-1'], supportedBrowsers['firefox-0']],
-        urls: allUrls
-      }
-    },
-    chrome: {
-      options:{
-        browsers: [supportedBrowsers['chrome-1'], supportedBrowsers['chrome-0']],
-        urls: allUrls
-      }
-    },
-
     options: {
       tunnelArgs: ["-B all"],
       tunneled: true,
@@ -183,8 +174,8 @@ var unsupportedBrowsers = {
       tags: ["master", 'Unit Test', 'Web'],
 
       // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
-      pollInterval: 5000, // Check for test results every 5 seconds (miliseconds)
-      statusCheckAttempts: 500,
+      pollInterval: 2000, // Check for test results every 5 seconds (miliseconds)
+      statusCheckAttempts: 5000,
       "max-duration": 10000,
       maxRetries: 10,
       onTestComplete: onTestComplete

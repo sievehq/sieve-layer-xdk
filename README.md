@@ -5,12 +5,12 @@
 | Browser          | Version    | OS Tested Against  |
 |------------------|------------|--------------------|
 | Internet Explorer| 11.0       | Windows 8.1        |
-| Edge             | 13.0       | Windows 10         |
-| Edge             | 14.0       | Windows 10         |
+| Edge             | 16.0       | Windows 10         |
+| Edge             | 15.0       | Windows 10         |
+| Safari           | 11.0       | OSX 10.13          |
 | Safari           | 10.0       | OSX 10.12          |
-| Safari           | 9.0        | OSX 10.11          |
-| Safari (IOS)     | 9.x        | IOS 10.0           |
-| Safari (IOS)     | 10.0       | IOS 9.3            |
+| Safari (IOS)     | default    | IOS 11.1           |
+| Safari (IOS)     | default    | IOS 10.0           |
 | Chrome           | 55         | OSX 11.0           |
 | Chrome           | 48         | Linux              |
 | Firefox          | 51         | OSX 11.0           |

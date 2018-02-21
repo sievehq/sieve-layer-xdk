@@ -236,11 +236,20 @@ module.exports = function (grunt) {
         ]
       }
     },
-    'generate-tests': {
+    'generate-quicktests': {
       debug: {
         files: [
           {
-            src: ['src/ui/components/test.js', 'src/ui/**/test.js', 'src/ui/**/tests/**.js']
+            src: ['src/ui/components/test.js', 'src/ui/**/test.js', 'src/ui/**/tests/**.js', 'test/core/unit/**.js', 'test/core/integration/**.js']
+          }
+        ],
+      }
+    },
+    'generate-smalltests': {
+      debug: {
+        files: [
+          {
+            src: ['src/ui/components/test.js', 'src/ui/**/test.js', 'src/ui/**/tests/**.js', 'test/core/unit/**.js', 'test/core/integration/**.js']
           }
         ],
       }
@@ -634,10 +643,10 @@ module.exports = function (grunt) {
   });
 
 
-  grunt.registerMultiTask('generate-tests', 'Building SpecRunner.html', function() {
+  grunt.registerMultiTask('generate-quicktests', 'Building SpecRunner.html', function() {
     var options = this.options();
     var specFiles = [
-      {file: 'test/SpecRunnerTemplate.html', contents: grunt.file.read('test/SpecRunnerTemplate.html'), template: true, destName: 'ui_'},
+      {file: 'test/SpecRunnerTemplate.html', contents: grunt.file.read('test/SpecRunnerTemplate.html'), template: true},
       {file: 'test/CoverageRunner.html', contents: grunt.file.read('test/CoverageRunner.html'), template: false}
     ];
     var startStr = "<!-- START GENERATED SPEC LIST -->";
@@ -664,7 +673,14 @@ module.exports = function (grunt) {
           console.error(e);
           throw new Error("Test file " + file + " has a compilation error");
         }
+
         var scriptTag = '<script src="../' + file + '" type="text/javascript"></script>';
+        if (file.match(/test\/core/)) {
+          folderName = "core_tests";
+        } else {
+          folderName = "ui_tests";
+        }
+      /*
         var folderName = file.replace(/src\/ui\/?(.*?)\/.*$/, "$1");
         var componentFolderName = file.replace(/src\/ui\/components\/?(.*?)\/.*$/, "$1");
 
@@ -677,7 +693,7 @@ module.exports = function (grunt) {
 
         if (folderName === 'ui-utils' || folderName === 'handlers') folderName = 'mixins';
         if (folderName === 'messages') folderName = 'components';
-
+*/
         if (!scripts[folderName]) scripts[folderName] = [];
         scripts[folderName].push(scriptTag);
         scripts.all.push(scriptTag);
@@ -697,15 +713,94 @@ module.exports = function (grunt) {
             if (testName === 'all') return;
             var testFile = contents.substring(0, startIndexes[i]) + '\n' + scripts[testName].join('\n') + '\n' + contents.substring(endIndexes[i]);
             if (index < allScripts.length - 1) {
-              testFile = testFile.replace(/next_file_name_here\.html/, specFiles[i].destName + allScripts[index + 1] + '.html');
+              testFile = testFile.replace(/next_file_name_here\.html/, allScripts[index + 1] + '.html');
             } else {
               //testFile = testFile.replace(/window.location.pathname/, '//window.location.pathname');
               testFile = testFile.replace(/next_file_name_here\.html/, 'tests_done.html');
             }
-            grunt.file.write(filePath.replace(/[^/]*$/, specFiles[i].destName + testName + '.html'), testFile);
+            grunt.file.write(filePath.replace(/[^/]*$/,  testName + '.html'), testFile);
           });
         }
       }
+    }
+  });
+
+  grunt.registerMultiTask('generate-smalltests', 'Building SpecRunner.html', function() {
+
+    function testDifficultyModifier(file) {
+      var contents = grunt.file.read(file);
+      var modifier = file.match(/src\/ui/) ? 2 : 1;
+
+      var matches = contents.match(/for\s*\((var )?i\s*=\s*0;\s*i\s*<\s*(\d+)/m);
+      if (matches && matches[2] > 25) modifier = modifier * 2;
+      return modifier;
+    }
+
+    function getTestCount(file) {
+      var contents = grunt.file.read(file);
+      var matches = contents.match(/\bit\(["']/g);
+      return matches ? matches.length : 0;
+    }
+
+
+    var options = this.options();
+    var contents = grunt.file.read('test/SpecRunnerTemplate.html');
+    var startStr = "<!-- START GENERATED SPEC LIST -->";
+    var endStr = "<!-- END GENERATED SPEC LIST -->";
+
+    var startIndexes = contents.indexOf(startStr) + startStr.length;
+    var endIndexes = contents.indexOf(endStr);
+
+    var allFiles = [];
+    this.files.forEach(function(fileGroup) {
+      fileGroup.src.forEach(function(file, index) {
+        allFiles.push(file);
+      });
+    });
+
+    var scripts = {};
+    var fileIndex = 0;
+    var maxSpecsPerFile = 600;
+    var currentCount = 0;
+
+    // Iterate over each file set and generate the build file specified for that set
+    allFiles.forEach(function(file, index) {
+
+      // If we don't validate that the unit test file compiles, it will simply be skipped during a test run.
+      // Do not allow grunt to complete if any unit tests fail to compile
+      try {
+        var f = new Function(grunt.file.read(file));
+      } catch(e) {
+        console.error(e);
+        throw new Error("Test file " + file + " has a compilation error");
+      }
+      var fileName;
+      var scriptTag = '<script src="../' + file + '" type="text/javascript"></script>';
+      var count = getTestCount(file);
+      count = count * testDifficultyModifier(file);
+      if (currentCount + count > maxSpecsPerFile && currentCount) {
+        fileIndex++;
+        currentCount = 0;
+      }
+      console.log(file + ": " + count + "; difficulty: " + testDifficultyModifier(file));
+      currentCount += count;
+      fileName = 'smalltest' + fileIndex;
+
+      if (!scripts[fileName]) scripts[fileName] = [];
+      scripts[fileName].push(scriptTag);
+    });
+
+    if (startIndexes !== -1) {
+      Object.keys(scripts).forEach(function(testName, index, allScripts) {
+        var testFile = contents.substring(0, startIndexes) + '\n' + scripts[testName].join('\n') + '\n' + contents.substring(endIndexes);
+        if (index < allScripts.length - 1) {
+          testFile = testFile.replace(/next_file_name_here\.html/, allScripts[index + 1] + '.html');
+        } else {
+          testFile = testFile.replace(/next_file_name_here\.html/, 'tests_done.html');
+        }
+        console.log("wriTE " + 'test/' +  testName + '.html');
+        grunt.file.write('test/' +  testName + '.html', testFile);
+      });
     }
   });
 
@@ -741,21 +836,18 @@ module.exports = function (grunt) {
 
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
 
-  grunt.registerTask("test", ["debug", "generate-tests", "generate-specrunner", "connect:saucelabs",
-     "saucelabs-jasmine:safari",
-    "saucelabs-jasmine:ios", "saucelabs-jasmine:firefox", "saucelabs-jasmine:chrome",
-    "saucelabs-jasmine:ie",  "saucelabs-jasmine:edge"]);
+  grunt.registerTask("test", ["debug", "connect:saucelabs","saucelabs-jasmine:quicktests", "saucelabs-jasmine:smalltests"]);
 
-  grunt.registerTask("retest", ["connect:saucelabs","saucelabs-jasmine:chrome",
-    "saucelabs-jasmine:safari",
-   "saucelabs-jasmine:ios", "saucelabs-jasmine:firefox",
-   "saucelabs-jasmine:ie",  "saucelabs-jasmine:edge"]);
+  grunt.registerTask("retest", ["connect:saucelabs", "saucelabs-jasmine:smalltests"]);
 
   grunt.registerTask('docs', ['debug', /*'jsducktemplates',*/ 'jsduck', 'jsduckfixes']);
 
   // Basic Code/theme building
   // We are not going to publish lib-es6 as this risks importing of files from both lib and lib-es6 by accident and getting multiple definitions of classes
-  grunt.registerTask('debug', ['version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5', 'custom_babel', 'remove:lib', 'move:lib', 'browserify:build', 'generate-tests', 'remove:libes6']);
+  grunt.registerTask('debug', [
+    'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
+    'custom_babel', 'remove:lib', 'move:lib',
+    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6']);
 
   grunt.registerTask('build', ['remove:build', 'debug', 'uglify', 'theme', 'cssmin']);
   grunt.registerTask('prepublish', ['build', 'copy:npm', 'fix-npm-package', 'refuse-to-publish']);

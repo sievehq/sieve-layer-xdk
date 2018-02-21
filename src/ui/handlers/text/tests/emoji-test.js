@@ -56,6 +56,9 @@ describe("Emoji Text Handler", function() {
     beforeEach(function() {
       Layer.UI.settings.useEmojiImages = false;
     });
+    afterEach(function() {
+      Layer.UI.settings.useEmojiImages = true;
+    });
     it("Should replace any occurance of :-) with an span", function() {
       var textData = {
         text: "hello :-)",

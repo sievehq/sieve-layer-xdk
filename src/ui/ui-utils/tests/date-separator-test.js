@@ -39,7 +39,7 @@ describe("Date Separator Utility", function() {
       predicate: 'conversation.id = "' + conversation.id + '"'
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 40; i++) {
       query.data.push(conversation.createMessage("m " + i).send());
     }
 

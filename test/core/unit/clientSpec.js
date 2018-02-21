@@ -52,11 +52,14 @@ describe("The Client class", function() {
     describe("The constructor() method", function() {
 
         it("Should initialize all caches", function() {
-            var client = new Layer.Core.Client({
+            client.destroy();
+
+            client = new Layer.Core.Client({
                 appId: "Samunwise",
                 url: "https://huh.com"
             });
             expect(client._scheduleCheckAndPurgeCacheItems).toEqual([]);
+            client.destroy();
         });
 
 
@@ -65,9 +68,10 @@ describe("The Client class", function() {
         });
 
         it("Should call _connectionRestored on receiving an online event", function() {
+            client.destroy();
             var _connectionRestored =  Layer.Core.Client.prototype._connectionRestored;
             spyOn(Layer.Core.Client.prototype, "_connectionRestored");
-            var client = new Layer.Core.Client({
+            client = new Layer.Core.Client({
                 appId: "Samunwise",
                 url: "https://huh.com"
             });
@@ -102,13 +106,13 @@ describe("The Client class", function() {
             client = null;
         });
         it("Should call _cleanup", function() {
-            spyOn(client, "_cleanup");
+            spyOn(client, "_cleanup").and.callThrough();
             client.destroy();
             expect(client._cleanup).toHaveBeenCalledWith();
         });
 
         it("Should call _destroyComponents", function() {
-            spyOn(client, "_destroyComponents");
+            spyOn(client, "_destroyComponents").and.callThrough();
             client.destroy();
             expect(client._destroyComponents).toHaveBeenCalledWith();
         });

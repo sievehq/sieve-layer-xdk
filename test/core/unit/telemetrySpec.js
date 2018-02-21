@@ -49,6 +49,7 @@ describe("The TelemetryMonitor class", function() {
         if (client.telemetryMonitor._writeTimeoutId) clearTimeout(client.telemetryMonitor._writeTimeoutId);
         localStorage.removeItem(client.telemetryMonitor.storageKey);
         if (client && !client.isDestroyed) client.destroy();
+        if (monitor && !monitor.isDestroyed) monitor.destroy();
         jasmine.Ajax.uninstall();
         jasmine.clock().uninstall();
     });

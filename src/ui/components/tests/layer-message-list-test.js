@@ -49,7 +49,7 @@ describe('layer-message-list', function() {
       predicate: 'conversation.id = "' + conversation.id + '"'
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(conversation.createMessage("m " + i).send());
     }
 
@@ -462,27 +462,27 @@ describe('layer-message-list', function() {
       var tmp = window.Layer.UI.UIUtils.isInBackground;
       window.Layer.UI.UIUtils.isInBackground = function() {return false;}
 
-      el.childNodes[50].item.isRead = false;
-      el.scrollTop = el.childNodes[50].offsetTop - el.offsetTop - 50;
-      el._markAsRead(el.childNodes[50]);
-      expect(el.childNodes[50].item.isRead).toBe(true);
+      el.childNodes[20].item.isRead = false;
+      el.scrollTop = el.childNodes[20].offsetTop - el.offsetTop - 50;
+      el._markAsRead(el.childNodes[20]);
+      expect(el.childNodes[20].item.isRead).toBe(true);
 
       // Restore
       window.Layer.UI.UIUtils.isInBackground = tmp;
     });
 
     it("Should  mark the 50th message as read if scrolled above the item", function() {
-      el.childNodes[50].item.isRead = false;
+      el.childNodes[20].item.isRead = false;
       el.scrollTop = 0;
-      el._markAsRead(el.childNodes[50]);
-      expect(el.childNodes[50].item.isRead).toBe(false);
+      el._markAsRead(el.childNodes[20]);
+      expect(el.childNodes[20].item.isRead).toBe(false);
     });
 
     it("Should  mark the 50th message as read if scrolled below the item", function() {
-      el.childNodes[50].item.isRead = false;
-      el.scrollTop = el.childNodes[50].offsetTop + el.scrollHeight;
-      el._markAsRead(el.childNodes[50]);
-      expect(el.childNodes[50].item.isRead).toBe(false);
+      el.childNodes[20].item.isRead = false;
+      el.scrollTop = el.childNodes[20].offsetTop + el.scrollHeight;
+      el._markAsRead(el.childNodes[20]);
+      expect(el.childNodes[20].item.isRead).toBe(false);
     });
   });
 
@@ -606,11 +606,11 @@ describe('layer-message-list', function() {
   describe("The _processAffectedWidgetsCustom() method", function() {
     var m1, m2, m3, m4, m5;
     beforeEach(function() {
-      m1 = el.childNodes[50];
-      m2 = el.childNodes[51];
-      m3 = el.childNodes[52];
-      m4 = el.childNodes[53];
-      m5 = el.childNodes[54];
+      m1 = el.childNodes[10];
+      m2 = el.childNodes[21];
+      m3 = el.childNodes[22];
+      m4 = el.childNodes[23];
+      m5 = el.childNodes[24];
       m1.firstInSeries = m1.lastInSeries = false;
       m2.firstInSeries = m2.lastInSeries = false;
       m3.firstInSeries = m3.lastInSeries = false;
@@ -634,7 +634,7 @@ describe('layer-message-list', function() {
     });
 
     it("Should set lastInSeries for any item lacking a nextSibling", function() {
-      while (el.childNodes[55]) el.removeChild(el.childNodes[55]);
+      while (el.childNodes[25]) el.removeChild(el.childNodes[25]);
       el._processAffectedWidgetsCustom([m1, m2, m3, m4, m5], 2000, false);
       expect(m5.lastInSeries).toBe(true);
     });
@@ -791,7 +791,7 @@ describe('layer-message-list', function() {
 
       var newElement = el.querySelector('#' + el._getItemId(message.id));
       expect(newElement.item).toBe(message);
-      expect(newElement).toBe(el.childNodes[80 + 1]); // + 1 for list header
+      expect(newElement).toBe(el.childNodes[15 + 1]); // + 1 for list header
     });
 
     it("Should insert a list item at the proper index take 2", function() {
@@ -810,7 +810,7 @@ describe('layer-message-list', function() {
 
       var newElement = el.querySelector('#' + el._getItemId(message.id));
       expect(newElement.item).toBe(message);
-      expect(newElement).toBe(el.childNodes[80 + 1]); // + 1 for list header
+      expect(newElement).toBe(el.childNodes[15 + 1]); // + 1 for list header
     });
 
     it("Should call _gatherAndProcessAffectedItems on 3 items before and 3 items after the inserted item", function() {
@@ -830,13 +830,13 @@ describe('layer-message-list', function() {
 
       // Posttest
       expect(el._gatherAndProcessAffectedItems).toHaveBeenCalledWith([
-        queryData[80-3],
-        queryData[80-2],
-        queryData[80-1],
-        queryData[80],
-        queryData[80+1],
-        queryData[80+2],
-        queryData[80+3]
+        queryData[15-3],
+        queryData[15-2],
+        queryData[15-1],
+        queryData[15],
+        queryData[15+1],
+        queryData[15+2],
+        queryData[15+3]
       ], false);
     });
 
@@ -857,13 +857,13 @@ describe('layer-message-list', function() {
 
       // Posttest
       expect(el._gatherAndProcessAffectedItems).toHaveBeenCalledWith([
-        queryData[80-3],
-        queryData[80-2],
-        queryData[80-1],
-        queryData[80],
-        queryData[80+1],
-        queryData[80+2],
-        queryData[80+3]
+        queryData[15-3],
+        queryData[15-2],
+        queryData[15-1],
+        queryData[15],
+        queryData[15+1],
+        queryData[15+2],
+        queryData[15+3]
       ], false);
     });
 
@@ -958,7 +958,7 @@ describe('layer-message-list', function() {
         node.classList.remove('layer-last-message-sent');
       });
       expect(el.querySelectorAllArray('.layer-last-message-sent')).toEqual([]);
-      el.childNodes[50].classList.add('layer-last-message-sent');
+      el.childNodes[20].classList.add('layer-last-message-sent');
 
       // Run
       el._updateLastMessageSent();
@@ -989,13 +989,13 @@ describe('layer-message-list', function() {
     it("Should update lastPagedAt and listData", function() {
       el.properties.lastPagedAt = 0;
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
-      expect(el.properties.listData.length).toEqual(100);
+      expect(el.properties.listData.length).toEqual(35);
       query.data.push(messages[1]);
       query.data.push(messages[0]);
       el._renderPagedData({type: 'data', data: messages});
       jasmine.clock().tick(1000);
       expect(el.properties.lastPagedAt > 0).toBe(true);
-      expect(el.properties.listData.length).toEqual(102);
+      expect(el.properties.listData.length).toEqual(37);
     });
 
     it("Should call _renderPagedDataDone with top 3 items and two new items", function() {
@@ -1024,14 +1024,14 @@ describe('layer-message-list', function() {
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
       spyOn(el, "_processAffectedWidgets");
-      el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
+      el._renderPagedDataDone([query.data[34], query.data[33], messages[0], messages[1]], fragment, {type: 'data', data: messages});
       expect(el._processAffectedWidgets).toHaveBeenCalledWith(jasmine.arrayContaining([el.childNodes[1], el.childNodes[2], el.childNodes[3], el.childNodes[3]]), true);
     });
 
     it("Should insert the Document Fragment just after the list header", function() {
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
-      el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
+      el._renderPagedDataDone([query.data[34], query.data[33], messages[0], messages[1]], fragment, {type: 'data', data: messages});
       expect(el.childNodes[0].classList.contains('layer-list-meta')).toBe(true);
       expect(el.childNodes[1].item).toBe(messages[0]);
     });
@@ -1042,7 +1042,7 @@ describe('layer-message-list', function() {
       spyOn(el, "scrollTo");
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
-      el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
+      el._renderPagedDataDone([query.data[34], query.data[33], messages[0], messages[1]], fragment, {type: 'data', data: messages});
       Layer.Utils.defer.flush();
       expect(el.scrollTo).toHaveBeenCalledWith(el.scrollHeight - el.clientHeight);
     });
@@ -1054,7 +1054,7 @@ describe('layer-message-list', function() {
       spyOn(el, "scrollTo");
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
-      el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
+      el._renderPagedDataDone([query.data[34], query.data[33], messages[0], messages[1]], fragment, {type: 'data', data: messages});
       Layer.Utils.defer.flush();
 
       // What was the 11th item is now the 13th item

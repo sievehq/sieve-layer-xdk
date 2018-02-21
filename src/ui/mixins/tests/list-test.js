@@ -40,7 +40,7 @@ describe("List Mixin", function() {
     });
     query.isFiring = false;
     query.data = [client.user];
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(
         new Layer.Core.Identity({
           userId: 'user' + i,
@@ -310,10 +310,11 @@ describe("List Mixin", function() {
     });
 
     it("Should scroll to the specified item and return true", function() {
-      var identity = client.getIdentity("layer:///identities/user40");
+      var identity = client.getIdentity("layer:///identities/user15");
       var identityWidget = document.getElementById(el._getItemId(identity.id));
       expect(el.scrollToItem(identity)).toEqual(true);
       expect(isCloseEnough(el.scrollTop, identityWidget.offsetTop - el.offsetTop)).toBe(true);
+
       expect(isCloseEnough(el.scrollTop, 0)).toBe(false)
     });
 
@@ -329,7 +330,7 @@ describe("List Mixin", function() {
     });
 
     it("Should return true and animate scrolling", function() {
-      var identity = client.getIdentity("layer:///identities/user40");
+      var identity = client.getIdentity("layer:///identities/user15");
       var identityWidget = document.getElementById(el._getItemId(identity.id));
 
       expect(el.scrollToItem(identity, 200)).toEqual(true);
@@ -340,7 +341,7 @@ describe("List Mixin", function() {
     });
 
     it("Should call the animateScrolling callback", function() {
-      var identity = client.getIdentity("layer:///identities/user40");
+      var identity = client.getIdentity("layer:///identities/user15");
       var spy = jasmine.createSpy('callback');
       el.scrollToItem(identity, 200, spy);
       expect(spy).not.toHaveBeenCalled();
@@ -350,8 +351,8 @@ describe("List Mixin", function() {
 
     // Sadly this does more to test the spy and callFake function than actually test the code
     it("Should skip callback of prior animation and only callback on new animation", function() {
-      var identity = client.getIdentity("layer:///identities/user40");
-      var identity2 = client.getIdentity("layer:///identities/user60");
+      var identity = client.getIdentity("layer:///identities/user5");
+      var identity2 = client.getIdentity("layer:///identities/user15");
       var identityWidget = document.getElementById(el._getItemId(identity2.id));
 
       var position;
@@ -627,10 +628,10 @@ describe("List Mixin", function() {
         displayName: 'User ' + 10000,
         isFullIdentity: true
       });
-      query.data.splice(50, 0, identity);
+      query.data.splice(25, 0, identity);
       query._triggerChange({
         type: 'insert',
-        index: 50,
+        index: 25,
         target: identity,
         query: query
       });
@@ -638,7 +639,7 @@ describe("List Mixin", function() {
       // Posttest
       var newElement = el.querySelector('#' + el._getItemId(identity.id));
       expect(newElement.item.userId).toEqual("user10000");
-      expect(newElement).toBe(el.childNodes[50]);
+      expect(newElement).toBe(el.childNodes[25]);
     });
 
     it("Should call _gatherAndProcessAffectedItems on 3 items before and 3 items after the inserted item", function() {
@@ -651,23 +652,23 @@ describe("List Mixin", function() {
       });
 
       // Run
-      query.data.splice(50, 0, identity);
+      query.data.splice(25, 0, identity);
       query._triggerChange({
         type: 'insert',
-        index: 50,
+        index: 25,
         target: identity,
         query: query
       });
 
       // Posttest
       expect(el._gatherAndProcessAffectedItems).toHaveBeenCalledWith([
-        query.data[50-3],
-        query.data[50-2],
-        query.data[50-1],
-        query.data[50],
-        query.data[50+1],
-        query.data[50+2],
-        query.data[50+3]
+        query.data[25-3],
+        query.data[25-2],
+        query.data[25-1],
+        query.data[25],
+        query.data[25+1],
+        query.data[25+2],
+        query.data[25+3]
       ], false);
     });
 
@@ -681,23 +682,23 @@ describe("List Mixin", function() {
       });
 
       // Run
-      query.data.splice(50, 0, identity);
+      query.data.splice(25, 0, identity);
       query._triggerChange({
         type: 'insert',
-        index: 50,
+        index: 25,
         target: identity,
         query: query
       });
 
       // Posttest
       expect(el._gatherAndProcessAffectedItems).toHaveBeenCalledWith([
-        query.data[50-3],
-        query.data[50-2],
-        query.data[50-1],
-        query.data[50],
-        query.data[50+1],
-        query.data[50+2],
-        query.data[50+3]
+        query.data[25-3],
+        query.data[25-2],
+        query.data[25-1],
+        query.data[25],
+        query.data[25+1],
+        query.data[25+2],
+        query.data[25+3]
       ], false);
     });
 
@@ -904,9 +905,9 @@ describe("List Mixin", function() {
       el._renderMovedData({
         target: query.data[3],
         fromIndex: 3,
-        toIndex: 50
+        toIndex: 25
       });
-      expect(el.childNodes[50].item).toBe(query.data[3]);
+      expect(el.childNodes[25].item).toBe(query.data[3]);
       expect(el.childNodes[3].item).toBe(query.data[4]);
       expect(el.childNodes[4].item).toBe(query.data[5]);
     });
