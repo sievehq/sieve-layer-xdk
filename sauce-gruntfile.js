@@ -108,7 +108,7 @@ var unsupportedBrowsers = {
     supportedBrowsers['firefox-0']
   ];
 
-  var smallTestUrls = grunt.file.expand("test/smalltest*.html").map(file => "http://localhost:9999/" + file + "?stop=true").reverse();
+  var smallTestUrls = grunt.file.expand("test/smalltest*.html").map(file => "http://localhost:9999/" + file + "?stop=true");
 
 
   var smallTestBrowsers = [
