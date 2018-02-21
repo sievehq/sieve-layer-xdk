@@ -104,7 +104,7 @@ var unsupportedBrowsers = {
     supportedBrowsers['ie11'],
     supportedBrowsers['chrome-1'],
     supportedBrowsers['chrome-0'],
-    supportedBrowsers['firefox-1'],
+    //supportedBrowsers['firefox-1'], enable once firefox-1 becomes Firefox 58; 57 has problems
     supportedBrowsers['firefox-0']
   ];
 

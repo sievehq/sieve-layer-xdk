@@ -38,7 +38,7 @@ describe("Has Query Mixin", function() {
     });
     query.isFiring = false;
     query.data = [client.user];
-    for (i = 0; i < 35; i++) {
+    for (i = 0; i < 25; i++) {
       query.data.push(
         new Layer.Core.Identity({
               userId: 'user' + i,

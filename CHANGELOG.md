@@ -14,6 +14,7 @@ Additional Changes:
 * Upgrade to jasmine 3.0.0
 * Refactored tests and CI with Saucelabs
 * WEB-1680: messageStatusRenderer and dateRenderer properties now used on initial load as well as new messages
+* WEB-1685: Improves quality and size of Preview Images, and adds static properties to let developers customize preview sizing and quality
 
 
 ## 1.0.0-pre2.2

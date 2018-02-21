@@ -536,7 +536,7 @@ registerComponent('layer-message-list', {
         const messageWidget = document.createElement(type);
         messageWidget.id = this._getItemId(message.id);
         messageWidget.dateRenderer = this.dateRenderer;
-        debugger;
+
         messageWidget.messageStatusRenderer = this.messageStatusRenderer;
         if (this.dateFormat) messageWidget.dateFormat = this.dateFormat;
         messageWidget._contentTag = handler.tagName;

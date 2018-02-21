@@ -61,12 +61,12 @@ registerComponent('layer-image-message-view', {
     },
 
     /**
-     * If showing only the image, and no metadata below it, use a maximum height of 400px.
+     * If showing only the image, and no metadata below it, use a maximum height of 768px.
      *
-     * @property {Number} [maxHeightWithoutMetadata=400]
+     * @property {Number} [maxHeightWithoutMetadata=768]
      */
     maxHeightWithoutMetadata: {
-      value: 400,
+      value: 768,
     },
 
     maxWidth: {
@@ -111,28 +111,27 @@ registerComponent('layer-image-message-view', {
     },
 
     // TODO: Allow this to be recalculated using the available width on the screen. For now this simplifies things greatly.
-    _getBestDimensions({ height = this.model.height, width = this.model.width }) {
-
+    _getBestDimensions({ height = this.model.previewHeight || this.model.height, width = this.model.previewWidth || this.model.width }) {
+      const maxWidthAvailable = this.getMessageListWidth() * 0.85;
+      const maxWidth = this.parentComponent.isShowingMetadata ? this.maxWidth : maxWidthAvailable;
       let ratio;
       let newWidth;
       let newHeight;
 
       if (width && height) {
         ratio = width / height;
-      } else if (this.model.previewWidth && this.model.previewHeight) {
-        ratio = this.model.previewWidth / this.model.previewHeight;
       }
 
       if (this.parentComponent && this.parentComponent.isShowingMetadata) {
         newHeight = this.heightWithMetadata;
         if (ratio) newWidth = newHeight * ratio;
-      } else if (this.model.previewHeight) {
-        newHeight = Math.min(this.maxHeightWithoutMetadata, this.model.previewHeight);
-        width = newHeight * ratio;
+      } else if (height) {
+        newHeight = Math.min(this.maxHeightWithoutMetadata, height);
+        newWidth = newHeight * ratio;
       }
 
-      if (newWidth && newWidth > this.maxWidth) {
-        newWidth = this.maxWidth;
+      if (newWidth && newWidth > maxWidth) {
+        newWidth = maxWidth;
         newHeight = newWidth / ratio;
       }
 
@@ -249,15 +248,7 @@ registerComponent('layer-image-message-view', {
 
 
     /**
-     * Generate a Canvas to render our image.
-     *
-     * Rendering Rules:
-     *
-     * * Images whose height is less than width and width is less than 192px are scaled to 192px
-     * * Images whose height is greater than width and width is less than 192px are scaled to height 192px?
-     * * Images whose width and height are equal, and less than 192px should be scaled up to 192px
-     * * Images between 192-350 are sized as-is
-     * * However, if there is metadata, scale images up to 350px
+     * Generate a Canvas to render our image in order to enforce exif orientation which is ignored by browser "img" tag.
      *
      * @method _renderCanvas
      * @private
@@ -276,8 +267,6 @@ registerComponent('layer-image-message-view', {
           if (data.imageHead && data.exif) {
             options.orientation = data.exif.get('Orientation') || 1;
           }
-          options.maxWidth = this.maxWidth;
-          options.maxHeight = this.properties.sizes.height || this.maxHeightWithoutMetadata;
 
           // Write the image to a canvas with the specified orientation
           ImageManager(blob, (canvas) => {

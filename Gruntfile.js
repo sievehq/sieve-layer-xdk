@@ -36,7 +36,7 @@ module.exports = function (grunt) {
     },
     remove: {
       build: {
-        fileList: ['build']
+        fileList: ['build', 'npm']
       },
       theme: {
         fileList: ['themes/build']
@@ -726,13 +726,16 @@ module.exports = function (grunt) {
   });
 
   grunt.registerMultiTask('generate-smalltests', 'Building SpecRunner.html', function() {
+    grunt.file.expand("test/smalltest*.html").forEach(function(file) {
+      grunt.file.delete(file);
+    });
 
     function testDifficultyModifier(file) {
       var contents = grunt.file.read(file);
       var modifier = file.match(/src\/ui/) ? 2 : 1;
 
       var matches = contents.match(/for\s*\((var )?i\s*=\s*0;\s*i\s*<\s*(\d+)/m);
-      if (matches && matches[2] > 25) modifier = modifier * 2;
+      if (matches && matches[2] >= 25) modifier = modifier * 3;
       return modifier;
     }
 
@@ -847,10 +850,10 @@ module.exports = function (grunt) {
   grunt.registerTask('debug', [
     'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
     'custom_babel', 'remove:lib', 'move:lib',
-    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6']);
+    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm']);
 
   grunt.registerTask('build', ['remove:build', 'debug', 'uglify', 'theme', 'cssmin']);
-  grunt.registerTask('prepublish', ['build', 'copy:npm', 'fix-npm-package', 'refuse-to-publish']);
+  grunt.registerTask('prepublish', ['build', 'fix-npm-package', 'refuse-to-publish']);
 
   grunt.registerTask('samples', ['debug', 'browserify:samples']);
   grunt.registerTask('theme', ['remove:theme', 'less', 'copy:themes']),
