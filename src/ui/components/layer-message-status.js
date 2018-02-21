@@ -112,7 +112,11 @@ registerComponent('layer-message-status', {
      *
      * @property {Function} [messageStatusRenderer=null]
      */
-    messageStatusRenderer: {},
+    messageStatusRenderer: {
+      get() {
+        return this.properties.messageStatusRenderer || this.parentComponent && this.parentComponent.messageStatusRenderer;
+      }
+    },
 
     /**
      * New message template, for when the message is in preview mode and has not yet been queued for sending
