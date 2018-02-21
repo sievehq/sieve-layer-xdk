@@ -197,7 +197,7 @@ registerComponent('layer-image-message-view', {
      * @param {HTMLElement} img
      */
     _imageLoaded() {
-      if (this.onDestroyCalled) return;
+      if (this.properties._internalState.onDestroyCalled) return;
       const img = this.nodes.image;
       if (!this.properties.sizes.height) {
         this.properties.sizes = this._getBestDimensions({ width: img.naturalWidth, height: img.naturalHeight });
