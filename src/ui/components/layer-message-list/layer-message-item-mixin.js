@@ -198,13 +198,13 @@ module.exports = {
     dateFormat: {},
 
     /**
-     * @inheritdoc Layer.UI.components.MessageListPanel.List#getMenuOptions
+     * @inheritdoc Layer.UI.components.MessageListPanel.List#getMenuItems
      *
-     * @property {Function} getMenuOptions
-     * @property {Layer.Core.Message} getMenuOptions.message
-     * @property {Object[]} getMenuOptions.return
+     * @property {Function} getMenuItems
+     * @property {Layer.Core.Message} getMenuItems.message
+     * @property {Object[]} getMenuItems.return
      */
-    getMenuOptions: {
+    getMenuItems: {
       type: Function,
       propagateToChildren: true,
     },

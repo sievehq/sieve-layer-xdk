@@ -519,14 +519,14 @@ describe('layer-message-list', function() {
       expect(item.messageStatusRenderer).toBe(messageStatusRenderer);
     });
 
-    it("Should setup getMenuOptions", function() {
-      var getMenuOptions = jasmine.createSpy('getMenuOptions');
+    it("Should setup getMenuItems", function() {
+      var getMenuItems = jasmine.createSpy('getMenuItems');
 
-      el.getMenuOptions = getMenuOptions;
+      el.getMenuItems = getMenuItems;
 
       var m = conversation.createMessage("m?");
       var item = el._generateItem(m);
-      expect(item.getMenuOptions).toBe(getMenuOptions);
+      expect(item.getMenuItems).toBe(getMenuItems);
     });
 
     it("Should set dateFormat", function() {

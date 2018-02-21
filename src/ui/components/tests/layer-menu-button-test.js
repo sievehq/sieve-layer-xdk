@@ -62,7 +62,7 @@ describe('layer-menu-button', function() {
   it("Should apply the item property", function() {
     el.item = "Frodo";
     var calledWith;
-    el.getMenuOptions = function(item) {
+    el.getMenuItems = function(item) {
       calledWith = item;
     };
     click(el);
@@ -72,7 +72,7 @@ describe('layer-menu-button', function() {
 
   it("Should apply menu options to the menu", function() {
     var options = [];
-    el.getMenuOptions = function() {return options;};
+    el.getMenuItems = function() {return options;};
     click(el);
     Layer.Utils.defer.flush();
     expect(document.querySelector('layer-menu').items).toBe(options);

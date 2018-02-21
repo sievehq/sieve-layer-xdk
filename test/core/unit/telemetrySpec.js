@@ -4,6 +4,10 @@ describe("The TelemetryMonitor class", function() {
 
     var client, monitor;
     var today;
+
+    beforeAll(function() {
+      localStorage.removeItem('layer-telemetry-' + appId);
+    });
     beforeEach(function() {
         jasmine.clock().install();
         jasmine.Ajax.install();

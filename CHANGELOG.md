@@ -2,6 +2,12 @@
 
 ## 1.0.0-pre2.3
 
+*breaking changes*
+
+* `getMenuOptions` has been renamed to `getMenuItems` in all places it occurs
+
+Additional Changes:
+
 * Automated tests setup with travis + saucelabs
 * Removes SystemBus from `root.js`; uses `Layer.Utils.defer` instead
 * Memory leaks removed from unit tests

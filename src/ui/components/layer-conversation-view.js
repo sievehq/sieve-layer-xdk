@@ -570,7 +570,7 @@ registerComponent('layer-conversation-view', {
      * Format is:
      *
      * ```
-     * widget.getMenuOptions = function(message) {
+     * widget.getMenuItems = function(message) {
      *   return [
      *     {text: "label1", method: method1},
      *     {text: "label2", method: method2},
@@ -579,13 +579,13 @@ registerComponent('layer-conversation-view', {
      * }
      * ```
      *
-     * @property {Function} getMenuOptions
-     * @property {Layer.Core.Message} getMenuOptions.message
-     * @property {Object[]} getMenuOptions.return
+     * @property {Function} getMenuItems
+     * @property {Layer.Core.Message} getMenuItems.message
+     * @property {Object[]} getMenuItems.return
      */
-    getMenuOptions: {
+    getMenuItems: {
       type: Function,
-      value: function getMenuOptions(message) {
+      value: function getMenuItems(message) {
         return [
           {
             text: 'delete',
@@ -596,7 +596,7 @@ registerComponent('layer-conversation-view', {
         ];
       },
       set(value) {
-        this.nodes.list.getMenuOptions = value;
+        this.nodes.list.getMenuItems = value;
       }
     },
 

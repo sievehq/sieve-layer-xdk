@@ -212,12 +212,12 @@ describe('layer-conversation-list', function() {
       expect(result.tagName).toEqual('LAYER-CHANNEL-ITEM');
     });
 
-    it("Should set getMenuOptions callback", function() {
+    it("Should set getMenuItems callback", function() {
       var spy = jasmine.createSpy('menuOptions');
-      el.getMenuOptions = spy;
+      el.getMenuItems = spy;
       var result = el._generateItem(query.data[1]);
       Layer.Utils.defer.flush();
-      expect(result.getMenuOptions).toBe(spy);
+      expect(result.getMenuItems).toBe(spy);
     });
 
     it("Should set size", function() {

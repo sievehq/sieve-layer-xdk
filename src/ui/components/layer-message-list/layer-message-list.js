@@ -225,13 +225,13 @@ registerComponent('layer-message-list', {
     },
 
     /**
-     * @inheritdoc Layer.UI.components.ConversationView#getMenuOptions
+     * @inheritdoc Layer.UI.components.ConversationView#getMenuItems
      *
-     * @property {Function} getMenuOptions
-     * @property {Layer.Core.Message} getMenuOptions.message
-     * @property {Object[]} getMenuOptions.return
+     * @property {Function} getMenuItems
+     * @property {Layer.Core.Message} getMenuItems.message
+     * @property {Object[]} getMenuItems.return
      */
-    getMenuOptions: {
+    getMenuItems: {
       type: Function,
     },
 
@@ -536,11 +536,12 @@ registerComponent('layer-message-list', {
         const messageWidget = document.createElement(type);
         messageWidget.id = this._getItemId(message.id);
         messageWidget.dateRenderer = this.dateRenderer;
+        debugger;
         messageWidget.messageStatusRenderer = this.messageStatusRenderer;
         if (this.dateFormat) messageWidget.dateFormat = this.dateFormat;
         messageWidget._contentTag = handler.tagName;
         messageWidget.item = message;
-        messageWidget.getMenuOptions = this.getMenuOptions;
+        messageWidget.getMenuItems = this.getMenuItems;
         if (this.query.pagedToEnd && this.query.data.indexOf(message) === this.query.data.length - 1) {
           messageWidget.classList.add('layer-first-message-of-conversation');
         }
