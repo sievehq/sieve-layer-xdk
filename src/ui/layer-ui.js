@@ -143,14 +143,16 @@ LayerUI.init = function init() {
  * @param {Object} mixins
  */
 LayerUI.setupMixins = function setupMixins(mixins) {
-  if (!LayerUI.settings.mixins) LayerUI.settings.mixins = {};
+  if (!LayerUI.settings._mixins) LayerUI.settings._mixins = {};
   Object.keys(mixins).forEach((componentName) => {
-    if (!LayerUI.settings.mixins[componentName]) {
-      LayerUI.settings.mixins[componentName] = [];
-    } else if (!Array.isArray(LayerUI.settings.mixins[componentName])) {
-      LayerUI.settings.mixins[componentName] = [LayerUI.settings.mixins[componentName]];
+    if (!LayerUI.settings._mixins[componentName]) {
+      LayerUI.settings._mixins[componentName] = [];
     }
-    LayerUI.settings.mixins[componentName] = LayerUI.settings.mixins[componentName].concat(mixins[componentName]);
+    if (!Array.isArray(mixins[componentName])) {
+      LayerUI.settings._mixins[componentName].push(mixins[componentName]);
+    } else {
+      LayerUI.settings._mixins[componentName] = LayerUI.settings._mixins[componentName].concat(mixins[componentName]);
+    }
   });
 };
 

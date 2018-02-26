@@ -28,7 +28,8 @@ describe("List Item Mixin", function() {
   afterEach(function() {
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
-
+    if (el) el.destroy();
+    if (client) client.destroy();
   });
 
   describe("The customNodeAbove property", function() {

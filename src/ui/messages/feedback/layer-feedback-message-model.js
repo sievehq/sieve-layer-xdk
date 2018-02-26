@@ -53,9 +53,6 @@ class FeedbackModel extends MessageTypeModel {
     const comment = this.comment;
     super._parseMessage(payload);
 
-    if (this.responses) {
-      this._processNewResponses();
-    }
     if (this.rating !== rating) {
       this._triggerAsync('message-type-model:change', {
         property: 'rating',
@@ -115,11 +112,11 @@ class FeedbackModel extends MessageTypeModel {
   }
 
   _processNewResponses() {
-    const data = this.responses.participantData[this.enabledFor[0].substring('layer:///identities/'.length)];
-    if (data.rating) {
-      this.rating = data.rating;
-      this.comment = data.comment;
-      this.sentAt = new Date(data.sent_at);
+    const rating = this.responses.getResponse('rating', this.enabledFor[0]);
+    if (rating) {
+      this.rating = rating;
+      this.comment = this.responses.getResponse('comment', this.enabledFor[0]);
+      this.sentAt = new Date(this.responses.getResponse('sent_at', this.enabledFor[0]));
     }
   }
 

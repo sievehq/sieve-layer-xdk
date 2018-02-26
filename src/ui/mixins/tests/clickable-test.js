@@ -37,11 +37,34 @@ describe("The Clickable Mixin", function() {
     CustomElements.takeRecords();
     Layer.Utils.defer.flush();
   });
+
+  afterEach(function() {
+    if (el) el.destroy();
+    if (client) client.destroy();
+    client = null;
+    jasmine.clock().uninstall();
+  });
+
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.click();
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
+
   it("Should respond to click events", function() {
     el.addEventListener('test-click', function() { called = true });
 
     // Run
-    el.click();
+    click(el);
 
     // Posttest
     expect(called).toBe(true);
@@ -52,6 +75,7 @@ describe("The Clickable Mixin", function() {
 
     // Run
     var e = new Event('touchstart');
+    e.touches = [{screenX: 400, screenY: 400}];
     el.dispatchEvent(e);
     e = new Event('touchend');
     el.dispatchEvent(e);
@@ -65,7 +89,7 @@ describe("The Clickable Mixin", function() {
     el.addEventListener('test-click', function() { called = true });
 
     // Run
-    el.click();
+    click(el);
 
     // Posttest
     expect(called).toBe(false);

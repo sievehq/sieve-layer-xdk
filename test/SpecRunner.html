@@ -1,9 +1,167 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <script>window.location = 'core_client.html'</script>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Jasmine Spec Runner v3.0.0</title>
+
+  <link rel="shortcut icon" type="image/png" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.0.0/jasmine_favicon.png">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.0.0/jasmine.css">
+
+  <script type="text/javascript" src="lib/jasmine-3.0.0.js"></script>
+  <script type="text/javascript" src="lib/jasmine-html-3.0.0.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.0.0/boot.min.js"></script>
+  <script src="lib/jasmine-reporter-michael.js" type="text/javascript"></script>
+  <script>
+/*eslint-disable */
+      jasmine.getEnv().addReporter(new jasmine.JSReporter2());
+  </script>
+
+  <!-- include source files here... -->
+  <script type='text/javascript' src='../build/layer-xdk.js'></script>
+  <script type='text/javascript' src='core/responses.js'></script>
+
+  <!-- include spec files here... -->
+    <script type="text/javascript" src="lib/mock-ajax.js"></script>
+
+    <script type="text/javascript">
+    var args = {};
+    location.search.substring(1).split(/&/).forEach(function(nameValue) {
+      if (nameValue) {
+        var pair = nameValue.split(/=/);
+        args[pair[0]] = pair[1];
+      }
+    });
+
+    var myspecs = ['../src/ui/messages/buttons/test.js',
+'../src/ui/messages/carousel/test.js',
+'../src/ui/messages/choice/test.js',
+'../src/ui/messages/feedback/test.js',
+'../src/ui/messages/file/test.js',
+'../src/ui/messages/image/test.js',
+'../src/ui/messages/link/test.js',
+'../src/ui/messages/location/test.js',
+'../src/ui/messages/message-type-list/test.js',
+'../src/ui/messages/product/test.js',
+'../src/ui/messages/receipt/test.js',
+'../src/ui/messages/response/test.js',
+'../src/ui/messages/status/test.js',
+'../src/ui/messages/text/test.js',
+'../src/ui/components/tests/component-test.js',
+'../src/ui/components/tests/layer-action-button-test.js',
+'../src/ui/components/tests/layer-age-test.js',
+'../src/ui/components/tests/layer-avatar-test.js',
+'../src/ui/components/tests/layer-channel-item-test.js',
+'../src/ui/components/tests/layer-choice-button-test.js',
+'../src/ui/components/tests/layer-compose-bar-test.js',
+'../src/ui/components/tests/layer-conversation-item-date-test.js',
+'../src/ui/components/tests/layer-conversation-item-test.js',
+'../src/ui/components/tests/layer-conversation-last-message-test.js',
+'../src/ui/components/tests/layer-conversation-list-test.js',
+'../src/ui/components/tests/layer-conversation-title-test.js',
+'../src/ui/components/tests/layer-conversation-view-test.js',
+'../src/ui/components/tests/layer-date-test.js',
+'../src/ui/components/tests/layer-file-upload-button-test.js',
+'../src/ui/components/tests/layer-identity-item-test.js',
+'../src/ui/components/tests/layer-identity-list-test.js',
+'../src/ui/components/tests/layer-loading-indicator-test.js',
+'../src/ui/components/tests/layer-membership-item-test.js',
+'../src/ui/components/tests/layer-membership-list-test.js',
+'../src/ui/components/tests/layer-menu-button-test.js',
+'../src/ui/components/tests/layer-menu-test.js',
+'../src/ui/components/tests/layer-message-list-test.js',
+'../src/ui/components/tests/layer-message-status-test.js',
+'../src/ui/components/tests/layer-notifier-test.js',
+'../src/ui/components/tests/layer-presence-test.js',
+'../src/ui/components/tests/layer-replaceable-content-test.js',
+'../src/ui/components/tests/layer-send-button-test.js',
+'../src/ui/components/tests/layer-start-of-conversation-test.js',
+'../src/ui/components/tests/layer-typing-indicator-test.js',
+'../src/ui/handlers/message/tests/unknown-test.js',
+'../src/ui/handlers/text/tests/emoji-test.js',
+'../src/ui/handlers/text/tests/newline-test.js',
+'../src/ui/mixins/tests/clickable-test.js',
+'../src/ui/mixins/tests/empty-list-test.js',
+'../src/ui/mixins/tests/file-drop-test.js',
+'../src/ui/mixins/tests/focus-on-keydown-test.js',
+'../src/ui/mixins/tests/has-query-test.js',
+'../src/ui/mixins/tests/list-item-selection-test.js',
+'../src/ui/mixins/tests/list-item-test.js',
+'../src/ui/mixins/tests/list-load-indicator-test.js',
+'../src/ui/mixins/tests/list-selection-test.js',
+'../src/ui/mixins/tests/list-test.js',
+'../src/ui/mixins/tests/message-handler-test.js',
+'../src/ui/mixins/tests/query-end-indicator-test.js',
+'../src/ui/mixins/tests/size-property-test.js',
+'../src/ui/mixins/tests/state-manager-test.js',
+'../src/ui/mixins/tests/throttler-test.js',
+'../src/ui/ui-utils/tests/date-separator-test.js',
+'../test/core/unit/clientAuthenticatorRequestSpec.js',
+'../test/core/unit/clientAuthenticatorSpec.js',
+'../test/core/unit/clientSpec.js',
+'../test/core/unit/dbManagerSpec.js',
+'../test/core/unit/layerErrorSpec.js',
+'../test/core/unit/layerEventSpec.js',
+'../test/core/unit/onlineStateManagerSpec.js',
+'../test/core/unit/rootSpec.js',
+'../test/core/unit/syncEventSpec.js',
+'../test/core/unit/syncManagerMoreSpec.js',
+'../test/core/unit/syncManagerSpec.js',
+'../test/core/unit/telemetrySpec.js',
+'../test/core/unit/typingIndicatorSpec.js',
+'../test/core/unit/utilSpec.js',
+'../test/core/unit/xhrSpec.js',
+'../test/core/integration/clientIntegrationSpec.js',
+'../test/core/integration/conversationIntegrationSpec.js',
+'../test/core/integration/syncManagerSpec.js',
+'../test/core/integration/websocketManagerSpec.js'];
+  var scriptIndex;
+  if (!('index' in args) && args.name) {
+    myspecs.forEach(function(name, index) {
+      if (args.name === name.replace('../', '')) scriptIndex = index;
+    });
+  } else {
+    scriptIndex = Number(args.index) || 0;
+  }
+  document.writeln('<scr' + 'ipt src="' + myspecs[scriptIndex] + '" type="text/javascript"></scr' + 'ipt>');
+  setTimeout(function() {
+    debugger;
+    document.getElementById('title').innerHTML = scriptIndex + ': ' + myspecs[scriptIndex].replace(/^.*\//, '');
+  }, 1000);
+</script>
+
+<script type="text/javascript">
+  (function() {
+    var jasmineEnv = jasmine.getEnv();
+    jasmineEnv.updateInterval = 1000;
+    var reporter = new jasmine.JSReporter2();
+    reporter.jasmineDone = function() {
+      var failedSuites = Object.keys(reporter.suites).filter(function(suiteName) {
+        return !reporter.suites[suiteName].passed;
+      });
+
+      if (failedSuites.length) {
+        reporter.jasmineDone2();
+      } else if (scriptIndex === myspecs.length - 1 || location.search.match(/stop=true/)) {
+        reporter.jasmineDone2();
+      } else {
+
+        //window.location.pathname = window.location.pathname.replace(/[^/]*?$/, 'ui_components.html');
+        var search = "";
+        args.index = scriptIndex + 1;
+        args.name = myspecs[args.index].replace(/^.*\//, ''); // parameter is here for people watching the run, not for functionality
+        Object.keys(args).forEach(function(argName) {
+          return search += "&" +  argName + '=' + args[argName];
+        });
+        window.location.search = search;
+      }
+    };
+    jasmineEnv.addReporter(reporter);
+  })();
+</script>
+
 </head>
 
 <body>
+  <div style='position: absolute; top: 0px; left: 0px; width: 300px; text-align: right;' id='title'></div>
 </body>
 </html>

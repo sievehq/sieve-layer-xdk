@@ -1,8 +1,34 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.3
+
+*breaking changes*
+
+* `getMenuOptions` has been renamed to `getMenuItems` in all places it occurs
+
+Additional Changes:
+
+* Automated tests setup with travis + saucelabs
+* Removes SystemBus from `root.js`; uses `Layer.Utils.defer` instead
+* Memory leaks removed from unit tests
+* Upgrade to jasmine 3.0.0
+* Refactored tests and CI with Saucelabs
+* WEB-1680: `messageStatusRenderer` and `dateRenderer` properties now used on initial load as well as new messages
+* WEB-1685: Improves quality and size of Preview Images, and adds static properties to let developers customize preview sizing and quality
+* WEB-1648: Replace `MessageTypeModel.responses` object with `MessageTypeModel.responses` a `MessageTypeResponseSummaryModel` instance (i.e. added the `MessageTypeResponseSummaryModel` class)
+    * Adds `model.responses.getResponse(responseName, identityId)`
+    * Adds `model.responses.getResponses(responseName, identityIds)`
+* Redefines the `layer-widget-destroyed` event; it now triggers on `document.body` for each removed component; access `evt.detail.target` not `evt.target` to determine what UI Component has been removed and is about to be destroyed.
+* Fixes build script that strips HTML Comments out of templates
+* ReplaceableContent subproperties now accept `null` values as a way to prevent anything from being rendered in an area.
+* Adds the 'layer-groups.css' theme
+* Flexbox workarounds added to the CSS
+* Now supports setting `model.action.event = null;` to prevent a model's action from triggering
+
 ## 1.0.0-pre2.2
 
 * NPM repo now contains missing theme source files, and not just theme build files
+* Removes redundant `messages:change` and `messageparts:change` events on loading external content
 
 ## 1.0.0-pre2.1
 

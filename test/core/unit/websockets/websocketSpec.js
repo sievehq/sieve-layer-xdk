@@ -73,6 +73,8 @@ describe("The Websocket Socket Manager Class", function() {
     afterEach(function() {
         jasmine.Ajax.uninstall();
         jasmine.clock().uninstall();
+        if (client && !client.isDestroyed) client.destroy();
+        if (websocketManager && !websocketManager.isDestroyed) websocketManager.destroy();
     });
 
     afterAll(function() {
@@ -82,8 +84,8 @@ describe("The Websocket Socket Manager Class", function() {
 
     describe("The constructor() method", function() {
         it("Should return a WebsocketManager", function() {
-            expect(new Layer.Core.Websockets.SocketManager({
-            })).toEqual(jasmine.any(Layer.Core.Websockets.SocketManager));
+            websocketManager = new Layer.Core.Websockets.SocketManager({});
+            expect(websocketManager).toEqual(jasmine.any(Layer.Core.Websockets.SocketManager));
         });
 
         it("Should call connect if client is authenticated", function() {
@@ -92,7 +94,7 @@ describe("The Websocket Socket Manager Class", function() {
             client.isAuthenticated = true;
 
             // Run
-            new Layer.Core.Websockets.SocketManager({
+            websocketManager = new Layer.Core.Websockets.SocketManager({
             });
 
             // Posttest
@@ -108,7 +110,7 @@ describe("The Websocket Socket Manager Class", function() {
             client.isAuthenticated = false;
 
             // Run
-            new Layer.Core.Websockets.SocketManager({
+            websocketManager = new Layer.Core.Websockets.SocketManager({
             });
 
             // Posttest

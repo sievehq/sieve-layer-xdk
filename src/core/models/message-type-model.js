@@ -21,6 +21,7 @@ import version from '../../version';
 import Root from '../root';
 import Message from '../models/message';
 import { ErrorDictionary } from '../layer-error';
+import ResponseSummaryModel from './message-type-response-summary-model';
 
 class MessageTypeModel extends Root {
   /**
@@ -37,6 +38,7 @@ class MessageTypeModel extends Root {
     if (!options.action) options.action = {};
 
     super(options);
+    this.responses = new ResponseSummaryModel();
 
     if (!this.customData) this.customData = {};
     this.currentMessageRenderer = this.constructor.messageRenderer;
@@ -278,6 +280,7 @@ class MessageTypeModel extends Root {
     const newFields = ['action', 'customData'].concat(fields);
     newFields.forEach((fieldName) => {
       if (this._propertyHasValue(fieldName)) {
+        if (Array.isArray(this[fieldName]) && this[fieldName].length === 0) return;
         body[Util.hyphenate(fieldName, '_')] = this[fieldName];
       }
     });
@@ -330,30 +333,29 @@ class MessageTypeModel extends Root {
   _parseMessage(payload) {
     const responses = this.childParts.filter(part => part.mimeAttributes.role === 'response_summary')[0];
     if (responses) {
-      const responseData = JSON.parse(responses.body);
-      if (responseData.participant_data) {
-        responseData.participantData = responseData.participant_data;
-        delete responseData.participant_data;
-      }
-      if (!Util.doesObjectMatch(this.responses, responseData)) {
+      const oldData = this.responses._participantData;
+      if (this.responses._parseMessage(JSON.parse(responses.body))) {
+        Util.defer(() => this._processNewResponses());
         this._triggerAsync('message-type-model:change', {
-          propertyName: 'responses',
-          oldValue: this.responses,
-          newValue: responseData,
+          propertyName: 'responses._participantData',
+          oldValue: oldData,
+          newValue: this.responses._participantData,
         });
-        this.responses = responseData;
       }
     }
 
     Object.keys(payload).forEach((propertyName) => {
+
       const modelName = Util.camelCase(propertyName);
-      if (this[modelName] !== payload[propertyName]) {
-        this._triggerAsync('message-type-model:change', {
-          propertyName: modelName,
-          oldValue: this[modelName],
-          newValue: payload[propertyName],
-        });
-        this[modelName] = payload[propertyName];
+      if (modelName in this.constructor.prototype) {
+        if (this[modelName] !== payload[propertyName]) {
+          this._triggerAsync('message-type-model:change', {
+            propertyName: modelName,
+            oldValue: this[modelName],
+            newValue: payload[propertyName],
+          });
+          this[modelName] = payload[propertyName];
+        }
       }
     });
   }
@@ -567,72 +569,14 @@ class MessageTypeModel extends Root {
   }
 
   /**
-   * Any time `this.responses` is set, this method is called to handle any side-effects.
-   *
-   * Any time `this.responses` is set, call Layer.Core.MessageTypeModel._processNewResponses.
-   *
-   * `this.responses` is set by Layer.Core.MessageTypeModel._parseMessage under two conditions:
-   *
-   * * Initializing this model from the Message; `__updateResponses` is not called during initialization
-   * * Updating this model after a `responsesummary` part is added or updated
-   *
-   * (DISABLED) Note that `this.trigger('message-type-model:change')` is called by the `_handlePartAdded` and `_handlePartChanged` methods above.
-   *
-   * @method __updateResponses
-   * @private
-   * @param {Object} newResponse
-   * @param {Object} oldResponse
-   */
-  __updateResponses(newResponse, oldResponse) {
-    if (!this.responses) this.__responses = {};
-    this._processNewResponses();
-    if (!this.part) {
-      this._triggerAsync('message-type-model:change', {
-        propertyName: 'responses',
-        oldValue: oldResponse,
-        newValue: newResponse,
-      });
-    }
-  }
-
-  /**
-   * Whenever the `resopnsesummary` Message Part is added or updated, this method is called to process the responses.
-   *
-   * When the responses have changed, a subclass may copy parts of the responses into its own properties.
+   * Whenever {@link #responses} changes as a result of any User posting a Response Message,
+   * this method is called to let each model process the new responses.
    *
    * @protected
    * @abstract
    * @method _processNewResponses
    */
   _processNewResponses() { }
-
-
-  /**
-   * Get the Response Message value corresponding to the given `responseName`.
-   *
-   * The identityId parameter can be ommitted, but if multiple users have sent Response Messages
-   * with the same responseName (i.e. "selection") then an error will be thrown by this method.
-   *
-   * @throws
-   * Multiple Responses; must use the identityId parameter
-   *
-   * @method getParticipantResponse
-   * @param {String} responseName    Name of the response to lookup
-   * @param {String} identityId         Identity ID of the user who made the response
-   */
-  getParticipantResponse(responseName, identityId) {
-    const results = []
-    if (identityId) {
-      return this.responses[identityId].responseName;
-    } else {
-      Object.keys(this.responses.participantData || {}).forEach((identityId) => {
-        const value = this.responses.participantData[identityId][responseName];
-        if (value !== null && value !== undefined) results.push(value);
-      });
-      if (results.length > 1) throw new Error('Multiple Responses; must use the identityId parameter');
-      return results[0];
-    }
-  }
 
   /**
    * Return the name of the Layer.Core.MessageTypeModel class that represents this Message; for use in simple tests.
@@ -657,7 +601,7 @@ class MessageTypeModel extends Root {
 
   // see actionEvent property docs below
   __getActionEvent() {
-    return this.action.event || this.constructor.defaultAction;
+    return this.action.event !== undefined ? this.action.event : this.constructor.defaultAction;
   }
 
   // see actionData property docs below
@@ -863,25 +807,14 @@ MessageTypeModel.prototype.role = null;
 //MessageTypeModel.prototype.locked = false;
 
 /**
- * Stores all user responses indexed by Identity ID within the `participant_data` subproperty
+ * Stores all user responses which can be accessed using `getResponse` or `getResponses`
  *
  * ```
- * {
- *     participant_data: {
- *         'layer:///identities/user_a': {
- *            selection: 'item1'
- *          },
- *          'layer:///identities/user_b': {
- *            vote: 'approved'
- *          }
- *      }
- * }
+ * console.log(model.responses.getResponse(identityId, 'selection');
+ * > 'brain-eating-musically-inclined-zombie'
  * ```
  *
- * TODO: should normalize to `participantData`
- * TODO: should represent this with a custom class and not Object.
- *
- * @property {Object}
+ * @property {Layer.Core.MessageTypeResponseSummaryModel}
  */
 MessageTypeModel.prototype.responses = null;
 
@@ -940,6 +873,25 @@ MessageTypeModel.prototype.messageSentAt = null;
  * @property {Object}
  */
 MessageTypeModel.prototype.messageRecipientStatus = null;
+
+
+/**
+ * The MIME Type that this Model generates and for which this model will be instantiated.
+ *
+ * @static
+ * @property {String} [MIMEType=]
+ * @abstract
+ */
+MessageTypeModel.MIMEType = '';
+
+/**
+ * The UI Component to render this model
+ *
+ * @static
+ * @property {String} [messageRenderer=]
+ * @abstract
+ */
+MessageTypeModel.messageRenderer = '';
 
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = [

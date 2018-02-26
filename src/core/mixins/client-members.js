@@ -83,7 +83,7 @@ module.exports = {
       this._models.members = {};
     },
     cleanup() {
-      Object.keys(this._models.members).forEach((id) => {
+      Object.keys(this._models.members || {}).forEach((id) => {
         const member = this._models.members[id];
         if (member && !member.isDestroyed) {
           member.destroy();

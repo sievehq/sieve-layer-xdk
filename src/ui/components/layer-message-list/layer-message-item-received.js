@@ -59,6 +59,7 @@ registerComponent('layer-message-item-received', {
     layer-message-item-received  .layer-message-item-main {
       flex-grow: 1;
       overflow: hidden;
+      width: 100px; /* flexbox bug workaround */
     }
     /* Insure that text, images, videos, etc... are all left aligned */
     layer-message-item-received layer-message-text-plain {

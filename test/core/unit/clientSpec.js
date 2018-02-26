@@ -40,6 +40,7 @@ describe("The Client class", function() {
     });
 
     afterEach(function() {
+        if (client && !client.isDestroyed) client.destroy();
         jasmine.clock().uninstall();
         jasmine.Ajax.uninstall();
     });
@@ -51,11 +52,14 @@ describe("The Client class", function() {
     describe("The constructor() method", function() {
 
         it("Should initialize all caches", function() {
-            var client = new Layer.Core.Client({
+            client.destroy();
+
+            client = new Layer.Core.Client({
                 appId: "Samunwise",
                 url: "https://huh.com"
             });
             expect(client._scheduleCheckAndPurgeCacheItems).toEqual([]);
+            client.destroy();
         });
 
 
@@ -64,9 +68,10 @@ describe("The Client class", function() {
         });
 
         it("Should call _connectionRestored on receiving an online event", function() {
+            client.destroy();
             var _connectionRestored =  Layer.Core.Client.prototype._connectionRestored;
             spyOn(Layer.Core.Client.prototype, "_connectionRestored");
-            var client = new Layer.Core.Client({
+            client = new Layer.Core.Client({
                 appId: "Samunwise",
                 url: "https://huh.com"
             });
@@ -101,13 +106,13 @@ describe("The Client class", function() {
             client = null;
         });
         it("Should call _cleanup", function() {
-            spyOn(client, "_cleanup");
+            spyOn(client, "_cleanup").and.callThrough();
             client.destroy();
             expect(client._cleanup).toHaveBeenCalledWith();
         });
 
         it("Should call _destroyComponents", function() {
-            spyOn(client, "_destroyComponents");
+            spyOn(client, "_destroyComponents").and.callThrough();
             client.destroy();
             expect(client._destroyComponents).toHaveBeenCalledWith();
         });
@@ -121,11 +126,13 @@ describe("The Client class", function() {
             expect(client.appId).toEqual("Doh!");
         });
 
-        it("Should not allow appId to be reset", function() {
+        it("Should not allow appId to be reset unless not yet connecting", function() {
+            client.appId = "Ray!";
+            client._wantsToBeAuthenticated = true;
             expect(function() {
-                client.appId = "Ray!";
-            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.appIdImmutable);
-            expect(Layer.Core.LayerError.ErrorDictionary.appIdImmutable.length > 0).toBe(true);
+                client.appId = "Ray2!";
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected);
+            expect(Layer.Core.LayerError.ErrorDictionary.cantChangeIfConnected.length > 0).toBe(true);
         });
     });
 
@@ -181,7 +188,9 @@ describe("The Client class", function() {
             });
 
             it("Should get by id", function() {
-                var part = message.findPart(part => part.mimeType === responses.message1.parts[1].mime_type);
+                var part = message.findPart(function(part) {
+                    return part.mimeType === responses.message1.parts[1].mime_type;
+                })
                 expect(client.getMessagePart(responses.message1.parts[1].id)).toBe(part);
             });
 
@@ -522,7 +531,7 @@ describe("The Client class", function() {
                         ["conversations:add", jasmine.objectContaining({
                             conversations: [c2]
                         })]
-                    ], "conversations");
+                    ], "conversations", client);
             });
 
             it("Should call _foldEvents on all conversations:remove events", function() {
@@ -550,7 +559,7 @@ describe("The Client class", function() {
                         ["conversations:remove", jasmine.objectContaining({
                             conversations: [c2]
                         })]
-                    ], "conversations);
+                    ], "conversations", client);
             });
 
             it("Should call _foldEvents on all messages:add events", function() {
@@ -578,7 +587,7 @@ describe("The Client class", function() {
                         ["messages:add", jasmine.objectContaining({
                             messages: [m2]
                         })]
-                    ], "messages");
+                    ], "messages", client);
             });
 
             it("Should call _foldEvents on all messages:remove events", function() {
@@ -606,7 +615,7 @@ describe("The Client class", function() {
                         ["messages:remove", jasmine.objectContaining({
                             messages: [m2]
                         })]
-                    ], "messages");
+                    ], "messages", client);
             });
 
             it("Should call _foldEvents on all identities:add events", function() {
@@ -633,7 +642,7 @@ describe("The Client class", function() {
                         ["identities:add", jasmine.objectContaining({
                             identities: [i2]
                         })]
-                    ], "identities");
+                    ], "identities", client);
             });
 
             it("Should call _foldEvents on all identities:remove events", function() {
@@ -660,7 +669,7 @@ describe("The Client class", function() {
                         ["identities:remove", jasmine.objectContaining({
                             identities: [i2]
                         })]
-                    ], "identities");
+                    ], "identities", client);
             });
         });
 
@@ -820,6 +829,7 @@ describe("The Client class", function() {
                 var m2 = c.createMessage("b").send();
                 var m3 = c.createMessage("c").send();
                 jasmine.clock().tick(1);
+                Layer.Utils.defer.flush();
 
                 // Pretest
                 expect(query.data).toEqual([m3, m2, m1]);

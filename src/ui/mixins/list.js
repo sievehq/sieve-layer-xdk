@@ -491,5 +491,11 @@ module.exports = {
         }
       }
     },
+
+    destroy() {
+      for (let i = this.childNodes.length - 1; i >= 0; i--) {
+        if (this.childNodes[i].destroy) this.childNodes[i].destroy();
+      }
+    },
   },
 };

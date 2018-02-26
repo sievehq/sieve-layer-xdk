@@ -33,7 +33,7 @@ describe("List Load Mixin", function() {
       predicate: 'conversation.id = "' + conversation.id + '"'
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(conversation.createMessage("m " + i).send());
     }
 
@@ -53,10 +53,12 @@ describe("List Load Mixin", function() {
 
   afterEach(function() {
     document.body.removeChild(testRoot);
-    if (el) el.onDestroy();
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
     jasmine.clock().uninstall();
-
-    if (client) client.destroy();
   });
 
   describe("The isDataLoading property", function() {

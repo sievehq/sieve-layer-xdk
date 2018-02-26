@@ -5,18 +5,22 @@
 | Browser          | Version    | OS Tested Against  |
 |------------------|------------|--------------------|
 | Internet Explorer| 11.0       | Windows 8.1        |
+| Edge             | 16.0       | Windows 10         |
 | Edge             | 13.0       | Windows 10         |
-| Edge             | 14.0       | Windows 10         |
+| Safari           | 11.0       | OSX 10.13          |
 | Safari           | 10.0       | OSX 10.12          |
-| Safari           | 9.0        | OSX 10.11          |
-| Safari (IOS)     | 9.x        | IOS 10.0           |
-| Safari (IOS)     | 10.0       | IOS 9.3            |
+| Safari (IOS)     | default    | IOS 11.1           |
+| Safari (IOS)     | default    | IOS 10.0           |
 | Chrome           | 55         | OSX 11.0           |
 | Chrome           | 48         | Linux              |
-| Firefox          | 51         | OSX 11.0           |
-| Firefox          | 50         | Windows 8          |
+| Firefox          | 58         | Windows 10         |
 
-Older versions of Safari do not support Websockets and will not work with the Layer WebSDK.
+* Older versions of Chrome _should_ work but are not tested
+* Older versions of Firefox _should_ work but currently fail unit tests due to how Jasmine 3.0.0 reports IndexedDB errors. While not officially supported, feel free to report issues on recent versions of Firefox.
+* Older versions of Safari do not support Websockets and will not be supported
+* Older versions of Edge are not supported
+* Older versions of IE are not supported
+
 
 ## Introduction
 

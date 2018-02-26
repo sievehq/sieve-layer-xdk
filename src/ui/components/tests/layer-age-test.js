@@ -16,9 +16,12 @@ describe('layer-age', function() {
   });
 
   afterEach(function() {
-    if (client) client.destroy();
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
     jasmine.clock().uninstall();
-
   });
 
   it('Should accept a date parameter', function() {

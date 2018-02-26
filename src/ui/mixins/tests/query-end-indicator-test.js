@@ -33,7 +33,7 @@ describe("Query End Mixin", function() {
       predicate: 'conversation.id = "' + conversation.id + '"'
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(conversation.createMessage("m " + i).send());
     }
 
@@ -53,10 +53,9 @@ describe("Query End Mixin", function() {
 
   afterEach(function() {
     document.body.removeChild(testRoot);
-    if (el) el.onDestroy();
-    jasmine.clock().uninstall();
-
+    if (el) el.destroy();
     if (client) client.destroy();
+    jasmine.clock().uninstall();
   });
 
   describe("The isEndOfResults property", function() {

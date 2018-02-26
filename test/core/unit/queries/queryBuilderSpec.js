@@ -19,7 +19,7 @@ describe("The QueryBuilder Classes", function() {
     afterEach(function() {
         client.destroy();
         jasmine.Ajax.uninstall();
-        //jasmine.clock().uninstall();  // Uncommenting this breaks the test framework!
+        jasmine.clock().uninstall();
     });
 
     afterAll(function() {

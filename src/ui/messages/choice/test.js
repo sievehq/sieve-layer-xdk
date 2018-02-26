@@ -60,7 +60,11 @@ describe('Choice Message Components', function() {
   afterEach(function() {
     if (client) client.destroy();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
-
+    if (testRoot.parentNode) {
+      testRoot.parentNode.removeChild(testRoot);
+      if (testRoot.firstChild && testRoot.firstChild.destroy) testRoot.firstChild.destroy();
+    }
+    jasmine.clock().uninstall();
   });
 
   describe("Model Tests", function() {
@@ -513,7 +517,9 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType);
+        var textPart = responseMessage.findPart(function(part) {
+          return part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType;
+        });
 
         expect(textPart.mimeType).toEqual('application/vnd.layer.status+json');
         expect(textPart.parentId).toEqual(responsePart.nodeId);
@@ -556,7 +562,9 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType);
+        var textPart = responseMessage.findPart(function(part) {
+          return part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType;
+        });
 
         expect(textPart.mimeType).toEqual('application/vnd.layer.status+json');
         expect(textPart.parentId).toEqual(responsePart.nodeId);
@@ -600,7 +608,9 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
+        var textPart = responseMessage.findPart(function(part) {
+          return part.mimeType === 'application/vnd.layer.status+json';
+        });
 
         expect(textPart.parentId).toEqual(responsePart.nodeId);
         expect(textPart.role).toEqual("status");
@@ -644,7 +654,9 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
+        var textPart = responseMessage.findPart(function(part) {
+          return part.mimeType === 'application/vnd.layer.status+json';
+        });
 
         expect(textPart.parentId).toEqual(responsePart.nodeId);
         expect(textPart.role).toEqual("status");
@@ -748,7 +760,9 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
+        var textPart = responseMessage.findPart(function(part) {
+          return part.mimeType === 'application/vnd.layer.status+json';
+        });
 
         expect(textPart.parentId).toEqual(responsePart.nodeId);
         expect(textPart.role).toEqual("status");
@@ -791,7 +805,9 @@ describe('Choice Message Components', function() {
 
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
+        var textPart = responseMessage.findPart(function(part) {
+          return part.mimeType === 'application/vnd.layer.status+json';
+        });
 
         expect(textPart.mimeType).toEqual('application/vnd.layer.status+json');
         expect(textPart.parentId).toEqual(responsePart.nodeId);
@@ -1250,7 +1266,9 @@ describe('Choice Message Components', function() {
         model.selectAnswer({id: "bb"});
         var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
-        var textPart = responseMessage.findPart(part => part.mimeType === 'application/vnd.layer.status+json');
+        var textPart = responseMessage.findPart(function(part) {
+          return part.mimeType === 'application/vnd.layer.status+json';
+        });
 
         expect(textPart.mimeType).toEqual('application/vnd.layer.status+json');
         expect(JSON.parse(textPart.body)).toEqual({
@@ -1310,11 +1328,9 @@ describe('Choice Message Components', function() {
           responseName: "hey"
         });
         model.generateMessage(conversation);
-        model.responses = {
-            participantData: {
-            "layer:///identities/heyho": {
-              "hey": "bb"
-            }
+        model.responses._participantData = {
+          "layer:///identities/heyho": {
+            "hey": "bb"
           }
         };
         model._processNewResponses();
@@ -1332,11 +1348,9 @@ describe('Choice Message Components', function() {
           responseName: "hey"
         });
         model.generateMessage(conversation);
-        model.responses = {
-          participantData: {
-            "layer:///identities/heyho": {
-              "hey": ""
-            }
+        model.responses._participantData = {
+          "layer:///identities/heyho": {
+            "hey": ""
           }
         };
         model._processNewResponses();

@@ -29,6 +29,7 @@ describe("Unknown Handler", function() {
   });
 
   afterEach(function() {
+    if (el) el.destroy();
     if (client) client.destroy();
     jasmine.clock().uninstall();
     el.onDestroy();

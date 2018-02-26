@@ -769,8 +769,8 @@ function _registerComponent(tagName) {
   classDef.mixins.push(stateManagerMixin);
 
   // Add in custom mixins specified via Layer.UI.settings
-  if (Settings.mixins[tagName]) {
-    classDef.mixins = classDef.mixins.concat(Settings.mixins[tagName]);
+  if (Settings._mixins[tagName]) {
+    classDef.mixins = classDef.mixins.concat(Settings._mixins[tagName]);
   }
 
   // Setup all events specified in the `events` property.  This adds properties,
@@ -1161,23 +1161,36 @@ function _registerComponent(tagName) {
    *
    * ```
    * document.body.addEventListener('layer-widget-destroyed', function(evt) {
-   *    if (evt.target === nodeToNotDestroy) {
+   *    if (evt.detail.target === nodeToNotDestroy) {
    *      evt.preventDefault();
    *    }
    * });
    * ```
    *
+   * > *Note*
+   * >
+   * > Once a node has been removed from the DOM, its events cannot bubble up.  So we *also* trigger the event on
+   * > `document.body`. This means that `evt.target` becomes `document.body`. So use `evt.detail.target`
+   * > not `evt.target` to identify the removed node.
+   *
    * @event layer-widget-destroyed
+   * @param {Event} evt
+   * @param {Object} evt.detail
+   * @param {Layer.UI.Component} evt.detail.target
    */
   classDef.detachedCallback = {
     value: function detachedCallback() {
+      const isMainComponent = this.mainComponent === this;
       this.onDetach();
 
       // Wait 10 seconds after its been removed, then check to see if its still removed from the dom before doing cleanup and destroy.
       setTimeout(() => {
         if (this.properties._internalState.onDestroyCalled) return;
-        if (!document.body.contains(this) && !document.head.contains(this) && this.trigger('layer-widget-destroyed')) {
-          this.onDestroy();
+        if (document.body.contains(this) || document.head.contains(this)) return;
+        if (this.trigger('layer-widget-destroyed', { target: this })) {
+          if (!isMainComponent || (!document.body || this.trigger.apply(document.body, ['layer-widget-destroyed', { target: this }] ) )) {
+            this.onDestroy();
+          }
         }
       }, Settings.destroyAfterDetachDelay);
     },
@@ -2048,7 +2061,7 @@ const standardClassMethods = {
       this.parentNode.removeChild(this);
     }
     Object.keys(this.nodes || {}).forEach((name) => {
-      if (this.nodes[name].destroy) this.nodes[name].destroy();
+      if (this.nodes[name] && this.nodes[name].destroy) this.nodes[name].destroy();
     });
     this.onDestroy();
   },

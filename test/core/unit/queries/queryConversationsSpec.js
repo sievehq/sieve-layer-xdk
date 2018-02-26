@@ -55,6 +55,7 @@ describe("The ConversationsQuery Class", function() {
         message = conversation.createMessage("Hey").send();
 
         jasmine.clock().tick(1);
+        Layer.Utils.defer.flush();
         requests.reset();
         client.syncManager.queue = [];
     });
@@ -726,6 +727,7 @@ describe("The ConversationsQuery Class", function() {
                 // This will trigger a conversations:change event with lastMessage changing, that should call _handleChangeEvent
                 conversation.createMessage('hey').send();
                 jasmine.clock().tick(1);
+                Layer.Utils.defer.flush();
                 expect(query._handleChangeEvent).toHaveBeenCalled();
 
 
@@ -867,6 +869,7 @@ describe("The ConversationsQuery Class", function() {
                 // This will trigger a conversations:change event with lastMessage changing, that should call _handleChangeEvent
                 conversation.createMessage('hey').send();
                 jasmine.clock().tick(1);
+                Layer.Utils.defer.flush();
                 expect(query._handleChangeEvent).toHaveBeenCalled();
 
 

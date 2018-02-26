@@ -96,6 +96,10 @@ registerComponent('layer-replaceable-content', {
       if (nodeOrGenerator) {
         this._insertContent(parent, nodeOrGenerator);
         processed = true;
+      } else if (nodeOrGenerator === null) {
+        // Only if its undefined is it not processed; null can be used to indicate that Nothing goes there
+        // and that no other processing (i.e. restoring original child nodes) should be done
+        processed = true;
       }
 
       // Or... Check the top level component's originalChildNodes (we ignore originalChildNodes of other parents)
@@ -130,8 +134,14 @@ registerComponent('layer-replaceable-content', {
     _findNodeOrNodeGenerator(parents) {
       for (let parentIndex = 0; parentIndex < parents.length; parentIndex++) {
         const parent = parents[parentIndex];
-        const nodeOrGenerator = parent.replaceableContent && parent.replaceableContent[this.name];
-        if (nodeOrGenerator) return { nodeOrGenerator, parent };
+        if (parent.replaceableContent) {
+          const nodeOrGenerator = parent.replaceableContent[this.name];
+          // A null value should be accepted as a way to override any existing values. However, undefined just means its not been set.
+          // (or has been incorrectly set...)
+          if (nodeOrGenerator !== undefined) {
+            return { nodeOrGenerator, parent };
+          }
+        }
       }
       return {};
     },

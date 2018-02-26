@@ -47,7 +47,7 @@ module.exports = {
   avatarNode: '<layer-avatar size="small" show-presence="false" layer-id="avatar"></layer-avatar>',
 
   /**
-   * @property {String} menuNode Describes a menu button for use within a Message List.  Use {@link Layer.UI.components.ConversationView#getMenuOptions} to customize the menu.
+   * @property {String} menuNode Describes a menu button for use within a Message List.  Use {@link Layer.UI.components.ConversationView#getMenuItems} to customize the menu.
    */
   menuNode: '<layer-menu-button layer-id="menuButton"></layer-menu-button>',
 

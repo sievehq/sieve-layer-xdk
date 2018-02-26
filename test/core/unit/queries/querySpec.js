@@ -787,8 +787,8 @@ describe("The Query Class", function() {
 
             // Posttest
 
-            var triggerChangeCalls = query._triggerChange.calls.allArgs().map(call => call[0].data[0]);
-            var appendCalls = query._appendResultsSplice.calls.allArgs().map(call => call[0]);
+            var triggerChangeCalls = query._triggerChange.calls.allArgs().map(function(call) { return call[0].data[0]; });
+            var appendCalls = query._appendResultsSplice.calls.allArgs().map(function(call) { return call[0]; });
             expect(triggerChangeCalls.length).toEqual(1);
             expect(triggerChangeCalls[0]).toBe(conversation2);
             expect(appendCalls.length).toEqual(1);
@@ -818,8 +818,8 @@ describe("The Query Class", function() {
             });
 
             // Posttest
-            var triggerChangeCalls = query._triggerChange.calls.allArgs().map(call => call[0].data[0]);
-            var appendCalls = query._appendResultsSplice.calls.allArgs().map(call => call[0]);
+            var triggerChangeCalls = query._triggerChange.calls.allArgs().map(function(call) { return call[0].data[0] });
+            var appendCalls = query._appendResultsSplice.calls.allArgs().map(function(call) { return call[0] });
             expect(appendCalls).toEqual([conversation2]);
             expect(triggerChangeCalls).toEqual([conversation2.toObject()]);
         });

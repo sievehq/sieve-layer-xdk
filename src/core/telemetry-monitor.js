@@ -417,13 +417,6 @@ TelemetryMonitor.prototype.tempState = null;
 TelemetryMonitor.prototype.enabled = true;
 
 /**
- * Pointer to the Layer.Core.Client
- *
- * @property {Layer.Core.Client}
- */
-TelemetryMonitor.prototype.client = null;
-
-/**
  * The presence of this causes Layer.Core.Root to automatically generate an id if one isn't present.
  *
  * This id is written to localStorage so that it can persist across sessions.

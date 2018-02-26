@@ -185,6 +185,20 @@ module.exports = {
       }
     },
 
+    /**
+     * Returns the number of pixels wide the Message List is; maybe 0 if not yet available.
+     *
+     * @method getMessageListWidth
+     * @returns {Number}
+     */
+    getMessageListWidth() {
+      let parent = this.parentComponent;
+      while(parent !== null && parent.tagName !== 'BODY' && parent.tagName !== 'LAYER-MESSAGE-LIST') parent = parent.parentComponent || parent.parentNode;
+
+      if (parent.tagName === 'LAYER-MESSAGE-LIST') return parent.clientWidth;
+      return 0;
+    },
+
     onDestroy() {
       delete this.properties.messageViewer;
     },

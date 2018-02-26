@@ -666,7 +666,7 @@ class SocketManager extends Root {
    * @private
    */
   _scheduleReconnect() {
-    if (this.isDestroyed || !client.isOnline || !client.isAuthenticated || this._isOpen()) return;
+    if (this.isDestroyed || !client || !client.isOnline || !client.isAuthenticated || this._isOpen()) return;
 
     const delay = Util.getExponentialBackoffSeconds(this.maxDelaySecondsBetweenReconnect, Math.min(15, this._lostConnectionCount));
     logger.debug('Websocket Reconnect in ' + delay + ' seconds');

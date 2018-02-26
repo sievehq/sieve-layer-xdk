@@ -225,13 +225,13 @@ registerComponent('layer-message-list', {
     },
 
     /**
-     * @inheritdoc Layer.UI.components.ConversationView#getMenuOptions
+     * @inheritdoc Layer.UI.components.ConversationView#getMenuItems
      *
-     * @property {Function} getMenuOptions
-     * @property {Layer.Core.Message} getMenuOptions.message
-     * @property {Object[]} getMenuOptions.return
+     * @property {Function} getMenuItems
+     * @property {Layer.Core.Message} getMenuItems.message
+     * @property {Object[]} getMenuItems.return
      */
-    getMenuOptions: {
+    getMenuItems: {
       type: Function,
     },
 
@@ -318,6 +318,7 @@ registerComponent('layer-message-list', {
     _handleScroll: {
       mode: registerComponent.MODES.OVERWRITE,
       value() {
+        // Calls to scrollTo() are automatically followed by calls to _checkVisibility() so skip this
         if (this.properties.isSelfScrolling) return;
 
         // If the user has scrolled within screenFullsBeforePaging of the top of the page...
@@ -433,7 +434,7 @@ registerComponent('layer-message-list', {
       if (UIUtils.isInBackground() || this.disable) return;
 
       const children = Array.prototype.slice.call(this.childNodes);
-      children.forEach((child) => {
+      children.filter(item => item.tagName !== 'DIV').forEach((child, index) => {
         if (child.properties && child.properties.item && !child.properties.item.isRead && this._shouldMarkAsRead(child)) {
           // TODO: Use a scheduler rather than many setTimeout calls
           setTimeout(() => this._markAsRead(child), Settings.markReadDelay);
@@ -476,6 +477,7 @@ registerComponent('layer-message-list', {
      * @param {Layer.UI.components.MessageListPanel.Item} child
      */
     _markAsRead(child) {
+      console.log("Should mark as read");
       if (this._shouldMarkAsRead(child)) {
         child.properties.item.isRead = true;
       }
@@ -534,11 +536,12 @@ registerComponent('layer-message-list', {
         const messageWidget = document.createElement(type);
         messageWidget.id = this._getItemId(message.id);
         messageWidget.dateRenderer = this.dateRenderer;
+
         messageWidget.messageStatusRenderer = this.messageStatusRenderer;
         if (this.dateFormat) messageWidget.dateFormat = this.dateFormat;
         messageWidget._contentTag = handler.tagName;
         messageWidget.item = message;
-        messageWidget.getMenuOptions = this.getMenuOptions;
+        messageWidget.getMenuItems = this.getMenuItems;
         if (this.query.pagedToEnd && this.query.data.indexOf(message) === this.query.data.length - 1) {
           messageWidget.classList.add('layer-first-message-of-conversation');
         }

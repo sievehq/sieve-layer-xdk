@@ -44,7 +44,14 @@ describe('layer-conversation-item', function() {
   });
 
   afterEach(function() {
-    if (client) client.destroy();
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) {
+      el.destroy();
+      el = null;
+    }
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
 
@@ -135,13 +142,13 @@ describe('layer-conversation-item', function() {
     });
   });
 
-  describe("The getMenuOptions property", function() {
+  describe("The getMenuItems property", function() {
     it("Should pass function to the menu button", function() {
       el.item = conversation;
 
       var spy = jasmine.createSpy('spy');
-      el.getMenuOptions = spy;
-      expect(el.nodes.menuButton.getMenuOptions).toBe(spy);
+      el.getMenuItems = spy;
+      expect(el.nodes.menuButton.getMenuItems).toBe(spy);
     });
 
     it("Should handle absence of menu button", function() {
@@ -150,7 +157,7 @@ describe('layer-conversation-item', function() {
       delete el.nodes.menuButton;
       var spy = jasmine.createSpy('spy');
       expect(function() {
-        el.getMenuOptions = spy;
+        el.getMenuItems = spy;
       }).not.toThrow();
     });
   });

@@ -148,6 +148,7 @@ module.exports = {
     /**
      * This event is a more specific version of messages:change (which will also fire when a part is added)
      *
+     * @event
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
      * @param {Layer.Core.MessagePart} evt.part    The Part that was added
@@ -157,6 +158,7 @@ module.exports = {
     /**
      * This event is a more specific version of messages:change (should also fire when a part is removed)
      *
+     * @event
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
      * @param {Layer.Core.MessagePart} evt.part    The Part that was removed

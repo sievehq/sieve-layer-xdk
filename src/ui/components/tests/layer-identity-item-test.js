@@ -36,11 +36,32 @@ describe('layer-identity-item', function() {
   });
 
   afterEach(function() {
-    if (client) client.destroy();
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) {
+      el.destroy();
+      el = null;
+    }
     jasmine.clock().uninstall();
     document.body.removeChild(testRoot);
-
   });
+
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.click();
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
 
   describe("The selected property", function() {
     it("Should update checkbox state", function() {
@@ -136,7 +157,7 @@ describe('layer-identity-item', function() {
       });
 
       // Run
-      el.nodes.checkbox.click();
+      click(el.nodes.checkbox);
 
       // Posttest
       expect(called).toBe(true);
@@ -155,7 +176,7 @@ describe('layer-identity-item', function() {
       });
 
       // Run
-      el.nodes.checkbox.click();
+      click(el.nodes.checkbox);
 
       // Posttest
       expect(deselectedCalled).toBe(false);
@@ -175,7 +196,7 @@ describe('layer-identity-item', function() {
       });
 
       // Run
-      el.nodes.checkbox.click();
+      click(el.nodes.checkbox);
 
       // Posttest
       expect(deselectedCalled).toBe(true);
@@ -184,9 +205,9 @@ describe('layer-identity-item', function() {
 
     it("Should update the layer-identity-item-selected if evt.preventDefault not called", function() {
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(false);
-      el.nodes.checkbox.click();
+      click(el.nodes.checkbox);
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(true);
-      el.nodes.checkbox.click();
+      click(el.nodes.checkbox);
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(false);
     });
 
@@ -200,14 +221,14 @@ describe('layer-identity-item', function() {
 
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(false);
       expect(el.nodes.checkbox.checked).toBe(false);
-      el.nodes.checkbox.click();
+      click(el.nodes.checkbox);
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(false);
       expect(el.nodes.checkbox.checked).toBe(false);
 
       el.isSelected = true;
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(true);
       expect(el.nodes.checkbox.checked).toBe(true);
-      el.nodes.checkbox.click();
+      click(el.nodes.checkbox);
       expect(el.innerNode.classList.contains('layer-identity-item-selected')).toBe(true);
       expect(el.nodes.checkbox.checked).toBe(true);
     });

@@ -4,6 +4,10 @@ describe("The TelemetryMonitor class", function() {
 
     var client, monitor;
     var today;
+
+    beforeAll(function() {
+      localStorage.removeItem('layer-telemetry-' + appId);
+    });
     beforeEach(function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
@@ -49,6 +53,7 @@ describe("The TelemetryMonitor class", function() {
         if (client.telemetryMonitor._writeTimeoutId) clearTimeout(client.telemetryMonitor._writeTimeoutId);
         localStorage.removeItem(client.telemetryMonitor.storageKey);
         if (client && !client.isDestroyed) client.destroy();
+        if (monitor && !monitor.isDestroyed) monitor.destroy();
         jasmine.Ajax.uninstall();
         jasmine.clock().uninstall();
     });

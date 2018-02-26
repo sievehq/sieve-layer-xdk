@@ -1,11 +1,15 @@
 describe('layer-message-list', function() {
   var el, testRoot, client, conversation, query, user1, restoreAnimatedScrollTo, animatedScrollIndex = 1;
+  var originalTimeout;
 
   beforeAll(function(done) {
     setTimeout(done, 1000);
   });
 
-  beforeEach(function() {
+  beforeEach(function(done) {
+    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+
     jasmine.clock().install();
     restoreAnimatedScrollTo = Layer.UI.UIUtils.animatedScrollTo;
     spyOn(Layer.UI.UIUtils, "animatedScrollTo").and.callFake(function(node, position, duration, callback) {
@@ -45,7 +49,7 @@ describe('layer-message-list', function() {
       predicate: 'conversation.id = "' + conversation.id + '"'
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(conversation.createMessage("m " + i).send());
     }
 
@@ -61,15 +65,28 @@ describe('layer-message-list', function() {
 
     Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
+
+    jasmine.clock().uninstall();
+    setTimeout(function() {
+      jasmine.clock().install();
+      done();
+    }, 100);
   });
 
   afterEach(function() {
-    if (client) client.destroy();
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) {
+      el.destroy();
+      el = null;
+    }
+    jasmine.clock().uninstall();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
     document.body.removeChild(testRoot);
-    if (el) el.onDestroy();
-    jasmine.clock().uninstall();
-
   });
 
 
@@ -128,6 +145,7 @@ describe('layer-message-list', function() {
       var tmp = window.Layer.UI.UIUtils.isInBackground;
       window.Layer.UI.UIUtils.isInBackground = function() {return false;}
       el.query = query;
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(150);
 
       // Run
@@ -327,7 +345,7 @@ describe('layer-message-list', function() {
       window.Layer.UI.UIUtils.isInBackground = restoreFunc;
     });
 
-    it("Should mark visible messages as read", function() {
+    it("Should mark visible messages as read at start of list", function() {
       var items = el.querySelectorAllArray('layer-message-item-sent');
       expect(items.length > 0).toBe(true);
       items.forEach(function(messageRow) {
@@ -341,56 +359,47 @@ describe('layer-message-list', function() {
       });
     });
 
-    it("Should mark visible messages as read part 2", function(done) {
-      jasmine.clock().uninstall();
-      setTimeout(function() {
-        try  {
-          var items = el.querySelectorAllArray('layer-message-item-sent');
-          expect(items.length > 0).toBe(true);
-          el.scrollTo(100);
-          setTimeout(function() {
-            try {
-              expect(el._shouldMarkAsRead(items[0])).toBe(false);
-              expect(el._shouldMarkAsRead(items[1])).toBe(true);
-              expect(el._shouldMarkAsRead(items[2])).toBe(true);
-              expect(el._shouldMarkAsRead(items[3])).toBe(true);
-              expect(el._shouldMarkAsRead(items[4])).toBe(false);
-              expect(el._shouldMarkAsRead(items[5])).toBe(false);
-              spyOn(el, "_shouldMarkAsRead").and.callThrough();
-              setTimeout(function() {
-                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[0]);
-                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[1]);
-                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[2]);
-                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[3]);
-                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[4]);
-                expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[5]);
+    it("Should mark visible messages in middle of list", function() {
+      var items = el.querySelectorAllArray('layer-message-item-sent');
+      expect(items.length > 0).toBe(true);
+      spyOn(el, "_shouldMarkAsRead").and.callThrough();
+      el.scrollTo(100);
+      jasmine.clock().tick(3000);
 
-                expect(items[0].item.isRead).toBe(false);
-                expect(items[1].item.isRead).toBe(true);
-                expect(items[2].item.isRead).toBe(true);
-                expect(items[3].item.isRead).toBe(true);
-                expect(items[4].item.isRead).toBe(false);
-                expect(items[5].item.isRead).toBe(false);
-                done();
-              } catch (e) {
-                done(e);
-              }
-            }, 3000);
-          }, 10);
-        } catch(e) {
-          done(e);
-        }
-      }, 500);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[0]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[1]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[2]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[3]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[4]);
+      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[5]);
+
+      expect(el._shouldMarkAsRead(items[0])).toBe(false);
+      expect(el._shouldMarkAsRead(items[1])).toBe(true);
+      expect(el._shouldMarkAsRead(items[2])).toBe(true);
+      expect(el._shouldMarkAsRead(items[3])).toBe(true);
+      expect(el._shouldMarkAsRead(items[4])).toBe(false);
+      expect(el._shouldMarkAsRead(items[5])).toBe(false);
+
+      expect(items[0].item.isRead).toBe(false);
+      expect(items[1].item.isRead).toBe(true);
+      expect(items[2].item.isRead).toBe(true);
+      expect(items[3].item.isRead).toBe(true);
+      expect(items[4].item.isRead).toBe(false);
+      expect(items[5].item.isRead).toBe(false);
     });
 
 
-    it("Should mark visible messages as read part 3", function() {
+    it("Should mark visible messages at end of list", function() {
+      spyOn(el, "_checkVisibility").and.callThrough();
       el.scrollTo(10000);
-      jasmine.clock().tick(10000);
+      jasmine.clock().tick(300); // allow _checkVisibility to be called
+      expect(el._checkVisibility).toHaveBeenCalled();
+
+      jasmine.clock().tick(3000);
       var items = el.querySelectorAllArray('layer-message-item-sent');
       expect(items.length > 0).toBe(true);
-      items.forEach(function(messageRow) {
-        if (messageRow.offsetTop - el.offsetTop < el.scrollTop + errorMargin) {
+      items.forEach(function(messageRow, index, allRows) {
+        if (messageRow.offsetTop - el.offsetTop < el.scrollTop - errorMargin) {
           expect(messageRow.item.isRead).toBe(false);
         } else if (messageRow.offsetTop + messageRow.clientHeight <= el.clientHeight + el.offsetTop + el.scrollTop + errorMargin) {
           expect(messageRow.item.isRead).toBe(true);
@@ -453,27 +462,27 @@ describe('layer-message-list', function() {
       var tmp = window.Layer.UI.UIUtils.isInBackground;
       window.Layer.UI.UIUtils.isInBackground = function() {return false;}
 
-      el.childNodes[50].item.isRead = false;
-      el.scrollTop = el.childNodes[50].offsetTop - el.offsetTop - 50;
-      el._markAsRead(el.childNodes[50]);
-      expect(el.childNodes[50].item.isRead).toBe(true);
+      el.childNodes[20].item.isRead = false;
+      el.scrollTop = el.childNodes[20].offsetTop - el.offsetTop - 50;
+      el._markAsRead(el.childNodes[20]);
+      expect(el.childNodes[20].item.isRead).toBe(true);
 
       // Restore
       window.Layer.UI.UIUtils.isInBackground = tmp;
     });
 
     it("Should  mark the 50th message as read if scrolled above the item", function() {
-      el.childNodes[50].item.isRead = false;
+      el.childNodes[20].item.isRead = false;
       el.scrollTop = 0;
-      el._markAsRead(el.childNodes[50]);
-      expect(el.childNodes[50].item.isRead).toBe(false);
+      el._markAsRead(el.childNodes[20]);
+      expect(el.childNodes[20].item.isRead).toBe(false);
     });
 
     it("Should  mark the 50th message as read if scrolled below the item", function() {
-      el.childNodes[50].item.isRead = false;
-      el.scrollTop = el.childNodes[50].offsetTop + el.scrollHeight;
-      el._markAsRead(el.childNodes[50]);
-      expect(el.childNodes[50].item.isRead).toBe(false);
+      el.childNodes[20].item.isRead = false;
+      el.scrollTop = el.childNodes[20].offsetTop + el.scrollHeight;
+      el._markAsRead(el.childNodes[20]);
+      expect(el.childNodes[20].item.isRead).toBe(false);
     });
   });
 
@@ -510,14 +519,14 @@ describe('layer-message-list', function() {
       expect(item.messageStatusRenderer).toBe(messageStatusRenderer);
     });
 
-    it("Should setup getMenuOptions", function() {
-      var getMenuOptions = jasmine.createSpy('getMenuOptions');
+    it("Should setup getMenuItems", function() {
+      var getMenuItems = jasmine.createSpy('getMenuItems');
 
-      el.getMenuOptions = getMenuOptions;
+      el.getMenuItems = getMenuItems;
 
       var m = conversation.createMessage("m?");
       var item = el._generateItem(m);
-      expect(item.getMenuOptions).toBe(getMenuOptions);
+      expect(item.getMenuItems).toBe(getMenuItems);
     });
 
     it("Should set dateFormat", function() {
@@ -597,11 +606,11 @@ describe('layer-message-list', function() {
   describe("The _processAffectedWidgetsCustom() method", function() {
     var m1, m2, m3, m4, m5;
     beforeEach(function() {
-      m1 = el.childNodes[50];
-      m2 = el.childNodes[51];
-      m3 = el.childNodes[52];
-      m4 = el.childNodes[53];
-      m5 = el.childNodes[54];
+      m1 = el.childNodes[10];
+      m2 = el.childNodes[21];
+      m3 = el.childNodes[22];
+      m4 = el.childNodes[23];
+      m5 = el.childNodes[24];
       m1.firstInSeries = m1.lastInSeries = false;
       m2.firstInSeries = m2.lastInSeries = false;
       m3.firstInSeries = m3.lastInSeries = false;
@@ -625,7 +634,7 @@ describe('layer-message-list', function() {
     });
 
     it("Should set lastInSeries for any item lacking a nextSibling", function() {
-      while (el.childNodes[55]) el.removeChild(el.childNodes[55]);
+      while (el.childNodes[25]) el.removeChild(el.childNodes[25]);
       el._processAffectedWidgetsCustom([m1, m2, m3, m4, m5], 2000, false);
       expect(m5.lastInSeries).toBe(true);
     });
@@ -672,6 +681,7 @@ describe('layer-message-list', function() {
 
     it("Should empty the list of items, but still contain a loadingIndicator, emptyList, and endOfListIndicator node", function() {
       el.onRender();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(150);
       expect(el.childNodes.length > 2).toBe(true);
       el._renderResetData();
@@ -705,6 +715,7 @@ describe('layer-message-list', function() {
 
       // Run
       queryData[5].destroy();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1);
       queryData = query.data.reverse();
 
@@ -721,6 +732,7 @@ describe('layer-message-list', function() {
 
       // Run
       queryData[5].destroy();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1);
 
       // Posttest
@@ -741,6 +753,7 @@ describe('layer-message-list', function() {
 
       // Run
       queryData[5].destroy();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1);
 
       // Posttest
@@ -778,7 +791,7 @@ describe('layer-message-list', function() {
 
       var newElement = el.querySelector('#' + el._getItemId(message.id));
       expect(newElement.item).toBe(message);
-      expect(newElement).toBe(el.childNodes[80 + 1]); // + 1 for list header
+      expect(newElement).toBe(el.childNodes[15 + 1]); // + 1 for list header
     });
 
     it("Should insert a list item at the proper index take 2", function() {
@@ -797,7 +810,7 @@ describe('layer-message-list', function() {
 
       var newElement = el.querySelector('#' + el._getItemId(message.id));
       expect(newElement.item).toBe(message);
-      expect(newElement).toBe(el.childNodes[80 + 1]); // + 1 for list header
+      expect(newElement).toBe(el.childNodes[15 + 1]); // + 1 for list header
     });
 
     it("Should call _gatherAndProcessAffectedItems on 3 items before and 3 items after the inserted item", function() {
@@ -817,13 +830,13 @@ describe('layer-message-list', function() {
 
       // Posttest
       expect(el._gatherAndProcessAffectedItems).toHaveBeenCalledWith([
-        queryData[80-3],
-        queryData[80-2],
-        queryData[80-1],
-        queryData[80],
-        queryData[80+1],
-        queryData[80+2],
-        queryData[80+3]
+        queryData[15-3],
+        queryData[15-2],
+        queryData[15-1],
+        queryData[15],
+        queryData[15+1],
+        queryData[15+2],
+        queryData[15+3]
       ], false);
     });
 
@@ -844,13 +857,13 @@ describe('layer-message-list', function() {
 
       // Posttest
       expect(el._gatherAndProcessAffectedItems).toHaveBeenCalledWith([
-        queryData[80-3],
-        queryData[80-2],
-        queryData[80-1],
-        queryData[80],
-        queryData[80+1],
-        queryData[80+2],
-        queryData[80+3]
+        queryData[15-3],
+        queryData[15-2],
+        queryData[15-1],
+        queryData[15],
+        queryData[15+1],
+        queryData[15+2],
+        queryData[15+3]
       ], false);
     });
 
@@ -938,13 +951,14 @@ describe('layer-message-list', function() {
     it("Should insure only the last message sent has this class set", function() {
       query.data[0].sender = user1;
       el.onRender();
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(150);
 
       el.querySelectorAllArray('.layer-last-message-sent').forEach(function(node) {
         node.classList.remove('layer-last-message-sent');
       });
       expect(el.querySelectorAllArray('.layer-last-message-sent')).toEqual([]);
-      el.childNodes[50].classList.add('layer-last-message-sent');
+      el.childNodes[20].classList.add('layer-last-message-sent');
 
       // Run
       el._updateLastMessageSent();
@@ -975,13 +989,13 @@ describe('layer-message-list', function() {
     it("Should update lastPagedAt and listData", function() {
       el.properties.lastPagedAt = 0;
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
-      expect(el.properties.listData.length).toEqual(100);
+      expect(el.properties.listData.length).toEqual(35);
       query.data.push(messages[1]);
       query.data.push(messages[0]);
       el._renderPagedData({type: 'data', data: messages});
       jasmine.clock().tick(1000);
       expect(el.properties.lastPagedAt > 0).toBe(true);
-      expect(el.properties.listData.length).toEqual(102);
+      expect(el.properties.listData.length).toEqual(37);
     });
 
     it("Should call _renderPagedDataDone with top 3 items and two new items", function() {
@@ -989,6 +1003,7 @@ describe('layer-message-list', function() {
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var affectedItems = [messages[1], messages[0], el.childNodes[1].item, el.childNodes[2].item, el.childNodes[3].item];
       el._renderPagedData({type: 'data', data: messages});
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1000);
       expect(el._renderPagedDataDone).toHaveBeenCalledWith(affectedItems, jasmine.any(DocumentFragment), {type: 'data', data: messages});
     });
@@ -997,6 +1012,7 @@ describe('layer-message-list', function() {
       el.properties.lastPagedAt = 0;
       spyOn(el, "_renderPagedDataDone");
       el._renderPagedData({type: 'data', data: []});
+      Layer.Utils.defer.flush();
       jasmine.clock().tick(1000);
       expect(el._renderPagedDataDone).toHaveBeenCalledWith([], null, {type: 'data', data: []});
       expect(el.properties.lastPagedAt).toBe(0);
@@ -1008,14 +1024,14 @@ describe('layer-message-list', function() {
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
       spyOn(el, "_processAffectedWidgets");
-      el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
+      el._renderPagedDataDone([query.data[34], query.data[33], messages[0], messages[1]], fragment, {type: 'data', data: messages});
       expect(el._processAffectedWidgets).toHaveBeenCalledWith(jasmine.arrayContaining([el.childNodes[1], el.childNodes[2], el.childNodes[3], el.childNodes[3]]), true);
     });
 
     it("Should insert the Document Fragment just after the list header", function() {
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
-      el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
+      el._renderPagedDataDone([query.data[34], query.data[33], messages[0], messages[1]], fragment, {type: 'data', data: messages});
       expect(el.childNodes[0].classList.contains('layer-list-meta')).toBe(true);
       expect(el.childNodes[1].item).toBe(messages[0]);
     });
@@ -1026,7 +1042,7 @@ describe('layer-message-list', function() {
       spyOn(el, "scrollTo");
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
-      el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
+      el._renderPagedDataDone([query.data[34], query.data[33], messages[0], messages[1]], fragment, {type: 'data', data: messages});
       Layer.Utils.defer.flush();
       expect(el.scrollTo).toHaveBeenCalledWith(el.scrollHeight - el.clientHeight);
     });
@@ -1038,7 +1054,7 @@ describe('layer-message-list', function() {
       spyOn(el, "scrollTo");
       var messages = [conversation.createMessage("mm 0"), conversation.createMessage("mm 1")];
       var fragment = el._generateFragment(messages);
-      el._renderPagedDataDone([query.data[99], query.data[98], messages[0], messages[1]], fragment, {type: 'data', data: messages});
+      el._renderPagedDataDone([query.data[34], query.data[33], messages[0], messages[1]], fragment, {type: 'data', data: messages});
       Layer.Utils.defer.flush();
 
       // What was the 11th item is now the 13th item

@@ -41,12 +41,13 @@ describe('layer-conversation-view', function() {
       model: Layer.Core.Query.Message
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(conversation.createMessage("M " + i).send());
     }
 
     el.query = query;
     jasmine.clock().tick(1);
+    Layer.Utils.defer.flush();
   });
 
   afterEach(function() {
@@ -343,12 +344,12 @@ describe('layer-conversation-view', function() {
     });
   });
 
-  describe("The getMenuOptions property", function() {
-    it("Should set the list getMenuOptions property", function() {
+  describe("The getMenuItems property", function() {
+    it("Should set the list getMenuItems property", function() {
       var f = function() {};
-      el.getMenuOptions = f;
+      el.getMenuItems = f;
       Layer.Utils.defer.flush();
-      expect(el.nodes.list.getMenuOptions).toBe(f);
+      expect(el.nodes.list.getMenuItems).toBe(f);
     });
   });
 

@@ -188,7 +188,11 @@ const LayerDate = {
      *
      * @property {Function} [dateRender=null]
      */
-    dateRenderer: {},
+    dateRenderer: {
+      get() {
+        return this.properties.dateRenderer || this.parentComponent && this.parentComponent.dateRenderer;
+      },
+    },
   },
   methods: {
     onRender: function onRender() {

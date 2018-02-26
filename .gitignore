@@ -50,3 +50,8 @@ test/coverage-build.js
 /lib-es5
 build
 /npm
+test/CoverageRunner.html
+test/SpecRunner.html
+test/core_tests.html
+test/smalltest*.html
+test/ui_tests.html

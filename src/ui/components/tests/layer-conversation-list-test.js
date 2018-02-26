@@ -30,7 +30,7 @@ describe('layer-conversation-list', function() {
       sortBy: [{ 'lastMessage.sentAt': 'desc' }]
     });
     query.isFiring = false;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(
         new Layer.Core.Conversation({
               participants: [client.user],
@@ -50,12 +50,32 @@ describe('layer-conversation-list', function() {
 
   afterEach(function() {
     try {
+      if (client) {
+        client.destroy();
+        client = null;
+      }
+      if (el) {
+        el.destroy();
+        el = null;
+      }
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
-
-      if (el) el.onDestroy();
     } catch(e) {}
   });
+
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
 
   describe('Event Handling', function() {
     it("Should call onConversationSelected when layer-conversation-selected is triggered", function() {
@@ -110,7 +130,7 @@ describe('layer-conversation-list', function() {
     it("Should wire up onClick", function() {
       var selectSpy = jasmine.createSpy('click');
       el.addEventListener('layer-conversation-selected', selectSpy);
-      el.childNodes[10].click();
+      click(el.childNodes[10]);
       expect(selectSpy).toHaveBeenCalled();
     });
   });
@@ -192,12 +212,12 @@ describe('layer-conversation-list', function() {
       expect(result.tagName).toEqual('LAYER-CHANNEL-ITEM');
     });
 
-    it("Should set getMenuOptions callback", function() {
+    it("Should set getMenuItems callback", function() {
       var spy = jasmine.createSpy('menuOptions');
-      el.getMenuOptions = spy;
+      el.getMenuItems = spy;
       var result = el._generateItem(query.data[1]);
       Layer.Utils.defer.flush();
-      expect(result.getMenuOptions).toBe(spy);
+      expect(result.getMenuItems).toBe(spy);
     });
 
     it("Should set size", function() {
@@ -242,8 +262,8 @@ describe('layer-conversation-list', function() {
     it("Should call _runFilter on all children", function() {
       el.childNodes[1].classList.add('layer-item-filtered');
       el.childNodes[2].classList.add('layer-item-filtered');
-      el.filter = 'C 50';
-      expect(el.querySelectorAllArray('layer-conversation-item:not(.layer-item-filtered)')).toEqual([el.childNodes[50]]);
+      el.filter = 'C 25';
+      expect(el.querySelectorAllArray('layer-conversation-item:not(.layer-item-filtered)')).toEqual([el.childNodes[25]]);
     });
   });
 });

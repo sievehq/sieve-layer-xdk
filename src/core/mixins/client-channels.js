@@ -156,7 +156,7 @@ module.exports = {
       this._models.channels = {};
     },
     cleanup() {
-      Object.keys(this._models.channels).forEach((id) => {
+      Object.keys(this._models.channels || {}).forEach((id) => {
         const channel = this._models.channels[id];
         if (channel && !channel.isDestroyed) {
           channel.destroy();

@@ -1,25 +1,12 @@
 import Events from 'backbone-events-standalone/backbone-events-standalone';
 import Core from './namespace';
-import Util, { logger } from '../utils';
+import Util, { logger, defer } from '../utils';
 import LayerEvent from './layer-event';
 import { ErrorDictionary } from './layer-error';
 
-/*
- * Provides a system bus that can be accessed by all components of the system.
- * Currently used to listen to messages sent via postMessage, but envisioned to
- * do far more.
- */
+
 function EventClass() { }
 EventClass.prototype = Events;
-
-const SystemBus = new EventClass();
-if (typeof postMessage === 'function') {
-  addEventListener('message', (event) => {
-    if (event.data.type === 'layer-delayed-event') {
-      SystemBus.trigger(event.data.internalId + '-delayed-event');
-    }
-  });
-}
 
 // Used to generate a unique internalId for every Root instance
 const uniqueIds = {};
@@ -145,9 +132,6 @@ class Root extends EventClass {
     if (!uniqueIds[name]) uniqueIds[name] = 0;
     this.internalId = name + uniqueIds[name]++;
 
-    // Every component listens to the SystemBus for postMessage (triggerAsync) events
-    SystemBus.on(this.internalId + '-delayed-event', this._processDelayedTriggers, this);
-
     // Generate a temporary id if there isn't an id
     if (!this.id && !options.id && this.constructor.prefixUUID) {
       this.id = this.constructor.prefixUUID + Util.generateUUID();
@@ -178,10 +162,6 @@ class Root extends EventClass {
 
     // If anyone is listening, notify them
     this.trigger('destroy');
-
-    // Cleanup pointers to SystemBus. Failure to call destroy
-    // will have very serious consequences...
-    SystemBus.off(this.internalId + '-delayed-event', null, this);
 
     // Remove all events, and all pointers passed to this object by other objects
     this.off();
@@ -495,20 +475,7 @@ class Root extends EventClass {
       (this._delayedTriggers.length && this._lastDelayedTrigger + 500 < Date.now());
     if (shouldScheduleTrigger) {
       this._lastDelayedTrigger = Date.now();
-      if (typeof postMessage === 'function' && typeof jasmine === 'undefined') {
-        const messageData = {
-          type: 'layer-delayed-event',
-          internalId: this.internalId,
-        };
-        if (typeof document !== 'undefined') {
-          window.postMessage(messageData, '*');
-        } else {
-          // React Native reportedly lacks a document, and throws errors on the second parameter
-          window.postMessage(messageData);
-        }
-      } else {
-        setTimeout(() => this._processDelayedTriggers(), 0);
-      }
+      defer(() => this._processDelayedTriggers());
     }
   }
 
@@ -644,6 +611,38 @@ function defineProperty(newClass, propertyName) {
   }
 }
 
+/**
+ * Initialize a class definition that is a subclass of Root.
+ *
+ * ```
+ * class myClass extends Root {
+ * }
+ * Root.initClass(myClass, 'myClass');
+ * console.log(Layer.Core.myClass);
+ * ```
+ *
+ * With namespace:
+ * ```
+ * const MyNameSpace = {};
+ * class myClass extends Root {
+ * }
+ * Root.initClass(myClass, 'myClass', MyNameSpace);
+ * console.log(MyNameSpace.myClass);
+ * ```
+ *
+ * Defining a class without calling this method means
+ *
+ * * none of the property getters/setters/adjusters will work;
+ * * Mixins won't be used
+ * * _supportedEvents won't be setup which means no events can be subscribed to on this class
+ *
+ *
+ * @method initClass
+ * @static
+ * @param {Function} newClass    Class definition
+ * @param {String} className     Class name
+ * @param {Object} [namespace=]  Object to write this class definition to
+ */
 function initClass(newClass, className, namespace) {
   // Make sure our new class has a name property
   // Throws errors when run in production

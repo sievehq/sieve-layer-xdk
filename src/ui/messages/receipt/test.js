@@ -51,7 +51,15 @@ describe('Receipt Message Components', function() {
 
   afterEach(function() {
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
-
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (testRoot.parentNode) {
+      testRoot.parentNode.removeChild(testRoot);
+      if (testRoot.firstChild && testRoot.firstChild.destroy) testRoot.firstChild.destroy();
+    }
+    jasmine.clock().uninstall();
   });
 
   describe("Model Tests", function() {
@@ -228,13 +236,13 @@ describe('Receipt Message Components', function() {
           })
         }, {
           id: 'layer:///messages/' + uuid1 + '/parts/' + uuid6,
-          mime_type:  LocationModel.MIMEType + "; role=options; parent-node-id=a",
+          mime_type:  ChoiceModel.MIMEType + "; role=options; parent-node-id=a",
           body: JSON.stringify({
             choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
           })
         }, {
           id: 'layer:///messages/' + uuid1 + '/parts/' + uuid7,
-          mime_type:  LocationModel.MIMEType + "; role=options; parent-node-id=a",
+          mime_type:  ChoiceModel.MIMEType + "; role=options; parent-node-id=a",
           body: JSON.stringify({
             choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
           })
@@ -263,8 +271,14 @@ describe('Receipt Message Components', function() {
       expect(m.shippingAddress.title).toEqual("Shipping Address");
       expect(m.billingAddress.title).toEqual("Billing Address");
       expect(m.items[0].name).toEqual("a");
-      expect(m.items[0].options[0].choices).toEqual([{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]);
-      expect(m.items[0].options[1].choices).toEqual([{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]);
+      expect(m.items[0].options[0].choices).toEqual([
+        jasmine.objectContaining({text: "c-one", id: "c1"}),
+        jasmine.objectContaining({text: "c-two", id: "c2"})
+      ]);
+      expect(m.items[0].options[1].choices).toEqual([
+        jasmine.objectContaining({text: "d-one", id: "d1"}),
+        jasmine.objectContaining({text: "d-two", id: "d2"})
+      ]);
     });
 
   });

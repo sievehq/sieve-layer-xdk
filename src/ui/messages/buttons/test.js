@@ -1,5 +1,5 @@
 describe('Button Message Components', function() {
-  var ButtonsModel, TextModel, ChoiceModel, client;
+  var ButtonsModel, TextModel, ChoiceModel, client, message;
   var conversation;
   var testRoot;
 
@@ -59,10 +59,24 @@ describe('Button Message Components', function() {
 
   afterEach(function() {
     if (client) client.destroy();
+    if (testRoot.parentNode) {
+      testRoot.parentNode.removeChild(testRoot);
+      if (testRoot.firstChild && testRoot.firstChild.destroy) testRoot.firstChild.destroy();
+    }
     jasmine.clock().uninstall();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
 
   });
+
+  function click(el) {
+    var evt = new Event('touchstart');
+    evt.touches = [{screenX: 400, screenY: 400}];
+    el.dispatchEvent(evt);
+
+    var evt = new Event('touchend');
+    evt.touches = [{screenX: 400, screenY: 400}];
+    el.dispatchEvent(evt);
+  }
 
   describe("Model Tests", function() {
     it("Should create an appropriate Action Buttons Model", function() {
@@ -147,7 +161,9 @@ describe('Button Message Components', function() {
       });
 
       var rootPart = message.getRootPart();
-      var contentPart = message.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+      var contentPart = message.findPart(function(part) {
+        return part.mimeType === 'application/vnd.layer.text+json';
+      });
       expect(message.parts.size).toEqual(2);
       expect(rootPart.mimeType).toEqual('application/vnd.layer.buttons+json');
       expect(JSON.parse(rootPart.body)).toEqual({
@@ -298,7 +314,9 @@ describe('Button Message Components', function() {
       });
 
       var rootPart = message.getRootPart();
-      var contentPart = message.findPart(part => part.mimeType === 'application/vnd.layer.text+json');
+      var contentPart = message.findPart(function(part) {
+        return part.mimeType === 'application/vnd.layer.text+json';
+      });
       expect(message.parts.size).toEqual(2);
       expect(rootPart.mimeType).toEqual('application/vnd.layer.buttons+json');
       expect(JSON.parse(rootPart.body)).toEqual({
@@ -543,7 +561,11 @@ describe('Button Message Components', function() {
 
       expect(model.choices.isstarred.selectedAnswer).toEqual("");
 
-      buttons.childNodes[0].childNodes[0].click();
+      if (Layer.Utils.isIOS) {
+        click(buttons.childNodes[0].childNodes[0]);
+      } else {
+        buttons.childNodes[0].childNodes[0].click();
+      }
       Layer.Utils.defer.flush();
       jasmine.clock().tick(1);
 
@@ -630,7 +652,11 @@ describe('Button Message Components', function() {
 
       var buttons = el.nodes.ui.nodes.buttons;
 
-      buttons.childNodes[0].childNodes[0].click();
+      if (Layer.Utils.isIOS) {
+        click(buttons.childNodes[0].childNodes[0]);
+      } else {
+        buttons.childNodes[0].childNodes[0].click();
+      }
 
 
       expect(spy).toHaveBeenCalled();
@@ -681,11 +707,17 @@ describe('Button Message Components', function() {
 
       var buttons = el.nodes.ui.nodes.buttons;
 
-      buttons.childNodes[0].childNodes[0].click();
+      if (Layer.Utils.isIOS) {
+        click(buttons.childNodes[0].childNodes[0]);
+      } else {
+        buttons.childNodes[0].childNodes[0].click();
+      }
 
       var responseMessage = model.choices.isstarred._sendResponse.calls.allArgs()[0][0];
       var responsePart = responseMessage.getRootPart();
-      var statusPart = responseMessage.findPart(part => part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType);
+      var statusPart = responseMessage.findPart(function(part) {
+        return part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType;
+      });
 
       expect(statusPart.mimeType).toEqual('application/vnd.layer.status+json');
       expect(statusPart.parentId).toEqual(responsePart.nodeId);

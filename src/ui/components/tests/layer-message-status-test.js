@@ -29,9 +29,12 @@ describe('layer-message-status', function() {
     Layer.Utils.defer.flush();
   });
   afterEach(function() {
-    if (client) client.destroy();
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
     document.body.removeChild(testRoot);
-
   });
 
   it('Should call rerender on any message change events', function() {

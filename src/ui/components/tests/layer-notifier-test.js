@@ -30,7 +30,12 @@ if (window.Notification) {
       Layer.Utils.defer.flush();
     });
     afterEach(function() {
-      if (client) client.destroy();
+      if (client) {
+        client.destroy();
+        client = null;
+      }
+      if (el) el.destroy();
+
       Layer.Utils.defer.reset();
       document.body.removeChild(testRoot);
 
@@ -290,18 +295,20 @@ if (window.Notification) {
 
           // Cleanup
           window.Layer.UI.UIUtils.isInBackground = restoreFunc;
+          document.body.removeEventListener('layer-message-notification', spy);
         });
 
         it("Should prevent handling if evt.preventDefault is called", function() {
           spyOn(el, "desktopNotify");
           spyOn(el, "toastNotify");
+          var fn = function(evt) {
+            evt.preventDefault();
+          };
           var restoreFunc = window.Layer.UI.UIUtils.isInBackground;
           spyOn(window.Layer.UI.UIUtils, 'isInBackground').and.returnValue(true);
           el.notifyInBackground = 'desktop';
           el.notifyInForeground = 'desktop';
-          document.body.addEventListener('layer-message-notification', function(evt) {
-            evt.preventDefault();
-          });
+          document.body.addEventListener('layer-message-notification', fn);
 
           // Run
           el._notify({message: message, notification: notification});
@@ -312,6 +319,7 @@ if (window.Notification) {
 
           // Cleanup
           window.Layer.UI.UIUtils.isInBackground = restoreFunc;
+          document.body.removeEventListener('layer-message-notification', fn);
         });
 
         it("Should do nothing if desktop notification is configured and permissions not granted", function() {
@@ -575,6 +583,9 @@ if (window.Notification) {
             item: message,
             model: message.createModel()
           });
+
+          // Cleanup
+          document.body.removeEventListener('layer-notification-click', spy1);
         });
       });
     });

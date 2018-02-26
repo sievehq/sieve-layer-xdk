@@ -70,6 +70,7 @@ registerComponent('layer-message-item-status', {
     }
     layer-message-item-status .layer-message-item-main {
       flex-grow: 1;
+      width: 100px; /* flexbox bug workaround */
     }
     layer-message-item-status.layer-message-item-hide-replaceable-content .layer-message-right-side,
     layer-message-item-status.layer-message-item-hide-replaceable-content .layer-message-left-side {

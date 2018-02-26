@@ -10,7 +10,7 @@
  * ```
  * var menuButton = document.createElement('layer-menu-button');
  * menuButton.item = message;
- * menuButton.getMenuOptions = function(item) {
+ * menuButton.getMenuItems = function(item) {
  *     return [
  *       {text: "delete", method: function() {item.delete(Layer.Constants.DELETION_MODE.ALL);}
  *     ];
@@ -19,12 +19,12 @@
  *
  * > *Note*
  * >
- * > The Layer.UI.components.MenuButton.item is used within the Layer.UI.components.MenuButton.getMenuOptions method, and is
+ * > The Layer.UI.components.MenuButton.item is used within the Layer.UI.components.MenuButton.getMenuItems method, and is
  * > not directly provided to your Menu Item Methods, as illustrated above.
  *
  * > *Note*
  * >
- * > The Layer.UI.components.MenuButton.getMenuOptions is called each time the user clicks on the Menu Button;
+ * > The Layer.UI.components.MenuButton.getMenuItems is called each time the user clicks on the Menu Button;
  * > your menu freshness is based solely on the user click time; updates that take place after that do not affect
  * > the menu that is displayed.
  *
@@ -69,20 +69,20 @@ registerComponent('layer-menu-button', {
      *
      * This is called each time the user clicks the menu button.
      *
-     * Menu items are provided via a `getMenuOptions` Function provided by the application,
-     * or a `getMenuOptions` provided by the Layer.UI.components.MenuButton.parentComponent
+     * Menu items are provided via a `getMenuItems` Function provided by the application,
+     * or a `getMenuItems` provided by the Layer.UI.components.MenuButton.parentComponent
      *
-     * @property {Function} getMenuOptions
-     * @property {Layer.Core.Root} getMenuOptions.item
-     * @property {Object[]} getMenuOptions.return
+     * @property {Function} getMenuItems
+     * @property {Layer.Core.Root} getMenuItems.item
+     * @property {Object[]} getMenuItems.return
      */
-    getMenuOptions: {
+    getMenuItems: {
       type: Function,
       noGetterFromSetter: true,
       value() { return []; },
       get() {
-        if (this.properties.getMenuOptions) return this.properties.getMenuOptions;
-        if (this.parentComponent && this.parentComponent.getMenuOptions) return this.parentComponent.getMenuOptions;
+        if (this.properties.getMenuItems) return this.properties.getMenuItems;
+        if (this.parentComponent && this.parentComponent.getMenuItems) return this.parentComponent.getMenuItems;
       },
       set(value) {
         this.toggleClass('layer-has-menu', Boolean(value));
@@ -130,7 +130,7 @@ registerComponent('layer-menu-button', {
     onButtonClick(evt) {
       evt.preventDefault();
       evt.stopPropagation();
-      const options = this.getMenuOptions(this.item);
+      const options = this.getMenuItems(this.item);
 
       // If there are options, update the menu's items and show it
       if (options) {

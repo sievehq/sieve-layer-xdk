@@ -173,7 +173,7 @@ registerComponent('layer-conversation-item', {
      * Format is:
      *
      * ```
-     * widget.getMenuOptions = function(conversation) {
+     * widget.getMenuItems = function(conversation) {
      *   return [
      *     {text: "label1", method: method1},
      *     {text: "label2", method: method2},
@@ -182,15 +182,15 @@ registerComponent('layer-conversation-item', {
      * }
      * ```
      *
-     * @property {Function} getMenuOptions
-     * @property {Layer.Core.Conversation} getMenuOptions.conversation
-     * @property {Object[]} getMenuOptions.return
+     * @property {Function} getMenuItems
+     * @property {Layer.Core.Conversation} getMenuItems.conversation
+     * @property {Object[]} getMenuItems.return
      */
-    getMenuOptions: {
+    getMenuItems: {
       type: Function,
       set() {
         if (this.nodes.menuButton) {
-          this.nodes.menuButton.getMenuOptions = this.properties.getMenuOptions;
+          this.nodes.menuButton.getMenuItems = this.properties.getMenuItems;
         }
       },
     },

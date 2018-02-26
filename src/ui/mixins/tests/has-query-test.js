@@ -38,7 +38,7 @@ describe("Has Query Mixin", function() {
     });
     query.isFiring = false;
     query.data = [client.user];
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 25; i++) {
       query.data.push(
         new Layer.Core.Identity({
               userId: 'user' + i,
@@ -56,7 +56,8 @@ describe("Has Query Mixin", function() {
 
   afterEach(function() {
     jasmine.clock().uninstall();
-    client.destroy();
+    if (el) el.destroy();
+    if (client) client.destroy();
     document.body.removeChild(testRoot);
 
   });

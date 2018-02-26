@@ -61,6 +61,7 @@ registerComponent('layer-message-item-sent', {
       text-align: right;
       flex-grow: 1;
       overflow: hidden;
+      width: 100px; /* flexbox bug workaround */
     }
     /* For backwards compat message view node */
     layer-message-item-sent .layer-message-item-main .layer-message-item-content {

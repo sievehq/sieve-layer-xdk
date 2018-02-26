@@ -739,7 +739,7 @@ describe("The Root Class", function() {
 
         // Posttest
         expect(a._processDelayedTriggers.calls.count()).toEqual(0);
-        jasmine.clock().tick(10);
+        Layer.Utils.defer.flush();
         expect(a._processDelayedTriggers.calls.count()).toEqual(1);
       });
 
@@ -751,33 +751,8 @@ describe("The Root Class", function() {
 
         // Posttest
         expect(a._processDelayedTriggers.calls.count()).toEqual(0);
-        jasmine.clock().tick(10);
+        Layer.Utils.defer.flush();
         expect(a._processDelayedTriggers.calls.count()).toEqual(1);
-      });
-
-      it("Should not schedule _processDelayedTriggers for additional events unless too much time has passed", function() {
-        spyOn(a, "_processDelayedTriggers");
-        a._triggerAsync("doh", 5);
-        a._triggerAsync("doh", 50);
-
-        jasmine.clock().tick(10);
-        expect(a._delayedTriggers.length).toEqual(2); // 2 because our spy doesn't let this array be cleared
-        expect(a._processDelayedTriggers.calls.count()).toEqual(1);
-
-        // Nothing should change 501 ms later
-        jasmine.clock().tick(501);
-        var d = new Date();
-        d.setSeconds(d.getSeconds() + 501);
-        jasmine.clock().mockDate(d);
-        expect(a._delayedTriggers.length).toEqual(2);
-        expect(a._processDelayedTriggers.calls.count()).toEqual(1);
-
-        // Run
-        a._triggerAsync("doh", 1234);
-        jasmine.clock().tick(10);
-
-        // Posttest: Let the second call go through if 500ms have passed even if _delayedTriggers.length != 1
-        expect(a._processDelayedTriggers.calls.count()).toEqual(2);
       });
     });
 

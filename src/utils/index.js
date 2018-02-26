@@ -369,7 +369,7 @@ exports.doesObjectMatch = (requestedData, actualData) => {
     const v2 = actualData[k2];
     if (k1 !== k2) return false;
     if (v1 && typeof v1 === 'object') {
-      // Array comparison is not used by the Web SDK at this time.
+      // Array comparison is not used by the Web XDK at this time.
       if (Array.isArray(v1)) {
         throw new Error('Array comparison not handled yet');
       } else if (!exports.doesObjectMatch(v1, v2)) {
@@ -382,8 +382,8 @@ exports.doesObjectMatch = (requestedData, actualData) => {
   return true;
 };
 
-exports.isMobile = global.navigator ? global.navigator.userAgent.match(/(mobile|android|phone)/i) : false;
-exports.isIOS = global.navigator ? global.navigator.userAgent.match(/(iPhone|iPad)/i) : false;
+exports.isMobile = global.navigator ? Boolean(global.navigator.userAgent.match(/(mobile|android|phone)/i)) : false;
+exports.isIOS = global.navigator ? Boolean(global.navigator.userAgent.match(/(iPhone|iPad)/i)) : false;
 
 /**
  * Simple array inclusion test

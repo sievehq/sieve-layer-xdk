@@ -26,8 +26,26 @@ describe('layer-presence', function() {
   });
   afterEach(function() {
     document.body.removeChild(testRoot);
-
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
   });
+
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
 
   describe("The item property", function() {
     it("Should accept an identity and bind its changes to onRerender", function() {
@@ -71,7 +89,7 @@ describe('layer-presence', function() {
   it("Should trigger layer-presence-click on click", function() {
     var spy = jasmine.createSpy("eventListener");
     el.addEventListener("layer-presence-click", spy);
-    el.click();
+    click(el);
     expect(spy).toHaveBeenCalledWith(jasmine.objectContaining({
       detail: {
         item: el.item

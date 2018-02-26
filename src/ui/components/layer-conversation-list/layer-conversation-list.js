@@ -300,7 +300,7 @@ registerComponent('layer-conversation-list', {
      * Format is:
      *
      * ```
-     * widget.getMenuOptions = function(conversation) {
+     * widget.getMenuItems = function(conversation) {
      *   return [
      *     {text: "label1", method: method1},
      *     {text: "label2", method: method2},
@@ -309,13 +309,13 @@ registerComponent('layer-conversation-list', {
      * }
      * ```
      *
-     * @property {Function} getMenuOptions
-     * @property {Layer.Core.Conversation} getMenuOptions.conversation
-     * @property {Object[]} getMenuOptions.return
+     * @property {Function} getMenuItems
+     * @property {Layer.Core.Conversation} getMenuItems.conversation
+     * @property {Object[]} getMenuItems.return
      */
-    getMenuOptions: {
+    getMenuItems: {
       type: Function,
-      value: function getMenuOptions(conversation) {
+      value: function getMenuItems(conversation) {
         return [
           {
             text: 'delete',
@@ -428,7 +428,7 @@ registerComponent('layer-conversation-list', {
       conversationWidget.id = this._getItemId(conversation.id);
       conversationWidget.item = conversation;
       conversationWidget.size = this.size;
-      if (this.getMenuOptions) conversationWidget.getMenuOptions = this.getMenuOptions;
+      if (this.getMenuItems) conversationWidget.getMenuItems = this.getMenuItems;
       if (this.dateFormat) conversationWidget.dateFormat = this.dateFormat;
 
       if (this.filter) conversationWidget._runFilter(this.filter);

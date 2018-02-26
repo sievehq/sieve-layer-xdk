@@ -57,8 +57,10 @@ describe("SyncManager Integration Tests", function() {
 
     });
 
-    afterAll(function() {
-
+    afterEach(function() {
+        if (client) client.destroy();
+        jasmine.clock().uninstall();
+        jasmine.Ajax.uninstall();
     });
 
     it("Should schedule a retry after a service unavailable error", function() {

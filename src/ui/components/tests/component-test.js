@@ -16,7 +16,12 @@ describe('Components', function() {
 
   afterEach(function() {
     try {
-      if (client) client.destroy();
+      if (client && !client.isDestroyed) {
+        client.destroy();
+      }
+      client = null;
+
+      if (el) el.destroy();
       jasmine.clock().uninstall();
       document.body.removeChild(testRoot);
 
@@ -925,6 +930,9 @@ describe('Components', function() {
         var item = listItems[i];
         expect(item.state).toBe(testState2);
       }
+
+      // Cleanup
+      client.destroy();
     });
   });
 
@@ -1099,6 +1107,7 @@ describe('Components', function() {
     it("Should trigger layer-widget-destroyed and not call onDestroy if event prevented", function() {
       spyOn(avatar, "onDestroy");
       avatar.addEventListener('layer-widget-destroyed', function(evt) {
+        expect(evt.detail.target).toBe(avatar);
         evt.preventDefault();
       });
 
@@ -1111,6 +1120,27 @@ describe('Components', function() {
       // Posttest
       expect(avatar.onDestroy).not.toHaveBeenCalled();
     });
+
+    it("Should trigger layer-widget-destroyed on document.body and not call onDestroy if event prevented", function() {
+      spyOn(avatar, "onDestroy");
+      var f = function(evt) {
+        evt.preventDefault();
+        expect(evt.detail.target).toBe(avatar);
+      };
+      document.body.addEventListener('layer-widget-destroyed', f);
+
+      // Run
+      testRoot.removeChild(avatar);
+      CustomElements.takeRecords();
+      Layer.Utils.defer.flush();
+      jasmine.clock().tick(10001);
+
+      // Posttest
+      expect(avatar.onDestroy).not.toHaveBeenCalled();
+
+      // Cleanup
+      document.body.removeEventListener('layer-widget-destroyed', f);
+    });
   });
 
   describe("The onDestroy() method", function() {
@@ -1122,10 +1152,10 @@ describe('Components', function() {
       CustomElements.takeRecords();
       Layer.Utils.defer.flush();
 
-      client = new Layer.Core.Client({appId: "fred53"});
-      client.user = new Layer.Core.Identity({
-        id: "layer:///identities/frodo-the-dodo"
-      });
+      // client = new Layer.Core.Client({appId: "fred53"});
+       client.user = new Layer.Core.Identity({
+         id: "layer:///identities/frodo-the-dodo"
+       });
     });
 
     it("Should clear all subscriptions", function() {
@@ -1146,10 +1176,10 @@ describe('Components', function() {
   describe("The destroy() method", function() {
     var avatar;
     beforeEach(function() {
-      client = new Layer.Core.Client({appId: "fred53"});
-      client.user = new Layer.Core.Identity({
-        id: "layer:///identities/frodo-the-dodo"
-      });
+      // client = new Layer.Core.Client({appId: "fred53"});
+       client.user = new Layer.Core.Identity({
+         id: "layer:///identities/frodo-the-dodo"
+       });
 
       // Run removal
       avatar = document.createElement('layer-avatar');

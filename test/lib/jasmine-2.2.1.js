@@ -351,6 +351,7 @@ getJasmineRequireObj().Spec = function(j$) {
     });
 
     function complete() {
+if (window.tmp) debugger;
       self.result.status = self.status();
       self.resultCallback(self.result);
 
@@ -2055,6 +2056,7 @@ getJasmineRequireObj().Suite = function() {
     });
 
     function complete() {
+if (window.tmp) debugger;
       self.result.status = self.status();
       self.resultCallback(self.result);
 

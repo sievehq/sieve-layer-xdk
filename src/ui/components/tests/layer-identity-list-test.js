@@ -27,7 +27,7 @@ describe('layer-identity-list', function() {
     });
     query.isFiring = false;
     query.data = [client.user];
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 35; i++) {
       query.data.push(
         new Layer.Core.Identity({
               userId: 'user' + i,
@@ -47,11 +47,17 @@ describe('layer-identity-list', function() {
 
   afterEach(function() {
     try {
+      if (client) {
+        client.destroy();
+        client = null;
+      }
+      if (el) {
+        el.destroy();
+        el = null;
+      }
       jasmine.clock().uninstall();
       Layer.UI.settings.appId = null;
       document.body.removeChild(testRoot);
-
-      if (el) el.onDestroy();
     } catch(e) {}
   });
 

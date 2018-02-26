@@ -24,7 +24,11 @@ describe('layer-replaceable-content', function() {
   });
   afterEach(function() {
     document.body.removeChild(testRoot);
-
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
   });
 
   it('Should accept a replaceableContent DOM node', function() {
@@ -141,6 +145,23 @@ describe('layer-replaceable-content', function() {
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild).toBe(button);
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.tagName).toEqual("DIV");
     expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.classList.contains('layer-replaceable-inner')).toBe(true);
+  });
+
+  it('Should accept a replaceableContent null provided to the root parent DOM node', function() {
+    // Setup
+    var button = document.createElement("button");
+    el.nodes.composer.replaceableContent = {
+      composerButtonPanelRight: button
+    };
+    el.replaceableContent = {
+      composerButtonPanelRight: null
+    };
+    CustomElements.takeRecords();
+    Layer.Utils.defer.flush();
+
+
+    // Test
+    expect(el.nodes.composer.nodes.composerButtonPanelRight.firstChild.firstChild).toBe(null);
   });
 
   it('Should ignore a replaceableContent DOM with wrong name provided to the root parent DOM node', function() {

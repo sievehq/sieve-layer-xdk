@@ -147,11 +147,6 @@ class ChoiceModel extends MessageTypeModel {
     // Generate the data for an Action Button from our Choices
     this._buildActionButtonProps();
 
-    // If there are any responses to this Message, process them (may set selectedAnswer)
-    if (this.responses) {
-      this._processNewResponses();
-    }
-
     if (this.__selectedAnswer === null && this.preselectedChoice) this.selectedAnswer = this.preselectedChoice;
 
     // Trigger a change event if there was a prior answer
@@ -201,9 +196,8 @@ class ChoiceModel extends MessageTypeModel {
 
     // Disable selection if this user is the sender, and other participants have made selections.
     // Rationale: This user was requesting feedback, this user's selections do not get priority
-    const data = this.responses ? this.responses.participantData : {};
-    const responseIdentityIds = Object.keys(data).filter(participantId => data[participantId][this.responseName]);
-    if (responseIdentityIds.length > 1 && this.message.sender === Client.user) return false;
+    const data = this.responses.getResponses(this.responseName, this.enabledFor);
+    if (data.length > 1 && this.message.sender === Client.user) return false;
 
     return true;
   }
@@ -331,7 +325,7 @@ class ChoiceModel extends MessageTypeModel {
     if (this._pauseUpdateTimeout) clearTimeout(this._pauseUpdateTimeout);
     this._pauseUpdateTimeout = setTimeout(() => {
       this._pauseUpdateTimeout = 0;
-      if (this.responses && this.message && !this.message.isNew()) this._processNewResponses();
+      if (this.responses.getResponse(his.responseName, Client.user.id) && this.message && !this.message.isNew()) this._processNewResponses();
     }, 6000);
   }
 
@@ -501,16 +495,16 @@ class ChoiceModel extends MessageTypeModel {
     } else {
       this._hasPendingResponse = false;
       const senderId = this.message.sender.userId;
-      const data = this.responses.participantData;
-      let responseIdentityIds = Object.keys(data).filter(participantId => this.responseName in data[participantId]);
+      let data = this.responses.getResponses(this.responseName, this.enabledFor);
 
       // If multiple users have resonded to this Choice Message, ignore any responses from the Choice
       // Message Sender.
-      if (responseIdentityIds.length > 1) responseIdentityIds = responseIdentityIds.filter(id => senderId !== id);
+      if (data.length > 1) data = data.filter(response => response.identityId !== senderId);
 
       // Assuming we have remaining responses, update selectedAnswer with them.
-      if (responseIdentityIds.length) {
-        this.selectedAnswer = data[responseIdentityIds[0]][this.responseName];
+      // TODO: Work out some way to aggregate multiple user's responses
+      if (data.length) {
+        this.selectedAnswer = data[0].value;
       }
     }
   }

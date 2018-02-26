@@ -29,24 +29,20 @@ var supportedBrowsers = {
   },
   'safari-1': {
     browserName: 'safari',
-    version: '9.0',
-    platform: 'OS X 10.11'
+    version: '10.0'
   },
   'safari-0': {
     browserName: 'safari',
-    version: '10.0',
-    platform: 'macOS 10.12'
+    version: 'latest'
   },
-/*  'ios-1': {
+ 'ios-1': {
     browserName: 'iphone',
-    version: 'latest-1',
-    platform: 'OS X 10.9'
+    version: '10.0'
   },
   'ios-0': {
     browserName: 'iphone',
     version: 'latest',
-    platform: 'OS X 10.9'
-  },*/
+  },
   'chrome-1': {
     browserName: 'chrome',
     platform: 'OSX 10.9',
@@ -65,9 +61,14 @@ var supportedBrowsers = {
   'firefox-0': {
     browserName: 'firefox',
     version: 'latest',
-    platform: 'OS X 10.9'
+    'platform': 'Windows 10'
+  },
+  'android': {
+    browserName: 'Android',
+    deviceName: 'Android Emulator'
   }
 };
+
 
 // These do not support websockets, so are not supported by layer-websdk
 var unsupportedBrowsers = {
@@ -84,97 +85,107 @@ var unsupportedBrowsers = {
 };
 
   var browsers;
+  var ipaddress = "localhost";
   if (grunt.option('browsers')) {
     browsers = grunt.option('browsers').split(/\s*,\s*/).map(function(name) {
       if (supportedBrowsers[name]) return supportedBrowsers[name];
       if (unsupportedBrowsers[name]) return unsupportedBrowsers[name];
       throw new Error(name + ' not found');
     });
-  } else {
+  } else  {
     browsers = Object.keys(supportedBrowsers).map(function(key) {return supportedBrowsers[key]});
   }
 
-  // Why this? Travis tunnel to saucelabs only sometimes survives long
-  // enough for all 11 tests to run.  So randomly test 3 browsers each run.
-  function getRandomThree() {
-    var browsersHash = {};
-    while(Object.keys(browsersHash).length < 3) {
-      var randomIndex = Math.floor(Math.random() * Object.keys(supportedBrowsers).length);
-      var key = Object.keys(supportedBrowsers)[randomIndex];
-      browsersHash[key] = supportedBrowsers[key];
-    }
-    var browserArray = Object.keys(browsersHash).map(function(key) {return browsersHash[key]});;
-    console.dir(browserArray);
-    return browserArray;
-  }
+  var quickTestUrls = [
+    "http://localhost:9999/test/ui_tests.html?stop=true",
+    "http://localhost:9999/test/core_tests.html?stop=true"
+  ];
+  var quickTestBrowsers = [
+    //supportedBrowsers['android'],
+    supportedBrowsers['safari-1'],
+    supportedBrowsers['safari-0'],
+    supportedBrowsers['edge-0'],
+    supportedBrowsers['edge-1'],
+    supportedBrowsers['ie11'],
+    supportedBrowsers['chrome-1'],
+    supportedBrowsers['chrome-0'],
+    //supportedBrowsers['firefox-1'], enable once firefox-1 becomes Firefox 58; 57 has problems
+    supportedBrowsers['firefox-0']
+  ];
 
-  if (process.env.TRAVIS_JOB_NUMBER) {
-    browsers = getRandomThree();
-    browsers.forEach(function(item) {
-      item['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER;
+  var smallTestUrls = grunt.file.expand("test/smalltest*.html").map(file => "http://localhost:9999/" + file + "?stop=true");
+
+
+  var smallTestBrowsers = [
+    supportedBrowsers['ios-0'],
+    supportedBrowsers['ios-1']
+  ];
+
+  var totalRuns = smallTestUrls.length * smallTestBrowsers.length + quickTestBrowsers.length * quickTestUrls.length;
+  var currentRuns = 0;
+
+  function onTestComplete(result, callback) {
+    currentRuns++;
+    var testPage = result.testPageUrl.replace(/^.*\//, '').replace(/\?.*$/, '');
+    console.log("----------------------------------------\nSaucelabs Results for " + testPage + ":" + result.passed);
+    console.log("Completed: " + currentRuns + " of " + totalRuns);
+    require("request").put({
+      url: ['https://saucelabs.com/rest/v1', process.env.SAUCE_USERNAME, 'jobs', result.job_id].join('/'),
+      auth: { user: process.env.SAUCE_USERNAME, pass: process.env.SAUCE_ACCESS_KEY },
+      json: {
+        passed: Boolean(result.passed),
+        name: currentRuns + "/" + totalRuns + ": " + (!result.result || !result.result.errors ? " Failed to Complete" : " Completed") + " Layer Web XDK " + version + " " + testPage,
+      }
+    }, function (error, response, body) {
+      if (response.statusCode != 200) {
+        console.error("Error updating sauce results: " + body.error  + '/' + response.statusCode);
+      }
     });
+
+    if (result.passed) {
+      callback();
+    } else if (!result.result || !result.result.errors) {
+      console.error("Unexpected result passed from server");
+      console.error(JSON.stringify(result, null, 4));
+      callback(false);
+    } else {
+      console.error("Unit Test Errors for " + result.platform.join(', ') + "\n •", result.result.errors.join("\n • "));
+      callback(false);
+    }
   }
 
   result.tasks.saucelabs = {
-    all: {
+    quicktests: {
       options: {
-        tunnelArgs: ["-B all"],
-        browsers: browsers,
-        build: "Layer Web XDK <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
-        urls: ["http://localhost:9999/test/SpecRunner.html"],
-        /*urls: [
-          "core_client",
-          "core_models_queries",
-          "core_services",
-          "ui_components",
-          "ui_handlers",
-          "ui_messages",
-          "ui_mixins",
-        "ui_utils"].map(function(testName) {
-            return  "http://127.0.0.1:9999/test/" + testName + ".html?stop=true";
-          }),*/
-        tunneled: true,
-        concurrency: 1,
-        throttled: 1,
-        testname: "Running Layer Web XDK <%= pkg.version %> Unit Test",
-        tags: ["master", 'Unit Test', 'Web'],
-
-        // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
-        pollInterval: 5000, // Check for test results every 5 seconds (miliseconds)
-        statusCheckAttempts: 360, // Allow up to 30 minutes (presumed to be 30 from start of first browser to end of last)
-        // max-duration should insure that the tunnel stays alive for the specified period.  Large values however cause
-        // saucelabs to just hang and not start any jobs on their servers.  This time appears to be per-job, not total
-        // runtime
-        "max-duration": 400,
-        maxRetries: 2,
-        onTestComplete: function(result, callback) {
-          console.log("----------------------------------------\nSaucelabs Results:" + result.passed);
-          require("request").put({
-              url: ['https://saucelabs.com/rest/v1', process.env.SAUCE_USERNAME, 'jobs', result.job_id].join('/'),
-              auth: { user: process.env.SAUCE_USERNAME, pass: process.env.SAUCE_ACCESS_KEY },
-              json: {
-                passed: Boolean(result.passed),
-                name: "Completed Layer Web XDK " + version + " Unit Test"
-              }
-            }, function (error, response, body) {
-              if (response.statusCode != 200) {
-                console.error("Error updating sauce results: " + body.error  + '/' + response.statusCode);
-              }
-            });
-
-            if (result.passed) {
-              callback();
-            } else if (!result.result || !result.result.errors) {
-              console.error("Unexpected result passed from server");
-              console.error(JSON.stringify(result, null, 4));
-              callback(false);
-            } else {
-              console.error("Unit Test Errors for " + result.platform.join(', ') + "\n •", result.result.errors.join("\n • "));
-              callback(false);
-            }
-        }
+        browsers: quickTestBrowsers,
+        urls: quickTestUrls
       }
+    },
+    smalltests: {
+      options: {
+        browsers: smallTestBrowsers,
+        urls: smallTestUrls
+      }
+    },
+    options: {
+      tunnelArgs: ["-B all"],
+      tunneled: true,
+      browsers: browsers,
+      build: "Layer Web XDK <%= pkg.version %>" + (process.env.TRAVIS_JOB_NUMBER ? ' ' + process.env.TRAVIS_JOB_NUMBER : ''),
+
+      concurrency: 2,
+      throttled: 2,
+      testname: "Running Layer Web XDK <%= pkg.version %> Unit Test",
+      tags: ["master", 'Unit Test', 'Web'],
+
+      // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
+      pollInterval: 2000, // Check for test results every 5 seconds (miliseconds)
+      statusCheckAttempts: 5000,
+      "max-duration": 10000,
+      maxRetries: 10,
+      onTestComplete: onTestComplete
     }
   };
+
   return result;
 };

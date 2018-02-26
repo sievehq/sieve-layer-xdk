@@ -8,9 +8,8 @@ describe("Conversation Integration Tests", function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
-        client = new Layer.Core.Client({
+        client = Layer.init({
             appId: appId,
-            url: "https://huh.com",
             isTrustedDevice: false
         });
         client.sessionToken = "sessionToken";
@@ -59,10 +58,17 @@ describe("Conversation Integration Tests", function() {
         });
 
         jasmine.clock().tick(1);
+        Layer.Utils.defer.flush();
         requests.reset();
         syncManager.queue = [request];
         client.syncManager.queue = [];
         client._clientReady();
+    });
+
+    afterEach(function() {
+      jasmine.clock().uninstall();
+      jasmine.Ajax.uninstall();
+      if (client) client.destroy();
     });
 
     afterAll(function() {

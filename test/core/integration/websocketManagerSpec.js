@@ -141,6 +141,7 @@ describe("Websocket tests", function() {
         }).send();
         requests.reset();
         jasmine.clock().tick(1);
+        Layer.Utils.defer.flush();
         client.syncManager.queue = [];
     });
 
@@ -292,6 +293,7 @@ describe("Websocket tests", function() {
                     }]
                 });
                 jasmine.clock().tick(1);
+                Layer.Utils.defer.flush();
 
                 // Posttest
                 expect(conv.participants).toEqual([fred, joe]);
@@ -342,6 +344,7 @@ describe("Websocket tests", function() {
                     }]
                 });
                 jasmine.clock().tick(1);
+                Layer.Utils.defer.flush();
                 var fred = client.getIdentity("fred"),
                     joe = client.getIdentity("joe");
 
@@ -390,6 +393,7 @@ describe("Websocket tests", function() {
                     }]
                 });
                 jasmine.clock().tick(1);
+                Layer.Utils.defer.flush();
 
                 // Posttest
                 expect(conv.participants).toEqual([b]);
@@ -444,6 +448,7 @@ describe("Websocket tests", function() {
                     }]
                 });
                 jasmine.clock().tick(1);
+                Layer.Utils.defer.flush();
 
                 // Posttest
                 var fred = client.getIdentity("fred"),
@@ -490,6 +495,7 @@ describe("Websocket tests", function() {
                     }]
                 });
                 jasmine.clock().tick(1);
+                Layer.Utils.defer.flush();
 
                 // Posttest
                 expect(conv.participants).toEqual([a, b, c]);
@@ -565,6 +571,7 @@ describe("Websocket tests", function() {
             // Run
             client.socketChangeManager._handleCreate(messageDef.body);
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
 
             // Posttest
             expect(Boolean(client.getMessage(messageDef.body.object.id))).toEqual(true);
@@ -681,6 +688,7 @@ describe("Websocket tests", function() {
             c1.lastMessage = null;
             c2.lastMessage = null;
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
             spyOn(c2, "_trigger");
 
             // Run
@@ -697,6 +705,7 @@ describe("Websocket tests", function() {
                 }]
             });
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
 
             // Posttest
             expect(c2.lastMessage.id).toEqual(messId2);
@@ -716,6 +725,7 @@ describe("Websocket tests", function() {
             // Setup
             c2.lastMessage = m1;
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
             spyOn(c2, "trigger");
 
 
@@ -733,6 +743,7 @@ describe("Websocket tests", function() {
                 }]
             });
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
 
             // Posttest
             expect(c2.lastMessage).toBe(null);
@@ -794,6 +805,7 @@ describe("Websocket tests", function() {
                 })
             });
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
 
             // Post test
             // If c is still the object in the client, then no new object was added
@@ -843,6 +855,7 @@ describe("Websocket tests", function() {
                 })
             });
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
 
             // Post test
             // If c is still the object in the client, then no new object was added
@@ -914,6 +927,7 @@ describe("Websocket tests", function() {
                 })
             });
             jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
 
             // Post test
             expect(c.lastMessage.id).toEqual(responses.message2.id);

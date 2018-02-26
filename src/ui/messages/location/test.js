@@ -59,7 +59,11 @@ describe('Location Message Components', function() {
   afterEach(function() {
     if (client) client.destroy();
     Layer.UI.UIUtils.animatedScrollTo = restoreAnimatedScrollTo;
-
+    if (testRoot.parentNode) {
+      testRoot.parentNode.removeChild(testRoot);
+      if (testRoot.firstChild && testRoot.firstChild.destroy) testRoot.firstChild.destroy();
+    }
+    jasmine.clock().uninstall();
   });
 
   describe("Model Tests", function() {
@@ -362,7 +366,7 @@ describe('Location Message Components', function() {
 
       el._runAction({});
       var expectedUrl = 'http://www.google.com/maps/?q=';
-      expectedUrl += escape(model.street1 + (model.street2 ? ' ' + model.street2 : '') + ' ' + `${model.city} ${model.administrativeArea}, ${model.postalCode} ${model.country}`);
+      expectedUrl += escape(model.street1 + (model.street2 ? ' ' + model.street2 : '') + ' ' + model.city + ' ' + model.administrativeArea + ', ' + model.postalCode + ' ' + model.country);
 
       el._runAction({});
       expect(Layer.UI.UIUtils.showFullScreen).toHaveBeenCalledWith(expectedUrl);

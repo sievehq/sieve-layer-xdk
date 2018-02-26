@@ -45,6 +45,7 @@ describe("The Client Authenticator Class", function() {
     });
 
     afterEach(function() {
+        if (Layer.client) Layer.client.destroy();
         jasmine.clock().uninstall();
         jasmine.Ajax.uninstall();
     });

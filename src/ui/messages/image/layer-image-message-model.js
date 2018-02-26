@@ -274,7 +274,7 @@ class ImageModel extends MessageTypeModel {
       this.height = srcCanvas.height;
 
       // If the source image is small, don't waste time generating a preview
-      if (srcCanvas.width > 350 || srcCanvas.height > 300) {
+      if (srcCanvas.width > ImageModel.MaxPreviewDimension || srcCanvas.height > ImageModel.MaxPreviewDimension) {
         const blob = this._postGeneratePreview(srcCanvas);
         this.preview = new MessagePart(blob);
         callback(this.preview);
@@ -294,7 +294,7 @@ class ImageModel extends MessageTypeModel {
    */
   _postGeneratePreview(srcCanvas) {
 
-    const size = normalizeSize({ width: this.width, height: this.height }, { width: 350, height: 350 });
+    const size = normalizeSize({ width: this.width, height: this.height }, { width: ImageModel.MaxPreviewDimension, height: ImageModel.MaxPreviewDimension });
     const canvas = document.createElement('canvas');
     this.previewWidth = canvas.width = size.width;
     this.previewHeight = canvas.height = size.height;
@@ -305,7 +305,7 @@ class ImageModel extends MessageTypeModel {
     context.drawImage(srcCanvas, 0, 0, size.width, size.height);
 
     // Turn the canvas into a jpeg image for our Preview Image
-    const binStr = atob(canvas.toDataURL('image/jpeg').split(',')[1]);
+    const binStr = atob(canvas.toDataURL('image/jpeg', ImageModel.PreviewQuality).split(',')[1]);
     const len = binStr.length;
     const arr = new Uint8Array(len);
 
@@ -482,6 +482,30 @@ ImageModel.prototype.previewHeight = null;
  * @property {String} url
  */
 ImageModel.prototype.url = '';
+
+/**
+ * Maximum width/height for a Preview Image.
+ *
+ * If width/height of an image we are sending is greater than this, we create a preview at this size.
+ *
+ * @static
+ * @property {Number} {MaxPreviewDimesion=768}
+ */
+ImageModel.MaxPreviewDimension = 768;
+
+/**
+ * Preview Image JPEG Quality
+ *
+ * When generating preview images, what quality of jpeg compression to use?
+ *
+ * * 100%: Full quality
+ * * 50%: Much compression
+ * * 0%: I have not dared to try this
+ *
+ * @static
+ * @property {Number} {PreviewQuality=0.5}
+ */
+ImageModel.PreviewQuality = 0.5;
 
 /**
  * Textual label representing all instances of Image Message.

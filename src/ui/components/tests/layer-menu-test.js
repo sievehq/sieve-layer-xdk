@@ -20,10 +20,28 @@ describe('layer-menu', function() {
   });
 
   afterEach(function() {
-    if (client) client.destroy();
-    document.body.removeChild(testRoot);
+    if (client) {
+      client.destroy();
+      client = null;
+    }
+    if (el) el.destroy();
 
+    document.body.removeChild(testRoot);
   });
+
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
 
   it("Should generate menus with suitable text", function() {
     el.items = [
@@ -42,11 +60,11 @@ describe('layer-menu', function() {
       {text: "b", method: jasmine.createSpy("b")}
     ];
 
-    el.firstChild.childNodes[0].click();
+    click(el.firstChild.childNodes[0]);
     expect(el.items[0].method).toHaveBeenCalledWith();
     expect(el.items[1].method).not.toHaveBeenCalledWith();
 
-    el.firstChild.childNodes[1].click();
+    click(el.firstChild.childNodes[1]);
     expect(el.items[0].method).toHaveBeenCalledWith();
     expect(el.items[1].method).toHaveBeenCalledWith();
   });
