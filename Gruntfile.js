@@ -166,17 +166,6 @@ module.exports = function (grunt) {
       }
     },
 
-    symlink: {
-      options: {
-        overwrite: false,
-        force: false
-      },
-      npm: {
-        src: 'node_modules',
-        dest: 'npm/node_modules'
-      }
-    },
-
     cssmin: {
       build: {
         files: [
@@ -846,7 +835,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-remove');
   grunt.loadNpmTasks('grunt-move');
-  grunt.loadNpmTasks('grunt-contrib-symlink');
 
 
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
@@ -862,7 +850,7 @@ module.exports = function (grunt) {
   grunt.registerTask('debug', [
     'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
     'custom_babel', 'remove:lib', 'move:lib',
-    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'symlink:npm']);
+    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm']);
 
   grunt.registerTask('build', ['remove:build', 'debug', 'uglify', 'theme', 'cssmin']);
   grunt.registerTask('prepublish', ['build', 'fix-npm-package', 'refuse-to-publish']);
@@ -874,3 +862,4 @@ module.exports = function (grunt) {
   // Open a port for running tests and rebuild whenever anything interesting changes
   grunt.registerTask("develop", ["connect:develop", "watch"]);
 };
+
