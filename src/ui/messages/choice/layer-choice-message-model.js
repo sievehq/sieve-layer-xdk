@@ -325,7 +325,9 @@ class ChoiceModel extends MessageTypeModel {
     if (this._pauseUpdateTimeout) clearTimeout(this._pauseUpdateTimeout);
     this._pauseUpdateTimeout = setTimeout(() => {
       this._pauseUpdateTimeout = 0;
-      if (this.responses.getResponse(his.responseName, Client.user.id) && this.message && !this.message.isNew()) this._processNewResponses();
+      if (this.responses.getResponse(this.responseName, Client.user.id) && this.message && !this.message.isNew()) {
+        this._processNewResponses();
+      }
     }, 6000);
   }
 

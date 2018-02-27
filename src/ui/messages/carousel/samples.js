@@ -20,41 +20,44 @@ ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
 CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
 model = new CarouselModel({
-items: [
-  new ButtonModel({
-    buttons: [
-      {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
-      {"type": "choice", "choices": [{"text": "Buy Me", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}},
-    ],
-    contentModel: new TextModel({
-      text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. ',
-      title: 'The Holy Hand Grenade',
-      author: 'King Arthur'
+  items: [
+    new ButtonModel({
+      buttons: [
+        {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
+        {"type": "choice", "choices": [{"text": "Buy Me", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}},
+      ],
+      contentModel: new TextModel({
+        text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. ',
+        title: 'The Holy Hand Grenade',
+        author: 'King Arthur'
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
+        {"type": "choice", "choices": [{"text": "Buy Me", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}},
+      ],
+      contentModel: new TextModel({
+        text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. ',
+        title: 'The Holy Hand Grenade',
+        author: 'King Arthur'
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
+        {"type": "choice", "choices": [{"text": "Buy Me", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}},
+      ],
+      contentModel: new TextModel({
+        text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. ',
+        title: 'The Holy Hand Grenade',
+        author: 'King Arthur'
+      })
     })
-  }),
-  new ButtonModel({
-    buttons: [
-      {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
-      {"type": "choice", "choices": [{"text": "Buy Me", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}},
-    ],
-    contentModel: new TextModel({
-      text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. ',
-      title: 'The Holy Hand Grenade',
-      author: 'King Arthur'
-    })
-  }),
-  new ButtonModel({
-    buttons: [
-      {"type": "choice", "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}], "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}},
-      {"type": "choice", "choices": [{"text": "Buy Me", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}},
-    ],
-    contentModel: new TextModel({
-      text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. ',
-      title: 'The Holy Hand Grenade',
-      author: 'King Arthur'
-    })
-  })
-]
+  ],
+  action: {
+    event: 'kill-arthor'
+  }
 });
 model.generateMessage($("layer-conversation-view").conversation, message => message.send())
 

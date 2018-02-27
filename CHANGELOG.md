@@ -1,5 +1,11 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.5
+
+* React Adapter now respects `className` and `style` properties
+* Fixes typo in 1.0.0-pre2.4
+* Button Message `action.event` and `action.data` are propagated to child models
+
 ## 1.0.0-pre2.4
 
 * Error publishing 1.0.0-pre2.3; have republished as 1.0.0-pre2.4.

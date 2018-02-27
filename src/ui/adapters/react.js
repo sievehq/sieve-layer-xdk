@@ -162,6 +162,7 @@ function initReact(React, ReactDom) {
         // a DocumentFragment so it must follow a more typical lifecycle
         if (this.node._onAfterCreate) this.node._onAfterCreate();
 
+        this._setupStandardProps();
       }
 
       /**
@@ -187,7 +188,22 @@ function initReact(React, ReactDom) {
             this.node[propDef.propertyName] = value;
           }
         }, this);
+
+        this._setupStandardProps();
         return false;
+      }
+
+      _setupStandardProps() {
+        Object.keys(this.props.style || {}).forEach(styleName =>  this.node.style[styleName] = this.props.style[styleName]);
+        if (this.props.className) {
+          const classNames = this.props.className.split(/\s+/);
+          (this._addedClassNames || []).forEach((className) => {
+            if (classNames.indexOf(className) === -1) this.node.classList.remove(className);
+          });
+
+          classNames.forEach(className => this.node.classList.add(className));
+          this._addedClassNames = [].concat(classNames);
+        }
       }
 
       /**

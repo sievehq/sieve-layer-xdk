@@ -144,6 +144,7 @@ class ButtonsModel extends MessageTypeModel {
     // If a Content Model was provided, add it to this model and generate its Message Part(s)
     if (this.contentModel) {
       this._addModel(this.contentModel, 'content', (parts) => {
+        this.contentModel._mergeAction(this.action);
         callback([this.part].concat(parts));
       });
     } else {
@@ -170,6 +171,7 @@ class ButtonsModel extends MessageTypeModel {
   _parseMessage(payload) {
     super._parseMessage(payload);
     this.contentModel = this.getModelsByRole('content')[0] || null;
+    if (this.contentModel) this.contentModel._mergeAction(this.action);
     this._setupButtonModels();
   }
 
