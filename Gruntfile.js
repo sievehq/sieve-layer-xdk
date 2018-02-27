@@ -139,10 +139,14 @@ module.exports = function (grunt) {
     copy: {
       npm: {
         files: [
-          {src: ['**'], cwd: 'themes/build/', dest: 'npm/themes/', expand: true},
-          {src: ['**'], cwd: 'themes/src/', dest: 'npm/themes/src/', expand: true},
           {src: ['**'], cwd: 'lib/', dest: 'npm/', expand: true},
           {src: 'package.json', dest: 'npm/package.json'}
+        ]
+      },
+      npmthemes: {
+        files: [
+          {src: ['**'], cwd: 'themes/build/', dest: 'npm/themes/', expand: true},
+          {src: ['**'], cwd: 'themes/src/', dest: 'npm/themes/src/', expand: true}
         ]
       },
 
@@ -811,7 +815,7 @@ module.exports = function (grunt) {
   grunt.registerTask('fix-npm-package', function() {
     var contents = JSON.parse(grunt.file.read('npm/package.json'));
     contents.main = 'index.js'
-    delete contents.scripts.prepare;
+    delete contents.scripts.prepublishOnly;
     grunt.file.write('npm/package.json', JSON.stringify(contents, null, 4));
   });
 
@@ -850,13 +854,13 @@ module.exports = function (grunt) {
   grunt.registerTask('debug', [
     'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
     'custom_babel', 'remove:lib', 'move:lib',
-    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm']);
+    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'copy:npmthemes','fix-npm-package']);
 
   grunt.registerTask('build', ['remove:build', 'debug', 'uglify', 'theme', 'cssmin']);
-  grunt.registerTask('prepublish', ['build', 'fix-npm-package', 'refuse-to-publish']);
+  grunt.registerTask('prepublish', ['build', 'refuse-to-publish']);
 
   grunt.registerTask('samples', ['debug', 'browserify:samples']);
-  grunt.registerTask('theme', ['remove:theme', 'less', 'copy:themes', 'copy:npm']),
+  grunt.registerTask('theme', ['remove:theme', 'less', 'copy:themes', 'copy:npmthemes']),
   grunt.registerTask('default', ['build']);
 
   // Open a port for running tests and rebuild whenever anything interesting changes

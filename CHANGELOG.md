@@ -1,5 +1,9 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.4
+
+* Error publishing 1.0.0-pre2.3; have republished as 1.0.0-pre2.4.
+
 ## 1.0.0-pre2.3
 
 *breaking changes*
