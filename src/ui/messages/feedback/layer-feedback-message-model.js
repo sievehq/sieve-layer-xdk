@@ -13,7 +13,7 @@
     enabledFor: ["layer:///identities/user_id"], // Only a single Identity is supported
     customResponseData: {hey: "ho"},
    });
-   model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+   model.send({ conversation });
  * ```
  *
  *### Importing
@@ -38,7 +38,11 @@ class FeedbackModel extends MessageTypeModel {
       'title', 'prompt', 'promptWait', 'responseMessage',
       'summary', 'placeholder', 'customResponseData',
     ]);
-    if (this.enabledFor && this.enabledFor.length) body.enabled_for = this.enabledFor;
+    if (this.enabledFor && this.enabledFor.length) {
+      body.enabled_for = this.enabledFor;
+    } else {
+      throw new Error('enabled_for is required');
+    }
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -101,7 +105,7 @@ class FeedbackModel extends MessageTypeModel {
       }),
     });
     if (!this.message.isNew()) {
-      responseModel.generateMessage(this.message.getConversation(), message => message.send());
+      responseModel.send({ conversation: this.message.getConversation() });
     }
 
     this._triggerAsync('message-type-model:change', {
@@ -160,8 +164,8 @@ class FeedbackModel extends MessageTypeModel {
 FeedbackModel.prototype.title = 'Experience Rating';
 FeedbackModel.prototype.prompt = 'Rate your experience 1-5 stars';
 FeedbackModel.prototype.promptWait = 'Waiting for Feedback';
-FeedbackModel.prototype.summary = '${customer} rated the experience ${rating} stars';
-FeedbackModel.prototype.responseMessage = '${customer} rated the experience ${rating} stars';
+FeedbackModel.prototype.summary = '${customer} rated the experience ${rating} stars'; // eslint-disable-line no-template-curly-in-string
+FeedbackModel.prototype.responseMessage = '${customer} rated the experience ${rating} stars'; // eslint-disable-line no-template-curly-in-string
 FeedbackModel.prototype.placeholder = 'Add a comment...';
 FeedbackModel.prototype.enabledFor = '';
 FeedbackModel.prototype.customResponseData = null;
@@ -183,5 +187,4 @@ Root.initClass.apply(FeedbackModel, [FeedbackModel, 'FeedbackModel']);
 Core.Client.registerMessageTypeModelClass(FeedbackModel, 'FeedbackModel');
 
 module.exports = FeedbackModel;
-
 

@@ -178,7 +178,7 @@ class DbManager extends Root {
           this.isOpen = false;
         };
 
-        this.db.onerror = err => Util.logger.error('db-manager Error: ', err);
+        this.db.onerror = err => Util.logger.info('db-manager Error: ', err);
       };
     }
 
@@ -429,7 +429,7 @@ class DbManager extends Root {
             body,
             id: part.id,
             encoding: part.encoding,
-            mime_type: part.mimeType,
+            mime_type: part.getMimeTypeWithAttributes(),
             content: !part._content ? null : {
               id: part._content.id,
               download_url: part._content.downloadUrl,
@@ -480,9 +480,20 @@ class DbManager extends Root {
    * @param {Function} [callback]
    */
   writeMessages(messages, callback) {
+    messages = messages.filter((message) => {
+      if (message.isDestroyed) {
+        return false;
+      } else if (message.isNew()) {
+        message.once('messages:sending', () => this.writeMessages([message]), this);
+        return false;
+      } else {
+        return true;
+      }
+    });
+
     this._getMessageData(
-      messages.filter(message => !message.isDestroyed && !message.isNew()),
-      dbMessageData => this._writeObjects('messages', dbMessageData, callback)
+      messages,
+      dbMessageData => this._writeObjects('messages', dbMessageData, callback),
     );
   }
 
@@ -588,8 +599,8 @@ class DbManager extends Root {
    */
   loadConversations(sortBy, fromId, pageSize, callback) {
     try {
-      let sortIndex,
-        range = null;
+      let sortIndex;
+      let range = null;
       const fromConversation = fromId ? client.getConversation(fromId) : null;
       if (sortBy === 'last_message') {
         sortIndex = 'last_message_sent';
@@ -703,7 +714,7 @@ class DbManager extends Root {
    * @param {Layer.Core.Message[]} callback.result
    */
   loadMessages(conversationId, fromId, pageSize, callback) {
-    if (!this['_permission_messages'] || this._isOpenError) return callback([]);
+    if (!this._permission_messages || this._isOpenError) return callback([]);
     try {
       const fromMessage = fromId ? client.getMessage(fromId) : null;
       const query = window.IDBKeyRange.bound([conversationId, 0],
@@ -726,7 +737,7 @@ class DbManager extends Root {
    * @param {Layer.Core.Announcement[]} callback.result
    */
   loadAnnouncements(fromId, pageSize, callback) {
-    if (!this['_permission_messages'] || this._isOpenError) return callback([]);
+    if (!this._permission_messages || this._isOpenError) return callback([]);
     try {
       const fromMessage = fromId ? client.getMessage(fromId) : null;
       const query = window.IDBKeyRange.bound(['announcement', 0],
@@ -865,11 +876,11 @@ class DbManager extends Root {
   _createMessage(message) {
     if (!client.getMessage(message.id)) {
       message._fromDB = true;
-      if (message.conversationId.indexOf('layer:///conversations')) {
+      if (message.conversationId.indexOf('layer:///conversations') === 0) {
         message.conversation = {
           id: message.conversationId,
         };
-      } else if (message.conversationId.indexOf('layer:///channels')) {
+      } else if (message.conversationId.indexOf('layer:///channels') === 0) {
         message.channel = {
           id: message.conversationId,
         };
@@ -974,36 +985,36 @@ class DbManager extends Root {
     // If the target is present in the sync event, but does not exist in the system,
     // do NOT attempt to instantiate this event... unless its a DELETE operation.
     const newData = syncEvents
-    .filter((syncEvent) => {
-      const hasTarget = Boolean(syncEvent.target && client.getObject(syncEvent.target));
-      return syncEvent.operation === 'DELETE' || hasTarget;
-    })
-    .map((syncEvent) => {
-      if (syncEvent.isWebsocket) {
-        return new SyncEvent.WebsocketSyncEvent({
-          target: syncEvent.target,
-          depends: syncEvent.depends,
-          operation: syncEvent.operation,
-          id: syncEvent.id,
-          data: syncEvent.data,
-          fromDB: true,
-          createdAt: syncEvent.created_at,
-        });
-      } else {
-        return new SyncEvent.XHRSyncEvent({
-          target: syncEvent.target,
-          depends: syncEvent.depends,
-          operation: syncEvent.operation,
-          id: syncEvent.id,
-          data: syncEvent.data,
-          method: syncEvent.method,
-          headers: syncEvent.headers,
-          url: syncEvent.url,
-          fromDB: true,
-          createdAt: syncEvent.created_at,
-        });
-      }
-    });
+      .filter((syncEvent) => {
+        const hasTarget = Boolean(syncEvent.target && client.getObject(syncEvent.target));
+        return syncEvent.operation === 'DELETE' || hasTarget;
+      })
+      .map((syncEvent) => {
+        if (syncEvent.isWebsocket) {
+          return new SyncEvent.WebsocketSyncEvent({
+            target: syncEvent.target,
+            depends: syncEvent.depends,
+            operation: syncEvent.operation,
+            id: syncEvent.id,
+            data: syncEvent.data,
+            fromDB: true,
+            createdAt: syncEvent.created_at,
+          });
+        } else {
+          return new SyncEvent.XHRSyncEvent({
+            target: syncEvent.target,
+            depends: syncEvent.depends,
+            operation: syncEvent.operation,
+            id: syncEvent.id,
+            data: syncEvent.data,
+            method: syncEvent.method,
+            headers: syncEvent.headers,
+            url: syncEvent.url,
+            fromDB: true,
+            createdAt: syncEvent.created_at,
+          });
+        }
+      });
 
     // Sort the results and then return them.
     // TODO: Query results should come back sorted by database with proper Index
@@ -1060,28 +1071,28 @@ class DbManager extends Root {
     this.onOpen(() => {
       const data = [];
       this.db.transaction([tableName], 'readonly')
-          .objectStore(tableName)
-          .index(indexName)
-          .openCursor(range, 'prev')
-          .onsuccess = (evt) => {
-            /* istanbul ignore next */
-            if (this.isDestroyed) return;
-            const cursor = evt.target.result;
-            if (cursor) {
-              if (shouldSkipNext) {
-                shouldSkipNext = false;
-              } else {
-                data.push(cursor.value);
-              }
-              if (pageSize && data.length >= pageSize) {
-                callback(data);
-              } else {
-                cursor.continue();
-              }
+        .objectStore(tableName)
+        .index(indexName)
+        .openCursor(range, 'prev')
+        .onsuccess = (evt) => {
+          /* istanbul ignore next */
+          if (this.isDestroyed) return;
+          const cursor = evt.target.result;
+          if (cursor) {
+            if (shouldSkipNext) {
+              shouldSkipNext = false;
             } else {
-              callback(data);
+              data.push(cursor.value);
             }
-          };
+            if (pageSize && data.length >= pageSize) {
+              callback(data);
+            } else {
+              cursor.continue();
+            }
+          } else {
+            callback(data);
+          }
+        };
     });
   }
 

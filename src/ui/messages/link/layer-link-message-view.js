@@ -3,7 +3,7 @@
  *
  * ### Importing
  *
- * Not included with the standard build. Import with:
+ * Included with the standard build. For custom build, Import with:
  *
  * ```
  * import '@layerhq/web-xdk/ui/messages/link/layer-link-message-view';
@@ -52,7 +52,8 @@ registerComponent('layer-link-message-view', {
     widthType: {
       get() {
         // Use a chat bubble if there is no metadata nor image to show, else render this as a normal card-like message
-        return this.model.imageUrl || this.parentComponent.isShowingMetadata ? Constants.WIDTH.FLEX : Constants.WIDTH.ANY;
+        return this.model.imageUrl || this.parentComponent.isShowingMetadata ?
+          Constants.WIDTH.FLEX : Constants.WIDTH.ANY;
       },
     },
 
@@ -75,7 +76,7 @@ registerComponent('layer-link-message-view', {
      */
     onRerender() {
       this.nodes.image.style.backgroundImage = this.model.imageUrl ? `url(${this.model.imageUrl})` : '';
-      this.toggleClass('layer-link-message-no-image', !Boolean(this.model.imageUrl));
+      this.toggleClass('layer-link-message-no-image', !(this.model.imageUrl));
       this.nodes.link.src = this.model.url;
       this.nodes.link.innerHTML = this.model.url;
     },

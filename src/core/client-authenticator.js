@@ -595,11 +595,17 @@ class ClientAuthenticator extends Root {
     }
 
     // Setup the Database Manager
-    if (!this.dbManager && DbManager) {
-      this.dbManager = new DbManager({
-        tables: this.persistenceFeatures,
-        enabled: this.isPersistenceEnabled,
-      });
+    if (!this.dbManager) {
+      if (!DbManager) {
+        if (this.isPersistenceEnabled && this.isTrustedDevice) {
+          logger.error('DbManager NOT imported. Persistence disabled!');
+        }
+      } else {
+        this.dbManager = new DbManager({
+          tables: this.persistenceFeatures,
+          enabled: this.isPersistenceEnabled,
+        });
+      }
     }
   }
 
@@ -626,13 +632,13 @@ class ClientAuthenticator extends Root {
         }
         this._clientReady();
       }, this)
-      .once('identities:loaded-error', (evt) => {
-        this.user.off('identities:loaded', null, this);
-        if (evt.error.id !== 'authentication_required') {
-          if (!this.user.displayName) this.user.displayName = this.defaultOwnerDisplayName;
-          this._clientReady();
-        }
-      }, this);
+        .once('identities:loaded-error', (evt) => {
+          this.user.off('identities:loaded', null, this);
+          if (evt.error.id !== 'authentication_required') {
+            if (!this.user.displayName) this.user.displayName = this.defaultOwnerDisplayName;
+            this._clientReady();
+          }
+        }, this);
     }
   }
 

@@ -139,12 +139,19 @@ registerComponent('layer-message-list', {
     <div class='layer-list-meta' layer-id='listMeta'>
 
       <!-- Rendered when the list is empty -->
-      <layer-replaceable-content layer-id='emptyNode' class='layer-empty-list' name='emptyNode'></layer-replaceable-content>
+      <layer-replaceable-content
+        layer-id='emptyNode'
+        class='layer-empty-list'
+        name='emptyNode'>
+      </layer-replaceable-content>
 
       <div class='layer-header-toggle'>
 
         <!-- Rendered when there are no more results to page to -->
-        <layer-replaceable-content layer-id='endOfResultsNode' class='layer-end-of-results-indicator' name='endOfResultsNode'>
+        <layer-replaceable-content
+          layer-id='endOfResultsNode'
+          class='layer-end-of-results-indicator'
+          name='endOfResultsNode'>
           <layer-start-of-conversation layer-id='startOfConversation'></layer-start-of-conversation>
         </layer-replaceable-content>
 
@@ -401,17 +408,18 @@ registerComponent('layer-message-list', {
         if (position === this.scrollTop) return;
         this.properties.isSelfScrolling = true;
         if (this.properties.cancelAnimatedScroll) this.properties.cancelAnimatedScroll();
-        const cancel = this.properties.cancelAnimatedScroll = UIUtils.animatedScrollTo(this, position, animateSpeed, () => {
-          // Wait for any onScroll events to trigger before we clear isSelfScrolling and procede
-          setTimeout(() => {
-            if (cancel !== this.properties.cancelAnimatedScroll) return;
-            this.properties.cancelAnimatedScroll = null;
+        const cancel = this.properties.cancelAnimatedScroll =
+          UIUtils.animatedScrollTo(this, position, animateSpeed, () => {
+            // Wait for any onScroll events to trigger before we clear isSelfScrolling and procede
+            setTimeout(() => {
+              if (cancel !== this.properties.cancelAnimatedScroll) return;
+              this.properties.cancelAnimatedScroll = null;
 
-            this.properties.isSelfScrolling = false;
-            this._checkVisibility();
-            if (animateCallback) animateCallback();
-          }, 100);
-        });
+              this.properties.isSelfScrolling = false;
+              this._checkVisibility();
+              if (animateCallback) animateCallback();
+            }, 100);
+          });
       },
     },
 
@@ -435,7 +443,8 @@ registerComponent('layer-message-list', {
 
       const children = Array.prototype.slice.call(this.childNodes);
       children.filter(item => item.tagName !== 'DIV').forEach((child, index) => {
-        if (child.properties && child.properties.item && !child.properties.item.isRead && this._shouldMarkAsRead(child)) {
+        if (child.properties && child.properties.item &&
+          !child.properties.item.isRead && this._shouldMarkAsRead(child)) {
           // TODO: Use a scheduler rather than many setTimeout calls
           setTimeout(() => this._markAsRead(child), Settings.markReadDelay);
         }
@@ -460,8 +469,10 @@ registerComponent('layer-message-list', {
       const childBottomVisiblePixel = childTopVisiblePixel + child.clientHeight;
       const isTooBig = child.clientHeight + 50 > this.clientHeight;
 
-      const isChildTopVisible = childTopVisiblePixel + errorMargin >= topVisiblePixel && childTopVisiblePixel < bottomVisiblePixel;
-      const isChildBottomVisible = childBottomVisiblePixel <= bottomVisiblePixel + errorMargin && childTopVisiblePixel < bottomVisiblePixel;
+      const isChildTopVisible = childTopVisiblePixel + errorMargin >= topVisiblePixel &&
+        childTopVisiblePixel < bottomVisiblePixel;
+      const isChildBottomVisible = childBottomVisiblePixel <= bottomVisiblePixel + errorMargin &&
+        childTopVisiblePixel < bottomVisiblePixel;
 
       return (isChildTopVisible && isChildBottomVisible || isTooBig && (isChildBottomVisible || isChildTopVisible));
     },
@@ -477,7 +488,6 @@ registerComponent('layer-message-list', {
      * @param {Layer.UI.components.MessageListPanel.Item} child
      */
     _markAsRead(child) {
-      console.log("Should mark as read");
       if (this._shouldMarkAsRead(child)) {
         child.properties.item.isRead = true;
       }

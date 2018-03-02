@@ -54,35 +54,38 @@ registerComponent('layer-choice-button', {
      *
      * @property {Layer.UI.messages.ChoiceMessageModel} model
      */
-    model: {},
+    model: {
+      set(newModel, oldModel) {
+        if (oldModel) {
+          this.model.off(null, null, this);
+          this.properties.buttons = [];
+          this.innerHTML = '';
+        }
+        if (newModel) {
+          newModel.on('message-type-model:change', this.onRerender, this);
+          newModel.choices.forEach((choice, index) => {
+            const widget = this.createElement('layer-action-button', {
+              text: newModel.getText(index),
+              tooltip: newModel.getTooltip(index),
+              parentNode: this,
+              data: { id: choice.id },
+              icon: choice.icon,
+            });
+
+            const def = { widget, choice };
+            this.properties.buttons.push(def);
+            widget.removeClickHandler('button-click', widget);
+            this.addClickHandler('button-click-' + choice.id, widget, this._onClick.bind(this, def));
+            this.onRerender();
+          });
+        }
+      },
+    },
   },
 
   methods: {
-    /**
-     * Each choice in the model is represented by a Layer.UI.components.ActionButton; generate those buttons and add them to the DOM.
-     *
-     * If any of the action buttons is clicked, it will trigger this widget's _onClick method.
-     *
-     * @method onAfterCreate
-     */
-    onAfterCreate() {
-      this.model.on('message-type-model:change', this.onRerender, this);
+    onCreate() {
       this.properties.buttons = [];
-      this.model.choices.forEach((choice, index) => {
-        const widget = this.createElement('layer-action-button', {
-          text: this.model.getText(index),
-          tooltip: this.model.getTooltip(index),
-          parentNode: this,
-          data: { id: choice.id },
-          icon: choice.icon,
-        });
-
-        const def = { widget, choice };
-        this.properties.buttons.push(def);
-        widget.removeClickHandler('button-click', widget);
-        this.addClickHandler('button-click-' + choice.id, widget, this._onClick.bind(this, def));
-
-      });
     },
 
     /**

@@ -13,7 +13,7 @@
  */
 import { ErrorDictionary } from '../../core/layer-error';
 
-module.exports.angular = module.exports.backbone = module.exports.react =  () => {
+module.exports.angular = module.exports.backbone = module.exports.react = () => {
   throw new Error(ErrorDictionary.adapterError);
 };
 

@@ -78,7 +78,11 @@ registerComponent('layer-identity-list', {
         </layer-replaceable-content>
 
         <!-- Rendered when there are no more results to page to -->
-        <layer-replaceable-content layer-id='endOfResultsNode' class='layer-end-of-results-indicator' name='endOfResultsNode'></layer-replaceable-content>
+        <layer-replaceable-content
+          layer-id='endOfResultsNode'
+          class='layer-end-of-results-indicator'
+          name='endOfResultsNode'>
+        </layer-replaceable-content>
 
         <!-- Rendered when waiting for server data -->
         <layer-replaceable-content layer-id='loadIndicator' class='layer-load-indicator' name='loadIndicator'>
@@ -246,7 +250,8 @@ registerComponent('layer-identity-list', {
         this._renderSelection();
       },
       get() {
-        if (!Array.isArray(this.properties.selectedIdentities)) this.properties.selectedIdentities = [];return this.properties.selectedIdentities;
+        if (!Array.isArray(this.properties.selectedIdentities)) this.properties.selectedIdentities = [];
+        return this.properties.selectedIdentities;
       },
     },
 
@@ -406,10 +411,11 @@ registerComponent('layer-identity-list', {
     onRerender(evt = {}) {
       switch (evt.type) {
         // If its a remove event, find the user and remove its widget.
-        case 'remove':
+        case 'remove': {
           const removalIndex = this.selectedIdentities.indexOf(evt.target);
           if (removalIndex !== -1) this.selectedIdentities.splice(removalIndex, 1);
           break;
+        }
 
         // If its a reset event, all data is gone, rerender everything.
         case 'reset':

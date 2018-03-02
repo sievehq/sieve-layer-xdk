@@ -7,7 +7,7 @@
  * @experimental This feature is incomplete, and available as Preview only.
  * @extends Layer.Core.Syncable
  */
-import { client  } from '../../settings';
+import { client } from '../../settings';
 import Core from '../namespace';
 import Syncable from './syncable';
 import Root from '../root';

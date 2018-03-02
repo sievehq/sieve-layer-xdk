@@ -80,10 +80,17 @@ registerComponent('layer-conversation-list', {
       <div class='layer-header-toggle'>
 
         <!-- Rendered when there are no more results to page to -->
-        <layer-replaceable-content layer-id='endOfResultsNode' class='layer-end-of-results-indicator' name='endOfResultsNode'></layer-replaceable-content>
+        <layer-replaceable-content
+          layer-id='endOfResultsNode'
+          class='layer-end-of-results-indicator'
+          name='endOfResultsNode'>
+        </layer-replaceable-content>
 
         <!-- Rendered when waiting for server data -->
-        <layer-replaceable-content layer-id='loadIndicator' class='layer-load-indicator' name='loadIndicator'>
+        <layer-replaceable-content
+          layer-id='loadIndicator'
+          class='layer-load-indicator'
+          name='loadIndicator'>
           <layer-loading-indicator></layer-loading-indicator>
         </layer-replaceable-content>
       </div>
@@ -250,7 +257,7 @@ registerComponent('layer-conversation-list', {
             this.properties.sortBy = [{ 'lastMessage.sentAt': 'desc' }];
             break;
           default:
-            this.properties.sortBy = [{ 'createdAt': 'desc' }];
+            this.properties.sortBy = [{ createdAt: 'desc' }];
         }
       },
     },

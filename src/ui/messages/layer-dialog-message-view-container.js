@@ -51,12 +51,14 @@ registerComponent('layer-dialog-message-view-container', {
   <div class="layer-card-title-bar">
     <div layer-id='icon' class="layer-card-title-bar-icon"></div>
     <div layer-id='title' class="layer-card-title-bar-text"></div>
-    <div layer-id='titleButtons' class="layer-card-title-buttons"><div layer-id='close' class="layer-card-title-close-button">&times;</div></div>
+    <div layer-id='titleButtons' class="layer-card-title-buttons">
+      <div layer-id='close' class="layer-card-title-close-button">&times;</div>
+    </div>
   </div>
   <div layer-id='UIContainer' class='layer-card-top'></div>
   `,
 
-   // Note that there is also a message property managed by the MessageHandler mixin
+  // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
     /**
      * The Layer.Core.MessageTypeModel whose data is rendered here.
@@ -64,6 +66,13 @@ registerComponent('layer-dialog-message-view-container', {
      * @property {Layer.Core.MessageTypeModel} model
      */
     model: {},
+
+    /**
+     * The action data of the button or Message that was used to open this expanded viewer.
+     *
+     * @property {Object}
+     */
+    openActionData: {},
 
     /**
      * The Layer.UI.messages.MessageViewMixin that is wrapped by this UI Component.
@@ -98,7 +107,7 @@ registerComponent('layer-dialog-message-view-container', {
       set(icon, oldIcon) {
         if (oldIcon) this.nodes.icon.classList.remove(oldIcon);
         if (icon) this.nodes.icon.classList.add(icon);
-        this.toggleClass('layer-title-icon-empty', !Boolean(icon));
+        this.toggleClass('layer-title-icon-empty', !(icon));
       },
     },
 

@@ -7,7 +7,7 @@
  */
 import { client } from '../../settings';
 import Layer from '../../core';
-import Util, { defer } from '../../utils';
+import Util, { defer, logger } from '../../utils';
 import { animatedScrollTo } from '../ui-utils';
 import { registerComponent } from '../components/component';
 import HasQuery from './has-query';
@@ -336,7 +336,7 @@ module.exports = {
           try {
             this.properties.onRenderListItem(widget, this.properties.listData, firstIndex + index, isTopItemNew);
           } catch (err) {
-            console.error(`Error in onRenderListItem for ${widget.item.id}; ${err}`);
+            logger.error(`Error in onRenderListItem for ${widget.item.id}; ${err}`);
           }
         }
       }, this);
@@ -481,7 +481,8 @@ module.exports = {
      */
     _runFilter() {
       if (!this.filter) {
-        this.querySelectorAllArray('.layer-item-filtered').forEach(item => item.classList.remove('layer-item-filtered'));
+        this.querySelectorAllArray('.layer-item-filtered')
+          .forEach(item => item.classList.remove('layer-item-filtered'));
       } else {
         for (let i = 0; i < this.childNodes.length; i++) {
           const listItem = this.childNodes[i];

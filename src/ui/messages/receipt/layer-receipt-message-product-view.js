@@ -53,8 +53,12 @@ registerComponent('layer-receipt-message-product-view', {
         const selectedOptions = this.item.options.map((choiceModel, index) => {
           if (choiceModel.selectedAnswer) {
             return choiceModel.getText(choiceModel.getChoiceIndexById(choiceModel.selectedAnswer));
+          } else {
+            return null;
           }
-        }).filter(selectedText => selectedText).join(', ');
+        })
+          .filter(selectedText => selectedText)
+          .join(', ');
         this.nodes.options.innerHTML = selectedOptions;
       }
     },

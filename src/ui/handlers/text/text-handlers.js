@@ -16,7 +16,7 @@ const handlers = {};
 module.exports.handlers = handlers;
 
 
- /**
+/**
  * Order the Text handlers if they haven't previously been sorted.
  *
  * @method _setupOrderedHandlers
@@ -25,12 +25,12 @@ module.exports.handlers = handlers;
 module.exports._setupOrderedHandlers = () => {
   handlersOrdered = Object.keys(handlers).filter(handlerName =>
     handlers[handlerName].enabled)
-  .map(handlerName => handlers[handlerName])
-  .sort((a, b) => {
-    if (a.order > b.order) return 1;
-    if (b.order > a.order) return -1;
-    return 0;
-  });
+    .map(handlerName => handlers[handlerName])
+    .sort((a, b) => {
+      if (a.order > b.order) return 1;
+      if (b.order > a.order) return -1;
+      return 0;
+    });
 };
 
 /**
@@ -46,12 +46,10 @@ module.exports._setupOrderedHandlers = () => {
  * @param {String} text
  * @returns {String}
  */
-module.exports.sanitizeText = (text) => {
-  return (text || '')
-    .trim()
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
+module.exports.sanitizeText = text => (text || '')
+  .trim()
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;');
 
 /**
  * Transform text into HTML using all registered text handlers.

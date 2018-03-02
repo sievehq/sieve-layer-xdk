@@ -10,9 +10,9 @@ register({
   order: 600,
   requiresEnable: true,
   handler(textData) {
-    let body = textData.text;
+    const body = textData.text;
     if (body.match(/^<p.*?>[\s\S]*<\/p>$/)) return;
-/*
+    /*
     const codeBlockIndices = [];
     const codeBlocks = [];
     let lastIndex = 0;
@@ -40,8 +40,9 @@ register({
       }
     });
     */
-    var bodyParts = body.split('\n').filter(str => str.match(/\S/)).map(str => str.trim());
-    textData.text = '<p class="layer-line-wrapping-paragraphs">' + bodyParts.join('</p><p class="layer-line-wrapping-paragraphs">') + '</p>';
+    const bodyParts = body.split('\n').filter(str => str.match(/\S/)).map(str => str.trim());
+    textData.text = '<p class="layer-line-wrapping-paragraphs">' +
+      bodyParts.join('</p><p class="layer-line-wrapping-paragraphs">') + '</p>';
   },
 });
 

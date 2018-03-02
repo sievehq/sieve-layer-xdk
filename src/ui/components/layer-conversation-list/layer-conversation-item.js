@@ -32,9 +32,13 @@ import SizeProperty from '../../mixins/size-property';
 
 registerComponent('layer-conversation-item', {
   mixins: [ListItem, ListItemSelection, SizeProperty],
+  /* eslint-disable-next-line max-len */
   template: `
     <div class='layer-list-item' layer-id='innerNode'>
-      <layer-replaceable-content  class='layer-conversation-left-side' name='conversationRowLeftSide'></layer-replaceable-content>
+      <layer-replaceable-content
+        class='layer-conversation-left-side'
+        name='conversationRowLeftSide'>
+      </layer-replaceable-content>
 
       <div class='layer-conversation-item-content'>
         <div class='layer-conversation-title-row'>
@@ -44,7 +48,10 @@ registerComponent('layer-conversation-item', {
         <layer-conversation-last-message layer-id='lastMessage'></layer-conversation-last-message>
       </div>
 
-      <layer-replaceable-content  class='layer-conversation-right-side' name='conversationRowRightSide'></layer-replaceable-content>
+      <layer-replaceable-content
+        class='layer-conversation-right-side'
+        name='conversationRowRightSide'>
+      </layer-replaceable-content>
     </div>
   `,
   style: `
@@ -155,7 +162,8 @@ registerComponent('layer-conversation-item', {
       },
       set(dateFormat) {
         if (dateFormat && this.nodes.date) {
-          Object.keys(dateFormat).forEach(formatName => (this.nodes.date[formatName + 'Format'] = dateFormat[formatName]));
+          Object.keys(dateFormat).forEach(formatName =>
+            (this.nodes.date[formatName + 'Format'] = dateFormat[formatName]));
         }
       },
     },

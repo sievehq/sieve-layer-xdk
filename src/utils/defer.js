@@ -12,24 +12,27 @@
  * @method defer
  * @param {Function} f
  */
+import { logger } from './index';
+
 const setImmediate = global.getNativeSupport && global.getNativeSupport('setImmediate');
 if (setImmediate) {
   module.exports = setImmediate;
 } else {
-  let setImmediateId = 0,
-    setImmediateDepth = 0,
+  let setImmediateId = 0;
+  let setImmediateDepth = 0;
 
-    // Have we scheduled the queue to be processed? If not, this is false
-    setImmediateIsPending = false,
+  // Have we scheduled the queue to be processed? If not, this is false
+  let setImmediateIsPending = false;
 
-    // Queue of functions to call and depth integers
-    setImmediateQueue = [];
+  // Queue of functions to call and depth integers
+  let setImmediateQueue = [];
 
   // If a setImmediate callback itself calls setImmediate which in turn calls setImmediate, at what point do we suspect we have an infinite loop?
   // A depth of 10 is currently considered OK, but this may need to be increased.
   const setImmediateMaxDepth = 10;
 
   // Process all callbacks in the setImmediateQueue
+  /* eslint-disable-next-line no-inner-declarations */
   function setImmediateProcessor() {
     // Processing the queue is no longer scheduled; clear any scheduling info.
     setImmediateIsPending = false;
@@ -48,11 +51,11 @@ if (setImmediate) {
         try {
           item();
         } catch (err) {
-          console.error(err);
+          logger.error(err);
         }
       } else if (item >= setImmediateMaxDepth) {
         setImmediateQueue = [];
-        console.error('Layer Error: setImmediate Max Queue Depth Exceded');
+        logger.error('Layer Error: setImmediate Max Queue Depth Exceded');
       }
     }
   }

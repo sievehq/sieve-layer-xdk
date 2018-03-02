@@ -117,7 +117,7 @@ registerComponent('layer-choice-message-view', {
           tooltip: choice.tooltip,
           event: 'layer-choice-select',
           data: { id: choice.id },
-          //icon: choice.icon,
+          // icon: choice.icon,
           parentNode: this.nodes.choices,
         });
       });

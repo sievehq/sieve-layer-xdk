@@ -10,7 +10,7 @@ model = new ButtonModel({
    {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Two Buttons"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -21,7 +21,7 @@ model = new ButtonModel({
    {"type": "action", "text": "Give Holy Grail", "event": "grant-grail"}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 
 
@@ -34,7 +34,7 @@ model = new ButtonModel({
    {"type": "action", "text": "Give Holy Grail", "event": "open-url", data: {url: "http://layer.com"}}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "One Button and Text Model"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -49,7 +49,7 @@ model = new ButtonModel({
     text: "Text Model Contents"
   })
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Two Buttons and Text Model"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -65,7 +65,7 @@ model = new ButtonModel({
     text: "Text Model Contents"
   })
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "open-url, open-file buttons with a Link Message"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -82,7 +82,7 @@ model = new ButtonModel({
     url: "http://docs.layer.com"
   })
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 
 new TextModel({text: "One Choice Button set and one Regular Button"}).send({ conversation: $("layer-conversation-view").conversation });
@@ -97,7 +97,7 @@ model = new ButtonModel({
     ]}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "3 button choice set with emoji characters"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -113,7 +113,7 @@ model = new ButtonModel({
   }
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "3 button choice with a name for a customized Response Message"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -132,7 +132,7 @@ model = new ButtonModel({
   }
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 
 new TextModel({text: "Choice Button custom responseName"}).send({ conversation: $("layer-conversation-view").conversation });
@@ -147,7 +147,7 @@ model = new ButtonModel({
     ], data: {responseName: "satisfaction"}}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Choice Buttons with allowReselect"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -161,7 +161,7 @@ model = new ButtonModel({
     ], "data": {allowReselect: true, name: 'Liking Layer'}}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Choice Buttons with allowReselect with preselectedChoice"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -175,7 +175,7 @@ model = new ButtonModel({
     ], "data": {preselectedChoice: 'dislike', allowReselect: true}}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Choice Buttons with allowDeselect"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -189,7 +189,7 @@ model = new ButtonModel({
     ], "data": {allowDeselect: true}}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Choice Buttons with allowMultiselect"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -203,7 +203,7 @@ model = new ButtonModel({
     ], "data": {allowMultiselect: true}}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Multiple Choice Sets"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -221,7 +221,7 @@ model = new ButtonModel({
     ], "data": {"responseName": "satisfaction2", allowReselect: true}}
  ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 
 
@@ -257,7 +257,7 @@ model = new ButtonModel({
    imageUrls: [ "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg" ],
  })
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 
 
@@ -291,7 +291,7 @@ model = new ButtonModel({
    imageUrls: [ "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg" ],
  })
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
@@ -348,4 +348,4 @@ model = new ButtonModel({
    imageUrls: [ "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg" ],
  })
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });

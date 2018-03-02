@@ -13,7 +13,7 @@
  *    subtitle: "The right choice for special occasions with your crazed inlaws.  This will make you feel like you at last belong.",
  *    artist: "Anonymous"
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  *
@@ -26,7 +26,7 @@
  *    sourceUrl: "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg",
  *    previewUrl: "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg",
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  * The ImageModel may also use the `source` and `preview` properties instead of `sourceUrl` and `previewUrl`.
@@ -39,7 +39,7 @@
  *    source: blob1,
  *    preview: blob2,
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  * ### Importing
@@ -60,6 +60,7 @@ import 'blueimp-load-image/js/load-image-meta';
 import 'blueimp-load-image/js/load-image-exif';
 import { normalizeSize } from '../../ui-utils';
 
+import { register } from '../../handlers/message/message-handlers';
 import Core, { Root, MessagePart, MessageTypeModel } from '../../../core';
 import { xhr } from '../../../utils';
 
@@ -91,7 +92,7 @@ class ImageModel extends MessageTypeModel {
   _generateParts2() {
     // Generate the MessagePart body
     const body = this._initBodyWithMetadata(['sourceUrl', 'previewUrl', 'artist', 'fileName', 'orientation',
-    'width', 'height', 'previewWidth', 'previewHeight', 'title', 'subtitle']);
+      'width', 'height', 'previewWidth', 'previewHeight', 'title', 'subtitle']);
 
     // Generate the MessagePart with the body
     this.part = new MessagePart({
@@ -171,7 +172,7 @@ class ImageModel extends MessageTypeModel {
     // triggers change events so that UIs can rerender with all image data.
     this.childParts.forEach((part) => {
       switch (part.mimeAttributes.role) {
-        case 'source':
+        case 'source': {
           this.source = part;
           const oldUrl = part.url;
           part.on('url-loaded', () => {
@@ -182,6 +183,7 @@ class ImageModel extends MessageTypeModel {
             });
           }, this);
           break;
+        }
         case 'preview':
           this.preview = part;
           if (!part.body) {
@@ -294,7 +296,10 @@ class ImageModel extends MessageTypeModel {
    */
   _postGeneratePreview(srcCanvas) {
 
-    const size = normalizeSize({ width: this.width, height: this.height }, { width: ImageModel.MaxPreviewDimension, height: ImageModel.MaxPreviewDimension });
+    const size = normalizeSize(
+      { width: this.width, height: this.height },
+      { width: ImageModel.MaxPreviewDimension, height: ImageModel.MaxPreviewDimension },
+    );
     const canvas = document.createElement('canvas');
     this.previewWidth = canvas.width = size.width;
     this.previewHeight = canvas.height = size.height;
@@ -511,9 +516,9 @@ ImageModel.PreviewQuality = 0.5;
  * Textual label representing all instances of Image Message.
  *
  * @static
- * @property {String} [Label=Picture]
+ * @property {String} [Label=Image]
  */
-ImageModel.Label = 'Picture';
+ImageModel.Label = 'Image';
 
 /**
  * The default action when selecting this Message is to trigger an `open-url` and view the Image.
@@ -544,5 +549,45 @@ Root.initClass.apply(ImageModel, [ImageModel, 'ImageModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(ImageModel, 'ImageModel');
+
+
+/*
+ * This Message Handler is NOT the main "layer-message-viewer" Message Handler;
+ * rather, this Viewer detects text/plain messages, converts them to
+ * Text Cards, and THEN lets the <layer-message-viewer /> component handle it from there
+ */
+register({
+  tagName: 'layer-message-viewer',
+  handlesMessage(message, container) {
+    const isCard = Boolean(message.getPartsMatchingAttribute({ role: 'root' })[0]);
+    const source = message.filterParts(part =>
+      ['image/png', 'image/gif', 'image/jpeg'].indexOf(part.mimeType) !== -1)[0];
+
+    if (!isCard && source) {
+      const preview = message.filterParts(part => part.mimeType === 'image/jpeg+preview')[0];
+      const metaPart = message.filterParts(part => part.mimeType === 'application/json+imageSize')[0];
+      const meta = metaPart ? JSON.parse(metaPart.body) : {};
+      const model = new ImageModel({
+        source,
+        preview,
+      });
+
+      if (meta.width) model.width = meta.width;
+      if (meta.height) model.height = meta.height;
+      if (meta.orientation) model.orientation = meta.orientation;
+      message._messageTypeModel = model;
+      model.part = new Layer.Core.MessagePart({
+        id: source.id,
+        _message: message,
+        mimeType: ImageModel.MIMEType,
+        mimeAttributes: { role: 'root' },
+        body: JSON.stringify(meta),
+      });
+
+      message._addToMimeAttributesMap(model.part);
+      return true;
+    }
+  },
+});
 
 module.exports = ImageModel;

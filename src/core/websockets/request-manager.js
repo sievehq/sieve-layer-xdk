@@ -211,8 +211,8 @@ class WebsocketRequestManager {
     // a 'connected' event... they have not failed.  May need to rethink this for cases where third parties are directly
     // calling the websocket manager bypassing the sync manager.
     if (this.isDestroyed || !this._isOpen()) return;
-    let count = 0,
-      abort = false;
+    let count = 0;
+    let abort = false;
     const now = Date.now();
     Object.keys(this._requestCallbacks).forEach((requestId) => {
       const callbackConfig = this._requestCallbacks[requestId];

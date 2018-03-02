@@ -7,9 +7,10 @@
 import { register } from './index';
 import { logger } from '../../utils';
 
-const openExpandedView = ({ messageViewer, model }) => {
+const openExpandedView = ({ messageViewer, model, data }) => {
   const dialog = document.createElement('layer-message-viewer-expanded');
   dialog.model = model;
+  dialog.openActionData = data;
   let node = messageViewer;
   while (node && node.tagName !== 'BODY' && node.tagName !== 'LAYER-CONVERSATION-VIEW') {
     node = node.parentNode;

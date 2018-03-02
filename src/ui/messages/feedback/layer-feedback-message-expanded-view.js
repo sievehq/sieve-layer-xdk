@@ -20,9 +20,11 @@ import Clickable from '../../mixins/clickable';
 
 // Snippet from https://stackoverflow.com/questions/2848462/count-bytes-in-textarea-using-javascript/12206089#12206089
 function getUTF8Length(s) {
-  var len = 0;
-  for (var i = 0; i < s.length; i++) {
-    var code = s.charCodeAt(i);
+  let len = 0;
+  let i;
+  let code;
+  for (i = 0; i < s.length; i++) {
+    code = s.charCodeAt(i);
     if (code <= 0x7f) {
       len += 1;
     } else if (code <= 0x7ff) {
@@ -82,6 +84,7 @@ registerComponent('layer-feedback-message-expanded-view', {
     maxByteLength: {
       value: 1500,
     },
+    openActionData: {},
   },
   methods: {
 
@@ -125,11 +128,11 @@ registerComponent('layer-feedback-message-expanded-view', {
 
     _onClick(evt) {
       if (!this.model.isEditable()) return;
-      var target = evt.target;
+      let target = evt.target;
       if (target.tagName !== 'SPAN') target = target.parentNode;
       if (target.tagName === 'SPAN') {
-        var spans = Array.prototype.slice.call(this.nodes.ratings.childNodes);
-        var index = spans.indexOf(target);
+        const spans = Array.prototype.slice.call(this.nodes.ratings.childNodes);
+        const index = spans.indexOf(target);
         if (index !== -1) {
           this.model.rating = index + 1;
           this.onRerender();

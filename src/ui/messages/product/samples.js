@@ -12,7 +12,7 @@ model = new ProductModel({
   brand: 'Apple',
   name: 'Apple 2 plus desktop computer',
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Simple Product with image and customData"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -29,7 +29,7 @@ model = new ProductModel({
   name: 'Apple 2 plus desktop computer',
   imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Simple Product with description, image and customData"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -47,7 +47,7 @@ model = new ProductModel({
   description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
   imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Product with Options"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -88,7 +88,7 @@ model = new ProductModel({
      }),
    ]
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Choices within Choices: A Button Message with Choice Buttons wrapping a Product Message with Options"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -137,7 +137,7 @@ contentModel: new ProductModel({
  ]
 }),
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 
 new TextModel({text: "Simple Product with no name"}).send({ conversation: $("layer-conversation-view").conversation });
@@ -155,7 +155,7 @@ model = new ProductModel({
   description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
   imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Simple Product with no price"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -172,7 +172,7 @@ model = new ProductModel({
   description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
   imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Simple Product with no price"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -190,7 +190,7 @@ model = new ProductModel({
   description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
   imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 
 
 new TextModel({text: "Simple Product with no brand"}).send({ conversation: $("layer-conversation-view").conversation });
@@ -208,5 +208,5 @@ model = new ProductModel({
   description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
   imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send());
+model.send({ conversation: $("layer-conversation-view").conversation });
 

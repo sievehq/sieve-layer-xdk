@@ -178,7 +178,34 @@ module.exports = function (grunt) {
         ]
       }
     },
-
+    eslint: {
+      build: {
+        files: [{
+          src: ['src/**.js', 'src/**/*.js', '!src/**/tests/*.js', '!src/**/test.js', '!src/**/samples.js']
+        }],
+        options: {
+          quiet: true,
+          configFile: '.eslintrc',
+          rules: {
+            'no-debugger': 2,
+            'no-console': 2
+          }
+        }
+      },
+      debug: {
+        files: [{
+          src: ['src/**.js', 'src/**/*.js', '!src/**/tests/*.js', '!src/**/test.js', '!src/**/samples.js']
+        }],
+        options: {
+          quiet: true,
+          configFile: '.eslintrc',
+          rules: {
+            'no-debugger': 0,
+            'no-console': 0
+          }
+        }
+      }
+    },
     // Documentation
     jsduck: {
       build: {
@@ -386,7 +413,7 @@ module.exports = function (grunt) {
     function replace(fileGroup, version) {
       fileGroup.src.forEach(function(file, index) {
         var contents = grunt.file.read(file);
-        grunt.file.write(fileGroup.dest, 'module.exports = "' + version + '";');
+        grunt.file.write(fileGroup.dest, "module.exports = '" + version + "';\n");
       });
     }
 
@@ -839,6 +866,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-remove');
   grunt.loadNpmTasks('grunt-move');
+  grunt.loadNpmTasks('grunt-eslint');
 
 
   grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
@@ -854,9 +882,9 @@ module.exports = function (grunt) {
   grunt.registerTask('debug', [
     'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
     'custom_babel', 'remove:lib', 'move:lib',
-    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'copy:npmthemes','fix-npm-package']);
+    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'copy:npmthemes','fix-npm-package', 'eslint:debug']);
 
-  grunt.registerTask('build', ['remove:build', 'debug', 'uglify', 'theme', 'cssmin']);
+  grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin']);
   grunt.registerTask('prepublish', ['build', 'refuse-to-publish']);
 
   grunt.registerTask('samples', ['debug', 'browserify:samples']);

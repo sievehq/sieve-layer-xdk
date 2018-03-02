@@ -66,7 +66,8 @@ class WebsocketChangeManager {
         this._handleDelete(msg);
         break;
       case 'update':
-        logger.info(`Websocket Change Event: Patch ${msg.object.type} ${msg.object.id}: ${msg.data.map(op => op.property).join(', ')}`);
+        logger.info('Websocket Change Event: ' +
+          `Patch ${msg.object.type} ${msg.object.id}: ${msg.data.map(op => op.property).join(', ')}`);
         logger.debug(msg.data);
         this._handlePatch(msg);
         break;

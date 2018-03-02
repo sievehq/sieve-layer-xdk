@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-file-upload-button', function() {
   var el, testRoot, client;
 
@@ -119,6 +120,51 @@ describe('layer-file-upload-button', function() {
     expect(args.length).toEqual(1);
     expect(args[0].detail.models[0].source).toBe(file);
     expect(args[0].detail).toEqual({ models: [jasmine.any(FileModel)] });
+  });
+
+  it("Should call parentComponent.onModelsGenerated", function() {
+    // Setup
+    el.parentComponent = {
+      onModelsGenerated: jasmine.createSpy('generated')
+    }
+    var file = new Blob(["abcdef"], {type: "crap/plain"});
+    el.nodes.input = {
+      files: [file]
+    }
+    var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel');
+
+    // Run
+    el.onChange();
+
+    // Posttest
+    expect(el.parentComponent.onModelsGenerated).toHaveBeenCalledWith([jasmine.any(FileModel)]);
+
+    // Cleanup
+    delete el.properties.parentComponent;
+  });
+
+  it("Should prevent call to parentComponent.onModelsGenerated", function() {
+    // Setup
+    el.parentComponent = {
+      onModelsGenerated: jasmine.createSpy('generated')
+    }
+    var file = new Blob(["abcdef"], {type: "crap/plain"});
+    el.nodes.input = {
+      files: [file]
+    }
+    var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel');
+    el.addEventListener('layer-models-generated', function(evt) {
+      evt.preventDefault();
+    });
+
+    // Run
+    el.onChange();
+
+    // Posttest
+    expect(el.parentComponent.onModelsGenerated).not.toHaveBeenCalled();
+
+    // Cleanup
+    delete el.properties.parentComponent;
   });
 
   // This test causes IE to open a file dialog, and no more tests run after that.

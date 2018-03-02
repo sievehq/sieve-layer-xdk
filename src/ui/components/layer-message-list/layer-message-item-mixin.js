@@ -253,7 +253,9 @@ module.exports = {
         }
 
         // Setup the layer-message-status
-        if (this.nodes.status && this.messageStatusRenderer) this.nodes.status.messageStatusRenderer = this.messageStatusRenderer;
+        if (this.nodes.status && this.messageStatusRenderer) {
+          this.nodes.status.messageStatusRenderer = this.messageStatusRenderer;
+        }
 
         // Setup the layer-delete
         if (this.nodes.delete) {

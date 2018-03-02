@@ -13,7 +13,7 @@
  *    description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices.",
  *    author: "layer.com"
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  * All properties except the `url` are optional; if you don't want an image, just leave out the `imageUrl.
@@ -31,7 +31,7 @@
  *        }
  *     }
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  * In the above example, the LinkModel's url will be used if showing a URL.
@@ -39,7 +39,7 @@
  *
  * ### Importing
  *
- * Not included with the standard build. Import using either:
+ * Included with the standard build. For custom build, Import with:
  *
  * ```
  * import '@layerhq/web-xdk/ui/messages/link/layer-link-message-view';
@@ -49,7 +49,7 @@
  * @class Layer.UI.messages.LinkMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core, { MessagePart, MessageTypeModel, Root }  from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Root } from '../../../core';
 import { xhr } from '../../../utils';
 
 const TitleRegEx = new RegExp(/<meta [^>]*property\s*=\s*['"]og:title['"].*?\/>/);
@@ -97,7 +97,7 @@ class LinkModel extends MessageTypeModel {
    *     url: "http://www.cnn.com/2017/11/17/health/dog-owners-heart-disease-and-death/index.html",
    * });
    * model.gatherMetadata(function(isSuccess,resultObj) {
-   *     model.generateMessage(conversation, message => message.send());
+   *    model.send({ conversation });
    * })
    * ```
    *
@@ -231,9 +231,9 @@ LinkModel.prototype.html = '';
  * Textual label representing all instances of Link Message.
  *
  * @static
- * @property {String} [Label=Link to]
+ * @property {String} [Label=Link]
  */
-LinkModel.Label = 'Link to';
+LinkModel.Label = 'Link';
 
 /**
  * The default action when selecting this Message is to trigger an `open-url` and view the linked document/site.

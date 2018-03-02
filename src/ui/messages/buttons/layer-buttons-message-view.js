@@ -93,7 +93,8 @@ registerComponent('layer-buttons-message-view', {
 
       // For each button (or button-set) in the Button Model's buttons array, add them to the UI
       this.model.buttons.forEach((button) => {
-        let widget, model;
+        let widget;
+        let model;
 
         // If any button is actually a set of buttons all on a single row, insure a reasonable minimum width
         // by adding a css class

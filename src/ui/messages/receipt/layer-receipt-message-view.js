@@ -117,7 +117,7 @@ registerComponent('layer-receipt-message-view', {
       }
 
       // Setup the Totals and Paid With sections
-      this.nodes.total.innerHTML = new Number(this.model.summary.totalCost)
+      this.nodes.total.innerHTML = Number(this.model.summary.totalCost)
         .toLocaleString(navigator.language, {
           currency: this.model.currency,
           style: 'currency',

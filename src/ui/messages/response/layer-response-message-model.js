@@ -35,7 +35,7 @@
  *       text: 'John picked a black toy poodle'
  *     }),
  * });
- * model.generateMessage(conversation, message => message.send());
+ * responseModel.send({ conversation });
  * ```
  *
  * Currently,a Response Message that does not contain a `displayModel` is not well supported,
@@ -55,6 +55,7 @@
  */
 import Core, { MessagePart, MessageTypeModel } from '../../../core';
 import { registerStatusModel } from '../../ui-utils';
+
 class ResponseModel extends MessageTypeModel {
 
   /**
@@ -114,6 +115,15 @@ class ResponseModel extends MessageTypeModel {
   // Used to render Last Message in the Conversation List
   getOneLineSummary() {
     return this.displayModel ? this.displayModel.getOneLineSummary() : '';
+  }
+
+  // No notification if there is no displayModel
+  getNotification() {
+    if (this.displayModel) {
+      return super.getNotification();
+    } else {
+      return {};
+    }
   }
 }
 

@@ -4,7 +4,7 @@
  * @ignore
  */
 
-import Core, { MessagePart, MessageTypeModel, Util }  from '../../../core';
+import Core, { MessageTypeModel } from '../../../core';
 
 class PersonModel extends MessageTypeModel {
 

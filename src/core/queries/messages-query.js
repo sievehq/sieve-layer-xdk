@@ -380,7 +380,9 @@ class MessagesQuery extends Query {
       list.forEach((item) => {
         const index = this._getInsertIndex(item, data);
         data.splice(index, 0, item);
-        if (index !== 0) logger.warn('Index of ' + item.id + ' is ' + index + '; position is ' + item.position + '; compared to ' + data[0].position);
+        if (index !== 0) {
+          logger.warn(`Index of ${item.id} is ${index}; position is ${item.position}; compared to ${data[0].position}`);
+        }
 
         this.totalSize += 1;
 

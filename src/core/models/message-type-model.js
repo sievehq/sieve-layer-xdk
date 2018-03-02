@@ -17,9 +17,9 @@
 import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Util from '../../utils';
-import version from '../../version';
 import Root from '../root';
-import Message from '../models/message';
+import Message from './message';
+import Identity from './identity';
 import { ErrorDictionary } from '../layer-error';
 import ResponseSummaryModel from './message-type-response-summary-model';
 
@@ -47,8 +47,6 @@ class MessageTypeModel extends Root {
     this._initializeProperties();
     if (this.message) {
       this._setupMessage();
-    } else {
-
     }
   }
 
@@ -73,13 +71,23 @@ class MessageTypeModel extends Root {
   /**
    * Send this Message Type Model within the specified Conversation
    *
+   * Simplest usage, which will generate a suitable notification for this message:
+   *
+   * ```
+   * model.send({
+   *    conversation: myConversation
+   * });
+   * ```
+   *
+   * The full API?
+   *
    * ```
    * model.send({
    *    conversation: myConversation,
    *    notification: {
-   *      title: "New Message from " + client.user.displayName,
-   *      text: model.text || model.title || 'New Message',
-   *      souncd: 'bleep.aiff'
+   *      title: "New Message from " + Layer.client.user.displayName,
+   *      text: model.getOneLineSummary(),
+   *      sound: 'bleep.aiff'
    *    },
    *    callback(message) {
    *       console.log("Generated and sending " + message.id);
@@ -95,6 +103,7 @@ class MessageTypeModel extends Root {
    *
    * For the Full Notification API, see [Server Docs](https://docs.layer.com/reference/server_api/push_notifications.out).
    *
+   * Finally, if you want to customize the message before sending it, see {@link #generateMessage} instead.
    *
    * @method send
    * @param {Object} options
@@ -111,6 +120,7 @@ class MessageTypeModel extends Root {
    * @return {Layer.Core.MessageTypeModel} this
    */
   send({ conversation, notification, callback }) {
+    if (notification === undefined) notification = this.getNotification();
     return this.generateMessage(conversation, (message) => {
       if (message.isNew()) message.send(notification);
       if (callback) callback(message);
@@ -142,7 +152,7 @@ class MessageTypeModel extends Root {
     this._generateParts((parts) => {
       this.childParts = parts;
       this.part.mimeAttributes.role = 'root';
-      //this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
+      // this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
       this.message = conversation.createMessage({
         id: Message.prefixUUID + this.id.replace(/\/parts\/.*$/, '').replace(/^.*MessageTypeModels\//, ''),
         parts: this.childParts,
@@ -423,7 +433,6 @@ class MessageTypeModel extends Root {
    */
   _handlePartAdded(addEvt) {
     const part = addEvt.part;
-    const message = this.message;
 
     // This removes from childParts any part that is not a part of the message. Doesn't seem to be a useful operation,
     // but commented it out until more thought goes into it.
@@ -439,7 +448,6 @@ class MessageTypeModel extends Root {
       part.on('messageparts:change', this._handlePartChanges, this);
       if (!this.part.body) this.part.fetchContent();
       this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
-      //this._triggerAsync('message-type-model:change');
     } else if (this.part && part.nodeId === this.part.nodeId) {
       this.part = part;
       this._handlePartChanges(addEvt);
@@ -527,8 +535,33 @@ class MessageTypeModel extends Root {
     if (title) {
       return title;
     } else {
-      return this.constructor.Label + ' ' + (Client.user === this.message.sender ? 'sent' : 'received');
+      return this.constructor.Label;
     }
+  }
+
+  /**
+   * Returns a notification object with suitable preset values for using in {@link Layer.Core.Message#send}
+   *
+   * @method getNotification
+   * @return {Object}
+   * @return {String} return.title    Notification title
+   * @return {String} return.text     Body of the notification
+   */
+  getNotification() {
+    const notification = {
+      title: MessageTypeModel.NotificationTitle.replace(/(\$\{.*?\})/g, (match) => {
+        const value = this[match.substring(2, match.length - 1)];
+        return (value instanceof Identity) ? value.displayName : value;
+      }),
+      text: this.getOneLineSummary(),
+    };
+
+    this.trigger('message-type-model:notification', {
+      notification,
+      modelName: this.getModelName(),
+    });
+
+    return notification;
   }
 
   /**
@@ -621,7 +654,7 @@ class MessageTypeModel extends Root {
   }
 
   __getMessageSender() {
-    return this.message ? this.message.sender : null;
+    return this.message ? this.message.sender : Client.user;
   }
 
   __getMessageSentAt() {
@@ -653,7 +686,7 @@ class MessageTypeModel extends Root {
   _processDelayedTriggers() {
     if (this.isDestroyed) return;
     let hasChange = false;
-    this._delayedTriggers = this._delayedTriggers.filter(evt => {
+    this._delayedTriggers = this._delayedTriggers.filter((evt) => {
       if (evt[0] === 'message-type-model:change' && !hasChange) {
         hasChange = true;
         return true;
@@ -799,14 +832,6 @@ MessageTypeModel.prototype.part = null;
 MessageTypeModel.prototype.role = null;
 
 /**
- * Are responses enabled for this Message?
- *
- * @ignore
- * @property {Boolean}
- */
-//MessageTypeModel.prototype.locked = false;
-
-/**
  * Stores all user responses which can be accessed using `getResponse` or `getResponses`
  *
  * ```
@@ -876,6 +901,29 @@ MessageTypeModel.prototype.messageRecipientStatus = null;
 
 
 /**
+ * The expression to use for setting the notification title.
+ *
+ * This title is used when sending a notification with your message.
+ *
+ * Set this with a template, where `this` refers to the MessageTypeModel instance
+ * that uses this.  Customize it with:
+ *
+ * ```
+ * Layer.Core.MessageTypeModel.NotificationTitle = 'Message Received from ${messageSender}';
+ * Layer.Core.MessageTypeModel.NotificationTitle = '${messageSender} sent ${title}';
+ * ```
+ *
+ * > *Note*
+ * > While `${value}` is accepted, this does *not* use javascript's template string; `${expression}` is *not* supported
+ *
+ * See {@link getNotification} for usage details.
+ *
+ * @property {String} NotificationTitle
+ * @static
+ */
+MessageTypeModel.NotificationTitle = 'New Message from ${messageSender}'; // eslint-disable-line no-template-curly-in-string
+
+/**
  * The MIME Type that this Model generates and for which this model will be instantiated.
  *
  * @static
@@ -895,8 +943,46 @@ MessageTypeModel.messageRenderer = '';
 
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = [
+
+  /**
+   * A property of this model has changed.
+   *
+   * ```
+   * model.on('message-type-model:change', function(evt) {
+   *    var responseChanges = evt.getChangesFor('responses');
+   *    responseChanges.forEach(change => console.log(change.propertyName + " has changed from ', change.oldValue, ' to ', change.newValue);
+   *    }
+   * });
+   * ```
+   *
+   * @event
+   * @param {Layer.Core.LayerEvent} evt
+   */
   'message-type-model:change',
+
+  /**
+   * Any event used to customize the behavior of a Message Type Model.
+   *
+   * @event
+   * @param {Layer.Core.LayerEvent} evt
+   */
   'message-type-model:customization',
+
+  /**
+   * Any event used to customize the notification sent when sending a Message
+   * representing this model.
+   *
+   * ```
+   * model.on('message-type-model:notification', function(evt) {
+   *    if (evt.notification.title.length > 50) evt.notification.title = 'Frodo is a Dodo';
+   *    if (evt.notification.text.length < 10) evt.notification.text += ' and furthermore, Frodo is a Dodo';
+   * });
+   * ```
+   *
+   * @event
+   * @param {Layer.Core.LayerEvent} evt
+   */
+  'message-type-model:notification',
 ].concat(Root._supportedEvents);
 Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel', Core]);
 module.exports = MessageTypeModel;

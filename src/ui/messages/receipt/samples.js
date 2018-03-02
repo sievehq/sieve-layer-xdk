@@ -122,7 +122,7 @@ new ReceiptModel({
         ]
     })
   ]
-}).generateMessage($("layer-conversation-view").conversation, message => message.send());
+}).send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "External Content"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -247,4 +247,4 @@ new ReceiptModel({
       ]
     }),
   ]
-}).generateMessage($("layer-conversation-view").conversation, message => message.send());
+}).send({ conversation: $("layer-conversation-view").conversation });

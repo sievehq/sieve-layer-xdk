@@ -44,7 +44,7 @@
  *     }),
  *   ]
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  * ### Importing
@@ -79,7 +79,7 @@ class ProductModel extends MessageTypeModel {
    */
   _generateParts(callback) {
     const body = this._initBodyWithMetadata([
-      'name', 'brand',  // naming
+      'name', 'brand', // naming
       'description', 'imageUrls', // Rendering
       'currency', 'price', 'quantity', // Purchasing
       'url', // Action properties
@@ -94,7 +94,7 @@ class ProductModel extends MessageTypeModel {
       callback([this.part]);
     } else {
       let count = 0;
-      let parts = [this.part];
+      const parts = [this.part];
       this.options.forEach((option) => {
         this._addModel(option, 'options', (newParts) => {
           count++;
@@ -137,7 +137,7 @@ class ProductModel extends MessageTypeModel {
    */
   getFormattedPrice() {
     if (this.price === null) return '';
-    return new Number(this.price).toLocaleString(navigator.language, {
+    return Number(this.price).toLocaleString(navigator.language, {
       currency: this.currency,
       style: 'currency',
     });

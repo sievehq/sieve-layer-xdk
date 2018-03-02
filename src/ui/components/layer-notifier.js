@@ -53,8 +53,8 @@
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
  */
-import { client } from '../../settings';
 import NotifyLib from 'notifyjs';
+import { client } from '../../settings';
 import { isInBackground as IsInBackground } from '../ui-utils';
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';
@@ -408,7 +408,13 @@ registerComponent('layer-notifier', {
       }
 
       if (type && type !== 'none') {
-        if (this.trigger('layer-message-notification', { item: message, model: message.createModel(), type, isBackground })) {
+        const allowNotification = this.trigger('layer-message-notification', {
+          item: message,
+          model: message.createModel(),
+          type,
+          isBackground,
+        });
+        if (allowNotification) {
           if (type === 'desktop' && this.properties.userEnabledDesktopNotifications) {
             this.desktopNotify(evt.notification, evt.message);
           } else if (type === 'toast') {
@@ -579,7 +585,7 @@ registerComponent('layer-notifier', {
         evt.stopPropagation();
         this.trigger('layer-notification-click', {
           item: this.properties.toastMessage,
-          model: this.properties.toastMessage.createModel()
+          model: this.properties.toastMessage.createModel(),
         });
         this.closeToast();
       }

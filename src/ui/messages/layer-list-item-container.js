@@ -25,35 +25,35 @@ registerComponent('layer-list-item-container', {
       <div layer-id="footer" class="layer-card-footer"></div>
     </div>`,
 
-   // Note that there is also a message property managed by the MessageHandler mixin
+  // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
     cardBorderStyle: {
       noGetterFromSetter: true,
       get() {
         return this.properties.cardBorderStyle || this.properties.ui.cardBorderStyle || 'list';
-      }
+      },
     },
     model: {},
     ui: {
       set() {
-        while(this.nodes.UIContainer.firstChild) this.nodes.UIContainer.removeChild(this.nodes.UIContainer.firstChild);
+        while (this.nodes.UIContainer.firstChild) this.nodes.UIContainer.removeChild(this.nodes.UIContainer.firstChild);
         if (this.properties.ui) this.nodes.UIContainer.appendChild(this.properties.ui);
-      }
+      },
     },
     title: {
       set(title) {
         this.nodes.title.innerHTML = title;
-      }
+      },
     },
     description: {
       set(description) {
         this.nodes.description.innerHTML = description;
-      }
+      },
     },
     footer: {
       set(footer) {
         this.nodes.footer.innerHTML = footer;
-      }
+      },
     },
   },
   methods: {

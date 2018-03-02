@@ -384,7 +384,9 @@ registerComponent('layer-conversation-view', {
      */
     conversation: {
       set(value) {
-        if (value && !(value instanceof Core.Conversation || value instanceof Core.Channel)) this.properties.conversation = null;
+        if (value && !(value instanceof Core.Conversation || value instanceof Core.Channel)) {
+          this.properties.conversation = null;
+        }
         if (client) this._setupConversation();
       },
     },
@@ -597,7 +599,7 @@ registerComponent('layer-conversation-view', {
       },
       set(value) {
         this.nodes.list.getMenuItems = value;
-      }
+      },
     },
 
     /**
@@ -759,6 +761,30 @@ registerComponent('layer-conversation-view', {
         this.toggleClass('layer-conversation-view-width-small', newValue < 460);
         this.toggleClass('layer-conversation-view-width-medium', newValue >= 460 && newValue < 600);
         this.toggleClass('layer-conversation-view-width-large', newValue >= 600);
+      },
+    },
+
+    /**
+     * Set a filter on the Query.
+     *
+     * See {@link Layer.Core.Query#filter}.  This removes the data entirely from the Query.
+     * Use it for removing items that are non-renderable or should not be rendered.
+     *
+     * ```
+     * widget.queryFilter = function queryFilter(message) {
+     *   const model = message.createModel();
+     *   return !(model.getModelName() === 'ResponseModel' && !model.displayModel);
+     * };
+     * ```
+     *
+     * @property {Function} queryFilter
+     * @property {Layer.Core.Message} queryFilter.message
+     * @property {Boolean} queryFilter.return
+     */
+    queryFilter: {
+      value: function queryFilter(message) {
+        const model = message.createModel();
+        return !model || !(model.getModelName() === 'ResponseModel' && !model.displayModel);
       },
     },
   },
@@ -969,7 +995,7 @@ registerComponent('layer-conversation-view', {
           });
         }
       }
-    }
+    },
   },
   listeners: {
     'layer-conversation-selected': function conversationSelected(evt) {
@@ -983,7 +1009,9 @@ registerComponent('layer-conversation-view', {
     'layer-message-notification': function messageNotification(evt) {
       // If the notification is not background, and we have toast notifications enabled, and message isn't in the selected conversation,
       // to a toast notify
-      if (!evt.detail.isBackground && evt.detail.item.conversationId === this.conversation.id && evt.target.notifyInForeground === 'toast') {
+      if (!evt.detail.isBackground &&
+        evt.detail.item.conversationId === this.conversation.id &&
+        evt.target.notifyInForeground === 'toast') {
         evt.preventDefault();
       }
     },

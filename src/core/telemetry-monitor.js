@@ -181,8 +181,8 @@ class TelemetryMonitor extends Root {
     return {
       user_agent: navigator.userAgent,
       screen: {
-        width: typeof screen === undefined ? 0 : screen.width,
-        height: typeof screen === undefined ? 0 : screen.height,
+        width: typeof screen === 'undefined' ? 0 : screen.width,
+        height: typeof screen === 'undefined' ? 0 : screen.height,
       },
       window: {
         width: window.innerWidth,
@@ -292,7 +292,7 @@ class TelemetryMonitor extends Root {
         method: 'POST',
         url: this.telemetryUrl,
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
         data: {
           id: Util.uuid(this.state.id),
@@ -302,9 +302,8 @@ class TelemetryMonitor extends Root {
       }, (result) => {
         if (result.success) {
           // Remove any records that were sent from our state
-          this.state.records = this.state.records.filter((record) => {
-            return records.indexOf(record) === -1;
-          });
+          this.state.records = this.state.records.filter(record =>
+            records.indexOf(record) === -1);
           this.writeState();
         }
       });

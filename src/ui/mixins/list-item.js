@@ -160,7 +160,8 @@ module.exports = {
     onReplaceableContentAdded: {
       mode: registerComponent.MODES.AFTER,
       value: function onReplaceableContentAdded(name, node) {
-        const props = ComponentsHash[this.tagName.toLowerCase()].properties.filter(propDef => propDef.propagateToChildren);
+        const props = ComponentsHash[this.tagName.toLowerCase()].properties
+          .filter(propDef => propDef.propagateToChildren);
 
         // Setup each node added this way as a full part of this component
         const nodeIterator = document.createNodeIterator(
@@ -169,9 +170,12 @@ module.exports = {
           () => true,
           false,
         );
-        let currentNode;
-        while (currentNode = nodeIterator.nextNode()) {
-          props.forEach(propDef => {
+        const allNodes = [];
+        let tmpNode;
+        while ((tmpNode = nodeIterator.nextNode())) allNodes.push(tmpNode);
+
+        allNodes.forEach((currentNode) => {
+          props.forEach((propDef) => {
             if (ComponentsHash[currentNode.tagName.toLowerCase()]) {
               if (!currentNode.properties._internalState) {
                 // hit using polyfil
@@ -182,7 +186,7 @@ module.exports = {
               }
             }
           });
-        }
+        });
       },
     },
 

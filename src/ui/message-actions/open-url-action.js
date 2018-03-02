@@ -13,7 +13,7 @@ const openUrlHandler = ({ data, model }) => {
   if (!url && model.fetchUrl) {
     // This fails; opening window async is a security violation.
     // Suggested fixes? None yet.
-    model.fetchUrl(url => showFullScreen(url));
+    model.fetchUrl(aUrl => showFullScreen(aUrl));
   } else if (url) {
     showFullScreen(url);
   }

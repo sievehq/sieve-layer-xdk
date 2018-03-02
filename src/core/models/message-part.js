@@ -311,8 +311,6 @@ class MessagePart extends Root {
 
   // Does not set this.url; instead relies on fact that this._content.downloadUrl has been updated
   _fetchStreamComplete(url, callback) {
-    const message = this._getMessage();
-
     this.trigger('url-loaded');
 
     this._triggerAsync('messageparts:change', {
@@ -492,7 +490,8 @@ class MessagePart extends Root {
       } else if (retryCount < MessagePart.MaxRichContentRetryCount) {
         this._processContentResponse(contentResponse, body, retryCount + 1);
       } else {
-        logger.error('Failed to upload rich content; triggering message:sent-error event; status of ', uploadResult.status, this);
+        logger.error('Failed to upload rich content; triggering message:sent-error event; status of ',
+          uploadResult.status, this);
         this._getMessage().trigger('messages:sent-error', {
           error: new LayerError({
             message: 'Upload of rich content failed',
@@ -515,8 +514,6 @@ class MessagePart extends Root {
     }
   }
 
-
-
   /**
    * Updates the MessagePart with new data from the server.
    *
@@ -528,7 +525,7 @@ class MessagePart extends Root {
    * @param  {Object} part - Server representation of a part
    * @private
    */
-   _populateFromServer(part) {
+  _populateFromServer(part) {
     // don't accept changes to mimeType (though do make sure we aren't
     // rejecting changes to mime type attributes). Primarily protects
     // a TextMessage from being converted to `text/plain` where it started
@@ -546,7 +543,7 @@ class MessagePart extends Root {
       this._content.expiration = new Date(part.content.expiration);
       // TODO: May need to invalidate this.body, but need to identify the conditions where this happens
     } else {
-       const textual = this.isTextualMimeType();
+      const textual = this.isTextualMimeType();
 
       // Custom handling for non-textual content
       if (!textual) {
@@ -576,7 +573,7 @@ class MessagePart extends Root {
     if (!part.body && part.content) {
       this.hasContent = true;
     } else if (!Util.isBlob(part.body) && !this.isTextualMimeType()) {
-      //this.body = Util.base64ToBlob(Util.utoa(part.body), this.mimeType);
+      // this.body = Util.base64ToBlob(Util.utoa(part.body), this.mimeType);
       this.body = Util.base64ToBlob(part.body, this.mimeType);
     } else {
       this.body = part.body;
@@ -646,11 +643,8 @@ class MessagePart extends Root {
    */
   __updateBody(newValue, oldValue) {
     if (Util.isBlob(newValue) && Util.isBlob(oldValue)) {
-      let newValueStr, oldValueStr;
-      Util.blobToBase64(newValue, (str) => {
-        newValueStr = str;
-        Util.blobToBase64(oldValue, (str) => {
-          oldValueStr = str;
+      Util.blobToBase64(newValue, (newValueStr) => {
+        Util.blobToBase64(oldValue, (oldValueStr) => {
           if (newValueStr !== oldValueStr) {
             this._triggerAsync('messageparts:change', {
               property: 'body',

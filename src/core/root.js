@@ -645,10 +645,10 @@ function defineProperty(newClass, propertyName) {
  */
 function initClass(newClass, className, namespace) {
   // Make sure our new class has a name property
-  // Throws errors when run in production
   try {
     if (newClass.name !== className) newClass.altName = className;
   } catch (e) {
+    // No-op
   }
 
   // Make sure our new class has a _supportedEvents, _ignoredEvents, _inObjectIgnore and EVENTS properties

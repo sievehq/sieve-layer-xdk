@@ -3,18 +3,10 @@
  *
  * @class Layer.UI.handlers.text.Autolinker
  */
-//import Autolinker from 'autolinker';
 import IsUrl from '../../ui-utils/is-url';
 import { register } from './text-handlers';
 
 const testExpr = IsUrl();
-/*const autolinker = new Autolinker({
-  truncate: {
-    length: 40,
-    location: 'middle',
-  },
-  className: 'layer-parsed-url',
-});*/
 
 /**
  * The Layer Image TextHandler replaces all image URLs with image tags
@@ -27,7 +19,7 @@ register({
   requiresEnable: true,
   handler(textData) {
     textData.text = textData.text.replace(testExpr, (url) => {
-      let shortUrl = url.replace(/^\w+\:\/+/, '');
+      let shortUrl = url.replace(/^\w+:\/+/, '');
       if (url.length > 50) {
         const firstSlash = url.indexOf('/', 15);
         const lastSlash = url.lastIndexOf('/');

@@ -21,7 +21,7 @@
  *      {text:  "What do you mean? African or European swallow?", id: "just a smart ass"},
  *   ],
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  * See property defintions below for more details on configuration of this Message.
@@ -355,8 +355,21 @@ class ChoiceModel extends MessageTypeModel {
      * });
      * ```
      *
-     * The value provided to the event via Layer.Core.LayerEvent.returnValue will become the Text Message
+     * The value provided to the event via Layer.Core.LayerEvent.returnValue will become the Status Message
      * used within the Response Message.
+     *
+     * One could also prevent the Response Message from containing a Status Message (sub-model); by returning `null`; this would mean:
+     *
+     * * The Response Message is not rendered
+     * * No notification is presented to recipients
+     *
+     * ```
+     * client.on('message-type-model:customization', function(evt) {
+     *     if (evt.detail.type === 'generate-response-message') {
+     *         evt.returnValue(null);
+     *     }
+     * });
+     * ```
      *
      * Alternatively, one could call `evt.preventDefault()`; this will prevent the Response Message from being sent.
      *
@@ -400,7 +413,7 @@ class ChoiceModel extends MessageTypeModel {
     // however rather than reject that entirely, we simply insure that we only send a Response Message
     // for a Message that is shared among the participants.
     if (!this.message.isNew()) {
-      responseModel.generateMessage(this.message.getConversation(), message => this._sendResponse(message));
+      responseModel.send({ conversation: this.message.getConversation() });
     }
   }
 
@@ -468,19 +481,6 @@ class ChoiceModel extends MessageTypeModel {
 
 
   /**
-   * Send the actual Response Message.
-   *
-   * Primarily exists to simplify unit testing
-   *
-   * @method _sendResponse
-   * @private
-   * @param {Layer.Core.Message} message
-   */
-  _sendResponse(message) {
-    message.send();
-  }
-
-  /**
    * Whenever a new Layer.Core.MessageTypeModel.responses value is set, update our state.
    *
    * A new Responses value typically means a change of selected answer for this Choice.
@@ -541,7 +541,7 @@ class ChoiceModel extends MessageTypeModel {
 
   // Used to render Last Message in the Conversation List
   getOneLineSummary() {
-    return this.label || this.title;
+    return this.label || this.title || this.constructor.Label;
   }
 
   /**

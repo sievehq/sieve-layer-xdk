@@ -20,6 +20,28 @@ module.exports = {
   events: [
     'message-type-model:change',
     'message-type-model:customization',
+
+    /**
+     * Any event used to customize the notification sent when sending a Message
+     * using {@link Layer.Core.MessageTypeModel#send}.
+     *
+     * ```
+     * client.on('message-type-model:notification', function(evt) {
+     *    if (evt.modelName === 'TextModel') {
+     *      if (evt.notification.title.length > 50) evt.notification.title = 'Frodo is a Dodo';
+     *      if (evt.notification.text.length < 10) evt.notification.text += ' and furthermore, Frodo is a Dodo';
+     *    }
+     * });
+     * ```
+     *
+     * > *Note*
+     * >
+     * > Calling {@link Layer.Core.Message#send} bypasses this event.
+     *
+     * @event
+     * @param {Layer.Core.LayerEvent} evt
+     */
+    'message-type-model:notification',
   ],
   lifecycle: {
     constructor(options) {

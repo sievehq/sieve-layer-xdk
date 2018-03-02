@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('File Message Components', function() {
   var FileModel;
   var conversation;
@@ -234,7 +235,7 @@ describe('File Message Components', function() {
       model2.generateMessage(conversation);
 
       expect(model1.getOneLineSummary()).toEqual("b");
-      expect(model2.getOneLineSummary()).toEqual("File sent");
+      expect(model2.getOneLineSummary()).toEqual("File");
     });
   });
 

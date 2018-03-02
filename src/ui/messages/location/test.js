@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Location Message Components', function() {
   var LocationModel;
   var conversation;
@@ -248,7 +249,7 @@ describe('Location Message Components', function() {
       model2.generateMessage(conversation);
 
       expect(model1.getOneLineSummary()).toEqual("b");
-      expect(model2.getOneLineSummary()).toEqual("Location sent");
+      expect(model2.getOneLineSummary()).toEqual("Location");
     });
   });
 

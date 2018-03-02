@@ -389,6 +389,7 @@
  *
  * @class Layer.UI.Component
  */
+/* eslint-disable no-use-before-define */
 
 import Layer from '../../core';
 import Util from '../../utils';
@@ -514,7 +515,12 @@ function finalizeMixinMerge(classDef) {
 
   methodNames.forEach((methodName) => {
     const methodDef = classDef.methods[methodName];
-    let methodList = [...methodDef.methodsBefore, ...methodDef.methodsMiddle, ...methodDef.methodsAfter, ...methodDef.methodLast];
+    let methodList = [
+      ...methodDef.methodsBefore,
+      ...methodDef.methodsMiddle,
+      ...methodDef.methodsAfter,
+      ...methodDef.methodLast,
+    ];
     if (methodDef.lock) methodList = [methodDef.lock, ...methodDef.methodLast];
 
     // For each method, either set the method to be the function, or set it to be the
@@ -601,27 +607,26 @@ function setupEvent(classDef, eventName) {
  */
 function getPropArray(classDef) {
   // Translate the property names into definitions with property/attribute names
-  return Object.keys(classDef.properties).map((propertyName) => {
-    return {
-      propertyName,
-      attributeName: Util.hyphenate(propertyName),
-      type: classDef.properties[propertyName].type,
-      order: classDef.properties[propertyName].order,
-      noGetterFromSetter: classDef.properties[propertyName].noGetterFromSetter,
-      propagateToChildren: classDef.properties[propertyName].propagateToChildren,
-      value: classDef.properties[propertyName].value,
-    };
-  }).sort((a, b) => {
-    if (a.order !== undefined && b.order !== undefined) {
-      return a.order - b.order;
-    } else if (a.order !== undefined) {
-      return -1;
-    } else if (b.order !== undefined) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
+  return Object.keys(classDef.properties).map(propertyName => ({
+    propertyName,
+    attributeName: Util.hyphenate(propertyName),
+    type: classDef.properties[propertyName].type,
+    order: classDef.properties[propertyName].order,
+    noGetterFromSetter: classDef.properties[propertyName].noGetterFromSetter,
+    propagateToChildren: classDef.properties[propertyName].propagateToChildren,
+    value: classDef.properties[propertyName].value,
+  }))
+    .sort((a, b) => {
+      if (a.order !== undefined && b.order !== undefined) {
+        return a.order - b.order;
+      } else if (a.order !== undefined) {
+        return -1;
+      } else if (b.order !== undefined) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
 }
 
 
@@ -645,6 +650,7 @@ function castProperty(type, value) {
 
     // Translate strings into functions
     case Function:
+      /* eslint-disable-next-line */
       return typeof value === 'string' ? eval('(' + value + ')') : value;
   }
   return value;
@@ -682,7 +688,6 @@ function setupProperty(classDef, prop, propertyDefHash) {
       return propDef.get ? propDef.get.apply(this) : this.properties[name];
     }
   };
-
 
 
   // The property setter will set this.properties[name] and then if there is a custom setter, it will be invoked.
@@ -1119,7 +1124,8 @@ function _registerComponent(tagName) {
       let finalValue = null;
 
       // Special case for React Adapter + Replaceable content makes it possible that the value is already in properties
-      let value = prop.propertyName in this.properties ? this.properties[prop.propertyName] : this.getAttribute(prop.attributeName);
+      let value = prop.propertyName in this.properties ?
+        this.properties[prop.propertyName] : this.getAttribute(prop.attributeName);
 
 
       // Firefox 57 requires this alternative to getAttribute() for cases where properties are directly set on the DOM
@@ -1149,7 +1155,6 @@ function _registerComponent(tagName) {
       this.properties[prop.propertyName] = prop.type ? castProperty(prop.type, finalValue) : finalValue;
     },
   };
-
 
 
   /**
@@ -1188,7 +1193,9 @@ function _registerComponent(tagName) {
         if (this.properties._internalState.onDestroyCalled) return;
         if (document.body.contains(this) || document.head.contains(this)) return;
         if (this.trigger('layer-widget-destroyed', { target: this })) {
-          if (!isMainComponent || (!document.body || this.trigger.apply(document.body, ['layer-widget-destroyed', { target: this }] ) )) {
+          if (!isMainComponent || !document.body) {
+            this.onDestroy();
+          } else if (this.trigger.apply(document.body, ['layer-widget-destroyed', { target: this }])) {
             this.onDestroy();
           }
         }
@@ -1229,7 +1236,7 @@ function _registerComponent(tagName) {
    * @static
    */
   ComponentsHash[tagName].properties = props;
-};
+}
 
 /**
  * A `<template />` dom node OR a string containing DOM nodes, but no `<style>` or `<template>` tags.
@@ -1241,38 +1248,38 @@ function _registerComponent(tagName) {
  * @static
  */
 
- /**
-  * Stylesheet string.
-  *
-  * A stylesheet string can be added to the document via `styleNode.innerHTML = value` assignment.
-  *
-  * @property {String} style
-  * @private
-  * @static
-  */
+/**
+ * Stylesheet string.
+ *
+ * A stylesheet string can be added to the document via `styleNode.innerHTML = value` assignment.
+ *
+ * @property {String} style
+ * @private
+ * @static
+ */
 
-  /**
-   * Event definitions.
-   *
-   * ```
-   * UI.registerComponent(tagName, {
-   *    events: ['layer-something-happening', 'layer-nothing-happening', 'your-custom-event']
-   * });
-   * ```
-   *
-   * The above component definition will result in:
-   *
-   * 1. The component will listen for the 3 events listed, regardless of whether this component triggered the event,
-   *    or its child components triggered the event.  `this.addEventListener('your-custom-event')` to intercept this event (the event will still propagate up).
-   * 2. The component will define the following properties: `onSomethingHappening`, `onNothingHappening` and `onYourCustomEvent`. These properties
-   *    are defined for you as a result of setting the `events` property.
-   * 3. Your app can now use either event listeners or property callbacks as illustrated below:
-   *
-   *
-   * @property {String[]} events
-   * @private
-   * @static
-   */
+/**
+ * Event definitions.
+ *
+ * ```
+ * UI.registerComponent(tagName, {
+ *    events: ['layer-something-happening', 'layer-nothing-happening', 'your-custom-event']
+ * });
+ * ```
+ *
+ * The above component definition will result in:
+ *
+ * 1. The component will listen for the 3 events listed, regardless of whether this component triggered the event,
+ *    or its child components triggered the event.  `this.addEventListener('your-custom-event')` to intercept this event (the event will still propagate up).
+ * 2. The component will define the following properties: `onSomethingHappening`, `onNothingHappening` and `onYourCustomEvent`. These properties
+ *    are defined for you as a result of setting the `events` property.
+ * 3. Your app can now use either event listeners or property callbacks as illustrated below:
+ *
+ *
+ * @property {String[]} events
+ * @private
+ * @static
+ */
 
 /**
  * Mixin modes determines how a new method being added to a class will be executed with respect to any other methods.

@@ -286,8 +286,8 @@ module.exports = {
         // channelId properties of all Messages or the Query's won't
         // see these as matching the query.
         Object.keys(this._models.messages)
-              .filter(id => this._models.messages[id].conversationId === oldId)
-              .forEach(id => (this._models.messages[id].conversationId = channel.id));
+          .filter(id => this._models.messages[id].conversationId === oldId)
+          .forEach(id => (this._models.messages[id].conversationId = channel.id));
       }
     },
 

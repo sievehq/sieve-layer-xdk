@@ -40,7 +40,7 @@ registerComponent('layer-message-viewer', {
   }
   `,
 
-   // Note that there is also a message property managed by the MessageHandler mixin
+  // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
 
     /**
@@ -219,8 +219,9 @@ registerComponent('layer-message-viewer', {
       if (this.nodes.cardContainer) this.nodes.cardContainer._onAfterCreate();
       if (cardUI._onAfterCreate) cardUI._onAfterCreate();
       if (this.nodes.cardContainer) cardUI._setupContainerClasses();
-      if (cardUI.hideMessageItemRightAndLeftContent && this.parentComponent) this.parentComponent.classList.add('layer-message-item-hide-replaceable-content');
-
+      if (cardUI.hideMessageItemRightAndLeftContent && this.parentComponent) {
+        this.parentComponent.classList.add('layer-message-item-hide-replaceable-content');
+      }
     },
 
     /**

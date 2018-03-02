@@ -100,23 +100,21 @@ function initAngular(angular) {
 
   // Gather all UI Components
   Object.keys(ComponentsHash)
-  .forEach((componentName) => {
-    const component = ComponentsHash[componentName];
+    .forEach((componentName) => {
+      const component = ComponentsHash[componentName];
 
-    // Get the camel case controller name
-    const controllerName = componentName.replace(/-(.)/g, (str, value) => value.toUpperCase());
+      // Get the camel case controller name
+      const controllerName = componentName.replace(/-(.)/g, (str, value) => value.toUpperCase());
 
 
-    controllers.directive(controllerName, () => {
-      return {
+      controllers.directive(controllerName, () => ({
         restrict: 'E',
         link: (scope, elem, attrs) => {
           const functionProps = component.properties;
           setupProps(scope, elem[0], attrs, functionProps);
         },
-      };
+      }));
     });
-  });
 }
 
 module.exports = initAngular;

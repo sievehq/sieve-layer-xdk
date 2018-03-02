@@ -305,8 +305,8 @@ class Query extends Root {
    * @return {Layer.Core.Query} this
    */
   update(options = {}) {
-    let needsRefresh,
-      needsRecreate;
+    let needsRefresh;
+    let needsRecreate;
 
     const optionsBuilt = (typeof options.build === 'function') ? options.build() : options;
 
@@ -457,6 +457,8 @@ class Query extends Root {
         this._run();
       }, this);
     } else {
+      // Note that there is retry logic for 3 retries in client-authenticator.js _nonsyncXhr() which is handled
+      // prior to giving up and sending us this error
       this.trigger('error', { error: results.data });
     }
   }
@@ -516,9 +518,9 @@ class Query extends Root {
 
   // Should be overridden by most subclasses
   _appendResultsSplice(item) {
-      const data = this.data;
-      const index = this._getInsertIndex(item, data);
-      data.splice(index, 0, this._getData(item));
+    const data = this.data;
+    const index = this._getInsertIndex(item, data);
+    data.splice(index, 0, this._getData(item));
   }
 
   // Should be overridden by most subclasses

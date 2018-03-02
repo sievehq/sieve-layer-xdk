@@ -81,7 +81,8 @@ registerComponent('layer-conversation-title', {
               title = users[0].displayName || users[0].firstName || users[0].lastName;
             } else {
               const sortedUsers = this._sortNames();
-              const sortedNames = sortedUsers.slice(0, 3).map(user => user.firstName || user.lastName || user.displayName);
+              const sortedNames =
+                sortedUsers.slice(0, 3).map(user => user.firstName || user.lastName || user.displayName);
               let names = sortedNames.join(', ');
               if (sortedUsers.length > 3) names += '&#8230;';
               title = names || 'No Title';
@@ -107,20 +108,20 @@ registerComponent('layer-conversation-title', {
     _sortNames() {
       const participants = this.item.participants;
       return participants
-          .filter(user => !user.isMine)
-          .filter(user => user.firstName || user.lastName || user.displayName)
-          .sort((userA, userB) => {
-            if (userA.type === 'bot' && userB.type !== 'bot') return 1;
-            if (userB.type === 'bot' && userA.type !== 'bot') return -1;
-            if ((!userA.firstName && !userA.lastName) && (userB.firstName || userB.lastName)) return 1;
-            if ((userA.firstName || userA.lastName) && (!userB.firstName && !userB.lastName)) return -1;
-            if (!userA.firstName && !userA.lastName) {
-              if (userA.displayName && !userB.displayName) return -1;
-              if (!userA.displayName && userB.displayName) return 1;
-            }
-            if (participants.indexOf(userA) > participants.indexOf(userB)) return 1;
-            return -1;
-          });
+        .filter(user => !user.isMine)
+        .filter(user => user.firstName || user.lastName || user.displayName)
+        .sort((userA, userB) => {
+          if (userA.type === 'bot' && userB.type !== 'bot') return 1;
+          if (userB.type === 'bot' && userA.type !== 'bot') return -1;
+          if ((!userA.firstName && !userA.lastName) && (userB.firstName || userB.lastName)) return 1;
+          if ((userA.firstName || userA.lastName) && (!userB.firstName && !userB.lastName)) return -1;
+          if (!userA.firstName && !userA.lastName) {
+            if (userA.displayName && !userB.displayName) return -1;
+            if (!userA.displayName && userB.displayName) return 1;
+          }
+          if (participants.indexOf(userA) > participants.indexOf(userB)) return 1;
+          return -1;
+        });
     },
   },
 });

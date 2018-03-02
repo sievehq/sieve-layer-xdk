@@ -40,7 +40,7 @@ const Channel = Core.Channel;
 registerComponent('layer-membership-list', {
   mixins: [List, ListSelection],
   // TODO: This is probably broken and needs to be updated to match other lists with a meta section at the top
-  template: `<div class='layer-load-indicator' layer-id='loadIndicator'>Loading users...</div>`,
+  template: '<div class="layer-load-indicator" layer-id="loadIndicator">Loading users...</div>',
   style: `
     layer-membership-list {
       overflow-y: auto;

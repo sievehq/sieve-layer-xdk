@@ -37,6 +37,7 @@ import './messages/layer-message-viewer-expanded';
 import './messages/status/layer-status-message-view';
 import './messages/response/layer-response-message-view';
 import './messages/text/layer-text-message-view';
+import './messages/link/layer-link-message-view';
 import './messages/image/layer-image-message-view';
 import './messages/buttons/layer-buttons-message-view';
 

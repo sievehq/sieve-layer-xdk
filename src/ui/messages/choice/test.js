@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Choice Message Components', function() {
   var ChoiceModel;
   var conversation;
@@ -508,14 +509,14 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe('');
         model.selectAnswer({id: "bb"});
         expect(model.selectedAnswer).toBe("bb");
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
         var textPart = responseMessage.findPart(function(part) {
           return part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType;
@@ -553,14 +554,14 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe('');
         model.selectAnswer({id: "bb"});
         expect(model.selectedAnswer).toBe("bb");
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
         var textPart = responseMessage.findPart(function(part) {
           return part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType;
@@ -599,14 +600,14 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe("bb");
         model.selectAnswer({id: "bb"});
         expect(model.selectedAnswer).toBe('');
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
         var textPart = responseMessage.findPart(function(part) {
           return part.mimeType === 'application/vnd.layer.status+json';
@@ -645,14 +646,14 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe("bb");
         model.selectAnswer({id: "bb"});
         expect(model.selectedAnswer).toBe('');
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
         var textPart = responseMessage.findPart(function(part) {
           return part.mimeType === 'application/vnd.layer.status+json';
@@ -689,13 +690,13 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe('');
         model.selectAnswer({id: "bb"});
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
@@ -719,18 +720,20 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
         model.selectAnswer({id: "bb"});
 
-        expect(model._sendResponse).not.toHaveBeenCalled();
+        expect(responseMessage).toBe(undefined);
         expect(model.trigger).not.toHaveBeenCalled();
 
         model.enabledFor = [client.user.id];
 
         model.selectAnswer({id: "bb"});
 
-        expect(model._sendResponse).toHaveBeenCalled();
+        expect(responseMessage).toEqual(jasmine.any(Layer.Core.Message));
         expect(model.trigger).toHaveBeenCalled();
       });
     });
@@ -751,14 +754,14 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe('cc');
         model.selectAnswer({id: "bb"});
         expect(model.selectedAnswer).toBe("cc,bb");
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
         var textPart = responseMessage.findPart(function(part) {
           return part.mimeType === 'application/vnd.layer.status+json';
@@ -796,14 +799,14 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         expect(model.selectedAnswer).toBe("bb,cc");
         model.selectAnswer({id: "bb"});
         expect(model.selectedAnswer).toBe("cc");
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
         var textPart = responseMessage.findPart(function(part) {
           return part.mimeType === 'application/vnd.layer.status+json';
@@ -844,13 +847,13 @@ describe('Choice Message Components', function() {
         message = m;
         message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
       });
-      spyOn(model, "_sendResponse");
+      var responseMessage;
+      spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
       spyOn(model, "trigger").and.callThrough();
 
       expect(model.selectedAnswer).toBe('cc');
       model.selectAnswer({id: "bb"});
 
-      var responseMessage = model._sendResponse.calls.allArgs()[0][0];
       var responsePart = responseMessage.getRootPart();
 
       expect(JSON.parse(responsePart.body)).toEqual({
@@ -875,18 +878,20 @@ describe('Choice Message Components', function() {
         message = m;
         message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
       });
-      spyOn(model, "_sendResponse");
+
+      var responseMessage;
+      spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
       spyOn(model, "trigger").and.callThrough();
       model.selectAnswer({id: "bb"});
 
-      expect(model._sendResponse).not.toHaveBeenCalled();
+      expect(responseMessage).toBe(undefined);
       expect(model.trigger).not.toHaveBeenCalled();
 
       model.enabledFor = [client.user.id];
 
       model.selectAnswer({id: "bb"});
 
-      expect(model._sendResponse).toHaveBeenCalled();
+      expect(responseMessage).toEqual(jasmine.any(Layer.Core.Message));
       expect(model.trigger).toHaveBeenCalled();
     });
 
@@ -971,12 +976,12 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
@@ -1007,12 +1012,12 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
@@ -1043,12 +1048,12 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
@@ -1082,13 +1087,13 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         // Deselect
         model.selectAnswer({ id: "bb" });
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
@@ -1120,12 +1125,12 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
@@ -1159,12 +1164,12 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
 
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
 
         expect(JSON.parse(responsePart.body)).toEqual({
@@ -1251,7 +1256,7 @@ describe('Choice Message Components', function() {
           message = m;
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
-        spyOn(model, "_sendResponse");
+
         var called = false;
         model.once('message-type-model:customization', function(evt) {
           if (evt.type === 'layer-choice-model-generate-response-message') {
@@ -1263,8 +1268,9 @@ describe('Choice Message Components', function() {
           }
         });
 
+        var responseMessage;
+        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
         model.selectAnswer({id: "bb"});
-        var responseMessage = model._sendResponse.calls.allArgs()[0][0];
         var responsePart = responseMessage.getRootPart();
         var textPart = responseMessage.findPart(function(part) {
           return part.mimeType === 'application/vnd.layer.status+json';

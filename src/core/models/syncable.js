@@ -263,7 +263,7 @@ class Syncable extends Root {
     if (this._syncCounter > 0) this._syncCounter--;
 
     this.syncState = this._syncCounter === 0 ? SYNC_STATE.SYNCED :
-                          SYNC_STATE.SYNCING;
+      SYNC_STATE.SYNCING;
     this.isSending = false;
   }
 

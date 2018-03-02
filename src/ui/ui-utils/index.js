@@ -7,7 +7,7 @@ import StatusManager from './status-message-manager';
 import ListSeparatorManager from './list-separator-manager';
 import RCUtils from './replaceable-content-utils';
 
- /**
+/**
  * Utility returns whether or not the window is in the background.
  *
  * @method isInBackground

@@ -131,7 +131,8 @@ class SyncManager extends Root {
         target: requestEvt.target,
       });
     } else {
-      logger.info(`Sync Manager Request PATCH ${requestEvt.target} request ignored; create request still enqueued`, requestEvt.toObject());
+      logger.info(`Sync Manager Request PATCH ${requestEvt.target} request ignored; create request still enqueued`,
+        requestEvt.toObject());
     }
 
     // If its a DELETE request, purge all other requests on that target.
@@ -172,8 +173,7 @@ class SyncManager extends Root {
    */
   _findUnfiredCreate(requestEvt) {
     return Boolean(this.queue.filter(evt =>
-      evt.target === requestEvt.target && evt.operation === 'POST' && !evt.isFiring).length
-    );
+      evt.target === requestEvt.target && evt.operation === 'POST' && !evt.isFiring).length);
   }
 
   /**
@@ -254,7 +254,8 @@ class SyncManager extends Root {
     requestEvt.isFiring = true;
     if (!requestEvt.headers) requestEvt.headers = {};
     requestEvt.headers.authorization = 'Layer session-token="' + Client.sessionToken + '"';
-    logger.info(`Sync Manager XHR Request Firing ${requestEvt.operation} ${requestEvt.target} at ${new Date().toISOString()}`,
+    logger.info('Sync Manager XHR Request Firing ',
+      `${requestEvt.operation} ${requestEvt.target} at ${new Date().toISOString()}`,
       requestEvt.toObject());
     xhr(requestEvt._getRequestData(Client), result => this._xhrResult(result, requestEvt));
   }
@@ -472,12 +473,12 @@ class SyncManager extends Root {
    * @param  {Object} result             Response object returned by xhr call
    */
   _xhrHandleServerUnavailableError(result) {
-    var request = result.request;
+    const request = result.request;
     this.trigger('sync:error-will-retry', {
+      request,
       target: request.target,
-      request: request,
       error: result.data,
-      retryCount: request.retryCount
+      retryCount: request.retryCount,
     });
     const maxDelay = SyncManager.MAX_UNAVAILABLE_RETRY_WAIT;
     const delay = Util.getExponentialBackoffSeconds(maxDelay, Math.min(15, request.retryCount++));

@@ -68,7 +68,6 @@
  * @class Layer.UI.components.MessageStatus
  * @extends Layer.UI.Component
  */
-import Layer from '../../core';
 import Constants from '../../constants';
 import { registerComponent } from './component';
 
@@ -114,8 +113,9 @@ registerComponent('layer-message-status', {
      */
     messageStatusRenderer: {
       get() {
-        return this.properties.messageStatusRenderer || this.parentComponent && this.parentComponent.messageStatusRenderer;
-      }
+        return this.properties.messageStatusRenderer ||
+          this.parentComponent && this.parentComponent.messageStatusRenderer;
+      },
     },
 
     /**
@@ -181,7 +181,8 @@ registerComponent('layer-message-status', {
      * @property {String} [deliveredGroupTemplate=delivered to ${count} participants]
      */
     deliveredGroupTemplate: {
-      value: 'delivered to ${count} participants',
+      value: 'delivered to ${count} participants', // eslint-disable-line no-template-curly-in-string
+
     },
 
     /**
@@ -192,7 +193,7 @@ registerComponent('layer-message-status', {
      * @property {String} [readGroupTemplate=read by ${count} participants]
      */
     readGroupTemplate: {
-      value: 'read by ${count} participants',
+      value: 'read by ${count} participants', // eslint-disable-line no-template-curly-in-string
     },
 
 
@@ -218,7 +219,8 @@ registerComponent('layer-message-status', {
      * @param {Event} evt
      */
     onRerender(evt) {
-      if (this.item && !this.item.isDestroyed && (!evt || evt.hasProperty('recipientStatus') || evt.hasProperty('syncState'))) {
+      if (this.item && !this.item.isDestroyed &&
+          (!evt || evt.hasProperty('recipientStatus') || evt.hasProperty('syncState'))) {
         const message = this.item;
         let html = '';
         if (this.messageStatusRenderer) {
@@ -257,11 +259,13 @@ registerComponent('layer-message-status', {
         // Group Conversations
         else if (message.readStatus === Constants.RECIPIENT_STATE.NONE) {
           const count = Object.keys(message.recipientStatus)
-            .filter(id => message.recipientStatus[id] === Constants.RECEIPT_STATE.DELIVERED || message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length - 1;
+            .filter(id =>
+              message.recipientStatus[id] === Constants.RECEIPT_STATE.DELIVERED ||
+              message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length - 1;
           html = this.deliveredGroupTemplate.replace(/(\$\{.*?\})/g, match => count);
         } else {
           const count = Object.keys(message.recipientStatus)
-              .filter(id => message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length - 1;
+            .filter(id => message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length - 1;
           html = this.readGroupTemplate.replace(/(\$\{.*?\})/g, match => count);
         }
         this.innerHTML = html;

@@ -178,8 +178,8 @@ registerComponent('layer-carousel-message-view', {
         // Generate the Carousel Item UI Component if not cached
         if (!card) {
           card = this.createElement('layer-message-viewer', {
-            //message: this.model.message,
-            //rootPart: item.part,
+            // message: this.model.message,
+            // rootPart: item.part,
             model: item,
             parentNode: this.nodes.items,
           });
@@ -295,7 +295,6 @@ registerComponent('layer-carousel-message-view', {
 
       const root = this.nodes.items;
       const nodes = root.childNodes;
-      const currentScroll = root.scrollLeft;
 
       // The last visible item on the right edge of the carousel is either the last fully visible item,
       // or if there is no fully visible last item then that means no item is fully visible so just grab
@@ -333,7 +332,6 @@ registerComponent('layer-carousel-message-view', {
 
       const root = this.nodes.items;
       const nodes = root.childNodes;
-      const currentScroll = root.scrollLeft;
 
       // Whatever happens, we're no longer at the end if the user is clicking to go to the start.
       // Note that the user should not be able to click to go towards the start if its already visible
@@ -371,7 +369,7 @@ registerComponent('layer-carousel-message-view', {
           }
         }
 
-        //We did not find one, so just scroll to the prior item
+        // We did not find one, so just scroll to the prior item
         if (!found) {
           const scrollTo = nodes[firstVisibleIndex - 1].offsetLeft;
           animatedScrollLeftTo(root, scrollTo, 200, this._updateScrollButtons.bind(this));
@@ -447,7 +445,7 @@ registerComponent('layer-carousel-message-view', {
       this.properties.startScrollX = this.nodes.items.scrollLeft;
       this.properties.startX = touch.pageX;
       this.properties.startY = touch.pageY;
-      //this.width = this.$element.width()
+      // this.width = this.$element.width()
     },
 
     /**
@@ -516,18 +514,21 @@ registerComponent('layer-carousel-message-view', {
           animatedScrollLeftTo(root, firstPartialCard.offsetLeft, 200, this._updateScrollButtons.bind(this));
         } else {
           // Else just snap to the item immediately right of the partially visible item.
-          animatedScrollLeftTo(root, firstPartialCard.nextElementSibling.offsetLeft, 200, this._updateScrollButtons.bind(this));
+          animatedScrollLeftTo(root, firstPartialCard.nextElementSibling.offsetLeft,
+            200, this._updateScrollButtons.bind(this));
         }
       }
 
       // Scrolling items to the right to reach the start of the carousel
       else {
+        /* eslint-disable no-lonely-if */
         if (percentDistanceToEnd < 0.4) {
           // If close to the end (far right) while moving towards the start, snap to the last Carousel Item
           animatedScrollLeftTo(root, root.lastChild.offsetLeft, 200, this._updateScrollButtons.bind(this));
         } else if (percentShown < 0.4) {
           // If less than 40% of the left-most partially visible item is showing snap to the item to the right of it
-          animatedScrollLeftTo(root, firstPartialCard.nextElementSibling.offsetLeft, 200, this._updateScrollButtons.bind(this));
+          animatedScrollLeftTo(root, firstPartialCard.nextElementSibling.offsetLeft,
+            200, this._updateScrollButtons.bind(this));
         } else {
           // Snap to the left-most partially visible item.  Will also trigger if the left-most item
           // is fully visible but should not do anything... or only adjust it slightly

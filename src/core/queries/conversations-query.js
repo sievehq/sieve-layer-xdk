@@ -217,8 +217,6 @@ class ConversationsQuery extends Query {
     const list = evt[name].filter(conversation => this._getIndex(conversation.id) === -1)
       .filter(obj => !this.filter || this.filter(obj));
 
-
-
     if (list.length) {
       const data = this.data;
 

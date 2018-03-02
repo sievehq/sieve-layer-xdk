@@ -52,7 +52,7 @@ registerComponent('layer-standard-message-view-container', {
     <span class="layer-next-icon" ></span>
   </div>`,
 
-   // Note that there is also a message property managed by the MessageHandler mixin
+  // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
     /**
      * The Layer.Core.MessageTypeModel whose data is rendered here.

@@ -3,6 +3,7 @@
  *
  * @class Layer.utils
  */
+/* eslint-disable no-restricted-properties */
 
 import uuid from 'uuid';
 import defer from './defer';
@@ -147,7 +148,8 @@ exports.shallowClone = (obj) => {
  * @method strictEncodeURI
  * @param {String} str
  */
-exports.strictEncodeURI = str => encodeURIComponent(str).replace(/[!~'()]/g, x => `%${x.charCodeAt(0).toString(16).toUpperCase()}`);
+exports.strictEncodeURI =
+  str => encodeURIComponent(str).replace(/[!~'()]/g, x => `%${x.charCodeAt(0).toString(16).toUpperCase()}`);
 
 /**
  * URL Decode a URL Encoded base64 string
@@ -216,8 +218,8 @@ exports.decode = (str) => {
  * @return {number}     Delay in seconds/fractions of a second
  */
 exports.getExponentialBackoffSeconds = function getExponentialBackoffSeconds(maxSeconds, counter) {
-  let secondsWaitTime = (Math.pow(2, counter)) / 10,
-    secondsOffset = Math.random(); // value between 0-1 seconds.
+  let secondsWaitTime = (Math.pow(2, counter)) / 10;
+  let secondsOffset = Math.random(); // value between 0-1 seconds.
   if (counter < 2) secondsOffset = secondsOffset / 4; // values less than 0.2 should be offset by 0-0.25 seconds
   else if (counter < 6) secondsOffset = secondsOffset / 2; // values between 0.2 and 1.0 should be offset by 0-0.5 seconds
 
@@ -401,8 +403,8 @@ exports.asciiInit = (version) => {
   if (!version) return 'Missing version';
 
   const split = version.split('-');
-  let line1 = split[0] || '',
-    line2 = split[1] || '';
+  let line1 = split[0] || '';
+  let line2 = split[1] || '';
 
   line1 += new Array(13 - line1.length).join(' ');
   line2 += new Array(14 - line2.length).join(' ');

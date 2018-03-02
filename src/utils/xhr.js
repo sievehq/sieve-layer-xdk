@@ -178,8 +178,8 @@ module.exports = (request, callback) => {
     if (typeof Blob !== 'undefined' && request.data instanceof Blob) {
       data = request.data;
     } else if (request.headers && (
-        String(request.headers['content-type']).match(/^application\/json/) ||
-        String(request.headers['content-type']) === 'application/vnd.layer-patch+json')
+      String(request.headers['content-type']).match(/^application\/json/) ||
+      String(request.headers['content-type']) === 'application/vnd.layer-patch+json')
     ) {
       data = typeof request.data === 'string' ? request.data : JSON.stringify(request.data);
     } else if (request.data && typeof request.data === 'object') {

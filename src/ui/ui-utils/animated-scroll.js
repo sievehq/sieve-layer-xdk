@@ -5,20 +5,20 @@
  * @class Layer.UI.UIUtils
  */
 
-const requestAnimFrame = (() => {
-  return window.requestAnimationFrame ||
+const requestAnimFrame = () => (
+  window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame;
-})();
+    window.mozRequestAnimationFrame);
+requestAnimFrame();
 
-const easeInOutQuad = function (t, b, c, d) {
-  t /= d/2;
+const easeInOutQuad = (t, b, c, d) => {
+  t /= d / 2;
   if (t < 1) return c / 2 * t * t + b;
   t--;
   return -c / 2 * (t * (t - 2) - 1) + b;
 };
 
-const scrollTo = function (element, property, to, callback) {
+const scrollTo = (element, property, to, callback) => {
   element[property] = to;
   setTimeout(() => callback(), 200);
 };
@@ -31,7 +31,7 @@ const scrollTo = function (element, property, to, callback) {
  * @param {Number} duration        The number of miliseconds to take to complete scrolling
  * @param {Function} callback      The function to call once the scrolling is completed
  */
-const animatedScrollTo = function (element, to, duration, callback) {
+const animatedScrollTo = (element, to, duration, callback) => {
   const start = element.scrollTop;
   const change = to - start;
   const animationStart = Date.now();
@@ -87,7 +87,7 @@ const animatedScrollTo = function (element, to, duration, callback) {
  * @param {Number} duration        The number of miliseconds to take to complete scrolling
  * @param {Function} callback      The function to call once the scrolling is completed
  */
-const animatedScrollLeftTo = function (element, to, duration, callback) {
+const animatedScrollLeftTo = (element, to, duration, callback) => {
   const start = element.scrollLeft;
   const change = to - start;
   const animationStart = Date.now();

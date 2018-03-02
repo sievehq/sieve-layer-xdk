@@ -146,8 +146,6 @@ class SocketManager extends Root {
     logger.info('Websocket Connecting');
 
     // Load up our websocket component or shim
-    /* istanbul ignore next */
-    //const WS = typeof WebSocket === 'undefined' ? require('websocket').w3cwebsocket : WebSocket;
     const WS = WebSocket;
 
     try {
@@ -161,7 +159,7 @@ class SocketManager extends Root {
       return;
     }
 
-     // If its the shim, set the event hanlers
+    // If its the shim, set the event hanlers
     /* istanbul ignore if */
     if (typeof WebSocket === 'undefined') {
       this._socket.onmessage = this._onMessage;
@@ -668,7 +666,8 @@ class SocketManager extends Root {
   _scheduleReconnect() {
     if (this.isDestroyed || !client || !client.isOnline || !client.isAuthenticated || this._isOpen()) return;
 
-    const delay = Util.getExponentialBackoffSeconds(this.maxDelaySecondsBetweenReconnect, Math.min(15, this._lostConnectionCount));
+    const delay = Util.getExponentialBackoffSeconds(this.maxDelaySecondsBetweenReconnect,
+      Math.min(15, this._lostConnectionCount));
     logger.debug('Websocket Reconnect in ' + delay + ' seconds');
     if (!this._reconnectId) {
       this._reconnectId = setTimeout(() => {

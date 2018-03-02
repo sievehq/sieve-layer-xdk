@@ -36,7 +36,10 @@ const TAB = 9;
 
 registerComponent('layer-compose-bar', {
   template: `
-    <layer-replaceable-content class='layer-button-panel layer-button-panel-left' name='composerButtonPanelLeft'></layer-replaceable-content>
+    <layer-replaceable-content
+      class='layer-button-panel layer-button-panel-left'
+      name='composerButtonPanelLeft'>
+    </layer-replaceable-content>
 
     <div class='layer-compose-edit-panel' layer-id='editPanel'>
       <div class='hidden-resizer' layer-id='resizer'>&nbsp;&nbsp;</div>
@@ -44,10 +47,14 @@ registerComponent('layer-compose-bar', {
       <textarea rows="1" layer-id='input'></textarea>
     </div>
 
-    <layer-replaceable-content class='layer-button-panel layer-button-panel-right' name='composerButtonPanelRight' layer-id='composerButtonPanelRight'>
+    <layer-replaceable-content
+      class='layer-button-panel layer-button-panel-right'
+      name='composerButtonPanelRight'
+      layer-id='composerButtonPanelRight'>
       <layer-send-button></layer-send-button>
     </layer-replaceable-content>
   `,
+
   style: `
     layer-compose-bar {
       display: flex;
@@ -108,7 +115,7 @@ registerComponent('layer-compose-bar', {
     conversation: {
       set(value) {
         this._setTypingListenerConversation();
-        if (this.manageDisabledState) this.disabled = !Boolean(value);
+        if (this.manageDisabledState) this.disabled = !(value);
       },
     },
 
@@ -218,7 +225,6 @@ registerComponent('layer-compose-bar', {
       value: true,
     },
   },
-
   methods: {
     /**
      * Constructor.
@@ -237,7 +243,6 @@ registerComponent('layer-compose-bar', {
       this.nodes.input.addEventListener('touchend', this._onFocus.bind(this)); // focus event doesn't refire after keyboard closes and you try to reopen it
 
       // Event handlers
-      this.addEventListener('layer-models-generated', this._handleAttachments.bind(this));
       this.addEventListener('layer-send-click', this._handleSendClick.bind(this, null));
     },
 
@@ -272,7 +277,7 @@ registerComponent('layer-compose-bar', {
        */
       this.trigger('layer-compose-bar-change-value', { newValue, oldValue });
 
-      this.isEmpty = !Boolean(this.value);
+      this.isEmpty = !(this.value);
     },
 
     /**
@@ -369,7 +374,7 @@ registerComponent('layer-compose-bar', {
      */
     sendModels(models) {
       if (models.length === 0) {
-        return;
+        // no-op
       } else if (models.length === 1) {
         if (this.conversation) {
           models[0].generateMessage(this.conversation, message => this._send(models[0]));
@@ -441,24 +446,22 @@ registerComponent('layer-compose-bar', {
      * @param {String} evt.detail.notification.sound
      */
 
-     /**
-      * The _send method takes a MessageTypeModel, adds a notification, and either sends it or allows the app to send it.
-      *
-      * If the Compose Bar does not have a Layer.Core.Conversation, then the model will not have a Message associated
-      * with it, and will not be ready to sendIf there is no Message (happens when the Compose Bar
-      * does not have an associated ), then it is ok to provide a `null` Message.  The result will
-      * not send a Layer.Core.Message, but will allow the event handler to handle it and create a Conversation if needed.
-      *
-      * @method _send
-      * @private
-      * @param {Layer.Core.MessageTypeModel} model
-      */
+    /**
+     * The _send method takes a MessageTypeModel, adds a notification, and either sends it or allows the app to send it.
+     *
+     * If the Compose Bar does not have a Layer.Core.Conversation, then the model will not have a Message associated
+     * with it, and will not be ready to sendIf there is no Message (happens when the Compose Bar
+     * does not have an associated ), then it is ok to provide a `null` Message.  The result will
+     * not send a Layer.Core.Message, but will allow the event handler to handle it and create a Conversation if needed.
+     *
+     * @method _send
+     * @private
+     * @param {Layer.Core.MessageTypeModel} model
+     */
     _send(model) {
       if (!model) throw new Error(ErrorDictionary.modelParamRequired);
-      const notification = {
-        title: `New Message from ${client.user.displayName}`,
-        text: model.text || model.title || model.constructor.Label + ' received',
-      };
+
+      const notification = model.getNotification();
 
       if (this.trigger('layer-send-message', {
         model,
@@ -533,7 +536,8 @@ registerComponent('layer-compose-bar', {
       setTimeout(() => {
         this.nodes.resizer.innerHTML = this.nodes.input.value.replace(/\n/g, '<br/>') || '&nbsp;';
         this.nodes.lineHeighter.innerHTML = this.nodes.input.value.replace(/\n/g, '<br/>') || '&nbsp;';
-        const willBeOneLine = !this.nodes.input.value.match(/\n/) && (this.nodes.resizer.clientHeight - this.nodes.lineHeighter.clientHeight < 10);
+        const willBeOneLine = !this.nodes.input.value.match(/\n/) &&
+          (this.nodes.resizer.clientHeight - this.nodes.lineHeighter.clientHeight < 10);
 
         // Prevent scrollbar flickering in and then out
         if (willBeOneLine) {
@@ -546,14 +550,13 @@ registerComponent('layer-compose-bar', {
     },
 
     /**
-     * If a file event was detected, send some attachments.
+     * Send some attachments; called from the {@link Layer.UI.components.FileUploadButton}.
      *
-     * @method
-     * @param {CustomEvent} evt
-     * @private
+     * @method onModelsGenerated
+     * @param {Layer.Core.MessageTypeModel[]} models
      */
-    _handleAttachments(evt) {
-      this.sendModels(evt.detail.models);
+    onModelsGenerated(models) {
+      this.sendModels(models);
     },
   },
 });

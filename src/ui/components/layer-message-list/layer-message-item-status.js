@@ -46,7 +46,10 @@ registerComponent('layer-message-item-status', {
     </div>
 
     <!-- Body: Right Side -->
-    <layer-replaceable-content class='layer-message-right-side' name='messageStatusRightSide'></layer-replaceable-content>
+    <layer-replaceable-content
+      class='layer-message-right-side'
+      name='messageStatusRightSide'>
+    </layer-replaceable-content>
   </div>
 
   <!-- Footer -->

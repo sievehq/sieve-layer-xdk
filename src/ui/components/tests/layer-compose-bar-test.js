@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-compose-bar', function() {
   var el, testRoot, client, conversation;
   var TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
@@ -148,26 +149,6 @@ describe('layer-compose-bar', function() {
       expect(el.nodes.input).toEqual(jasmine.any(HTMLTextAreaElement));
       expect(el.nodes.resizer).toEqual(jasmine.any(HTMLElement));
       expect(el.nodes.lineHeighter).toEqual(jasmine.any(HTMLElement));
-    });
-
-    it("Should wire up layer-models-generated to handleAttachments", function() {
-      el.client = client;
-      el.properties.conversation = conversation;
-      var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel')
-      var model = new FileModel({sourceUrl: "hey ho", mimeType: "text/plain"});
-
-      var evt = new CustomEvent('layer-models-generated', {
-        detail: {models: [model]},
-        bubbles: true,
-        cancelable: true
-      });
-      spyOn(el, 'sendModels');
-
-      // Run
-      el.firstChild.dispatchEvent(evt);
-
-      // Posttest
-      expect(el.sendModels).toHaveBeenCalledWith([model]);
     });
   });
 
@@ -518,19 +499,14 @@ describe('layer-compose-bar', function() {
     });
   });
 
-  describe("The handleAttachments() method", function() {
+  describe("The onModelsGenerated() method", function() {
     it("Should call send with its models", function() {
       var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel')
       var model = new FileModel({sourceUrl: "hey ho", mimeType: "text/plain"});
-      var evt = new CustomEvent('layer-models-generated', {
-        detail: {models: [model]},
-        bubbles: true,
-        cancelable: true
-      });
       spyOn(el, 'sendModels');
 
       // Run
-      el.firstChild.dispatchEvent(evt);
+      el.onModelsGenerated([model]);
 
       // Posttest
       expect(el.sendModels).toHaveBeenCalledWith([model]);

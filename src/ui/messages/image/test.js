@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Image Message Components', function() {
   var ImageModel;
   var conversation;
@@ -291,7 +292,7 @@ describe('Image Message Components', function() {
       model2.generateMessage(conversation);
 
       expect(model1.getOneLineSummary()).toEqual("b");
-      expect(model2.getOneLineSummary()).toEqual("Picture sent");
+      expect(model2.getOneLineSummary()).toEqual("Image");
     });
 
     it("Should get the correct url value", function() {

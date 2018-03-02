@@ -19,11 +19,10 @@ registerComponent('layer-message-unknown', {
      */
     onRender() {
       const mimeTypes = this.message.mapParts(part => part.mimeType)
-      .join(', ');
-      this.innerHTML = `Message with mimeTypes ${mimeTypes} has been received but has no renderer`;
+        .join(', ');
+      this.innerHTML = `Message with MIME Types ${mimeTypes} has been received but has no renderer`;
     },
   },
 });
 
 // Do not register this handler
-

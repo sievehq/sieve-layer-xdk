@@ -73,14 +73,16 @@ function initReact(React, ReactDom) {
 
   // Gather all UI Components flagged as Main Components; other components don't require special React Components for direct use.
   Object.keys(ComponentsHash)
-  .forEach((componentName) => {
+    .forEach(componentName => defineComponent(componentName));
+
+  function defineComponent(componentName) {
     const component = ComponentsHash[componentName];
 
     // Get the camel case Component name
     const className = (componentName.substring(0, 1).toUpperCase() +
       componentName.substring(1)
-      .replace(/-(.)/g, (str, value) => value.toUpperCase()))
-        .replace(/^Layer/, '');
+        .replace(/-(.)/g, (str, value) => value.toUpperCase()))
+      .replace(/^Layer/, '');
 
     libraryResult[className] = class extends React.Component {
 
@@ -194,14 +196,18 @@ function initReact(React, ReactDom) {
       }
 
       _setupStandardProps() {
-        Object.keys(this.props.style || {}).forEach(styleName =>  this.node.style[styleName] = this.props.style[styleName]);
+        // CSS Styles
+        Object.keys(this.props.style || {})
+          .forEach(styleName => (this.node.style[styleName] = this.props.style[styleName]));
+
+        // CSS Classes
         if (this.props.className) {
           const classNames = this.props.className.split(/\s+/);
-          (this._addedClassNames || []).forEach((className) => {
-            if (classNames.indexOf(className) === -1) this.node.classList.remove(className);
+          (this._addedClassNames || []).forEach((classNameInner) => {
+            if (classNames.indexOf(classNameInner) === -1) this.node.classList.remove(classNameInner);
           });
 
-          classNames.forEach(className => this.node.classList.add(className));
+          classNames.forEach(classNameInner => this.node.classList.add(classNameInner));
           this._addedClassNames = [].concat(classNames);
         }
       }
@@ -253,8 +259,8 @@ function initReact(React, ReactDom) {
           children: this.props.children,
         });
       }
-    }
-  });
+    };
+  }
   return libraryResult;
 }
 

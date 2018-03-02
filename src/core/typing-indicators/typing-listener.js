@@ -1,6 +1,6 @@
 import Core from '../namespace';
 import TypingPublisher from './typing-publisher';
-import {STARTED, PAUSED, FINISHED} from './typing-indicators';
+import { STARTED, FINISHED } from './typing-indicators';
 
 /**
  * The Typing Listener Class listens to keyboard events on

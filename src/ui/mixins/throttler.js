@@ -45,7 +45,9 @@ module.exports = {
     _throttler(callback) {
       // setTimeout doesn't complete while user scrolls on touchscreen (or trackpad) on Chrome, so we track the time of the last
       // request and allow the request to refire if it was too long ago
-      if (!this.properties.throttler.timeout || Date.now() - this.properties.throttler.lastCall > this._throttlerTimeout) {
+      if (!this.properties.throttler.timeout ||
+        Date.now() - this.properties.throttler.lastCall > this._throttlerTimeout) {
+
         clearTimeout(this.properties.throttler.timeout);
         this.properties.throttler.lastCall = Date.now();
         this.properties.throttler.callWaiting = false;

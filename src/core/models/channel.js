@@ -404,7 +404,8 @@ class Channel extends Container {
   }
 
   _deleteResult(result, id) {
-    if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
+    if (!result.success &&
+        (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
       Channel.load(id);
     }
   }

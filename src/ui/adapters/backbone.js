@@ -60,36 +60,36 @@ function initBackbone(backbone) {
 
   // Gather all UI Components
   Object.keys(ComponentsHash)
-  .forEach((componentName) => {
-    const component = ComponentsHash[componentName];
+    .forEach((componentName) => {
+      const component = ComponentsHash[componentName];
 
-    // Get the camel case Component name
-    const className = (componentName.substring(0, 1).toUpperCase() +
-      componentName.substring(1).replace(/-(.)/g, (str, value) => value.toUpperCase())
-    ).replace(/^Layer/, '');
+      // Get the camel case Component name
+      const className = (componentName.substring(0, 1).toUpperCase() +
+        componentName.substring(1).replace(/-(.)/g, (str, value) => value.toUpperCase())
+      ).replace(/^Layer/, '');
 
-    // Define the Backbone View
-    const view = libraryResult[className] = backbone.View.extend({
-      el: componentName,
-      initialize: function initialize(options) {
-        Object.keys(options || {}).forEach((propertyName) => {
-          this[propertyName] = options[propertyName];
-        });
-      },
-    });
-
-    // Define getters/setters so that the View acts as though it were the WebComponent it wraps
-    component.properties.forEach((propertyDef) => {
-      Object.defineProperty(view.prototype, propertyDef.propertyName, {
-        set(value) {
-          this.$el[0][propertyDef.propertyName] = value;
-        },
-        get() {
-          return this.$el[0][propertyDef.propertyName];
+      // Define the Backbone View
+      const view = libraryResult[className] = backbone.View.extend({
+        el: componentName,
+        initialize: function initialize(options) {
+          Object.keys(options || {}).forEach((propertyName) => {
+            this[propertyName] = options[propertyName];
+          });
         },
       });
+
+      // Define getters/setters so that the View acts as though it were the WebComponent it wraps
+      component.properties.forEach((propertyDef) => {
+        Object.defineProperty(view.prototype, propertyDef.propertyName, {
+          set(value) {
+            this.$el[0][propertyDef.propertyName] = value;
+          },
+          get() {
+            return this.$el[0][propertyDef.propertyName];
+          },
+        });
+      });
     });
-  });
   return libraryResult;
 }
 

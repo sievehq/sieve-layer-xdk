@@ -156,8 +156,8 @@ class ConversationMessage extends Message {
    * @return {number} result.deliveredCount
    */
   _getReceiptStatus(status, id) {
-    let readCount = 0,
-      deliveredCount = 0;
+    let readCount = 0;
+    let deliveredCount = 0;
     Object.keys(status)
       .filter(participant => participant !== id)
       .forEach((participant) => {
@@ -350,7 +350,8 @@ class ConversationMessage extends Message {
       url: '?' + queryStr,
       method: 'DELETE',
     }, (result) => {
-      if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
+      if (!result.success &&
+          (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
         Message.load(id);
       }
     });
@@ -390,11 +391,12 @@ class ConversationMessage extends Message {
       conversationId = message.conversationId;
     }
 
+    const isMine = message.sender.user_id !== Client.user.userId;
     return new ConversationMessage({
       conversationId,
       fromServer: message,
       _fromDB: message._fromDB,
-      _notify: message.notification && fromWebsocket && message.is_unread && message.sender.user_id !== Client.user.userId ? message.notification : null,
+      _notify: message.notification && fromWebsocket && message.is_unread && isMine ? message.notification : null,
     });
   }
 }

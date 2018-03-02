@@ -68,7 +68,8 @@ class ChannelMessage extends Message {
       url: '',
       method: 'DELETE',
     }, (result) => {
-      if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
+      if (!result.success &&
+          (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
         Message.load(id);
       }
     });

@@ -16,10 +16,16 @@
  */
 import { registerComponent } from '../component';
 
+/* eslint-disable max-len */
 registerComponent('layer-start-of-conversation', {
   template: `
-    Conversation began <layer-date layer-id='startDate' default-format='{"month": "long", "year": "numeric", "day": "numeric", "hour": "numeric", "minute": "numeric" }' today-format='{"hour": "numeric", "minute": "numeric"}' week-format='{"weekday": "long", "hour": "numeric", "minute": "numeric"}'></layer-date>
+    Conversation began
+    <layer-date layer-id='startDate'
+      default-format='{"month": "long", "year": "numeric", "day": "numeric", "hour": "numeric", "minute": "numeric" }'
+      today-format='{"hour": "numeric", "minute": "numeric"}' week-format='{"weekday": "long", "hour": "numeric", "minute": "numeric"}'>
+    </layer-date>
   `,
+  /* eslint-enable max-len */
   style: `
     layer-start-of-conversation {
       display: block;
@@ -46,7 +52,9 @@ registerComponent('layer-start-of-conversation', {
       set(value) {
         this.toggleClass('layer-has-conversation', value);
         if (this.nodes.startDate) {
-          if (value && value.isLoading) value.once(`${value.constructor.eventPrefix}:loaded`, this._onConversationChange, this);
+          if (value && value.isLoading) {
+            value.once(`${value.constructor.eventPrefix}:loaded`, this._onConversationChange, this);
+          }
           this.nodes.startDate.date = value ? value.createdAt : null;
         }
       },

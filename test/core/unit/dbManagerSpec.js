@@ -635,7 +635,7 @@ var dbIt = it;
                 id: message.getRootPart().id,
                 body: message.getRootPart().body,
                 encoding: message.getRootPart().encoding,
-                mime_type: message.getRootPart().mimeType,
+                mime_type: message.getRootPart().mimeType + ";role=root",
                 content: null
               }]
             }]);
@@ -875,6 +875,49 @@ var dbIt = it;
         spyOn(dbManager, "_getMessageData").and.callFake(function(data, callback) {callback([{id: 'fred'}])});
         dbManager.writeMessages([message]);
         expect(dbManager._writeObjects).toHaveBeenCalledWith('messages', [{id: 'fred'}], undefined);
+      });
+
+      it("Should not write isNew messages", function() {
+        // Run
+        var messages = [
+          conversation.createMessage("m1").send(),
+          conversation.createMessage("m2").presend()
+        ];
+        var messageData;
+        dbManager._getMessageData([messages[0]], function(data) {
+          messageData = data;
+        });
+
+        // Run
+        Layer.Utils.defer.flush();
+
+        // Posttest
+        expect(dbManager._writeObjects).toHaveBeenCalledWith('messages', messageData, undefined);
+      });
+
+      it("Should write isNew messages once  they are sending", function(done) {
+        // Run
+        var messages = [
+          conversation.createMessage("m1").send(),
+          conversation.createMessage("m2").presend()
+        ];
+
+        // Run
+        setTimeout(function() {
+          try {
+            dbManager._writeObjects.calls.reset();
+            messages[1].send();
+            Layer.Utils.defer.flush();
+
+            // Posttest
+            var args = dbManager._writeObjects.calls.argsFor(0);
+            expect(args[0]).toEqual('messages');
+            expect(args[1][0]).toEqual(jasmine.objectContaining({id: messages[1].id}));
+            done();
+          } catch(e) {
+            done(e);
+          }
+        }, 500);
       });
     });
 

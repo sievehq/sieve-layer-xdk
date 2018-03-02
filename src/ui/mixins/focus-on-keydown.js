@@ -40,7 +40,7 @@ module.exports = {
           keyCode >= 48 && keyCode <= 57 || // 0-9
           keyCode >= 97 && keyCode <= 111 || // NUMPAD
           keyCode >= 186 && keyCode <= 191 || // Puncuation
-          [32, 219, 220, 222].indexOf(keyCode) !== -1) {  // Punctuation
+          [32, 219, 220, 222].indexOf(keyCode) !== -1) { // Punctuation
         if (['INPUT', 'TEXTAREA'].indexOf(document.activeElement.tagName) === -1) {
           this.onKeyDown();
         }

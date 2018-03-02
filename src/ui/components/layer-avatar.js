@@ -278,19 +278,19 @@ registerComponent('layer-avatar', {
 
     _sortMultiAvatars() {
       return this.users
-          .filter(user => !user.isMine)
-          .sort((userA, userB) => {
-            if (userA.type === 'BOT' && userB.type !== 'BOT') return 1;
-            if (userB.type === 'BOT' && userA.type !== 'BOT') return -1;
-            if (userA.avatarUrl && !userB.avatarUrl) return -1;
-            if (userB.avatarUrl && !userA.avatarUrl) return 1;
-            if (!userA.avatarUrl) {
-              if (this.onGenerateInitials(userA) && !this.onGenerateInitials(userB)) return -1;
-              if (this.onGenerateInitials(userB) && !this.onGenerateInitials(userA)) return 1;
-            }
-            if (this.users.indexOf(userA) > this.users.indexOf(userB)) return 1;
-            return -1;
-          });
+        .filter(user => !user.isMine)
+        .sort((userA, userB) => {
+          if (userA.type === 'BOT' && userB.type !== 'BOT') return 1;
+          if (userB.type === 'BOT' && userA.type !== 'BOT') return -1;
+          if (userA.avatarUrl && !userB.avatarUrl) return -1;
+          if (userB.avatarUrl && !userA.avatarUrl) return 1;
+          if (!userA.avatarUrl) {
+            if (this.onGenerateInitials(userA) && !this.onGenerateInitials(userB)) return -1;
+            if (this.onGenerateInitials(userB) && !this.onGenerateInitials(userA)) return 1;
+          }
+          if (this.users.indexOf(userA) > this.users.indexOf(userB)) return 1;
+          return -1;
+        });
     },
   },
 });

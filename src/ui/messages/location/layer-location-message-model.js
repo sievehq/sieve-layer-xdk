@@ -18,7 +18,7 @@
  *     accuracy: 0.8,
  *     createdAt: new Date(),
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  * For a model that uses an address:
@@ -32,7 +32,7 @@
  *   administrativeArea: 'CA',
  *   street1: '655 4th st'
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  * Note that the description property can be ignored if the `showAddress` is set to `true`,
@@ -66,7 +66,8 @@ class LocationModel extends MessageTypeModel {
    * @private
    */
   _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['latitude', 'longitude', 'heading', 'accuracy', 'createdAt', 'altitude', 'description', 'title', 'city', 'country', 'postalCode', 'administrativeArea', 'street1', 'street2']);
+    const body = this._initBodyWithMetadata(['latitude', 'longitude', 'heading', 'accuracy', 'createdAt',
+      'altitude', 'description', 'title', 'city', 'country', 'postalCode', 'administrativeArea', 'street1', 'street2']);
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -87,7 +88,8 @@ class LocationModel extends MessageTypeModel {
     if (this.description && this.showAddress !== true) {
       return this.description;
     } else if (this.street1 || this.city || this.postalCode) {
-      return this.street1 + (this.street2 ? '\n' + this.street2 : '') + `\n${this.city} ${this.administrativeArea}${this.postalCode ? ', ' + this.postalCode : ''}`;
+      return this.street1 + (this.street2 ? '\n' + this.street2 : '') +
+        `\n${this.city} ${this.administrativeArea}${this.postalCode ? ', ' + this.postalCode : ''}`;
     }
   }
 }

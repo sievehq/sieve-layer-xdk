@@ -19,7 +19,7 @@
  *     author: 'King Arthur'
  *   })
  * });
- * model.generateMessage(conversation, message => message.send())
+ * model.send({ conversation });
  * ```
  *
  * You can also create Action Buttons to use existing event definitions such as `open-url`:
@@ -31,7 +31,7 @@
  *     {"type": "action", "text": "Open Page", "event": "open-url", data: {url: "https://layer.com" }}
  *   ]
  * });
- * model.generateMessage(conversation, message => message.send())
+ * model.send({ conversation });
  * ```
  *
  * Finally, you can use Choice Buttons instead of or in addition to Action Buttons:
@@ -59,7 +59,7 @@
  *     author: 'King Arthur'
  *   })
  * });
- * model.generateMessage(conversation, message => message.send())
+ * model.send({ conversation });
  * ```
  *
  *
@@ -253,7 +253,6 @@ class ButtonsModel extends MessageTypeModel {
     return '';
   }
 }
-
 
 
 /**

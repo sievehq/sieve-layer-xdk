@@ -9,7 +9,6 @@
 import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Syncable from './syncable';
-import { ErrorDictionary } from '../layer-error';
 import Util from '../../utils';
 import Constants from '../../constants';
 import Root from '../root';

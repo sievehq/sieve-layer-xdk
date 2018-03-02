@@ -1,5 +1,33 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.6
+
+*Breaking Changes*
+
+* Response Messages are now sent with Notifications.  No changes are needed for apps that consider this desirable. Those that do not
+  are likely to consider this a breaking change.
+
+Additional Changes:
+
+* Adds eslint to build
+* WEB-1686: layer-models-generated event now supports `evt.preventDefault()` to prevent the models from being sent as a Message
+* WEB-1660: Builds in default to filter out Messages from the Conversation View Query that are Response Messages that have no displayable content
+* WEB-1641: Simplifies and standardizes how Notifications are sent with Messages when working with Message Type Models.
+    * `MessageTypeModel` adds a `getNotification()` method which returns a standard/suggested `notification` object for inclusion with `message.send(notification)`
+    * `MessageTypeModel.send()` now calls `getNotification()` if a `notification` is not provided, which means that `model.send({ conversation })` will generate a suitable notification for all participants
+    * `MessageTypeModel.generateMessage()` is still available but `MessageTypeModel.send()` is not recommended over it unless you need to modify the Message before its sent.
+    * `MessageTypeModel.NotificationTitle` property now contains a customizable string to use for the notification `title`; see API Reference for details.
+    * The Choice Model now uses `responseModel.send({ conversation })`, which means that Response Messages will now include notifications
+    * `client.on('messages:sending')` and `message.on('messages:sending')` can now be used to alter notifications
+    * Standardizes/updates how Messages are presented in both Conversation Lists (as Last Message) and in Notifications.
+    * Adds the `message-type-model:notification` event for customizing notifications sent for each model "on the fly"
+* WEB-1691: Backwards compatability support for Atlas/Layer-UI Image Messages
+* WEB-1639: Insure presend + indexedDB work together properly
+* Fixes persistence/indexedDB to work with MIME Type Attributes
+* Fixes styling of messages that are not yet received by the server to be 50% opaque
+* WEB-1671: Expanded Views now get the action data from the button or message that opened them; provided via the `openActionData` property.
+* WEB-1696: Link Message is now part of the standard build; import not required.
+
 ## 1.0.0-pre2.5
 
 * React Adapter now respects `className` and `style` properties

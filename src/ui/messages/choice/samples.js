@@ -12,8 +12,7 @@ model = new ChoiceModel({
       {text:  "Are we using Imperial or Metric units?", id: "clever bastard"},
       {text:  "What do you mean? African or European swallow?", id: "just a smart ass"},
     ],
- });
- model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+ }).send({ conversation: $("layer-conversation-view").conversation });
 
  new TextModel({text: "Name property for a custom response message"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -27,7 +26,7 @@ model = new ChoiceModel({
     ],
     name: "Airspeed Question",
  });
- model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+ model.send({ conversation: $("layer-conversation-view").conversation })
 
  new TextModel({text: "Custom responseName"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -41,7 +40,7 @@ model = new ChoiceModel({
        {text:  "What do you mean? African or European swallow?", id: "just a smart ass"},
      ],
   });
-  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+  model.send({ conversation: $("layer-conversation-view").conversation })
 
 
 new TextModel({text: "Preselected Choice"}).send({ conversation: $("layer-conversation-view").conversation });
@@ -56,7 +55,7 @@ model = new ChoiceModel({
       {text:  "What do you mean? African or European swallow?", id: "just a smart ass"},
     ],
  });
- model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+ model.send({ conversation: $("layer-conversation-view").conversation })
 
 
  new TextModel({text: "Enabled for you but not me"}).send({ conversation: $("layer-conversation-view").conversation });
@@ -71,7 +70,7 @@ model = new ChoiceModel({
       {text:  "What do you mean? African or European swallow?", id: "just a smart ass"},
     ],
  });
- model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+ model.send({ conversation: $("layer-conversation-view").conversation })
 
  new TextModel({text: "Enabled for me but not you"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -85,7 +84,7 @@ model = new ChoiceModel({
       {text:  "What do you mean? African or European swallow?", id: "just a smart ass"},
     ],
  });
- model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+ model.send({ conversation: $("layer-conversation-view").conversation })
 
 
  new TextModel({text: "Custom Response Data {\"hey\": \"ho\"}"}).send({ conversation: $("layer-conversation-view").conversation });
@@ -102,7 +101,7 @@ model = new ChoiceModel({
       {text:  "What do you mean? African or European swallow?", id: "just a smart ass"},
     ],
  });
- model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+ model.send({ conversation: $("layer-conversation-view").conversation })
 
  new TextModel({text: "Custom Response Data per Choice (v2 feature)"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -138,7 +137,7 @@ model = new ChoiceModel({
       },
     ],
  });
- model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+ model.send({ conversation: $("layer-conversation-view").conversation })
 
 new TextModel({text: "Change text between selected/unselected states (v2 feature)"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -170,7 +169,7 @@ new TextModel({text: "Change text between selected/unselected states (v2 feature
       },
     ],
  });
- model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+ model.send({ conversation: $("layer-conversation-view").conversation })
 
 new TextModel({text: "Allow reselect"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -184,7 +183,7 @@ ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
       {text:  "black", id: "black"},
     ],
  });
- model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+ model.send({ conversation: $("layer-conversation-view").conversation })
 
  new TextModel({text: "Allow deselect"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -198,7 +197,7 @@ model = new ChoiceModel({
      {text:  "black", id: "black"},
    ],
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation })
 
 new TextModel({text: "Allow multiselect"}).send({ conversation: $("layer-conversation-view").conversation });
 
@@ -212,4 +211,4 @@ model = new ChoiceModel({
      {text:  "black", id: "black"},
    ],
 });
-model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+model.send({ conversation: $("layer-conversation-view").conversation })

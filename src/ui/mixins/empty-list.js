@@ -46,5 +46,5 @@ module.exports = {
         this.isEmptyList = evt.type !== 'reset' && this.query.data.length === 0;
       }
     },
-  }
+  },
 };

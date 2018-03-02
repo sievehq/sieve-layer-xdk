@@ -176,8 +176,8 @@ class Identity extends Syncable {
   _handlePatchEvent(newValueIn, oldValueIn, paths) {
     const changes = [];
     paths.forEach((path) => {
-      let newValue = newValueIn,
-        oldValue = oldValueIn;
+      let newValue = newValueIn;
+      let oldValue = oldValueIn;
       if (path === 'presence.last_seen_at') {
         this._presence.lastSeenAt = new Date(newValue.last_seen_at);
         newValue = this._presence.lastSeenAt;
@@ -187,7 +187,7 @@ class Identity extends Syncable {
         newValue = this._presence.status;
         oldValue = oldValue.status;
 
-        //We receive a huge number of presence.status change events from the websocket that do not represent
+        // We receive a huge number of presence.status change events from the websocket that do not represent
         // an actual change in value. Insure we do not trigger events announcing such a change.
         if (newValue === oldValue) return;
       }
@@ -269,7 +269,9 @@ class Identity extends Syncable {
         target: this.id,
       },
     }, (result) => {
-      if (!result.success && result.data.id !== 'authentication_required') this._updateValue(['_presence', 'status'], oldValue);
+      if (!result.success && result.data.id !== 'authentication_required') {
+        this._updateValue(['_presence', 'status'], oldValue);
+      }
     });
 
     // these are equivalent; only one is useful for understanding your state given that your still connected/online.
@@ -278,16 +280,16 @@ class Identity extends Syncable {
     this._updateValue(['_presence', 'status'], status);
   }
 
- /**
-  * Update the UserID.
-  *
-  * This will not only update the User ID, but also the ID,
-  * URL, and reregister it with the Client.
-  *
-  * @method _setUserId
-  * @private
-  * @param {string} userId
-  */
+  /**
+   * Update the UserID.
+   *
+   * This will not only update the User ID, but also the ID,
+   * URL, and reregister it with the Client.
+   *
+   * @method _setUserId
+   * @private
+   * @param {string} userId
+   */
   _setUserId(userId) {
     client._removeIdentity(this);
     this.__userId = userId;
@@ -373,15 +375,13 @@ class Identity extends Syncable {
   }
 
   static toDbBasicObjects(items) {
-    return items.map((identity) => {
-      return {
-        id: identity.id,
-        url: identity.url,
-        user_id: identity.userId,
-        display_name: identity.displayName,
-        avatar_url: identity.avatarUrl,
-      };
-    });
+    return items.map(identity => ({
+      id: identity.id,
+      url: identity.url,
+      user_id: identity.userId,
+      display_name: identity.displayName,
+      avatar_url: identity.avatarUrl,
+    }));
   }
 }
 

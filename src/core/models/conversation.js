@@ -56,7 +56,7 @@ import Syncable from './syncable';
 import Container from './container';
 import ConversationMessage from './conversation-message';
 import { ErrorDictionary } from '../layer-error';
-import Util from '../../utils';
+import Util, { logger } from '../../utils';
 import Constants from '../../constants';
 import LayerEvent from '../layer-event';
 
@@ -603,7 +603,8 @@ class Conversation extends Container {
 
 
   _deleteResult(result, id) {
-    if (!result.success && (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
+    if (!result.success &&
+        (!result.data || (result.data.id !== 'not_found' && result.data.id !== 'authentication_required'))) {
       Conversation.load(id);
     }
   }

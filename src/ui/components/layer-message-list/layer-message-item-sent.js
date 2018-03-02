@@ -29,7 +29,10 @@ registerComponent('layer-message-item-sent', {
       <div class='layer-message-row' layer-id='messageRow'>
 
         <!-- Body: left Side -->
-        <layer-replaceable-content class='layer-message-left-side' name='messageSentLeftSide'></layer-replaceable-content>
+        <layer-replaceable-content
+          class='layer-message-left-side'
+          name='messageSentLeftSide'>
+        </layer-replaceable-content>
 
 
         <!-- Body: Message Contents -->
@@ -39,7 +42,10 @@ registerComponent('layer-message-item-sent', {
         </div>
 
         <!-- Body: Right Side -->
-        <layer-replaceable-content class='layer-message-right-side' name='messageSentRightSide'></layer-replaceable-content>
+        <layer-replaceable-content
+          class='layer-message-right-side'
+          name='messageSentRightSide'>
+        </layer-replaceable-content>
       </div>
 
       <!-- Footer -->

@@ -1433,7 +1433,9 @@ describe("The Message class", function() {
             Layer.Utils.defer.flush();
 
             // Posttest
-            expect(m.trigger).toHaveBeenCalledWith("messages:sending");
+            expect(m.trigger).toHaveBeenCalledWith("messages:sending", {
+                notification: undefined
+            });
         });
 
         it("Should call _readAllBlobs and only add the Message after reading is done", function(done) {

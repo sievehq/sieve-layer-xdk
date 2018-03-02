@@ -44,7 +44,7 @@ registerComponent('layer-titled-message-view-container', {
   <div layer-id='UIContainer' class='layer-card-top'></div>
   `,
 
-   // Note that there is also a message property managed by the MessageHandler mixin
+  // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
     /**
      * The Layer.Core.MessageTypeModel whose data is rendered here.
@@ -87,7 +87,7 @@ registerComponent('layer-titled-message-view-container', {
       set(icon, oldIcon) {
         if (oldIcon) this.nodes.icon.classList.remove(oldIcon);
         if (icon) this.nodes.icon.classList.add(icon);
-        this.toggleClass('layer-title-icon-empty', !Boolean(icon));
+        this.toggleClass('layer-title-icon-empty', !(icon));
       },
     },
   },

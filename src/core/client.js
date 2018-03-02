@@ -85,7 +85,6 @@
  */
 
 import ClientAuth from './client-authenticator';
-import { ErrorDictionary } from './layer-error';
 import TypingIndicatorListener from './typing-indicators/typing-indicator-listener';
 import Util from '../utils';
 import version from '../version';

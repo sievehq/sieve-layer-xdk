@@ -4,7 +4,6 @@
  * @class Layer.UI.messages.MessageViewMixin
  */
 
-import { registerComponent } from '../components/component';
 import Constants from '../constants';
 
 module.exports = {
@@ -193,7 +192,9 @@ module.exports = {
      */
     getMessageListWidth() {
       let parent = this.parentComponent;
-      while(parent !== null && parent.tagName !== 'BODY' && parent.tagName !== 'LAYER-MESSAGE-LIST') parent = parent.parentComponent || parent.parentNode;
+      while (parent !== null && parent.tagName !== 'BODY' && parent.tagName !== 'LAYER-MESSAGE-LIST') {
+        parent = parent.parentComponent || parent.parentNode;
+      }
 
       if (parent.tagName === 'LAYER-MESSAGE-LIST') return parent.clientWidth;
       return 0;

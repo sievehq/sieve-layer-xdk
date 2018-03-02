@@ -19,7 +19,6 @@
  * @extends Layer.UI.Component
  */
 import { registerComponent } from './component';
-import { defer } from '../../utils';
 
 registerComponent('layer-replaceable-content', {
   template: '<div class="layer-replaceable-inner" layer-id="content"></div>',

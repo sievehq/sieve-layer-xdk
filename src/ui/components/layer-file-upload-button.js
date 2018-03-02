@@ -167,17 +167,30 @@ registerComponent('layer-file-upload-button', {
         });
 
         /**
-         * This widget triggers a `layer-models-generated` event when the user selects files.
-         * This event is captured and stopped from propagating by the Layer.UI.components.ComposeBar.
-         * If using it outside of the composer, this event can be used to receive the Message Type Models generated
-         * for the selected files.
+         * This widget triggers a `layer-models-generated` event when the user selects files, and Message Type Models
+         * have been generated for them.  Call `event.preventDefault()` to prevent this event from being received
+         * by the parent {@link Layer.UI.components.ComposeBar}:
+         *
+         * ```
+         * document.body.addEventListener('layer-models-generated', function(evt) {
+         *   evt.preventDefault();
+         *   var models = evt.detail.models;
+         *   var CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
+         *   var model = new CarouselModel({ items: models });
+         *   model.send({ conversation });
+         * });
+         * ```
          *
          * @event layer-models-generated
          * @param {Object} evt
          * @param {Object} evt.detail
          * @param {Layer.Core.MessageTypeModel[]} evt.detail.models
          */
-        this.trigger('layer-models-generated', { models });
+        if (this.trigger('layer-models-generated', { models })) {
+          if (this.parentComponent && this.parentComponent.onModelsGenerated) {
+            this.parentComponent.onModelsGenerated(models);
+          }
+        }
       }
     },
   },

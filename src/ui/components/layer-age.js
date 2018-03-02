@@ -88,36 +88,36 @@ registerComponent('layer-age', {
         this.innerHTML = this.ageRenderer(value);
       } else if (!value) {
         this.innerHTML = 'Never Used';
-      } else  {
-          const today = new Date();
-          const twoHours = 2 * 60 * 60 * 1000;
-          const twoDays = 2 * 24 * 60 * 60 * 1000;
-          const timeDiff = today.getTime() - value.getTime();
-          if (timeDiff < twoHours) {
-            const minutes = Math.floor(timeDiff/(60*1000));
-            if (minutes) {
-              this.innerHTML = `${minutes} min${minutes > 1 ? 's' : ''} ago`;
-            } else {
-              this.innerHTML = '';
-            }
-          } else if (timeDiff < twoDays) {
-            const hours = Math.floor(timeDiff/(60*60*1000));
-            this.innerHTML = `${hours} hours ago`;
+      } else {
+        const today = new Date();
+        const twoHours = 2 * 60 * 60 * 1000;
+        const twoDays = 2 * 24 * 60 * 60 * 1000;
+        const timeDiff = today.getTime() - value.getTime();
+        if (timeDiff < twoHours) {
+          const minutes = Math.floor(timeDiff / (60 * 1000));
+          if (minutes) {
+            this.innerHTML = `${minutes} min${minutes > 1 ? 's' : ''} ago`;
           } else {
-            const monthsDiff = getMonthsDiff(today, value);
+            this.innerHTML = '';
+          }
+        } else if (timeDiff < twoDays) {
+          const hours = Math.floor(timeDiff / (60 * 60 * 1000));
+          this.innerHTML = `${hours} hours ago`;
+        } else {
+          const monthsDiff = getMonthsDiff(today, value);
 
-            if (monthsDiff < 2) {
-              const days = Math.floor(timeDiff/(24*60*60*1000));
-              this.innerHTML = `${days} days ago`;
-            } else if (monthsDiff < 12) {
-              this.innerHTML = `${monthsDiff} months ago`;
-            } else {
-              const years = today.getFullYear() - value.getFullYear();
-              this.innerHTML = `${years} year${years > 1 ? 's' : ''} ago`;
-            }
+          if (monthsDiff < 2) {
+            const days = Math.floor(timeDiff / (24 * 60 * 60 * 1000));
+            this.innerHTML = `${days} days ago`;
+          } else if (monthsDiff < 12) {
+            this.innerHTML = `${monthsDiff} months ago`;
+          } else {
+            const years = today.getFullYear() - value.getFullYear();
+            this.innerHTML = `${years} year${years > 1 ? 's' : ''} ago`;
           }
         }
-      },
+      }
     },
+  },
 });
 

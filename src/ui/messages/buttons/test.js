@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Button Message Components', function() {
   var ButtonsModel, TextModel, ChoiceModel, client, message;
   var conversation;
@@ -416,7 +417,7 @@ describe('Button Message Components', function() {
         ]
       });
       model.generateMessage(conversation);
-      expect(model.getOneLineSummary()).toEqual("Buttons sent");
+      expect(model.getOneLineSummary()).toEqual("Buttons");
 
       model = new ButtonsModel({
         buttons: [
@@ -703,7 +704,8 @@ describe('Button Message Components', function() {
 
       Layer.Utils.defer.flush();
 
-      spyOn(model.choices.isstarred, '_sendResponse');
+      var responseMessage;
+      spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
 
       var buttons = el.nodes.ui.nodes.buttons;
 
@@ -713,7 +715,6 @@ describe('Button Message Components', function() {
         buttons.childNodes[0].childNodes[0].click();
       }
 
-      var responseMessage = model.choices.isstarred._sendResponse.calls.allArgs()[0][0];
       var responsePart = responseMessage.getRootPart();
       var statusPart = responseMessage.findPart(function(part) {
         return part.mimeType === Layer.Core.Client.getMessageTypeModelClass('StatusModel').MIMEType;

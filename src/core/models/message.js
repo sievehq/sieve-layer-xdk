@@ -221,9 +221,9 @@ class Message extends Syncable {
       const addedParts = [];
       const removedParts = [];
       adjustedParts.forEach((part) => {
-         if (!currentParts.has(part)) addedParts.push(part);
+        if (!currentParts.has(part)) addedParts.push(part);
       });
-      currentParts.forEach((part) =>  {
+      currentParts.forEach((part) => {
         if (!adjustedParts.has(part)) removedParts.push(part);
       });
 
@@ -416,7 +416,7 @@ class Message extends Syncable {
       Client._addMessage(this);
 
       // allow for modification of message before sending
-      this.trigger('messages:sending');
+      this.trigger('messages:sending', { notification });
 
       const data = {
         parts: new Array(this.parts.size),
@@ -702,8 +702,6 @@ class Message extends Syncable {
     return part || null;
   }
 
-
-
   /**
    * Utility for filtering Message Parts since the Javascript Set object lacks a `filter` method.
    *
@@ -793,7 +791,8 @@ class Message extends Syncable {
     let results = [];
     Object.keys(matches).forEach((attributeName) => {
       const attributeValue = matches[attributeName];
-      const tmpResults = (this._mimeAttributeMap[attributeName] || []).filter(item => item.value === attributeValue).map(item => item.part);
+      const tmpResults = (this._mimeAttributeMap[attributeName] || [])
+        .filter(item => item.value === attributeValue).map(item => item.part);
       if (first) {
         results = tmpResults;
         first = false;
@@ -1169,8 +1168,21 @@ Message._supportedEvents = [
    * Typically, you would listen to this event more broadly using `client.on('messages:sending')`
    * which would trigger before sending ANY Messages.
    *
+   * You may also use this event to modify or remove a notification:
+   *
+   * ```
+   * client.on('messages:sending', function(evt) {
+   *   if (evt.target.getModelName() === 'ResponseModel') {
+   *     evt.detail.notification.text = evt.detail.notification.title = '';
+   *   }
+   * });
+   * ```
+   *
    * @event
    * @param {Layer.Core.LayerEvent} evt
+   * @param {Layer.Core.Message} evt.target
+   * @param {Object} evt.detail
+   * @param {Object} evt.detail.notification
    */
   'messages:sending',
 

@@ -1,6 +1,8 @@
 /**
  * @class Layer
  */
+
+/* eslint-disable import/first */
 if (global.Layer) throw new Error('You appear to have multiple copies of the Layer Web XDK loaded at the same time');
 
 import Constants from './constants';

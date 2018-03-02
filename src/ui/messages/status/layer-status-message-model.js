@@ -8,7 +8,7 @@
  * ```
  * StatusModel = Layer.Core.Client.getMessageTypeModelClass('StatusModel')
  * model = new StatusModel({text: "Your brains have been eaten."})
- * model.generateMessage(conversation, message => message.send())
+ * model.send({ conversation });
  * ```
  *
  * ### Importing

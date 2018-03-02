@@ -7,11 +7,9 @@
  * @class  Layer.Core.MessageTypeResponseSummaryModel
  * @extends Layer.Core.Root
  */
-import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Syncable from './syncable';
 import Root from '../root';
-import { ErrorDictionary } from '../layer-error';
 import Util from '../../utils';
 import Identity from './identity';
 
@@ -26,7 +24,6 @@ class MessageTypeResponseSummaryModel extends Root {
   _parseMessage(payload) {
     const participantData = payload.participant_data;
     if (!Util.doesObjectMatch(this._participantData, participantData)) {
-      const oldData = this._participantData;
       this._participantData = participantData;
       return true;
     }
@@ -86,12 +83,10 @@ class MessageTypeResponseSummaryModel extends Root {
         if (ids && ids.indexOf(identityId) === -1) return false;
         return true;
       })
-      .map((identityId) => {
-        return {
-          identityId,
-          value: this._participantData[identityId][responseName],
-        }
-      });
+      .map(identityId => ({
+        identityId,
+        value: this._participantData[identityId][responseName],
+      }));
   }
 }
 
@@ -101,6 +96,7 @@ MessageTypeResponseSummaryModel.prototype.part = null;
 MessageTypeResponseSummaryModel._supportedEvents = ['change'].concat(Root._supportedEvents);
 
 MessageTypeResponseSummaryModel.inObjectIgnore = Root.inObjectIgnore;
-Root.initClass.apply(MessageTypeResponseSummaryModel, [MessageTypeResponseSummaryModel, 'MessageTypeResponseSummaryModel', Core]);
+Root.initClass.apply(MessageTypeResponseSummaryModel,
+  [MessageTypeResponseSummaryModel, 'MessageTypeResponseSummaryModel', Core]);
 Syncable.subclasses.push(MessageTypeResponseSummaryModel);
 module.exports = MessageTypeResponseSummaryModel;

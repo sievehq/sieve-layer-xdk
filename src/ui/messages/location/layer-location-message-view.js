@@ -36,7 +36,8 @@ registerComponent('layer-location-message-view', {
   layer-location-message-view img {
     display: block;
   }
-  layer-message-viewer.layer-location-message-view .layer-location-message-show-street-address  .layer-standard-card-container-description p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
+  layer-message-viewer.layer-location-message-view .layer-location-message-show-street-address
+  .layer-standard-card-container-description p.layer-line-wrapping-paragraphs + p.layer-line-wrapping-paragraphs {
     margin-top: 0px;
   }
   `,
@@ -90,9 +91,16 @@ registerComponent('layer-location-message-view', {
      */
     _updateImageSrc() {
       if (this.parentNode && this.parentNode.clientWidth) {
-        const marker = this.model.latitude ? this.model.latitude + ',' + this.model.longitude : escape(this.model.street1 + (this.model.street2 ? ' ' + this.model.street2 : '') + ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
-
-        this.nodes.img.src = `${location.protocol}//maps.googleapis.com/maps/api/staticmap?size=${this.parentNode.clientWidth}x${this.height}&language=${navigator.language.toLowerCase()}&key=${window.googleMapsAPIKey}&zoom=${this.model.zoom}&markers=${marker}`;
+        let marker;
+        if (this.model.latitude) {
+          marker = `${this.model.latitude},${this.model.longitude}`;
+        } else {
+          marker = escape(this.model.street1 + (this.model.street2 ? ` ${this.model.street2}` : '') +
+            ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
+        }
+        this.nodes.img.src = location.protocol + '//maps.googleapis.com/maps/api/staticmap?' +
+        `size=${this.parentNode.clientWidth}x${this.height}&language=${navigator.language.toLowerCase()}` +
+        `&key=${window.googleMapsAPIKey}&zoom=${this.model.zoom}&markers=${marker}`;
       }
     },
 
@@ -112,7 +120,8 @@ registerComponent('layer-location-message-view', {
     _setupContainerClasses() {
       this.parentComponent.toggleClass('layer-arrow-next-container', this.hideMap);
       this.parentComponent.toggleClass('layer-no-core-ui', this.hideMap);
-      this.parentComponent.toggleClass('layer-location-message-show-street-address', this.model.street1 && !this.model.description);
+      this.parentComponent.toggleClass('layer-location-message-show-street-address',
+        this.model.street1 && !this.model.description);
     },
   },
 });

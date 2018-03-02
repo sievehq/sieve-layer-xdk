@@ -8,14 +8,13 @@ MessageTypeListModel = Layer.Core.Client.getMessageTypeModelClass('MessageTypeLi
       new TextModel({text: "Farewell world, I'm off to find a better planet"})
     ]
   });
-  model.generateMessage($("layer-conversation-view").conversation, message => message.send())
+  model.send({ conversation });
 
 
 * @class Layer.UI.cards.MessageTypeListModel
 * @extends layer.model
 */
 import Core, { MessagePart, MessageTypeModel } from '../../../core';
-import Util from '../../../utils';
 
 class MessageTypeListModel extends MessageTypeModel {
   _generateParts(callback) {
@@ -27,7 +26,7 @@ class MessageTypeListModel extends MessageTypeModel {
     });
 
     let asyncCount = 0;
-    let parts = [this.part];
+    const parts = [this.part];
     this.items.forEach((item) => {
       this._addModel(item, 'message-item', (moreParts) => {
         moreParts.forEach(p => parts.push(p));
@@ -66,5 +65,4 @@ MessageTypeListModel.MIMEType = 'application/x.layer.message-type-list+json';
 Core.Client.registerMessageTypeModelClass(MessageTypeListModel, 'MessageTypeListModel');
 
 module.exports = MessageTypeListModel;
-
 

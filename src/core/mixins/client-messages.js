@@ -105,9 +105,21 @@ module.exports = {
      *          });
      *      });
      *
+     * You may also use this event to modify or remove a notification:
+     *
+     * ```
+     * client.on('messages:sending', function(evt) {
+     *   if (evt.target.getModelName() === 'ResponseModel') {
+     *     evt.detail.notification.text = evt.detail.notification.title = '';
+     *   }
+     * });
+     * ```
+     *
      * @event
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
+     * @param {Object} evt.detail
+     * @param {Object} evt.detail.notification
      */
     'messages:sending',
 

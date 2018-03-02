@@ -34,7 +34,11 @@ registerComponent('layer-identity-item', {
       <layer-presence layer-id='presence' class='presence-without-avatar' size='medium'></layer-presence>
       <label class='layer-identity-name' layer-id='title'></label>
       <layer-age layer-id='age'></layer-age>
-      <layer-replaceable-content layer-id='rightSide' class='layer-identity-right-side' name='identityRowRightSide'></layer-replaceable-content>
+      <layer-replaceable-content
+        layer-id='rightSide'
+        class='layer-identity-right-side'
+        name='identityRowRightSide'>
+      </layer-replaceable-content>
     </div>
   `,
   style: `
@@ -216,7 +220,10 @@ registerComponent('layer-identity-item', {
       if (!filter) {
         match = true;
       } else if (filter instanceof RegExp) {
-        match = filter.test(identity.displayName) || filter.test(identity.firstName) || filter.test(identity.lastName) || filter.test(identity.emailAddress);
+        match = filter.test(identity.displayName) ||
+          filter.test(identity.firstName) ||
+          filter.test(identity.lastName) ||
+          filter.test(identity.emailAddress);
       } else if (typeof filter === 'function') {
         match = filter(identity);
       } else {
@@ -231,5 +238,3 @@ registerComponent('layer-identity-item', {
     },
   },
 });
-
-

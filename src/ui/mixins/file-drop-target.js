@@ -5,7 +5,6 @@
  *
  * @class Layer.UI.mixins.FileDropTarget
  */
-import { client } from '../../settings';
 import ImageModel from '../messages/image/layer-image-message-model';
 import FileModel from '../messages/file/layer-file-message-model';
 import CarouselModel from '../messages/carousel/layer-carousel-message-model';
@@ -133,10 +132,7 @@ module.exports = {
      *              const files = Array.prototype.filter.call(dt.files, file => file.type);
      *              const MyCustomMessageModel = Layer.Core.Client.getMessageTypeModelClass('MyCustomMessageModel')
      *              var model = new MyCustomMessageModel({ files: files });
-     *              model.generateMessage(this.conversation, message => message.send({
-     *                text: 'MyCustomMessage received',
-     *                title: `New Message from ${client.user.displayName}`,
-     *              }));
+     *              model.send({ conversation: this.conversation });
      *           }
      *         }
      *       }
@@ -162,22 +158,10 @@ module.exports = {
 
       if (files.length === 1) {
         const model = this._processAttachment(files[0]);
-        model.generateMessage(this.conversation, (message) => {
-          message.send({
-            text: 'File received',
-            title: `New Message from ${client.user.displayName}`,
-          });
-          if (callback) callback(message);
-        });
+        model.send({ conversation: this.conversation, callback });
       } else {
         const model = this._processAttachments(files);
-        model.generateMessage(this.conversation, (message) => {
-          message.send({
-            text: 'Carousel received',
-            title: `New Message from ${client.user.displayName}`,
-          });
-          if (callback) callback(message);
-        });
+        model.send({ conversation: this.conversation, callback });
       }
       return false;
     },
@@ -193,9 +177,13 @@ module.exports = {
     _processAttachments(files) {
       const imageTypes = ['image/gif', 'image/png', 'image/jpeg', 'image/svg'];
       const nonImageParts = files.filter(file => imageTypes.indexOf(file.type) === -1);
-      return new CarouselModel({
-        items: nonImageParts.length ? files.map(file => new FileModel({ source: file, title: file.name })) : files.map(file => new ImageModel({ source: file, title: file.name })),
-      });
+      let items;
+      if (nonImageParts.length) {
+        items = files.map(file => new FileModel({ source: file, title: file.name }));
+      } else {
+        items = files.map(file => new ImageModel({ source: file, title: file.name }));
+      }
+      return new CarouselModel({ items });
     },
 
     /**

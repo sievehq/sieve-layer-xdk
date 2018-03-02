@@ -32,7 +32,7 @@
  *       })
  *     ]
  * });
- * model.generateMessage(conversation, message => message.send());
+ * model.send({ conversation });
  * ```
  *
  * ### Importing
@@ -100,7 +100,7 @@ class CarouselModel extends MessageTypeModel {
    */
   _parseMessage(payload) {
     super._parseMessage(payload);
-    this.items = this.getModelsByRole('carousel-item').sort(function(a, b) {
+    this.items = this.getModelsByRole('carousel-item').sort((a, b) => {
       const orderA = Number(a.part.mimeAttributes['item-order']);
       const orderB = Number(b.part.mimeAttributes['item-order']);
       return orderA - orderB;
@@ -180,5 +180,4 @@ Root.initClass.apply(CarouselModel, [CarouselModel, 'CarouselModel']);
 Core.Client.registerMessageTypeModelClass(CarouselModel, 'CarouselModel');
 
 module.exports = CarouselModel;
-
 

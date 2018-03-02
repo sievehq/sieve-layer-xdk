@@ -13,14 +13,16 @@
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
  */
-import { registerComponent } from '../../components/component';
-import Constants from '../../constants';
-import MessageViewMixin from '../message-view-mixin';
-import './layer-image-message-model';
 import ImageManager from 'blueimp-load-image/js/load-image';
 import 'blueimp-load-image/js/load-image-orientation';
 import 'blueimp-load-image/js/load-image-meta';
 import 'blueimp-load-image/js/load-image-exif';
+
+import { registerComponent } from '../../components/component';
+import { logger } from '../../../utils';
+import Constants from '../../constants';
+import MessageViewMixin from '../message-view-mixin';
+import './layer-image-message-model';
 
 registerComponent('layer-image-message-view', {
   mixins: [MessageViewMixin],
@@ -111,7 +113,10 @@ registerComponent('layer-image-message-view', {
     },
 
     // TODO: Allow this to be recalculated using the available width on the screen. For now this simplifies things greatly.
-    _getBestDimensions({ height = this.model.previewHeight || this.model.height, width = this.model.previewWidth || this.model.width }) {
+    _getBestDimensions({
+      height = this.model.previewHeight || this.model.height,
+      width = this.model.previewWidth || this.model.width,
+    }) {
       const maxWidthAvailable = this.getMessageListWidth() * 0.85;
       const maxWidth = this.parentComponent.isShowingMetadata ? this.maxWidth : maxWidthAvailable;
       let ratio;
@@ -157,7 +162,7 @@ registerComponent('layer-image-message-view', {
      */
     onRender() {
       // wait until the parentComponent is a Message Display Container
-      //if (!this.properties._internalState.onAttachCalled) return;
+      // if (!this.properties._internalState.onAttachCalled) return;
 
       // Get the blob and render as a canvas
       if (this.model.source || this.model.preview) {
@@ -179,7 +184,9 @@ registerComponent('layer-image-message-view', {
     },
 
     onRerender() {
-      if (this.nodes.image.naturalWidth && this.model.part.body && this.parentComponent && this.parentComponent.isShowingMetadata) {
+      if (this.nodes.image.naturalWidth && this.model.part.body &&
+        this.parentComponent && this.parentComponent.isShowingMetadata) {
+
         // 10 margin for error in case custom stylesheets add margins borders and padding to skew results
         if (this.nodes.image.naturalWidth + 10 < this.parentComponent.clientWidth) {
           this.nodes.image.style.width = 'inherit';
@@ -230,7 +237,7 @@ registerComponent('layer-image-message-view', {
      * @private
      * @removed
      */
-    /*_getMaxMessageWidth() {
+    /* _getMaxMessageWidth() {
       if (this.messageViewer.classList.contains('layer-root-viewer')) {
         const parent = this.messageViewer.parentNode;
         if (!parent || !parent.clientWidth) return 0;
@@ -281,10 +288,10 @@ registerComponent('layer-image-message-view', {
 */
 
               this.nodes.image.src = canvas.toDataURL();
-              //if (canvas.width >= this.minWidth) this.parentComponent.style.width = canvas.width + 'px';
+              // if (canvas.width >= this.minWidth) this.parentComponent.style.width = canvas.width + 'px';
               this.isHeightAllocated = true;
             } else {
-              console.error(canvas);
+              logger.error(canvas);
             }
           }, options);
         },
