@@ -202,7 +202,7 @@ registerComponent('layer-identity-list', {
    */
 
   /**
-   * @inheritdoc #layer-identity-selection-complete
+   * @inheritdoc #event-layer-identity-selection-complete
    *
    * @property {Function} onIdentityDeselected
    * @param {Event} evt

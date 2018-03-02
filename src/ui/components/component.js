@@ -119,7 +119,7 @@
  *
  * ### Events
  *
- * As part of your {@link #registerComponent} call you can pass in an `events` array;
+ * As part of your {@link Layer.UI#static-method-registerComponent} call you can pass in an `events` array;
  * this is an array of strings representing events to listen for,
  * and provide as property-based event listeners.
  *

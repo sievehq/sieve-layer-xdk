@@ -709,6 +709,7 @@ class Message extends Syncable {
    * var parts = message.filterParts(part => part.mimeType == "just/ducky");
    * ```
    *
+   * @method filterParts
    * @param {Function} fn
    * @param {Set} [optionalParts]   If searching on parts from somewhere other than `this.parts`
    */
@@ -727,6 +728,7 @@ class Message extends Syncable {
    * var parts = message.filterPartsByMimeType("text/plain");
    * ```
    *
+   * @method filterPartsByMimeType
    * @param {Function} fn
    */
   filterPartsByMimeType(mimeType) {
@@ -743,6 +745,7 @@ class Message extends Syncable {
    * var specificPart = message.findPart(part => part.mimeType == "dog/cat");
    * ```
    *
+   * @method findPart
    * @param {Function} [fn]
    */
   findPart(fn) {
@@ -760,6 +763,7 @@ class Message extends Syncable {
    * var parts = message.mapParts(part => part.toObject());
    * ```
    *
+   * @method mapParts
    * @param {Function} fn
    * @param {Set} [optionalParts]   If searching on parts from somewhere other than `this.parts`
    */

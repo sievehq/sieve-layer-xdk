@@ -916,7 +916,7 @@ MessageTypeModel.prototype.messageRecipientStatus = null;
  * > *Note*
  * > While `${value}` is accepted, this does *not* use javascript's template string; `${expression}` is *not* supported
  *
- * See {@link getNotification} for usage details.
+ * See {@link #getNotification} for usage details.
  *
  * @property {String} NotificationTitle
  * @static

@@ -85,7 +85,7 @@ If using `npm link`, note that after cloning this repo, run:
 ## Build Commands
 
 * `grunt develop`: Starts a webserver for running tests or sample apps, and watches for changes, rebuilding source and theme on any change
-* `grunt docs`: Generate API Reference docs into folder `~/docs`; you may need to run `gem install jsduck` first.
+* `grunt docs`: Generate API Reference docs into folder `~/docs`; you may need to run `gem install jsduck` first. *Warning*: Use Ruby `2.0`; later versions log too many errors.
 * `grunt theme`: Generate CSS files from the `.less` files
 * `grunt debug`: Generate all lib folders and basic build files.
 * `grunt build`: Run's `grunt debug` and `grunt theme` and then generates all minified files

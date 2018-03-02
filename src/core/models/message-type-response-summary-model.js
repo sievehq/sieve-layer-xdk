@@ -71,6 +71,7 @@ class MessageTypeResponseSummaryModel extends Root {
    * property whose value may be an empty string, null, or other empty values. These results are included in the
    * array.
    *
+   * @method getResponses
    * @param {String} responseName
    * @param {String[]} [identityIds=null] Only include results from these authorized users (optional)
    * @returns {Object[]} responses
@@ -90,10 +91,24 @@ class MessageTypeResponseSummaryModel extends Root {
   }
 }
 
+/**
+ * The full participant data object
+ *
+ * @private
+ * @property {Object} _participantData
+ */
 MessageTypeResponseSummaryModel.prototype._participantData = null;
+
+/**
+ * The {@link Layer.Core.MessagePart} object that this model represents.
+ *
+ * @property {Layer.Core.MessagePart} part
+ */
 MessageTypeResponseSummaryModel.prototype.part = null;
 
-MessageTypeResponseSummaryModel._supportedEvents = ['change'].concat(Root._supportedEvents);
+MessageTypeResponseSummaryModel._supportedEvents = [
+  'change',
+].concat(Root._supportedEvents);
 
 MessageTypeResponseSummaryModel.inObjectIgnore = Root.inObjectIgnore;
 Root.initClass.apply(MessageTypeResponseSummaryModel,

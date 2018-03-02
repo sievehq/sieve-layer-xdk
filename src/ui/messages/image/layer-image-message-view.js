@@ -233,7 +233,7 @@ registerComponent('layer-image-message-view', {
      * Note that even if there is a large amount of available width, there is still a maximum allowed height
      * that may prevent us from using the full width.
      *
-     * method _getMaxMessageWidth
+     * @method _getMaxMessageWidth
      * @private
      * @removed
      */
