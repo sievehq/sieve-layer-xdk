@@ -1,5 +1,5 @@
-CarouselModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json')
-TextModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json')
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json')
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json')
 
 
 new TextModel({text: "Simple Text Messages"}).send({ conversation: $("layer-conversation-view").conversation });

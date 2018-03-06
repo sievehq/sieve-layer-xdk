@@ -114,7 +114,8 @@ class ResponseModel extends MessageTypeModel {
 
   // Used to render Last Message in the Conversation List
   getOneLineSummary() {
-    return this.displayModel ? this.displayModel.getOneLineSummary() : '';
+    const result = super.getOneLineSummary();
+    return (result === this.constructor.LabelSingular) ? '' : result;
   }
 
   // No notification if there is no displayModel
@@ -170,6 +171,31 @@ ResponseModel.prototype.responseToNodeId = '';
  * @property {Layer.Core.MessageTypeModel}
  */
 ResponseModel.prototype.displayModel = null;
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelSingular=Response]
+ */
+ResponseModel.LabelSingular = 'Response';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Responses]
+ */
+ResponseModel.LabelPlural = 'Responses';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=${itemCount} ${label}]
+ */
+ResponseModel.SummaryTemplate = '${displayModel}'; // eslint-disable-line no-template-curly-in-string
+
 
 /**
  * The MIME Type recognized by and used by the Response Model.

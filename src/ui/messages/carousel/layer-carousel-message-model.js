@@ -125,9 +125,12 @@ class CarouselModel extends MessageTypeModel {
     if (this.items) this.items.forEach(item => item._mergeAction(newValue));
   }
 
-  // Used to render Last Message in the Conversation List
-  getOneLineSummary() {
-    return this.items.length + ' ' + this.constructor.Label;
+  __getItemCount() {
+    return this.items.length;
+  }
+  __getItemLabel() {
+    return (this.items.length > 1) ?
+      this.constructor.ItemPlural : this.constructor.ItemSingular;
   }
 }
 
@@ -150,12 +153,54 @@ CarouselModel.prototype.items = null;
 CarouselModel.prototype.title = '';
 
 /**
- * Textual label representing all instances of Carousel Message.
+ * Get the number of carousel items
+ *
+ * @readonly
+ * @property {String} [itemCount=0]
+ */
+CarouselModel.prototype.itemCount = 0;
+
+CarouselModel.prototype.itemLabel = '';
+
+/**
+ * One instance of this type
  *
  * @static
- * @property {String} [Label=Items]
+ * @property {String} [LabelSingular=Carousel]
  */
-CarouselModel.Label = 'Items';
+CarouselModel.LabelSingular = 'Carousel';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Carousels]
+ */
+CarouselModel.LabelPlural = 'Carousels';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [ItemSingular=item]
+ */
+CarouselModel.ItemSingular = 'item';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [ItemPlural=items]
+ */
+CarouselModel.ItemPlural = 'items';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=${itemCount} ${itemLabel}]
+ */
+CarouselModel.SummaryTemplate = '${itemCount} ${itemLabel}'; // eslint-disable-line no-template-curly-in-string
 
 /**
  * The MIME Type recognized by and used by the Carousel Model.

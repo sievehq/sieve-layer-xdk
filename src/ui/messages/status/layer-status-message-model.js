@@ -47,11 +47,6 @@ class StatusModel extends MessageTypeModel {
     });
     callback([this.part]);
   }
-
-  // Used to render Last Message in the Conversation List
-  getOneLineSummary() {
-    return this.text;
-  }
 }
 
 /**
@@ -61,13 +56,31 @@ class StatusModel extends MessageTypeModel {
  */
 StatusModel.prototype.text = '';
 
+
 /**
- * Textual label representing all instances of Status Message.
+ * One instance of this type
  *
  * @static
- * @property {String} [Label=Status]
+ * @property {String} [LabelSingular=Status]
  */
-StatusModel.Label = 'Status';
+StatusModel.LabelSingular = 'Status';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Status]
+ */
+StatusModel.LabelPlural = 'Status';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=${itemCount} ${label}]
+ */
+StatusModel.SummaryTemplate = '${text}'; // eslint-disable-line no-template-curly-in-string
+
 
 /**
  * The MIME Type recognized by and used by the Status Model.

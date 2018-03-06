@@ -1,5 +1,24 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.7
+
+*Breaking Changes*
+
+* The `Label` static property has been removed from all Message Type Model classes.
+
+Additional Changes:
+
+* Each Message Type Model now has
+    * A static `LabelSingular` property (File, Location, Receipt, Product, etc...). Overwrite this value with customizations.
+    * A static `LabelPlural` property (Files, Locations, Receipts, Products, etc...). Overwrite this value with customizations.
+    * A static `SummaryTemplate` property that is used to generate a one line summary, and which accepts templated values (`${title}: ${text}`) which accesses the properties of the Model.  Overwrite this value with customizations.
+    * A `typeLabel` property that can be referenced in the `SummaryTemplate` property to get ("File", "Location", "Receipt") the name of the message type
+    * Models may still provide their own `getOneLineSummary()` method, but should no longer need to do so.
+* Identity List now has
+    * `metadataRenderer` property for rendering metadata when the `size` property is `large`
+    * Support for `size` property to be `large`
+* Minified themes `layer-basic-blue.min.css` and `layer-groups.min.css` are now part of the `npm` repo
+
 ## 1.0.0-pre2.6
 
 *Breaking Changes*

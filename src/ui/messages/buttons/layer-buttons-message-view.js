@@ -19,6 +19,7 @@ import '../../components/layer-choice-button';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
 import './layer-buttons-message-model';
+import { logger } from '../../../utils';
 
 registerComponent('layer-buttons-message-view', {
   template: `
@@ -121,7 +122,7 @@ registerComponent('layer-buttons-message-view', {
                 model,
               });
             } else {
-              console.error('Failed to find a Choice Model to render');
+              logger.error('Failed to find a Choice Model to render');
             }
             break;
         }

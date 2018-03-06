@@ -501,6 +501,7 @@ class MessagePart extends Root {
           }),
           part: this,
         });
+        this.destroy();
       }
     } else {
       this.trigger('parts:send', {

@@ -4,7 +4,9 @@ FeedbackModel = Layer.Core.Client.getMessageTypeModelClass('FeedbackModel');
 
 new TextModel({text: "Basic Feedback"}).send({ conversation: $("layer-conversation-view").conversation });
 
-model = new FeedbackModel({});
+model = new FeedbackModel({
+  enabledFor: [Layer.client.user.id],
+});
 model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Feedback with custom action data"}).send({ conversation: $("layer-conversation-view").conversation });

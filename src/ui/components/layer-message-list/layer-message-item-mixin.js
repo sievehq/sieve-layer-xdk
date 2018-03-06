@@ -126,7 +126,7 @@
  * @extends Layer.UI.Component
  */
 import Constants from '../../../constants';
-import Util from '../../../utils';
+import Util, { logger } from '../../../utils';
 import ListItem from '../../mixins/list-item';
 
 module.exports = {
@@ -268,7 +268,7 @@ module.exports = {
         // Render all mutable data
         this.onRerender();
       } catch (err) {
-        console.error('layer-message-item.render(): ', err);
+        logger.error('layer-message-item.render(): ', err);
       }
     },
 

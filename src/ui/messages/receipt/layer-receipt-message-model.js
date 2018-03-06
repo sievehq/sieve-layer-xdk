@@ -131,11 +131,28 @@ class ReceiptModel extends MessageTypeModel {
     this.recipientModel = this.getModelsByRole('recipient'); */
   }
 
-  // Used to render Last Message in the Conversation List
-  getOneLineSummary() {
-    return ('Receipt for ' + this.items.length + ' item') + (this.items.length > 1 ? 's' : '');
+  __getItemCount() {
+    return this.items.length;
+  }
+
+  __getItemLabel() {
+    return this.items.length > 1 ? ReceiptModel.ItemPlural : ReceiptModel.ItemSingular;
   }
 }
+
+/**
+ * Number of Product Items in this receipt.
+ *
+ * @property {Number} itemCount
+ */
+ReceiptModel.prototype.itemCount = 0;
+
+/**
+ * Label to use to describe the items in this receipt.
+ *
+ * @property {String} [itemLabel=item/items]
+ */
+ReceiptModel.prototype.itemLabel = 0;
 
 /**
  * Location Model representing the billing address for this receipt.
@@ -284,6 +301,48 @@ ReceiptModel.prototype.summary = null;
  * @property {String} [title]
  */
 ReceiptModel.prototype.title = '';
+
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelSingular=Receipt]
+ */
+ReceiptModel.LabelSingular = 'Receipt';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Receipts]
+ */
+ReceiptModel.LabelPlural = 'Receipts';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [ItemSingular=item]
+ */
+ReceiptModel.ItemSingular = 'item';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [ItemPlural=items]
+ */
+ReceiptModel.ItemPlural = 'items';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=${typeLabel} for ${itemCount} ${itemLabel}]
+ */
+ReceiptModel.SummaryTemplate = '${typeLabel} for ${itemCount} ${itemLabel}'; // eslint-disable-line no-template-curly-in-string
+
 
 /**
  * Array of submodel definitions to use when parsing the Receipt Message.

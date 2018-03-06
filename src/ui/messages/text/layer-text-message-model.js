@@ -65,11 +65,6 @@ class TextModel extends MessageTypeModel {
   getDescription() { return this.subtitle; }
   getFooter() { return this.author; }
 
-  // Used to render Last Message in the Conversation List
-  getOneLineSummary() {
-    return this.title || this.text;
-  }
-
   destroy() {
     super.destroy();
   }
@@ -120,12 +115,28 @@ TextModel.prototype.subtitle = '';
 TextModel.prototype.mimeType = 'text/plain';
 
 /**
- * Textual label representing all instances of Text Message.
+ * Standard concise representation of this Message Type
  *
  * @static
- * @property {String} [Label=Text]
+ * @property {String} [SummaryTemplate=${text}]
  */
-TextModel.Label = 'Text';
+TextModel.SummaryTemplate = '${text}'; // eslint-disable-line no-template-curly-in-string
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelSingular=Text]
+ */
+TextModel.LabelSingular = 'Text';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Texts]
+ */
+TextModel.LabelPlural = 'Texts';
 
 /**
  * The MIME Type recognized by and used by the Text Model.
@@ -170,4 +181,3 @@ register({
 });
 
 module.exports = TextModel;
-

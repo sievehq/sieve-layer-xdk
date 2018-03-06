@@ -530,12 +530,31 @@ class MessageTypeModel extends Root {
    * @method getOneLineSummary
    * @returns {String}
    */
-  getOneLineSummary() {
+  getOneLineSummary(ignoreTitle) {
     const title = this.getTitle();
-    if (title) {
+    if (!ignoreTitle && title) {
       return title;
-    } else {
-      return this.constructor.Label;
+    }
+
+    if (this.constructor.SummaryTemplate) {
+      const templateStr = this.constructor.SummaryTemplate || '';
+      const result = templateStr.replace(/(\$\{.*?\})/g, (match) => {
+        const value = this[match.substring(2, match.length - 1)];
+        if (value instanceof Identity) {
+          return value.displayName;
+        } else if (value instanceof MessageTypeModel) {
+          return value.getOneLineSummary();
+        } else if (value !== null) {
+          return value;
+        } else {
+          return '';
+        }
+      });
+      if (result) return result;
+    }
+
+    if (this.constructor.LabelSingular) {
+      return this.constructor.LabelSingular;
     }
   }
 
@@ -701,6 +720,10 @@ class MessageTypeModel extends Root {
 
   toString() {
     return `[${this.constructor.name} ${this.id}]`;
+  }
+
+  __getTypeLabel() {
+    return this.constructor.LabelSingular;
   }
 }
 
@@ -899,6 +922,15 @@ MessageTypeModel.prototype.messageSentAt = null;
  */
 MessageTypeModel.prototype.messageRecipientStatus = null;
 
+/**
+ * Get the label for this item type.
+ *
+ * See each model's `LabelSingular` static property for name or to customize that name.
+ *
+ * @readonly
+ * @property {String} [typeLabel]
+ */
+MessageTypeModel.prototype.typeLabel = '';
 
 /**
  * The expression to use for setting the notification title.
@@ -986,4 +1018,3 @@ MessageTypeModel._supportedEvents = [
 ].concat(Root._supportedEvents);
 Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel', Core]);
 module.exports = MessageTypeModel;
-

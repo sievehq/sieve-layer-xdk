@@ -1,4 +1,4 @@
-TextModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json')
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
 
 
 

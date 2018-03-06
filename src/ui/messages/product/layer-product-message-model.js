@@ -82,7 +82,7 @@ class ProductModel extends MessageTypeModel {
       'name', 'brand', // naming
       'description', 'imageUrls', // Rendering
       'currency', 'price', 'quantity', // Purchasing
-      'url', // Action properties
+      'url', 'title', // Action properties
     ]);
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -235,12 +235,28 @@ ProductModel.prototype.url = '';
 ProductModel.defaultAction = 'open-url';
 
 /**
- * Textual label representing all instances of Product Message.
+ * Standard concise representation of this Message Type
  *
  * @static
- * @property {String} [Label=Product]
+ * @property {String} [SummaryTemplate=${name}]
  */
-ProductModel.Label = 'Product';
+ProductModel.SummaryTemplate = '${name}'; // eslint-disable-line no-template-curly-in-string
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelSingular=Product]
+ */
+ProductModel.LabelSingular = 'Product';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Products]
+ */
+ProductModel.LabelPlural = 'Products';
 
 /**
  * The MIME Type recognized by and used by the Product Model.

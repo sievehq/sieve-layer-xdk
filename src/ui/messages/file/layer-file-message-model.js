@@ -219,12 +219,28 @@ FileModel.prototype.size = '';
 FileModel.prototype.mimeType = '';
 
 /**
- * Textual label representing all instances of File Message.
+ * One instance of this type
  *
  * @static
- * @property {String} [Label=File]
+ * @property {String} [LabelSingular=File]
  */
-FileModel.Label = 'File';
+FileModel.LabelSingular = 'File';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Files]
+ */
+FileModel.LabelPlural = 'Files';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=]
+ */
+FileModel.SummaryTemplate = '';
 
 /**
  * The default action when selecting this Message is to trigger an `open-file` and view the File.

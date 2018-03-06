@@ -83,11 +83,6 @@ class LinkModel extends MessageTypeModel {
   getFooter() { return this.author; }
   getDescription() { return this.description; }
 
-  // Used to render Last Message in the Conversation List
-  getOneLineSummary() {
-    return this.title || this.url;
-  }
-
   /**
    * Before sending a Link Message you may want to load the article and populate this Model's proerties from it.
    *
@@ -228,12 +223,28 @@ LinkModel.prototype.url = '';
 LinkModel.prototype.html = '';
 
 /**
- * Textual label representing all instances of Link Message.
+ * Standard concise representation of this Message Type
  *
  * @static
- * @property {String} [Label=Link]
+ * @property {String} [SummaryTemplate=${url}]
  */
-LinkModel.Label = 'Link';
+LinkModel.SummaryTemplate = '${url}'; // eslint-disable-line no-template-curly-in-string
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelSingular=Link]
+ */
+LinkModel.LabelSingular = 'Link';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Links]
+ */
+LinkModel.LabelPlural = 'Links';
 
 /**
  * The default action when selecting this Message is to trigger an `open-url` and view the linked document/site.

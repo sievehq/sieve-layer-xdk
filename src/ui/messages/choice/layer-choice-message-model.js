@@ -541,7 +541,7 @@ class ChoiceModel extends MessageTypeModel {
 
   // Used to render Last Message in the Conversation List
   getOneLineSummary() {
-    return this.label || this.title || this.constructor.Label;
+    return this.label || this.title || this.constructor.LabelSingular;
   }
 
   /**
@@ -869,12 +869,28 @@ ChoiceModel.prototype.name = '';
 ChoiceModel.prototype._pauseUpdateTimeout = 0;
 
 /**
- * Textual label representing all instances of Choice Message.
+ * One instance of this type
  *
  * @static
- * @property {String} [Label=Choice]
+ * @property {String} [LabelSingular=Choice]
  */
-ChoiceModel.Label = 'Choice';
+ChoiceModel.LabelSingular = 'Choice';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Choices]
+ */
+ChoiceModel.LabelPlural = 'Choices';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=]
+ */
+ChoiceModel.SummaryTemplate = '';
 
 /**
  * There is no default action when clicking on a Choice Message; only clicking on the Choice Buttons should cause an action.

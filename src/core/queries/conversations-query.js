@@ -130,7 +130,9 @@ class ConversationsQuery extends Query {
     // for which we have no object, so we'll get the add event at that time.
     if (index !== -1) {
       const sortField = this._getSortField();
-      const reorder = evt.hasProperty('lastMessage') && sortField === 'last_message';
+      // Do not reorder when lastMessage changes to null as we are just waiting for a new Last Message, and UI will be jerky.
+      // If its the last message is deleted, and no more exist on server, well... just keep current sort order.
+      const reorder = evt.hasProperty('lastMessage') && evt.target.lastMessage && sortField === 'last_message';
       let newIndex;
 
       if (this.dataType === Query.ObjectDataType) {

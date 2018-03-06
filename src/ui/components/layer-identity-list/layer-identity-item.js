@@ -32,7 +32,10 @@ registerComponent('layer-identity-item', {
     <div class='layer-list-item' layer-id='listItem'>
       <layer-avatar layer-id='avatar' show-presence='true'></layer-avatar>
       <layer-presence layer-id='presence' class='presence-without-avatar' size='medium'></layer-presence>
-      <label class='layer-identity-name' layer-id='title'></label>
+      <div class='layer-identity-inner'>
+        <label class='layer-identity-name' layer-id='title'></label>
+        <div class='layer-identity-metadata' layer-id='metadata'></div>
+      </div>
       <layer-age layer-id='age'></layer-age>
       <layer-replaceable-content
         layer-id='rightSide'
@@ -51,7 +54,7 @@ registerComponent('layer-identity-item', {
       flex-direction: row;
       align-items: center;
     }
-    layer-identity-item .layer-list-item label {
+    layer-identity-item .layer-list-item .layer-identity-inner {
       flex-grow: 1;
       width: 100px; /* Flexbox bug */
     }
@@ -64,6 +67,13 @@ registerComponent('layer-identity-item', {
     }
     layer-identity-item.layer-size-tiny layer-presence {
       display: block;
+    }
+    layer-identity-item .layer-identity-inner {
+      display: flex;
+      flex-direction: column;
+    }
+    layer-identity-item:not(.layer-size-large) .layer-identity-metadata {
+      display: none;
     }
   `,
   properties: {
@@ -94,6 +104,13 @@ registerComponent('layer-identity-item', {
      */
     nameRenderer: {},
 
+    /**
+     * @inheritdoc Layer.UI.components.IdentityListPanel.List#metadataRenderer
+     *
+     * @property {Function} metadataRenderer
+     */
+    metadataRenderer: {},
+
     // See Layer.UI.SizeProperty.size
     size: {
       value: 'medium',
@@ -104,7 +121,7 @@ registerComponent('layer-identity-item', {
 
     // See Layer.UI.SizeProperty.supportedSizes
     supportedSizes: {
-      value: ['tiny', 'small', 'medium'],
+      value: ['tiny', 'small', 'medium', 'large'],
     },
   },
   methods: {
@@ -177,7 +194,12 @@ registerComponent('layer-identity-item', {
     // Lifecycle event
     onRerender() {
       this.nodes.avatar.users = [this.item];
-      this.nodes.title.innerHTML = this.nameRenderer ? this.nameRenderer(this.item) : this.item.displayName;
+      if (this.nodes.title) {
+        this.nodes.title.innerHTML = this.nameRenderer ? this.nameRenderer(this.item) : this.item.displayName;
+      }
+      if (this.nodes.metadata && this.metadataRenderer) {
+        this.nodes.metadata.innerHTML = this.metadataRenderer(this.item);
+      }
       this.nodes.age.date = this.item.lastSeenAt;
       this.toggleClass('layer-identity-item-empty', !this.item.displayName);
     },

@@ -140,10 +140,6 @@ class FeedbackModel extends MessageTypeModel {
     });
   }
 
-  getOneLineSummary() {
-    return this.title;
-  }
-
   getSummary(template, useYou) {
     return template.replace(/(\$\{.*?\})/g, (match) => {
       const key = match.substring(2, match.length - 1);
@@ -175,7 +171,31 @@ FeedbackModel.prototype.sentAt = null;
 FeedbackModel.prototype.customer = '';
 
 FeedbackModel.anonymousUserName = 'Customer';
-FeedbackModel.Label = 'Feedback Request';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelSingular=Feedback Request]
+ */
+FeedbackModel.LabelSingular = 'Feedback Request';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Feedback Requests]
+ */
+FeedbackModel.LabelPlural = 'Feedback Requests';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=${prompt}]
+ */
+FeedbackModel.SummaryTemplate = '${prompt}'; // eslint-disable-line no-template-curly-in-string
+
 FeedbackModel.defaultAction = 'layer-open-expanded-view';
 FeedbackModel.messageRenderer = 'layer-feedback-message-view';
 FeedbackModel.messageRendererExpanded = 'layer-feedback-message-expanded-view';

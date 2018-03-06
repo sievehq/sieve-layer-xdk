@@ -183,7 +183,15 @@ describe('Carousel Message Components', function() {
         ]
       });
 
-      expect(model.getOneLineSummary()).toEqual("3 Items");
+      expect(model.getOneLineSummary()).toEqual("3 items");
+
+      model = new CarouselModel({
+        items: [
+          new TextModel({text: "a"}),
+        ]
+      });
+
+      expect(model.getOneLineSummary()).toEqual("1 item");
     });
   });
 

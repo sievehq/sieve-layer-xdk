@@ -272,6 +272,25 @@ registerComponent('layer-identity-list', {
       type: Function,
     },
 
+    /**
+     * Provide property manage the metadata section of the Large Identity Item (requires the {@link #size} property to be `large`).
+     *
+     * Note that changing this will not rerender the list.
+     *
+     * ```javascript
+     * identityList.metadataRenderer = function(identity) {
+     *    return identity.metadata.department;
+     * };
+     * ```
+     *
+     * @property {Function} [metadataRenderer=null]
+     * @property {Layer.Core.Identity} metadataRenderer.identity
+     * @property {String} metadataRenderer.return
+     */
+    metadataRenderer: {
+      type: Function,
+    },
+
     // See Layer.UI.mixins.SizeProperty.size
     size: {
       value: 'medium',
@@ -280,7 +299,7 @@ registerComponent('layer-identity-list', {
 
     // See Layer.UI.mixins.SizeProperty.supportedSizes
     supportedSizes: {
-      value: ['tiny', 'small', 'medium'],
+      value: ['tiny', 'small', 'medium', 'large'],
     },
 
     /**
@@ -394,6 +413,7 @@ registerComponent('layer-identity-list', {
       identityWidget.item = identity;
       identityWidget.id = this._getItemId(identity.id);
       identityWidget.nameRenderer = this.nameRenderer;
+      identityWidget.metadataRenderer = this.metadataRenderer;
       identityWidget.isSelected = this.selectedIdentities.indexOf(identity) !== -1;
       identityWidget._runFilter(this.filter);
       return identityWidget;

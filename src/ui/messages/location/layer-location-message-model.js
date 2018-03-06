@@ -219,12 +219,28 @@ LocationModel.prototype.street2 = '';
 LocationModel.prototype.showAddress = null;
 
 /**
- * Textual label representing all instances of Location Message.
+ * One instance of this type
  *
  * @static
- * @property {String} [Label=Location]
+ * @property {String} [LabelSingular=Location]
  */
-LocationModel.Label = 'Location';
+LocationModel.LabelSingular = 'Location';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Locations]
+ */
+LocationModel.LabelPlural = 'Locations';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=]
+ */
+LocationModel.SummaryTemplate = '';
 
 /**
  * The default action when selecting this Message is to trigger an `open-map` action to show

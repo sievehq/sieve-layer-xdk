@@ -417,6 +417,15 @@ describe('Button Message Components', function() {
         ]
       });
       model.generateMessage(conversation);
+      expect(model.getOneLineSummary()).toEqual("Button");
+
+      model = new ButtonsModel({
+        buttons: [
+          {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
+          {"type": "action", "text": "Kill Arthur", "event": "kill-arthur", "tooltip": "Kill", data: {who: "Arthur"}},
+        ]
+      });
+      model.generateMessage(conversation);
       expect(model.getOneLineSummary()).toEqual("Buttons");
 
       model = new ButtonsModel({

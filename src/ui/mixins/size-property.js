@@ -20,6 +20,7 @@
  * @class Layer.UI.mixins.SizeProperty
  */
 import { registerComponent } from '../components/component';
+import { logger } from '../../utils';
 
 module.exports = {
   properties: {
@@ -43,7 +44,7 @@ module.exports = {
       set(newValue, oldValue) {
         if (this.supportedSizes.indexOf(newValue) === -1) {
           this.properties.size = oldValue;
-          console.info(this.tagName + ' does not support a size value of ' + newValue);
+          logger.info(this.tagName + ' does not support a size value of ' + newValue);
 
         } else {
           this.supportedSizes.forEach(size =>

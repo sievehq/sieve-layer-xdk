@@ -130,6 +130,7 @@ module.exports = function (grunt) {
         ]
       }
     },
+
     custom_copy: {
       src: {
         src: ['src/core/*', 'src/*.js', 'src/utils'],
@@ -174,7 +175,7 @@ module.exports = function (grunt) {
       build: {
         files: [
           {src: ['themes/build/layer-basic-blue.css'], dest: 'themes/build/layer-basic-blue.min.css'},
-          //{src: ['themes/build/layer-groups.css'], dest: 'themes/build/layer-groups.min.css'}
+          {src: ['themes/build/layer-groups.css'], dest: 'themes/build/layer-groups.min.css'}
         ]
       }
     },
@@ -858,10 +859,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-jsduck');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-notify');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-remove');
@@ -884,7 +885,7 @@ module.exports = function (grunt) {
     'custom_babel', 'remove:lib', 'move:lib',
     'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'copy:npmthemes','fix-npm-package', 'eslint:debug']);
 
-  grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin']);
+  grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin', 'copy:npmthemes']);
   grunt.registerTask('prepublish', ['build', 'refuse-to-publish']);
 
   grunt.registerTask('samples', ['debug', 'browserify:samples']);

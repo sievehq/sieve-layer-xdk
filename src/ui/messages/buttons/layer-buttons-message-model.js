@@ -242,7 +242,8 @@ class ButtonsModel extends MessageTypeModel {
     if (this.contentModel) {
       return this.contentModel.getOneLineSummary();
     } else {
-      return super.getOneLineSummary();
+      return this.buttons.length > 1 || this.buttons[0].type === 'choice' && this.buttons[0].choices.length > 1 ?
+        this.constructor.LabelPlural : this.constructor.LabelSingular;
     }
   }
 
@@ -284,12 +285,28 @@ ButtonsModel.prototype.contentModel = null;
 ButtonsModel.prototype.choices = null;
 
 /**
- * Textual label representing all instances of Button Message.
+ * One instance of this type
  *
  * @static
- * @property {String} [Label=Button]
+ * @property {String} [LabelSingular=Button]
  */
-ButtonsModel.Label = 'Buttons';
+ButtonsModel.LabelSingular = 'Button';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Buttons]
+ */
+ButtonsModel.LabelPlural = 'Buttons';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=]
+ */
+ButtonsModel.SummaryTemplate = '';
 
 /**
  * The MIME Type recognized by and used by the Buttons Model.

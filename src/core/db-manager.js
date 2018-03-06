@@ -140,6 +140,7 @@ class DbManager extends Root {
       this.db.close();
       delete this.db;
     }
+    if (!client) return;
 
     // Abort if all tables are disabled
     const enabledTables = TABLES.filter(tableDef => this['_permission_' + tableDef.name]);
@@ -176,6 +177,7 @@ class DbManager extends Root {
         this.db.onversionchange = () => {
           if (this.db) this.db.close();
           this.isOpen = false;
+          setTimeout(() => this._open(false), 1000);
         };
 
         this.db.onerror = err => Util.logger.info('db-manager Error: ', err);

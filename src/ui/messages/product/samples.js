@@ -1,5 +1,5 @@
 TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
-ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
+ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 
 new TextModel({text: "Simple product, no image, description or options"}).send({ conversation: $("layer-conversation-view").conversation });

@@ -513,12 +513,28 @@ ImageModel.MaxPreviewDimension = 768;
 ImageModel.PreviewQuality = 0.5;
 
 /**
- * Textual label representing all instances of Image Message.
+ * One instance of this type
  *
  * @static
- * @property {String} [Label=Image]
+ * @property {String} [LabelSingular=Image]
  */
-ImageModel.Label = 'Image';
+ImageModel.LabelSingular = 'Image';
+
+/**
+ * One instance of this type
+ *
+ * @static
+ * @property {String} [LabelPlural=Images]
+ */
+ImageModel.LabelPlural = 'Images';
+
+/**
+ * Standard concise representation of this Message Type
+ *
+ * @static
+ * @property {String} [SummaryTemplate=]
+ */
+ImageModel.SummaryTemplate = '';
 
 /**
  * The default action when selecting this Message is to trigger an `open-url` and view the Image.

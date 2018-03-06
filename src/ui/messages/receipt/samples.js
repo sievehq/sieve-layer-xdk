@@ -1,9 +1,9 @@
 TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
-ReceiptModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.receipt+json')
-LocationModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.location+json')
-ListModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.list+json')
-ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
-ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
+ReceiptModel = Layer.Core.Client.getMessageTypeModelClass('ReceiptModel')
+LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel')
+ListModel = Layer.Core.Client.getMessageTypeModelClass('ListModel')
+ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel')
+ImageModel = Layer.Core.Client.getMessageTypeModelClass('ImageModel')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 
 new TextModel({text: "Standard Receipt Message"}).send({ conversation: $("layer-conversation-view").conversation });
