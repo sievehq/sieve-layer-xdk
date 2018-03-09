@@ -1339,7 +1339,7 @@ describe('Choice Message Components', function() {
             "hey": "bb"
           }
         };
-        model._processNewResponses();
+        model.parseModelResponses();
         expect(model.selectedAnswer).toEqual("bb");
       });
 
@@ -1359,7 +1359,7 @@ describe('Choice Message Components', function() {
             "hey": ""
           }
         };
-        model._processNewResponses();
+        model.parseModelResponses();
         expect(model.selectedAnswer).toEqual("");
       });
     });

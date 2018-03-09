@@ -214,7 +214,7 @@ class Root extends EventClass {
         if (typeof v === 'function') return;
 
         // Generate arrays...
-        if (Array.isArray(v)) {
+        if (Array.isArray(v) || v instanceof Set) {
           obj[key] = [];
           v.forEach((item) => {
             if (item instanceof Root) {

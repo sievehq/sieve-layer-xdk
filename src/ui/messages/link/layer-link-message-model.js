@@ -64,13 +64,13 @@ class LinkModel extends MessageTypeModel {
    *
    * Used for Sending the Link Message.
    *
-   * @method _generateParts
+   * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    * @private
    */
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['imageUrl', 'author', 'title', 'description', 'url']);
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata(['imageUrl', 'author', 'title', 'description', 'url']);
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,

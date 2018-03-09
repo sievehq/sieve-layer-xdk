@@ -87,7 +87,7 @@ class Conversation extends Container {
     // If the options doesn't contain server object, setup participants.
     if (!options || !options.fromServer) {
       this.participants = client._fixIdentities(this.participants);
-      if (this.participants.indexOf(client.user) === -1) {
+      if (client.user && this.participants.indexOf(client.user) === -1) {
         this.participants.push(client.user);
       }
     }

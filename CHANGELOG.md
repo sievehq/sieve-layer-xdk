@@ -1,5 +1,45 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.8
+
+*Breaking Changes*
+
+* Message Types were previously intialized using `_parseMessage` and `_generateParts`. These methods have been refactored/renamed; see below.
+* WEB-1702: Do not allow `getXXX(id, true)` calls if `!client.isReady`.
+
+Additional Changes:
+
+* WEB-1672: Dialog no longer calls `evt.preventDefault()` on touch events from UI Components inside of the Dialog
+* Update default MIME Type from `text/plain` to `application/vnd.layer.text+json`
+* WEB-1684: Refactored/redesigned methods for initializing and updating Message Type Models:
+    * `model._initializeProperties()` method has been removed. Initialize properties in your constructor.
+    * `model._generateParts()` has been renamed to `generateParts()`
+    * `model._addModel()` has been renamed to `addChildModel()`
+    * `model.addChildPart()` has been added
+    * `model._initBodyWithMetadata()` has been renamed to `initBodyWithMetadata()`
+    * `model._propertyHasValue()` has been renamed to `propertyHasValue()`
+    * `model._parseMessage()` has been renamed to `parseMessage()`
+    * `model.parseMessage()/_parseMessage()` has been redefined; you should not be providing one of these in your Message Type Subclass
+    * `model.parseModelPart({ payload, isEdit })` has been added to the lifecycle. Provide one of these in your Message Type Subclass; it will be called
+        when the Message is first imported into the Model, and recalled any time the model's Message Part is updated
+    * `model.parseModelChildParts({ changes, isEdit })` has been added to the lifecycle. Provide one of these in your Message Type Subclass; it will be called
+        when the Message is first imported into the Model, and recalled any time new Child Message Parts are added, or are updated.
+    * `model.parseModelResponses()` has been added to the lifecycle. Provide one of these if your Message Type Subclass uses Message Responses; it will be called
+        when the Messeage is first imported into the Model (if that message has any responses), and recalled any time a Response Message Part is added or updated in the Message.
+    * `model._processNewResponses()` has been removed; see `model.parseModelResponses()`
+    * `model._mergeAction()` has been renamed to `mergeAction()`
+    * `model.responses._parseMessage()` has been renamed to `parseResponsePart()`
+    * `model.responses.reset()` has been added to handle cases where the Response Summary Message Part has been deleted
+* Removes `/* istanbul ignore next */` from every generated line of code
+* WEB-1702: Do not allow `getXXX(id, true)` calls if `!client.isReady`. Applies to `getConversation`, `getMessage`, `getIdentity`, etc...
+* Fixes broken code in animated scroller that caused it to leap when it should slide
+* WEB-1697: When fewer than a screenful of messages in the message list, latest message is at the bottom of the View, rather than the top
+    * BEFORE this change: Last message rendered at the top of the list, and as the Query loads messages, it gets pushed down
+    * AFTER this change: Last message rendered at the bottom, and as the Query loads messages, they are rendered above the last message which does not move.
+* Minor fixes to Location Message width
+* Fixes bug in `Message.toObject()` which failed to handle Sets (Message Parts)
+
+
 ## 1.0.0-pre2.7
 
 *Breaking Changes*

@@ -46,13 +46,13 @@ class TextModel extends MessageTypeModel {
    *
    * Used for Sending the Text Message.
    *
-   * @method _generateParts
+   * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    * @private
    */
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['text', 'author', 'summary', 'title', 'subtitle']);
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata(['text', 'author', 'summary', 'title', 'subtitle']);
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,

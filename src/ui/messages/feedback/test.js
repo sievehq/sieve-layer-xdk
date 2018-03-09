@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Feedback Message Components', function() {
   var FeedbackModel, ResponseModel;
   var conversation;
@@ -157,7 +158,7 @@ describe('Feedback Message Components', function() {
         comment: "hello"
       };
       model.responses._participantData = responses;
-      model._processNewResponses();
+      model.parseModelResponses();
       expect(model.rating).toEqual(4);
       expect(model.comment).toEqual("hello");
     });

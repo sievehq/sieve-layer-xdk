@@ -50,14 +50,14 @@ class ReceiptModel extends MessageTypeModel {
    * Used for Sending the Receipt Message.  It will generate one MessagePart per
    * Product Message, and one MessagePart per Location Message.
    *
-   * @method _generateParts
+   * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    * @private
    */
-  _generateParts(callback) {
+  generateParts(callback) {
     // Put the basic fields into the body
-    const body = this._initBodyWithMetadata(['createdAt', 'currency', 'discounts', 'paymentMethod', 'order', 'title']);
+    const body = this.initBodyWithMetadata(['createdAt', 'currency', 'discounts', 'paymentMethod', 'order', 'title']);
 
     // Copy in a snake cased version of the summary fields
     body.summary = {};
@@ -81,14 +81,14 @@ class ReceiptModel extends MessageTypeModel {
         if (modelDef.model === 'items') {
           // For each product item, add it to this model, and generate parts to add to our parts array
           this.items.forEach((item) => {
-            this._addModel(item, modelDef.role, moreParts => moreParts.forEach(p => parts.push(p)));
+            this.addChildModel(item, modelDef.role, moreParts => moreParts.forEach(p => parts.push(p)));
           });
           currentCount++;
           if (currentCount === expectedCount) callback(parts);
         } else {
           // For each location message, and other model, add a pointer to it from this model, and
           // add it to our parts array.
-          this._addModel(this[modelDef.model], modelDef.role, (moreParts) => {
+          this.addChildModel(this[modelDef.model], modelDef.role, (moreParts) => {
             moreParts.forEach(p => parts.push(p));
             currentCount++;
             if (currentCount === expectedCount) callback(parts);
@@ -98,15 +98,9 @@ class ReceiptModel extends MessageTypeModel {
     });
   }
 
-  /**
-   * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
-   *
-   * @method _parseMessage
-   * @private
-   * @param {Object} payload
-   */
-  _parseMessage(payload) {
-    super._parseMessage(payload);
+  // See parent class
+  parseModelPart({ payload, isEdit }) {
+    super.parseModelPart({ payload, isEdit });
 
     this.createdAt = new Date(this.createdAt);
 
@@ -120,7 +114,9 @@ class ReceiptModel extends MessageTypeModel {
         this.summary[Util.camelCase(propertyName)] = summary[propertyName];
       });
     }
+  }
 
+  parseModelChildParts({ parts, init }) {
     // Gather all of the product items for this Receipt Message, and generate models for them
     this.items = this.getModelsByRole('product-items');
 

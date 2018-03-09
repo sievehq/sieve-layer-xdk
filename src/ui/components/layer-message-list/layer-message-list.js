@@ -164,7 +164,8 @@ registerComponent('layer-message-list', {
   `,
   style: `
     layer-message-list {
-      display: block;
+      display: flex;
+      flex-direction: column;
       flex-grow: 1;
       height: 100px; /* flexbox bug */
       padding-bottom: 15px;
@@ -173,10 +174,16 @@ registerComponent('layer-message-list', {
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
     }
+    layer-message-list > .layer-message-item {
+      flex-shrink: 0;
+    }
 
     layer-message-list:not(.layer-loading-data) .layer-load-indicator,
     layer-message-list:not(.layer-end-of-results) .layer-end-of-results-indicator {
       display: none;
+    }
+    layer-message-list > .layer-list-meta {
+      flex-grow: 1;
     }
   `,
   properties: {

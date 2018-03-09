@@ -60,13 +60,13 @@ class LocationModel extends MessageTypeModel {
    *
    * Used for Sending the Location Message.
    *
-   * @method _generateParts
+   * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    * @private
    */
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['latitude', 'longitude', 'heading', 'accuracy', 'createdAt',
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata(['latitude', 'longitude', 'heading', 'accuracy', 'createdAt',
       'altitude', 'description', 'title', 'city', 'country', 'postalCode', 'administrativeArea', 'street1', 'street2']);
 
     this.part = new MessagePart({

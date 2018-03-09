@@ -175,7 +175,7 @@ describe("The Message class", function() {
             var part1 = m.findPart();
             var part2 = m.findPart(function(part) {return part !== part1});
             expect(part1.body).toEqual("Hello There 1");
-            expect(part1.mimeType).toEqual("text/plain");
+            expect(part1.mimeType).toEqual("application/vnd.layer.text+json");
 
             expect(part2.body).toEqual("Hello There 2");
             expect(part2.mimeType).toEqual("text/greeting");

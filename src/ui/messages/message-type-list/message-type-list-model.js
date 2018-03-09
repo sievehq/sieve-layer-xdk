@@ -17,8 +17,8 @@ MessageTypeListModel = Layer.Core.Client.getMessageTypeModelClass('MessageTypeLi
 import Core, { MessagePart, MessageTypeModel } from '../../../core';
 
 class MessageTypeListModel extends MessageTypeModel {
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata([]);
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata([]);
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -28,7 +28,7 @@ class MessageTypeListModel extends MessageTypeModel {
     let asyncCount = 0;
     const parts = [this.part];
     this.items.forEach((item) => {
-      this._addModel(item, 'message-item', (moreParts) => {
+      this.addChildModel(item, 'message-item', (moreParts) => {
         moreParts.forEach(p => parts.push(p));
         asyncCount++;
         if (asyncCount === this.items.length) {
@@ -36,17 +36,17 @@ class MessageTypeListModel extends MessageTypeModel {
         }
       });
     });
-    this.items.forEach(item => item._mergeAction(this.action));
+    this.items.forEach(item => item.mergeAction(this.action));
   }
 
-  _parseMessage(payload) {
-    super._parseMessage(payload);
+  parseModelChildParts() {
+    super.parseModelChildParts();
 
     // Gather all of the parts that represent a high level list element (ignoring any subparts they may bring with them)
     // Exclucde our main list part that defines the list rather than its list items
     const parts = this.childParts.filter(part => part.mimeAttributes.role === 'message-item');
     this.items = parts.map(part => part.createModel());
-    this.items.forEach(item => item._mergeAction(this.action));
+    this.items.forEach(item => item.mergeAction(this.action));
   }
 
   getOneLineSummary() {

@@ -205,6 +205,7 @@ class MessagesQuery extends Query {
     }
   }
 
+  // TODO: Is this as efficient as it could be? Should index start at the end of the list?
   _getInsertIndex(message, data) {
     let index;
     for (index = 0; index < data.length; index++) {

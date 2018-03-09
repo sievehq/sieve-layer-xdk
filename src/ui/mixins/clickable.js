@@ -68,8 +68,9 @@ module.exports = {
      * @param {String} name         Any unique string
      * @param {HTMLElement} target  Target of events to listen for
      * @param {Function} fn         Handler to call when the event occurs
+     * @param {Boolean} [allowDuplicateEvents=false]  evt.preventDefault is called after a touch event to prevent a click event from also firing. This can mess with other behaviors; so may need to be disabled in some cases.
      */
-    addClickHandler(name, target, fn) {
+    addClickHandler(name, target, fn, allowDuplicateEvents = false) {
       if (!this.properties._clickableState[name]) this.properties._clickableState[name] = {};
       const state = this.properties._clickableState[name];
       state.fn = fn;
@@ -77,6 +78,7 @@ module.exports = {
       state.onTouchMove = this._onTouchMove.bind(this, name);
       state.onTouchEnd = this._onTouchEnd.bind(this, name);
       state.onFire = this._fireClickHandler.bind(this, name);
+      state.allowDuplicateEvents = allowDuplicateEvents;
 
       target.addEventListener('touchstart', state.onTouchStart);
       target.addEventListener('touchmove', state.onTouchMove);
@@ -91,7 +93,7 @@ module.exports = {
       // This is frankly kind of hazardous and we will either need to have a way to add more nodes here or we'll
       // need to rip this out entirely (or allow customers to)
       const clickableTargets = ['A', 'INPUT', 'BUTTON', 'TEXTAREA', 'SELECT'];
-      if (clickableTargets.indexOf(evt.target.tagName) === -1) {
+      if (!state.allowDuplicateEvents && clickableTargets.indexOf(evt.target.tagName) === -1) {
         // if tap event, prevent the click handler from firing causing a double event occurance
         evt.preventDefault();
       }

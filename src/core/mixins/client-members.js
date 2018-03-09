@@ -113,6 +113,7 @@ module.exports = {
       if (this._models.members[id]) {
         result = this._models.members[id];
       } else if (canLoad) {
+        if (!this.isReady) throw new Error(ErrorDictionary.clientMustBeReady);
         result = Syncable.load(id);
       }
       if (canLoad) result._loadType = 'fetched';

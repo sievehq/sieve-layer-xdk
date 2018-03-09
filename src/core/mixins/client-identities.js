@@ -156,6 +156,7 @@ module.exports = {
       if (this._models.identities[id]) {
         result = this._models.identities[id];
       } else if (canLoad) {
+        if (!this.isReady) throw new Error(ErrorDictionary.clientMustBeReady);
         result = Identity.load(id);
       }
       if (canLoad) result._loadType = 'fetched';

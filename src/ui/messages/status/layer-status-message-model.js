@@ -33,13 +33,13 @@ class StatusModel extends MessageTypeModel {
    *
    * Used for Sending the Status Message.
    *
-   * @method _generateParts
+   * @method generateParts
    * @private
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['text']);
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata(['text']);
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,

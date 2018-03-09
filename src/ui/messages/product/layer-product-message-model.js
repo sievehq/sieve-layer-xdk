@@ -62,9 +62,10 @@
 import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
 
 class ProductModel extends MessageTypeModel {
-  _initializeProperties() {
-    if (!this.imageUrls) this.imageUrls = [];
-    if (!this.options) this.options = [];
+  constructor(options = {}) {
+    if (!options.imageUrls) options.imageUrls = [];
+    if (!options.options) options.options = [];
+    super(options);
   }
 
   /**
@@ -72,13 +73,13 @@ class ProductModel extends MessageTypeModel {
    *
    * Used for Sending the Product Message.
    *
-   * @method _generateParts
+   * @method generateParts
    * @private
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata([
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata([
       'name', 'brand', // naming
       'description', 'imageUrls', // Rendering
       'currency', 'price', 'quantity', // Purchasing
@@ -96,7 +97,7 @@ class ProductModel extends MessageTypeModel {
       let count = 0;
       const parts = [this.part];
       this.options.forEach((option) => {
-        this._addModel(option, 'options', (newParts) => {
+        this.addChildModel(option, 'options', (newParts) => {
           count++;
           newParts.forEach(p => parts.push(p));
           if (count === this.options.length) callback(parts);
@@ -108,12 +109,11 @@ class ProductModel extends MessageTypeModel {
   /**
    * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
    *
-   * @method _parseMessage
+   * @method parseModelChildParts
    * @protected
-   * @param {Object} payload
    */
-  _parseMessage(payload) {
-    super._parseMessage(payload);
+  parseModelChildParts({ parts, init }) {
+    super.parseModelChildParts({ parts, init });
 
     // Read the options Message Parts, generate models for them and store them in the options property
     this.options = this.getModelsByRole('options');

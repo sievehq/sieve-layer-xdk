@@ -20,8 +20,15 @@ class MessageTypeResponseSummaryModel extends Root {
     if (!this._participantData) this._participantData = {};
   }
 
+  reset() {
+    this._participantData = {};
+    this.part = null;
+  }
+
   // TODO: Known issue: doesObjectMatch won't compare arrays.
-  _parseMessage(payload) {
+  parseResponsePart(part) {
+    this.part = part;
+    const payload = JSON.parse(part.body);
     const participantData = payload.participant_data;
     if (!Util.doesObjectMatch(this._participantData, participantData)) {
       this._participantData = participantData;

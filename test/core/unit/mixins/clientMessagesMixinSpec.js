@@ -131,10 +131,11 @@ describe("The Client Message Mixin", function() {
             client.isReady = false;
             var newId = message.id + "a";
             spyOn(client, 'xhr');
-            client.getMessage(newId, true);
-            expect(client.xhr).not.toHaveBeenCalled();
-            client._clientReady();
-            expect(client.xhr).toHaveBeenCalled();
+
+            expect(function() {
+                client.getMessage(newId, true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMustBeReady);
+            expect(Layer.Core.LayerError.ErrorDictionary.clientMustBeReady).toEqual(jasmine.any(String));
         });
     });
 

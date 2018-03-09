@@ -33,8 +33,8 @@ import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
 import ResponseModel from '../response/layer-response-message-model';
 
 class FeedbackModel extends MessageTypeModel {
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata([
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata([
       'title', 'prompt', 'promptWait', 'responseMessage',
       'summary', 'placeholder', 'customResponseData',
     ]);
@@ -51,11 +51,12 @@ class FeedbackModel extends MessageTypeModel {
     callback([this.part]);
   }
 
-  _parseMessage(payload) {
+  // See parent class
+  parseModelPart({ payload, isEdit }) {
     this.enabledFor = payload.enabled_for;// shouldn't be needed; review sequencing of parsing response data vs property data in parent method
     const rating = this.rating;
     const comment = this.comment;
-    super._parseMessage(payload);
+    super.parseModelPart({ payload, isEdit });
 
     if (this.rating !== rating) {
       this._triggerAsync('message-type-model:change', {
@@ -70,6 +71,15 @@ class FeedbackModel extends MessageTypeModel {
         newValue: this.comment,
         oldValue: comment,
       });
+    }
+  }
+
+  parseModelResponses() {
+    const rating = this.responses.getResponse('rating', this.enabledFor[0]);
+    if (rating) {
+      this.rating = rating;
+      this.comment = this.responses.getResponse('comment', this.enabledFor[0]);
+      this.sentAt = new Date(this.responses.getResponse('sent_at', this.enabledFor[0]));
     }
   }
 
@@ -113,15 +123,6 @@ class FeedbackModel extends MessageTypeModel {
       oldValue: null,
       newValue: this.sentAt,
     });
-  }
-
-  _processNewResponses() {
-    const rating = this.responses.getResponse('rating', this.enabledFor[0]);
-    if (rating) {
-      this.rating = rating;
-      this.comment = this.responses.getResponse('comment', this.enabledFor[0]);
-      this.sentAt = new Date(this.responses.getResponse('sent_at', this.enabledFor[0]));
-    }
   }
 
   __setRating(newValue, oldValue) {

@@ -63,13 +63,13 @@ class ResponseModel extends MessageTypeModel {
    *
    * Used for Sending the Response Message.
    *
-   * @method _generateParts
+   * @method generateParts
    * @private
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['responseTo', 'responseToNodeId', 'participantData', 'sharedData']);
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata(['responseTo', 'responseToNodeId', 'participantData', 'sharedData']);
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -79,7 +79,7 @@ class ResponseModel extends MessageTypeModel {
 
     // Add the displayModel's MessagePart, if there is one
     if (this.displayModel) {
-      this._addModel(this.displayModel, 'status', (moreParts) => {
+      this.addChildModel(this.displayModel, 'status', (moreParts) => {
         moreParts.forEach(p => parts.push(p));
         callback(parts);
       });
@@ -91,12 +91,11 @@ class ResponseModel extends MessageTypeModel {
   /**
    * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
    *
-   * @method _parseMessage
+   * @method parseModelChildParts
    * @private
-   * @param {Object} payload
    */
-  _parseMessage(payload) {
-    super._parseMessage(payload);
+  parseModelChildParts({ parts, init }) {
+    super.parseModelChildParts({ parts, init });
 
     // Find the displayModel in the MessageParts and create that Model.
     this.displayModel = this.getModelsByRole('status')[0] || null;

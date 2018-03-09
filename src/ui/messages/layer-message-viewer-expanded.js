@@ -77,7 +77,9 @@ registerComponent('layer-message-viewer-expanded', {
   methods: {
     // Lifecycle method: Setup event handlers and local variables
     onCreate() {
-      this.addClickHandler('dialog-click', this, this._onClick.bind(this));
+      // Last `true` argument prevents `evt.preventDefault()` from being called
+      // on touch events that occur within the dialog
+      this.addClickHandler('dialog-click', this, this._onClick.bind(this), true);
       this.addEventListener('touchmove', this.onTouchMove.bind(this));
       this.properties.boundPopStateListener = this._popStateListener.bind(this);
     },

@@ -55,13 +55,13 @@ class CarouselModel extends MessageTypeModel {
    *
    * Requires generating one or more Message Parts per submodel in the `items` array
    *
-   * @method _generateParts
+   * @method generateParts
    * @protected
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata(['title']);
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata(['title']);
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -73,7 +73,7 @@ class CarouselModel extends MessageTypeModel {
 
     // Generate the parts for each carousel-item, attach the carousel-item role and call the callback when done
     this.items.forEach((item, index) => {
-      this._addModel(item, 'carousel-item', (moreParts) => {
+      this.addChildModel(item, 'carousel-item', (moreParts) => {
         moreParts[0].mimeAttributes['item-order'] = index * 100 + 100;
         moreParts.forEach(p => parts.push(p));
         asyncCount++;
@@ -85,7 +85,7 @@ class CarouselModel extends MessageTypeModel {
 
     // This is done independently of generating the parts; should not modify the Parts that are being generrated,
     // and is here as there is no `afterMessageCreated` callback or event.
-    this.items.forEach(item => item._mergeAction(this.action));
+    this.items.forEach(item => item.mergeAction(this.action));
   }
 
 
@@ -94,12 +94,12 @@ class CarouselModel extends MessageTypeModel {
    *
    * This primarily consists of importing all of the `carousel-item` Message Parts.
    *
-   * @method _parseMessage
+   * @method parseModelChildParts
    * @protected
    * @param {Object} payload
    */
-  _parseMessage(payload) {
-    super._parseMessage(payload);
+  parseModelChildParts({ parts, init }) {
+    super.parseModelChildParts({ parts, init });
     this.items = this.getModelsByRole('carousel-item').sort((a, b) => {
       const orderA = Number(a.part.mimeAttributes['item-order']);
       const orderB = Number(b.part.mimeAttributes['item-order']);
@@ -107,7 +107,7 @@ class CarouselModel extends MessageTypeModel {
     });
 
     // Setup the actions for each Carousel Item Model.
-    this.items.forEach(item => item._mergeAction(this.action));
+    this.items.forEach(item => item.mergeAction(this.action));
   }
 
   /**
@@ -122,7 +122,7 @@ class CarouselModel extends MessageTypeModel {
    * @param {Object} newValue
    */
   __updateAction(newValue) {
-    if (this.items) this.items.forEach(item => item._mergeAction(newValue));
+    if (this.items) this.items.forEach(item => item.mergeAction(newValue));
   }
 
   __getItemCount() {

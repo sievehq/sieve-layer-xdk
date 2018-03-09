@@ -7,9 +7,8 @@ import Core, { MessageTypeModel } from '../../../core';
 
 class OrganizationModel extends MessageTypeModel {
 
-  _parseMessage(payload) {
-    super._parseMessage(payload);
-
+  parseModelChildParts() {
+    super.parseModelChildParts();
     this.addressModels = this.getModelsByRole('address');
     this.contactModels = this.getModelsByRole('contact');
   }

@@ -65,33 +65,25 @@ import Core, { Root, MessagePart, MessageTypeModel } from '../../../core';
 import { xhr } from '../../../utils';
 
 class ImageModel extends MessageTypeModel {
-
-  /**
-   * Sanitize initial properties; convert source/preview blobs to MessageParts.
-   *
-   * Only an issue when the model is created and directly passed a Blob.
-   *
-   * @method _initializeProperties
-   * @protected
-   */
-  _initializeProperties() {
-    if (this.source) {
-      this.source = new MessagePart(this.source);
+  constructor(options = {}) {
+    if (options.source && !(options.source instanceof MessagePart)) {
+      options.source = new MessagePart(options.source);
     }
-    if (this.preview) {
-      this.preview = new MessagePart(this.preview);
+    if (options.preview && !(options.preview instanceof MessagePart)) {
+      options.preview = new MessagePart(options.preview);
     }
+    super(options);
   }
 
   /**
-   * Does the work of _generateParts but allows us to asynchronously call it if needed.
+   * Does the work of generateParts but allows us to asynchronously call it if needed.
    *
    * @method _generateParts2
    * @private
    */
   _generateParts2() {
     // Generate the MessagePart body
-    const body = this._initBodyWithMetadata(['sourceUrl', 'previewUrl', 'artist', 'fileName', 'orientation',
+    const body = this.initBodyWithMetadata(['sourceUrl', 'previewUrl', 'artist', 'fileName', 'orientation',
       'width', 'height', 'previewWidth', 'previewHeight', 'title', 'subtitle']);
 
     // Generate the MessagePart with the body
@@ -105,16 +97,14 @@ class ImageModel extends MessageTypeModel {
     // Node Heirarchy
     if (this.source) {
       parts.push(this.source);
-      this.source.mimeAttributes.role = 'source';
-      this.source.mimeAttributes['parent-node-id'] = this.part.nodeId;
+      this.addChildPart(this.source, 'source');
     }
 
     // If there is a preview part, add it to the parts array and add it to the Message Part
     // Node Heirarchy
     if (this.preview) {
       parts.push(this.preview);
-      this.preview.mimeAttributes.role = 'preview';
-      this.preview.mimeAttributes['parent-node-id'] = this.part.nodeId;
+      this.addChildPart(this.preview, 'preview');
     }
 
     return parts;
@@ -127,12 +117,12 @@ class ImageModel extends MessageTypeModel {
    * need to generate the `preview` which is an async task.  Much of the work to generate the
    * Message Parts is therefore async called after the preview is generated.
    *
-   * @method _generateParts
+   * @method generateParts
    * @protected
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
-  _generateParts(callback) {
+  generateParts(callback) {
     if (this.source && !this.mimeType) this.mimeType = this.source.type;
 
     if (this.source && !this.fileName) this.fileName = this.source.name;
@@ -142,13 +132,13 @@ class ImageModel extends MessageTypeModel {
       this._gatherMetadataFromEXIF(this.source.body, () => {
         // Generate a smaller version of the image
         this._generatePreview(this.source.body, () => {
-          // Finish the standard _generateParts task
+          // Finish the standard generateParts task
           const parts = this._generateParts2();
           callback(parts);
         });
       });
     } else {
-      // Finish the standard _generateParts task
+      // Finish the standard generateParts task
       const parts = this._generateParts2();
       callback(parts);
     }
@@ -157,15 +147,15 @@ class ImageModel extends MessageTypeModel {
   /**
    * Given a Layer.Core.Message, initialize this Image Model.
    *
-   * `_parseMessage` is called for intialization, and is also recalled
+   * `parseModelChildParts` is called for intialization, and is also recalled
    * whenever the Message itself is modified.
    *
-   * @method _parseMessage
+   * @method parseModelChildParts
    * @protected
    * @param {Object} payload    Metadata describing the Image Message
    */
-  _parseMessage(payload) {
-    super._parseMessage(payload);
+  parseModelChildParts({ changes = [], isEdit = false }) {
+    super.parseModelChildParts({ changes, isEdit });
 
     // Iterate over each part, copying suitable parts into the associated property.
     // Change events occur when fetching external content for these MessageParts and

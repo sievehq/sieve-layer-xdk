@@ -44,29 +44,15 @@ class MessageTypeModel extends Root {
     this.currentMessageRenderer = this.constructor.messageRenderer;
     this.currentMessageRendererExpanded = this.constructor.messageRendererExpanded;
     this.childParts = [];
-    this._initializeProperties();
+    this.childModels = [];
     if (this.message) {
       this._setupMessage();
+      // Some anonymous models will have a message but not have a part to parse
+      if (this.part) {
+        this.parseMessage();
+      }
     }
   }
-
-  /**
-   * Initializes properties of the Message Type subclass.
-   *
-   * Why use this? There are two paths for initialization:
-   *
-   * 1. _generateParts() for generating a Message from a Model
-   * 2. _parseMessage() for populating the model from a Message
-   *
-   * Rather than initialize things in both methods, put basic initialization in `_initializeProperties`.
-   *
-   * Putting initialization in a subclass's constructor has sequencing problems.
-   *
-   * @abstract
-   * @protected
-   * @method _initializeProperties
-   */
-  _initializeProperties() {}
 
   /**
    * Send this Message Type Model within the specified Conversation
@@ -130,14 +116,19 @@ class MessageTypeModel extends Root {
   /**
    * Generate a Layer.Core.Message from this Model.
    *
-   * This method returns the Message asynchronously as some models
-   * may require processing of data prior to writing data into MessageParts.
+   * This method returns the Layer.Core.Message asynchronously as some models
+   * may require processing of data prior to writing data into the Layer.Core.MessagePart objects.
    *
    * ```
    * model.generateMessage(conversation, function(message) {
    *     message.send();
    * });
    * ```
+   *
+   * > *Note*
+   * >
+   * > A model can have only a single message; calling `generateMessage()` a second time
+   * > will do nothing other than call `callback` with the existing message.
    *
    * @method generateMessage
    * @param {Layer.Core.Conversation} conversation
@@ -149,7 +140,7 @@ class MessageTypeModel extends Root {
     if (this.message) return callback(this.message);
     if (!conversation) throw new Error(ErrorDictionary.conversationMissing);
     if (!(conversation instanceof Root)) throw new Error(ErrorDictionary.conversationMissing);
-    this._generateParts((parts) => {
+    this.generateParts((parts) => {
       this.childParts = parts;
       this.part.mimeAttributes.role = 'root';
       // this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
@@ -161,25 +152,36 @@ class MessageTypeModel extends Root {
       Client._removeMessageTypeModel(this);
       this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
       Client._addMessageTypeModel(this);
-      this._setupMessage(true);
+      this._setupMessage();
+      this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
       if (callback) callback(this.message);
     });
     return this;
   }
 
   /**
-   * Adds a Model (submodel) to this Model; for use from `_generateParts` *only*.
+   * Provide a generateParts method so that your model can be turned into a Message when generating it locally.
+   *
+   * @abstract
+   * @protected
+   * @method generateParts
+   * @param {Function} callback
+   * @param {Layer.Core.MessagePart[]} callback.parts  Array of Message Parts to be added to the new message
+   */
+
+  /**
+   * Adds a Model (submodel) to this Model; for use from `generateParts` *only*.
    *
    * Note that adding a role name is needed for proper parsing of the Message by recipients of the Message.
    *
    * ```
-   * _generateParts(callback) {
+   * generateParts(callback) {
    *     this.part = new MessagePart({
    *         mimeType: this.constructor.MIMEType,
    *         body: JSON.stringify({}),
    *     });
    *     if (this.subModel) {
-   *         model._addModel(subModel, 'some-role', function(parts) {
+   *         model.addChildModel(subModel, 'some-role', function(parts) {
    *             callback([this.part].concat(parts));
    *         });
    *     }
@@ -187,14 +189,14 @@ class MessageTypeModel extends Root {
    * ```
    *
    * @protected
-   * @method _addModel
+   * @method addChildModel
    * @param {Layer.Core.MessageTypeModel} model    The sub-model to add to this model
    * @param {String} role                          The role to assign the sub-model
    * @param {Function} callback                    The function to call when the sub-model has generated its parts
    * @param {Layer.Core.MessagePart[]} parts       Array of Parts that should be added to the Message
    */
-  _addModel(model, role, callback) {
-    model._generateParts((moreParts) => {
+  addChildModel(model, role, callback) {
+    model.generateParts((moreParts) => {
       moreParts[0].mimeAttributes.role = role;
       moreParts[0].mimeAttributes['parent-node-id'] = this.part.nodeId;
       if (callback) callback(moreParts);
@@ -202,23 +204,56 @@ class MessageTypeModel extends Root {
   }
 
   /**
+   * Adds a Child Message Part to this Model; for use from `generateParts` *only*.
+   *
+   * Use {@link #addChildModel} if this Message Part is represented by a Message Type Model.
+   *
+   * * Note that adding a role name is needed for proper parsing of the Message by recipients of the Message.
+   *
+   * ```
+   * generateParts(callback) {
+   *     this.part = new MessagePart({
+   *         mimeType: this.constructor.MIMEType,
+   *         body: JSON.stringify({}),
+   *     });
+   *     if (this.source) {
+   *         this.source = new Layer.Core.MessagePart({
+   *             mimeType: "my-custom/mime-type",
+   *             body: "my-data"
+   *         });
+   *         this.addChildPart(this.source, "source");
+   *     }
+   * }
+   * ```
+   *
+   * @method addChildPart
+   * @protected
+   * @param {Layer.Core.MessagePart} part
+   * @param {String} role
+   */
+  addChildPart(part, role) {
+    part.mimeAttributes.role = role;
+    part.mimeAttributes['parent-node-id'] = this.part.nodeId;
+  }
+
+  /**
    * Setup any Layer.Core.Message so that its bound to this Model.
    *
    * This method will take whatever `this.message` contains and do setup upon it.
    *
-   * When completed, Layer.Core.MessageTypeModel._parseMessage is called upon it
+   * When completed, Layer.Core.MessageTypeModel.parseModelPart is called upon it
    * unless explicitly suppressed.
    *
    * @method _setupMessage
-   * @protected
-   * @param {Boolean} doNotParse     Do not call Layer.Core.MessageTypeModel._parseMessage on finishing setup
+   * @private
    */
-  _setupMessage(doNotParse) {
+  _setupMessage() {
 
     // Typically, every model will have a part; however, there are some special cases where
     // an "anonymous" submodel may be created, such as is done when the ButonModel creates a ChoiceModel
     // that is not directly associated with a part, but is indirectly associated (handled via `parentId` property)
     if (this.part) {
+      if (!this.part.body) this.part.fetchContent();
       if (!this.id) {
         // The Model ID is derived from the Message ID so that they are linked together in a 1-to-1 relationship.
         this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
@@ -239,7 +274,9 @@ class MessageTypeModel extends Root {
       this.childModels = [];
     }
 
-    // For any part added/removed call suitable handlers
+    // For any part added/removed call suitable handlers (and remove any older handlers which mostly only show up in unit tests)
+    this.message.off('messages:part-added', this._handlePartAdded, this);
+    this.message.off('messages:part-removed', this._handlePartRemoved, this);
     this.message.on('messages:part-added', this._handlePartAdded, this);
     this.message.on('messages:part-removed', this._handlePartRemoved, this);
 
@@ -248,24 +285,14 @@ class MessageTypeModel extends Root {
 
     // Register this model so that it can be retrieved instead of re-instantiated
     Client._addMessageTypeModel(this);
-
-    if (this.part) {
-      // If a Message Type Model's main part does not have a body, that means it has to be fetched;
-      // call fetchContent to start loading it.
-      if (!this.part.body) this.part.fetchContent();
-
-      // Parse the message-part and initialize the model from the part's body
-      if (!doNotParse) {
-        this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
-      }
-    }
   }
 
   /**
-   * Generate the Layer.Core.MessagePart.body field to represent this Message Type Model.
+   * Generate the {@link Layer.Core.MessagePart#body} field to represent this Message Type Model.
    *
-   * This is for use from Layer.Core.MessageTypeModel._generatePart to build a `body` object
-   * from the properties specified here.
+   * This is for use from {@link #generateParts} to build a `body` object which can be serialized via `JSON.stringify`.
+   *
+   * Specify as input what properties go into the `body` (handles string/number/boolean only).
    *
    * This code snippet will copy the author, size and title properties into the MessagePart `body`
    * of the Part being generated.
@@ -273,23 +300,23 @@ class MessageTypeModel extends Root {
    * This method also converts all camelCase property names into snake_case property names.
    *
    * ```
-   * var body = this._initBodyWithMetadata(['author', 'size', 'title']);
+   * var body = this.initBodyWithMetadata(['author', 'size', 'title']);
    * this.part = new MessagePart({
    *   mimeType: this.constructor.MIMEType,
    *   body: JSON.stringify(body),
    * });
    * ```
    *
-   * @method _initBodyWithMetadata
+   * @method initBodyWithMetadata
    * @protected
    * @param {String[]} fields
    * @returns {String}
    */
-  _initBodyWithMetadata(fields) {
+  initBodyWithMetadata(fields) {
     const body = { };
     const newFields = ['action', 'customData'].concat(fields);
     newFields.forEach((fieldName) => {
-      if (this._propertyHasValue(fieldName)) {
+      if (this.propertyHasValue(fieldName)) {
         if (Array.isArray(this[fieldName]) && this[fieldName].length === 0) return;
         body[Util.hyphenate(fieldName, '_')] = this[fieldName];
       }
@@ -298,64 +325,76 @@ class MessageTypeModel extends Root {
   }
 
   /**
-   * Used by Layer.Core.MessageTypeModel._initBodyWithMetadata to determine if a given property has a value to write to the `body`.
+   * Used by {@link #initBodyWithMetadata} to determine if a given property has a value to write to the `body`.
    *
    * Any property whose value is different from its prototype would typically be written... but
-   * Object properties must always be generated separate from the prototype, so custom tests
-   * must be added here and to subclasses.
+   * Object properties can _never_ be built into the prototype (else they become static properties shared among all instances)
+   * and so custom tests must be added here and to subclasses.
    *
    * This method prevents us from writing every property to `body` and instead only write those with relevant data.
    *
-   * @method _propertyHasValue
+   * Provide a custom subclass for this method if your class needs changes to this test.
+   *
+   * @method propertyHasValue
    * @protected
    * @param {String} fieldName   The property name whose value may/may-not be worth writing.
-   * @returns {Boolean}
+   * @returns {Boolean} Should the value be written
    */
-  _propertyHasValue(fieldName) {
+  propertyHasValue(fieldName) {
     if (fieldName === 'action' && Util.isEmpty(this.action)) return false;
     if (fieldName === 'customData' && Util.isEmpty(this.customData)) return false;
     if (this[fieldName] === this.constructor.prototype[fieldName]) return false;
     return true;
   }
 
+
   /**
-   * This method parses the message to extract the information managed by the model.
+   * Setup this instance's properties, responses, sub-message-parts and submodels.
    *
-   * `_parseMessage` is called for intialization, and is also recalled
-   * whenever the Message itself is modified.  Any subclass providing an implementation should
-   * take steps to determine whether changes from the server should overwrite properties that are already setup.
-   *
-   * The payload represents the Message's Root Message Part's JSON properties.
-   *
-   * `this.message` and `this.childParts` are already set and can help building the model.
+   * This method is called once, when instantiating a new instance.
    *
    * This method will:
    *
-   * * setup `this.responses` with any data sent via Response Messages.
-   * * Import each property from payload into the properties of this instance (converting from snake case to cammel case)
+   * * Call {@link #parseModelPart} to setup this model from its main Layer.Core.MessagePart
+   * * Initialize {@link #responses} and if needed, call {@link #parseModelResponses}
+   * * Call {@link #parseModelChildParts} to load in any child models/child message parts
+   *
+   * @protected
+   * @method parseMessage
+   */
+  parseMessage() {
+    const responses = this.childParts.filter(part => part.mimeAttributes.role === 'response_summary')[0];
+
+    this.parseModelPart({
+      payload: this.part.body ? JSON.parse(this.part.body) : {},
+      isEdit: false,
+    });
+    if (responses) this._parseModelResponses(responses);
+    this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
+  }
+
+  /**
+   * This method parses the {@link #part} to extract the information that will be managed by the model.
+   *
+   * `parseModelPart` is called for intialization, and is also recalled
+   * whenever this Model's Layer.Core.MessagePart is modified (locally or remotely).
+   *
+   * There may be cases where changes to properties via an Edit to the MessagePart need to be handled differently
+   * from initializing your Model from the Part.
+   *
+   * The root class implementation of this method will import each property from payload into the properties of
+   * this instance (converting from snake case to cammel case).
    *
    * Subclass this method to add additional parsing specific to your custom Layer.Core.MessageTypeModel.
    *
-   * @method _parseMessage
+   * @method parseModelPart
    * @protected
-   * @param {Object} payload    This is the body of the message after running it through `JSON.parse(body)`
+   * @param {Object} options
+   * @param {Object} options.payload    This is the body of `this.part` after running it through `JSON.parse(this.part.body)`
+   * @param {Boolean} options.isEdit    If this method is called in response to an update to the Layer.Core.MessagePart then `isEdit` is `true`; for initialization it will be `false`.
    */
-  _parseMessage(payload) {
-    const responses = this.childParts.filter(part => part.mimeAttributes.role === 'response_summary')[0];
-    if (responses) {
-      const oldData = this.responses._participantData;
-      if (this.responses._parseMessage(JSON.parse(responses.body))) {
-        Util.defer(() => this._processNewResponses());
-        this._triggerAsync('message-type-model:change', {
-          propertyName: 'responses._participantData',
-          oldValue: oldData,
-          newValue: this.responses._participantData,
-        });
-      }
-    }
-
+  parseModelPart({ payload, isEdit }) {
     Object.keys(payload).forEach((propertyName) => {
-
       const modelName = Util.camelCase(propertyName);
       if (modelName in this.constructor.prototype) {
         if (this[modelName] !== payload[propertyName]) {
@@ -370,6 +409,93 @@ class MessageTypeModel extends Root {
     });
   }
 
+
+  /**
+   * This method parses the {@link #childParts} and {@link #childModels} to identify significant data that is needed for intialization.
+   *
+   * This method is called:
+   *
+   * * By {@link #parseMessage} when parsing a new Layer.Core.Message into a new Model.
+   * * By {@link #generateMessage} to parse a newly (locally) generated message
+   *
+   * {@link #message}, {@link #childParts} and {@link #childModels} properties are already set and can help building the model.
+   *
+   * Common example of what a subclass implementation of this method may do:
+   *
+   * ```
+   * parseModelChildParts({ changes = [], isEdit = false }) {
+   *    super.parseModelPart({ payload, isEdit });
+   *    this.source = this.childParts.filter(part => part.role === 'source')[0];  // Get the child MessagePart
+   *    this.billingAddressModel = this.getModelsByRole('billing-address')[0];    // Get the child MessageTypeModel
+   * }
+   * ```
+   *
+   * > *Note*
+   * >
+   * > when this is called after `model.generateMessage()` new submodels are generated and replace any submodels
+   * > that the Model was instantiated with.  This should be fixed within the XDK in the future.
+   *
+   * @method parseModelChildParts
+   * @protected
+   * @param {Object} options
+   * @param {Object[]} options.changes  Array of changes to Child MessageParts
+   * @param {Layer.Core.MessagePart} options.changes.part    The Layer.Core.MessagePart that changed
+   * @param {String} options.changes.type   The type of change: 'added', 'removed', 'changed'
+   * @param {Boolean} options.isEdit  Is the change an update to MessageParts or is this the intialization call
+   */
+  parseModelChildParts({ changes = [], isEdit = false }) {
+    // No-op for now
+    // TODO: Initialize properties by reflecting on prototypes and roles.
+  }
+
+  /**
+   * Parse the Response Summary Layer.Core.MessagePart.
+   *
+   * Called when:
+   *
+   * * initializing with a Layer.Core.Message with an existing Repsonse Summary.
+   * * A Response Summary part is added to the Layer.Core.Message
+   * * A Response Summary part is removed from the Layer.Core.Message (input is `null`)
+   * * A Response Summary part is updated with new responses
+   *
+   * @method _parseModelResponses
+   * @private
+   * @param {Layer.Core.MessagePart} responsePart
+   */
+  _parseModelResponses(responsePart) {
+    if (responsePart) {
+      const oldData = this.responses._participantData;
+      if (this.responses.parseResponsePart(responsePart)) {
+        this.parseModelResponses(); // Call the public method that lets each model update its state
+        this._triggerAsync('message-type-model:change', {
+          propertyName: 'responses._participantData',
+          oldValue: oldData,
+          newValue: this.responses._participantData,
+        });
+      }
+    } else {
+      const oldData = this.responses._participantData;
+      this.responses.reset();
+      this.parseModelResponses(); // Call the public method that lets each model update its state
+      this._triggerAsync('message-type-model:change', {
+        propertyName: 'responses._participantData',
+        oldValue: oldData,
+        newValue: this.responses._participantData,
+      });
+    }
+  }
+
+
+  /**
+   * Whenever {@link #responses} changes as a result of *any* User posting a Response Message,
+   * this method is called to let each model process the new responses.
+   *
+   * @protected
+   * @abstract
+   * @method parseModelResponses
+   */
+  parseModelResponses() { }
+
   /**
    * Whenever a relevant part has changed, reparse the message.
    *
@@ -379,13 +505,13 @@ class MessageTypeModel extends Root {
    * * Any part within `this.childParts` is changed
    * * Any part is added/removed from `this.childParts`
    *
-   * Any time the underlying message changes, Layer.Core.MessageTypeModel._parseMessage is recalled
+   * Any time the underlying message changes, Layer.Core.MessageTypeModel.parseModelPart is recalled
    * so that the Model can be rebuilt.
    *
    * > *Note*
    * >
    * > If you manage state in your model, you must track whether this is your first call to
-   * > `_parseMessage` in which all state can be updated, or a subsequent call in which
+   * > `parseModelPart` in which all state can be updated, or a subsequent call in which
    * > you want to *not* overwrite some local state manipulations.
    *
    * @method _handlePartChanges
@@ -393,8 +519,15 @@ class MessageTypeModel extends Root {
    * @param {Layer.Core.LayerEvent} evt
    */
   _handlePartChanges(evt) {
-    if (this.part) {
-      this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
+    if (this.part && this.part === evt.target) {
+      this.parseModelPart({
+        payload: this.part.body ? JSON.parse(this.part.body) : {},
+        isEdit: true,
+      });
+    } else if (evt.target.role === 'response_summary') {
+      this._parseModelResponses(evt.target);
+    } else {
+      this.parseModelChildParts({ changes: [{ type: 'changed', part: evt.target }], isEdit: true });
     }
   }
 
@@ -402,9 +535,9 @@ class MessageTypeModel extends Root {
    * A MessagePart has been removed.
    *
    * If the part is a Child Part, remove it from `this.childParts` and call
-   * Layer.Core.MessageTypeModel._handlePartChanges which in turn will trigger a change event.
+   * {@link #parseModelChildParts} which in turn will trigger model change events if needed.
    *
-   * Assume that the root part would never be removed as that would be an invalid operation.
+   * Assume that the root part of a Layer.Core.Message would never be removed as that would be an invalid operation.
    *
    * @method _handlePartRemoved
    * @private
@@ -415,17 +548,25 @@ class MessageTypeModel extends Root {
     const partIndex = this.childParts.indexOf(removedPart);
     if (partIndex !== -1) {
       this.childParts.splice(partIndex, 1);
-      this._handlePartChanges(removeEvt);
     }
 
     this.childModels = this.childModels.filter(part => part.id !== removedPart.id);
+    if (partIndex !== -1) {
+      if (removedPart === this.responses.part) {
+        this._parseModelResponses(null);
+      } else {
+        this.parseModelChildParts({ changes: [{ type: 'removed', part: removedPart }], isEdit: true });
+      }
+    }
   }
 
   /**
    * A MessagePart has been added.
    *
-   * If the new part is a Child Part, add it to `this.childParts` and call
-   * Layer.Core.MessageTypeModel._handlePartChanges.
+   * * If the new part is a Child Part call {@link #_handleChildPartAdded}
+   * * If the new part added shares this model's Part ID, the update `this.part` to the newly received part, and
+   *   let {@link #_handlePartChanges} process the new Part.
+   * * If the MessagePart is not a replacement for this part, nor a new Child Part, ignore it
    *
    * @method _handlePartAdded
    * @private
@@ -433,21 +574,10 @@ class MessageTypeModel extends Root {
    */
   _handlePartAdded(addEvt) {
     const part = addEvt.part;
-
-    // This removes from childParts any part that is not a part of the message. Doesn't seem to be a useful operation,
-    // but commented it out until more thought goes into it.
-    // this.childParts = this.childParts.filter(childPart => message.parts.has(childPart));
-
-    // If this MessagePart is a Chile Node of this Model, then add it to our childParts and call _handlePartChanges
     const parentId = part.parentId;
-    if (parentId && parentId === this.nodeId) {
-      this.childParts.push(part);
-      const childModel = part.createModel();
-      if (childModel) this.childModels.push(childModel);
 
-      part.on('messageparts:change', this._handlePartChanges, this);
-      if (!this.part.body) this.part.fetchContent();
-      this._parseMessage(this.part.body ? JSON.parse(this.part.body) : {});
+    if (parentId && parentId === this.nodeId) {
+      this._handleChildPartAdded(part);
     } else if (this.part && part.nodeId === this.part.nodeId) {
       this.part = part;
       this._handlePartChanges(addEvt);
@@ -455,20 +585,48 @@ class MessageTypeModel extends Root {
   }
 
   /**
-   * Used from {@link #_parseMessage} subclass implementations to gather submodels and assign them as properties.
+   * A new Child Part has been added to this Model/Message.
+   *
+   * * Update {@link #childParts}
+   * * Update {@link #childModels}
+   * * If its a Response Summary call {@link #_parseModelResponses}
+   * * If its a regular child Message Part, call {@link #parseModelChildParts}
+   *
+   * @method _handleChildPartAdded
+   * @private
+   * @param {Layer.Core.MessagePart} part
+   */
+  _handleChildPartAdded(part) {
+    this.childParts.push(part);
+    const childModel = part.createModel();
+    if (childModel) this.childModels.push(childModel);
+
+    // Call _handlePartChanges any time a childPart has changed
+    part.on('messageparts:change', this._handlePartChanges, this);
+    if (!part.body) part.fetchContent();
+
+    if (part.role === 'response_summary') {
+      this._parseModelResponses(part);
+    } else {
+      this.parseModelChildParts({ changes: [{ type: 'added', part }], isEdit: true });
+    }
+  }
+
+  /**
+   * Used from {@link #parseModelChildParts} subclass implementations to gather submodels and assign them as properties.
    *
    * This code snippet shows how a submodel is generated from the Message for the specified role name:
    *
    * ```
-   * _parseMessage(payload) {
-   *     super._parseMessage(payload);
+   * parseModelChildParts({ changes, isEdit }) {
+   *     super.parseModelPart({ changes, isEdit });
    *     this.billingAddressModel = this.getModelsByRole('billing-address')[0];
    *     this.productItems = this.getModelsByRole('product-item');
    * }
    * ```
    *
    * Specifically, it will search the {@link #childModels} for a MessageTypeModel whose `role` value
-   * matches the specified role.  Note that `role` is part of the Layer.Core.MessagePart's attributes.
+   * matches the specified role.  Note that `role` is part of the Layer.Core.MessagePart's MIME Type attributes.
    *
    * @method getModelsByRole
    * @protected
@@ -479,6 +637,12 @@ class MessageTypeModel extends Root {
     return this.childModels.filter(model => model.role === role);
   }
 
+  /**
+   * Any event triggered upon this model will bubble up to the Layer.Core.Client.
+   *
+   * @private
+   * @method _getBubbleEventsTo
+   */
   _getBubbleEventsTo() {
     return Client;
   }
@@ -593,11 +757,11 @@ class MessageTypeModel extends Root {
    * For each subproperty within the Layer.Core.MessageTypeModel.action `data` property,
    * if it exists, leave it untouched, else copy in the value from `newValue`
    *
-   * @method _mergeAction
+   * @method mergeAction
    * @protected
    * @param {Object} newValue    A new event and/or data for the action of this Model.
    */
-  _mergeAction(newValue) {
+  mergeAction(newValue) {
 
     // If there is no current event, copy in the new event (if there is one)
     if (!this.action.event) this.action.event = newValue.event;
@@ -619,16 +783,6 @@ class MessageTypeModel extends Root {
       if (!(propertyName in currentData)) currentData[propertyName] = newData[propertyName];
     });
   }
-
-  /**
-   * Whenever {@link #responses} changes as a result of any User posting a Response Message,
-   * this method is called to let each model process the new responses.
-   *
-   * @protected
-   * @abstract
-   * @method _processNewResponses
-   */
-  _processNewResponses() { }
 
   /**
    * Return the name of the Layer.Core.MessageTypeModel class that represents this Message; for use in simple tests.
@@ -660,7 +814,6 @@ class MessageTypeModel extends Root {
   __getActionData() {
     return this.action.data || {};
   }
-
 
   // See nodeId property docs below
   __getNodeId() {

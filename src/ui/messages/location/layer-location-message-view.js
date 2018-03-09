@@ -19,6 +19,7 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
 import './layer-location-message-model';
+import { defer } from '../../../utils';
 
 registerComponent('layer-location-message-view', {
   mixins: [MessageViewMixin],
@@ -65,6 +66,10 @@ registerComponent('layer-location-message-view', {
       value: Constants.WIDTH.FULL,
     },
 
+    preferredMaxWidth: {
+      value: 640,
+    },
+
     /**
      * Use a Standard Display Container to render this UI.
      *
@@ -91,16 +96,18 @@ registerComponent('layer-location-message-view', {
      */
     _updateImageSrc() {
       if (this.parentNode && this.parentNode.clientWidth) {
-        let marker;
-        if (this.model.latitude) {
-          marker = `${this.model.latitude},${this.model.longitude}`;
-        } else {
-          marker = escape(this.model.street1 + (this.model.street2 ? ` ${this.model.street2}` : '') +
-            ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
-        }
-        this.nodes.img.src = location.protocol + '//maps.googleapis.com/maps/api/staticmap?' +
-        `size=${this.parentNode.clientWidth}x${this.height}&language=${navigator.language.toLowerCase()}` +
-        `&key=${window.googleMapsAPIKey}&zoom=${this.model.zoom}&markers=${marker}`;
+        defer(() => {
+          let marker;
+          if (this.model.latitude) {
+            marker = `${this.model.latitude},${this.model.longitude}`;
+          } else {
+            marker = escape(this.model.street1 + (this.model.street2 ? ` ${this.model.street2}` : '') +
+              ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
+          }
+          this.nodes.img.src = location.protocol + '//maps.googleapis.com/maps/api/staticmap?' +
+            `size=${this.parentNode.clientWidth}x${this.height}&language=${navigator.language.toLowerCase()}` +
+            `&key=${window.googleMapsAPIKey}&zoom=${this.model.zoom}&markers=${marker}`;
+        });
       }
     },
 

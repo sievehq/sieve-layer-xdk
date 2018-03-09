@@ -8,8 +8,8 @@ import Core, { MessageTypeModel } from '../../../core';
 
 class PersonModel extends MessageTypeModel {
 
-  _parseMessage(payload) {
-    super._parseMessage(payload);
+  parseModelChildParts() {
+    super.parseModelChildParts();
 
     this.addressModels = this.getModelsByRole('address');
   }

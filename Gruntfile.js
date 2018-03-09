@@ -7,6 +7,7 @@ var babel = require('babel-core');
 
 module.exports = function (grunt) {
   var saucelabsTests = require('./sauce-gruntfile')(grunt, version);
+  var doingIstanbul = false;
 
 
   grunt.initConfig({
@@ -303,7 +304,7 @@ module.exports = function (grunt) {
     watch: {
       js: {
         files: ['package.json', 'Gruntfile.js', 'samples/index-all.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
-        tasks: ['debug', 'notify:watch'],
+        tasks: ['debug', 'notify:watch', 'eslint:debug'],
         options: {
           interrupt: false
         }
@@ -339,6 +340,7 @@ module.exports = function (grunt) {
   /* Insure that browserify and babelify generated code does not get counted against our test coverage */
   var through = require('through');
   function fixBrowserifyForIstanbul(file) {
+    doingIstanbul = true;
     var generatedLines = [
       "function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }",
     ];
@@ -459,7 +461,7 @@ module.exports = function (grunt) {
         }
         var babelResult = babel.transform(output, {
           presets: ["babel-preset-es2015"],
-          auxiliaryCommentBefore: 'istanbul ignore next'
+          auxiliaryCommentBefore: doingIstanbul ? 'istanbul ignore next' : ''
         });
         var result = babelResult.code;
 
@@ -883,7 +885,7 @@ module.exports = function (grunt) {
   grunt.registerTask('debug', [
     'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
     'custom_babel', 'remove:lib', 'move:lib',
-    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'copy:npmthemes','fix-npm-package', 'eslint:debug']);
+    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'copy:npmthemes','fix-npm-package']);
 
   grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin', 'copy:npmthemes']);
   grunt.registerTask('prepublish', ['build', 'refuse-to-publish']);

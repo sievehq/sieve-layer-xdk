@@ -60,25 +60,22 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { client as Client } from '../../../settings';
-import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
+import Core, { Identity, MessagePart, Root, MessageTypeModel } from '../../../core';
 import ResponseModel from '../response/layer-response-message-model';
 import StatusModel from '../status/layer-status-message-model';
 import ChoiceItem from './layer-choice-message-model-item';
 import { ErrorDictionary } from '../../../core/layer-error';
 
 class ChoiceModel extends MessageTypeModel {
+  constructor(options = {}) {
+    if (!options.enabledFor) options.enabledFor = [];
+    if (options.preselectedChoice) options.selectedAnswer = options.preselectedChoice;
+    super(options);
+    this._normalizeChoices();
+    this._sanitizeProperties();
+  }
 
-  /**
-   * Initialize the properties; called from the constructor
-   *
-   * @method _initializeProperties
-   * @protected
-   */
-  _initializeProperties() {
-    if (!this.enabledFor) this.enabledFor = [];
-    if (this.allowMultiselect) this.allowDeselect = true;
-    if (this.allowDeselect) this.allowReselect = true;
-
+  _normalizeChoices() {
     this.choices = (this.choices || []).map((choice) => {
       if (choice instanceof ChoiceItem) {
         return choice;
@@ -86,21 +83,24 @@ class ChoiceModel extends MessageTypeModel {
         return new ChoiceItem(choice);
       }
     });
+  }
 
+  _sanitizeProperties() {
 
-    if (this.preselectedChoice) this.selectedAnswer = this.preselectedChoice;
+    if (this.allowMultiselect) this.allowDeselect = true;
+    if (this.allowDeselect) this.allowReselect = true;
   }
 
   /**
    * Generate the Message Parts representing this model so that the Choice Message can be sent.
    *
-   * @method _generateParts
+   * @method generateParts
    * @protected
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
-  _generateParts(callback) {
-    const body = this._initBodyWithMetadata([
+  generateParts(callback) {
+    const body = this.initBodyWithMetadata([
       'label', 'type', 'responseName', 'name',
       'allowReselect', 'allowDeselect', 'allowMultiselect',
       'title', 'customResponseData', 'preselectedChoice',
@@ -122,41 +122,36 @@ class ChoiceModel extends MessageTypeModel {
     callback([this.part]);
   }
 
-  /**
-   * Given a Layer.Core.Message, initialize this Choice Model.
-   *
-   * `_parseMessage` is called for intialization, and is also recalled
-   * whenever the Message itself is modified.
-   *
-   * @method _parseMessage
-   * @protected
-   * @param {Object} payload    Metadata describing the Choice Message
-   */
-  _parseMessage(payload) {
-    const initialSelectedAnswer = this.selectedAnswer;
+  // See parent class
+  parseModelPart({ payload, isEdit }) {
     // Explicitly protect us from this illegal usage.
     delete payload.selectedAnswer;
 
     // Copy in the properties... minus selected_answer
-    super._parseMessage(payload);
+    super.parseModelPart({ payload, isEdit });
 
-    this._initializeProperties();
-
-    this.choices = (this.choices || []).map(choice => new ChoiceItem(choice));
+    this._normalizeChoices();
 
     // Generate the data for an Action Button from our Choices
     this._buildActionButtonProps();
+  }
 
+  /**
+   * Initialize or process changes to this Message Type Model's sub-message-parts.
+   *
+   * `parseModelChildParts` is called for intialization, and is also recalled
+   * whenever the sub-parts are added or modified.
+   *
+   * @method parseModelChildParts
+   * @protected
+   * @param {Object} options
+   * @param {Object[]} options.changes
+   * @param {String} options.changes.type  (one of `added`, `removed`, `changed`)
+   * @param {Layer.Core.MessagePart} options.changes.part   The Part that has changed.
+   */
+  parseModelChildParts({ changes, init }) {
+    super.parseModelChildParts({ changes, init });
     if (this.__selectedAnswer === null && this.preselectedChoice) this.selectedAnswer = this.preselectedChoice;
-
-    // Trigger a change event if there was a prior answer
-    if (this.selectedAnswer !== initialSelectedAnswer) {
-      this._triggerAsync('message-type-model:change', {
-        propertyName: 'selectedAnswer',
-        oldValue: initialSelectedAnswer,
-        newValue: this.selectedAnswer,
-      });
-    }
   }
 
   /**
@@ -197,7 +192,9 @@ class ChoiceModel extends MessageTypeModel {
     // Disable selection if this user is the sender, and other participants have made selections.
     // Rationale: This user was requesting feedback, this user's selections do not get priority
     const data = this.responses.getResponses(this.responseName, this.enabledFor);
-    if (data.length > 1 && this.message.sender === Client.user) return false;
+
+    // If someone else has answered, disable this user from answering
+    if (data.filter(item => Identity.prefixUUID + item.identityId !== Client.user.id).length) return false;
 
     return true;
   }
@@ -326,7 +323,7 @@ class ChoiceModel extends MessageTypeModel {
     this._pauseUpdateTimeout = setTimeout(() => {
       this._pauseUpdateTimeout = 0;
       if (this.responses.getResponse(this.responseName, Client.user.id) && this.message && !this.message.isNew()) {
-        this._processNewResponses();
+        this.parseModelResponses();
       }
     }, 6000);
   }
@@ -475,7 +472,7 @@ class ChoiceModel extends MessageTypeModel {
     if (this._pauseUpdateTimeout) clearTimeout(this._pauseUpdateTimeout);
     this._pauseUpdateTimeout = setTimeout(() => {
       this._pauseUpdateTimeout = 0;
-      if (this._hasPendingResponse) this._processNewResponses();
+      if (this._hasPendingResponse) this.parseModelResponses();
     }, 6000);
   }
 
@@ -487,14 +484,16 @@ class ChoiceModel extends MessageTypeModel {
    *
    * Read in the new values, and update `this.selectedAnswer`.
    *
-   * @method _processNewResponses
+   * @method parseModelResponses
    * @protected
    */
-  _processNewResponses() {
+  parseModelResponses() {
     // If still within the _pauseUpdateTimeout, simply indicate that we have a pending response
     if (this._pauseUpdateTimeout) {
       this._hasPendingResponse = true;
     } else {
+      const initialSelectedAnswer = this.selectedAnswer;
+
       this._hasPendingResponse = false;
       const senderId = this.message.sender.userId;
       let data = this.responses.getResponses(this.responseName, this.enabledFor);
@@ -507,6 +506,15 @@ class ChoiceModel extends MessageTypeModel {
       // TODO: Work out some way to aggregate multiple user's responses
       if (data.length) {
         this.selectedAnswer = data[0].value;
+
+        // Trigger a change event if there was a prior answer
+        if (this.selectedAnswer !== initialSelectedAnswer) {
+          this._triggerAsync('message-type-model:change', {
+            propertyName: 'selectedAnswer',
+            oldValue: initialSelectedAnswer,
+            newValue: this.selectedAnswer,
+          });
+        }
       }
     }
   }

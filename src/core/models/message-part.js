@@ -70,6 +70,7 @@ import Root from '../root';
 import Content from './content';
 import LayerError, { ErrorDictionary } from '../layer-error';
 import Util, { logger, xhr } from '../../utils';
+import { STANDARD_MIME_TYPES } from '../../constants';
 
 class MessagePart extends Root {
 
@@ -91,7 +92,7 @@ class MessagePart extends Root {
       if (args.length > 0) {
         newOptions.mimeType = args[0];
       } else {
-        newOptions.mimeType = 'text/plain';
+        newOptions.mimeType = STANDARD_MIME_TYPES.TEXT;
       }
     } else if (Util.isBlob(options) || Util.isBlob(options.body)) {
       const body = options instanceof Blob ? options : options.body;
@@ -143,9 +144,10 @@ class MessagePart extends Root {
     const attributes = this.mimeAttributes;
     const parameters = mimeType.split(/\s*;\s*/);
     if (!parameters) return;
+    const wasInitializing = this.isInitializing;
     this.isInitializing = true;
     mimeType = parameters.shift();
-    this.isInitializing = false;
+    this.isInitializing = wasInitializing;
 
     parameters.forEach((param) => {
       const index = param.indexOf('=');

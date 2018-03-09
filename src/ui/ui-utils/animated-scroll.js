@@ -5,11 +5,10 @@
  * @class Layer.UI.UIUtils
  */
 
-const requestAnimFrame = () => (
+const requestAnimFrame =
   window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame);
-requestAnimFrame();
+  window.webkitRequestAnimationFrame ||
+  window.mozRequestAnimationFrame;
 
 const easeInOutQuad = (t, b, c, d) => {
   t /= d / 2;

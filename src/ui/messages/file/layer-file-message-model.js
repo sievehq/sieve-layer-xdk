@@ -47,12 +47,12 @@ class FileModel extends MessageTypeModel {
   /**
    * Generate the Message Parts representing this model so that the File Message can be sent.
    *
-   * @method _generateParts
+   * @method generateParts
    * @protected
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
-  _generateParts(callback) {
+  generateParts(callback) {
     const source = this.source;
     let sourcePart;
 
@@ -65,7 +65,7 @@ class FileModel extends MessageTypeModel {
     }
 
     // Setup the MessagePart
-    const body = this._initBodyWithMetadata(['sourceUrl', 'author', 'size', 'title', 'mimeType']);
+    const body = this.initBodyWithMetadata(['sourceUrl', 'author', 'size', 'title', 'mimeType']);
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
       body: JSON.stringify(body),
@@ -74,32 +74,24 @@ class FileModel extends MessageTypeModel {
     // Create the source Message Part
     if (source) {
       sourcePart = new MessagePart(this.source);
-      sourcePart.mimeAttributes.role = 'source';
-      sourcePart.mimeAttributes['parent-node-id'] = this.part.nodeId;
+      this.addChildPart(sourcePart, 'source');
       this.childParts.push(sourcePart);
     }
 
     callback(this.source ? [this.part, sourcePart] : [this.part]);
   }
 
-  /**
-   * Given a Layer.Core.Message, initialize this File Model.
-   *
-   * `_parseMessage` is called for intialization, and is also recalled
-   * whenever the Message itself is modified.
-   *
-   * @method _parseMessage
-   * @protected
-   * @param {Object} payload    Metadata describing the File Message
-   */
-  _parseMessage(payload) {
-    super._parseMessage(payload);
-
-    // setup this.source and any other roles that should be saved as properties
-    this.childParts.forEach(part => (this[part.mimeAttributes.role] = part));
+  // See parent class
+  parseModelPart({ payload, isEdit }) {
+    super.parseModelPart({ payload, isEdit });
 
     // Initialize the mimeType property if available
     if (!this.mimeType && this.source) this.mimeType = this.source.mimeType;
+  }
+
+  parseModelChildParts({ changes = [], isEdit = false }) {
+    super.parseModelChildParts({ changes, isEdit });
+    this.source = this.childParts.filter(part => part.role === 'source')[0] || null;
   }
 
   /**

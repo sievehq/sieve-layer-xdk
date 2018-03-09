@@ -209,6 +209,7 @@ module.exports = {
       if (this._models.channels[id]) {
         result = this._models.channels[id];
       } else if (canLoad) {
+        if (!this.isReady) throw new Error(ErrorDictionary.clientMustBeReady);
         result = Channel.load(id);
       }
       if (canLoad) result._loadType = 'fetched';

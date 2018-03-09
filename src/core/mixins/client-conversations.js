@@ -220,6 +220,7 @@ module.exports = {
       if (this._models.conversations[id]) {
         result = this._models.conversations[id];
       } else if (canLoad) {
+        if (!this.isReady) throw new Error(ErrorDictionary.clientMustBeReady);
         result = Conversation.load(id);
       }
       if (canLoad) result._loadType = 'fetched';

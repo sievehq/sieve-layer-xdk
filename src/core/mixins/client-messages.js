@@ -259,6 +259,7 @@ module.exports = {
       if (this._models.messages[id]) {
         result = this._models.messages[id];
       } else if (canLoad) {
+        if (!this.isReady) throw new Error(ErrorDictionary.clientMustBeReady);
         result = Syncable.load(id);
       }
       if (canLoad) result._loadType = 'fetched';

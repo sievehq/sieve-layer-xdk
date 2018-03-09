@@ -97,14 +97,9 @@ import ChoiceItem from '../choice/layer-choice-message-model-item';
 
 class ButtonsModel extends MessageTypeModel {
 
-  /**
-   * Initializes properties that need initial values regardless of whether initialized by Message or by the app.
-   *
-   * @method _initializeProperties
-   * @protected
-   */
-  _initializeProperties() {
-    this.choices = {};
+  constructor(options = {}) {
+    options.choices = {};
+    super(options);
   }
 
   /**
@@ -112,12 +107,12 @@ class ButtonsModel extends MessageTypeModel {
    *
    * Used for Sending the Buttons Message.
    *
-   * @method _generateParts
+   * @method generateParts
    * @private
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
-  _generateParts(callback) {
+  generateParts(callback) {
     const body = {
       buttons: this.buttons.map((button) => {
         if (button.type === 'choice') {
@@ -143,8 +138,8 @@ class ButtonsModel extends MessageTypeModel {
 
     // If a Content Model was provided, add it to this model and generate its Message Part(s)
     if (this.contentModel) {
-      this._addModel(this.contentModel, 'content', (parts) => {
-        this.contentModel._mergeAction(this.action);
+      this.addChildModel(this.contentModel, 'content', (parts) => {
+        this.contentModel.mergeAction(this.action);
         callback([this.part].concat(parts));
       });
     } else {
@@ -161,17 +156,20 @@ class ButtonsModel extends MessageTypeModel {
     });
   }
 
-  /**
-   * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
-   *
-   * @method _parseMessage
-   * @protected
-   * @param {Object} payload
-   */
-  _parseMessage(payload) {
-    super._parseMessage(payload);
+  // If this.responses.part is set then _setupButtonModels was already called
+  parseMessage() {
+    super.parseMessage();
+    if (!this.responses.part) this._setupButtonModels();
+  }
+
+  parseModelChildParts({ parts, init }) {
     this.contentModel = this.getModelsByRole('content')[0] || null;
-    if (this.contentModel) this.contentModel._mergeAction(this.action);
+    if (this.contentModel) this.contentModel.mergeAction(this.action);
+  }
+
+
+  parseModelResponses() {
+    super.parseModelResponses();
     this._setupButtonModels();
   }
 
@@ -222,12 +220,14 @@ class ButtonsModel extends MessageTypeModel {
         model.on('message-type-model:change', evt => this.trigger('message-type-model:change', evt));
 
         // Update the preselectedChoice based on any responses
-        if (model.responses) {
-          model._processNewResponses();
+        if (this.responses.part) {
+          model.responses.parseResponsePart(this.responses.part);
+          model.parseModelResponses();
         }
-      } else {
-        // This will kick off a call to _processNewResponses
-        this.choices[button.data.responseName || 'selection'].responses = this.responses;
+      } else if (this.responses.part) {
+        const model = this.choices[button.data.responseName || 'selection'];
+        model.responses.parseResponsePart(this.responses.part);
+        model.parseModelResponses();
       }
     });
   }

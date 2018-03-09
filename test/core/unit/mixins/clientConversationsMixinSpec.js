@@ -122,10 +122,10 @@ describe("The Client Conversation Mixin", function() {
         it("Should not load if not ready", function() {
             client.isReady = false;
             requests.reset();
-            client.getConversation(cid1, true);
-            expect(requests.count()).toEqual(0);
-            client._clientReady();
-            expect(requests.count()).toEqual(1);
+            expect(function() {
+                client.getConversation(cid1, true);
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.clientMustBeReady);
+            expect(Layer.Core.LayerError.ErrorDictionary.clientMustBeReady).toEqual(jasmine.any(String));
         });
     });
 

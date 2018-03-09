@@ -117,10 +117,7 @@ module.exports = {
     /**
      * Create a Layer.Core.MessageTypeModel instance for this Message.
      *
-     * Retrieves one from cache if it already exists.  If recalling from cache,
-     * will call _parseMessage and cause it to update its state.
-     *
-     * TODO: May want to be more cautious with excessive calls to _parseMessage.
+     * Retrieves one from cache if it already exists.
      *
      * Note that the Part specifies whether we are generating the Root Model, or
      * if not, which sub model to generate for this Message.
@@ -137,8 +134,6 @@ module.exports = {
 
       const messageTypeModel = this.getMessageTypeModel(part.id);
       if (messageTypeModel) {
-        // If the Model already exists, recall the _parseMessage method
-        messageTypeModel._parseMessage(part.body ? JSON.parse(part.body) : {});
         return messageTypeModel;
       } else {
         // Instantiate a sutiable model for this Part.

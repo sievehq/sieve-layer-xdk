@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-message-list', function() {
   var el, testRoot, client, conversation, query, user1, restoreAnimatedScrollTo, animatedScrollIndex = 1;
   var originalTimeout;
@@ -940,6 +941,10 @@ describe('layer-message-list', function() {
         target: message,
         query: query
       });
+      CustomElements.takeRecords();
+      Layer.Utils.defer.flush();
+      CustomElements.takeRecords();
+      Layer.Utils.defer.flush();
 
       // Posttest
       expect(el.scrollTop).toEqual(10);

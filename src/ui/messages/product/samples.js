@@ -1,3 +1,4 @@
+/* eslint-disable */
 TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
 ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
@@ -92,7 +93,7 @@ model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Choices within Choices: A Button Message with Choice Buttons wrapping a Product Message with Options"}).send({ conversation: $("layer-conversation-view").conversation });
 
-  ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
+  ProductModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonsModel({

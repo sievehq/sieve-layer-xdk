@@ -92,7 +92,7 @@ describe("The MessageParts class", function() {
 
         it("Should initialize with a string", function() {
            expect(new Layer.Core.MessagePart("hey").body).toEqual("hey");
-           expect(new Layer.Core.MessagePart("ho").mimeType).toEqual("text/plain");
+           expect(new Layer.Core.MessagePart("ho").mimeType).toEqual("application/vnd.layer.text+json");
         });
 
         it("Should initialize with two strings", function() {
