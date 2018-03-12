@@ -718,6 +718,28 @@ describe("The Message class", function() {
             expect(m.isUnread).toEqual(false);
         });
 
+        it("Should not call _setReceiptStatus and should instead schedule it to be done once the Conversation is loaded", function() {
+            // Pretest
+            m.deliveryStatus = '';
+            m.readStatus = '';
+            conversation.syncState = Layer.Constants.SYNC_STATE.LOADING;
+
+            // Run 1
+            m.recipientStatus = {"layer:///identities/999": "read"};
+
+            // Posttest
+            expect(m.deliveryStatus).toEqual('');
+            expect(m.readStatus).toEqual('');
+
+            // Run 2
+            conversation.trigger('conversations:loaded');
+            Layer.Utils.defer.flush();
+
+            // Posttest
+            expect(m.deliveryStatus).toEqual(Layer.Constants.RECIPIENT_STATE.NONE);
+            expect(m.readStatus).toEqual(Layer.Constants.RECIPIENT_STATE.NONE);
+        });
+
         it("Should call _setReceiptStatus", function() {
             // Setup
             spyOn(m, "_setReceiptStatus");

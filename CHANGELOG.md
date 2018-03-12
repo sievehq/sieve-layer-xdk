@@ -1,5 +1,10 @@
 # Web XDK Change Log
 
+## 1.0.0-pre2.9
+
+* WEB-1631: `Layer.Core.Message.deliveryStatus` and `Layer.Core.Message.readStatus` now more correctly handles case where `Layer.Core.Conversation` is still loading
+  from the server.
+
 ## 1.0.0-pre2.8
 
 *Breaking Changes*
