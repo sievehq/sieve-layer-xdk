@@ -176,6 +176,7 @@ LayerError.ErrorDictionary = {
   valueNotSupported: 'The value provided is not a supported value',
   permissionDenied: 'Operation not allowed on that object',
   adapterError: 'You must call Layer.init() before you can use an adapter',
+  eventHandlerRequired: 'You must provide an event handler for',
 };
 
 module.exports = Core.LayerError = LayerError;

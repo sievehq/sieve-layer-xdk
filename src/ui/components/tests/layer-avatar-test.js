@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-avatar', function() {
   var el, testRoot, client;
 
@@ -8,7 +9,7 @@ describe('layer-avatar', function() {
   beforeEach(function() {
     client = new Layer.init({
       appId: 'Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',

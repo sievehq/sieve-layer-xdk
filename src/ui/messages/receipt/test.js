@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Receipt Message Components', function() {
   var ReceiptModel, ProductModel, ChoiceModel, LocationModel;
   var conversation, message;
@@ -18,8 +19,8 @@ describe('Receipt Message Components', function() {
     });
 
     client = new Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

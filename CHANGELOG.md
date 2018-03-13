@@ -2,8 +2,15 @@
 
 ## 1.0.0-pre2.9
 
+*Breaking Changes*
+
+* WEB-1421: Client now throws errors if a `challenge` event is not registered.  All apps should register this event even if only to handle reauthentication
+
+Additional Changes:
+
 * WEB-1631: `Layer.Core.Message.deliveryStatus` and `Layer.Core.Message.readStatus` now more correctly handles case where `Layer.Core.Conversation` is still loading
   from the server.
+* WEB-1421: Client now throws errors if a `challenge` event is not registered.  All apps should register this event even if only to handle reauthentication
 
 ## 1.0.0-pre2.8
 

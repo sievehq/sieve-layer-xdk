@@ -25,6 +25,18 @@ const LocalFileReader = typeof FileReader === 'undefined' ? global.getNativeSupp
 exports.generateUUID = uuid.v4;
 
 /**
+ * Generate a random UUID as a Uint8Array array
+ *
+ * @method
+ * @return {Uint8Array[]}
+ */
+exports.generateUUIDBytes = () => {
+  const b = new Uint8Array(16);
+  uuid.v4(null, b);
+  return btoa(String.fromCharCode.apply(null, b));
+};
+
+/**
  * Returns the 'type' portion of a Layer ID.
  *
  *         switch(Utils.typeFromID(id)) {
