@@ -14,6 +14,7 @@ Additional Changes:
 * WEB-1198: Filters out invalid Identities from `createConversation` and `addParticipants`
 * WEB-1619: Adds Anonymous avatar and group avatar graphics
 * WEB-1247: Handles scenario where External Content is being accessed prior to it having been created
+* WEB-1574: Now triggers `move` events and rerenders UI when adding Conversation Query results to individually fetched Conversations
 
 ## 1.0.0-pre2.8
 
