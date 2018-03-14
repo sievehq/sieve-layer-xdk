@@ -302,7 +302,13 @@ class MessagePart extends Root {
    * @return {Layer.Core.Content} this
    */
   fetchStream(callback) {
+    // Locally generate External Content
+    if (this.__url) this._fetchStreamComplete(this.__url, callback);
+
+    // No external content
     if (!this._content) throw new Error(ErrorDictionary.contentRequired);
+
+    // Expired external content
     if (this._content.isExpired()) {
       this._content.refreshContent(url => this._fetchStreamComplete(url, callback));
     } else {
