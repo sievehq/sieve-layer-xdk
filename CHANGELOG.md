@@ -5,8 +5,9 @@
 *Breaking Changes*
 
 * WEB-1421: Client now throws errors if a `challenge` event is not registered.  All apps should register this event even if only to handle reauthentication
+* Titled Message View Container now expects the Message Type View to provide `getTitle()` and `getIconClass()` methods rather than `_getTitle()` and `_getIconClass()` methods.
 
-Additional Changes:
+All Changes:
 
 * WEB-1631: `Layer.Core.Message.deliveryStatus` and `Layer.Core.Message.readStatus` now more correctly handles case where `Layer.Core.Conversation` is still loading
   from the server.
@@ -18,6 +19,11 @@ Additional Changes:
 * If `isPersistenceEnabled` is used, but no `import @layerhq/core/db-manager` then an error is thrown
 * WEB-1267: Now correctly writes Receipt Requests to `indexedDB` and loads them on reloading the app (if `isPersistenceEnabled` is `true`)
 * Small adjustments to positioning of Conversation List Item's `<layer-menu-button />`
+* The FileUploadButton component now supports `onFilesSelected` and `onModelsGenerated` as properties that can be assigned event handler functions
+* Setting `messageViewer.messageViewContainerTagName = null` prior to `onAfterCreate` now correctly skips the use of any Message View Container
+  for a Custom Message Type (for use in managing sub-message-viewers).
+* Titled Message View Container now expects the Message Type View to provide `getTitle()` and `getIconClass()` methods rather than `_getTitle()` and `_getIconClass()` methods.
+* Fixes `model.source` for the File Message Type Model to refer to a `Layer.Core.MessagePart`
 
 ## 1.0.0-pre2.8
 

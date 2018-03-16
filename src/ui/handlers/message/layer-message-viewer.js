@@ -101,12 +101,8 @@ registerComponent('layer-message-viewer', {
 
       // Get the UI Node's preferred Display Container... unless this component's messageViewContainerTagName has been set
       get() {
-        const result = this.nodes.ui.messageViewContainerTagName;
-        if (result === 'layer-standard-view-container' && this.properties.messageViewContainerTagNameIsSet) {
-          return this.properties.messageViewContainerTagName;
-        } else {
-          return result;
-        }
+        if (this.properties.messageViewContainerTagNameIsSet) return this.properties.messageViewContainerTagName;
+        return this.nodes.ui.messageViewContainerTagName;
       },
     },
 

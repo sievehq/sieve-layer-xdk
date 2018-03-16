@@ -124,6 +124,14 @@ module.exports = {
     cssClassList: {
       value: ['layer-message-type-view'],
     },
+
+    /**
+     * Hide any `replaceableContent` to the left and right of the Message Item to make more room for this Message.
+     *
+     * That typically means hiding any Avatars, Menu Buttons, etc...
+     *
+     * @property {Boolean} [hideMessageItemRightAndLeftContent=false]
+     */
     hideMessageItemRightAndLeftContent: {},
   },
   methods: {
