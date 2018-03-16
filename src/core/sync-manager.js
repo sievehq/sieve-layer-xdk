@@ -146,7 +146,7 @@ class SyncManager extends Root {
   _processNextRequest(requestEvt) {
     // Fire the request if there aren't any existing requests already firing
     if (this.queue.length && !this.queue[0].isFiring) {
-      if (requestEvt && Client.dbManager) {
+      if (requestEvt && Client.dbManager && !requestEvt.isPersistenceDisabled) {
         Client.dbManager.writeSyncEvents([requestEvt], () => this._processNextStandardRequest());
       } else {
         this._processNextStandardRequest();
@@ -155,7 +155,11 @@ class SyncManager extends Root {
 
     // If we have anything in the receipts queue, fire it
     if (this.receiptQueue.length) {
-      this._processNextReceiptRequest();
+      if (requestEvt && Client.dbManager && !requestEvt.isPersistenceDisabled) {
+        Client.dbManager.writeSyncEvents([requestEvt], () => this._processNextReceiptRequest());
+      } else {
+        this._processNextReceiptRequest();
+      }
     }
   }
 
@@ -215,7 +219,7 @@ class SyncManager extends Root {
     let firingReceipts = 0;
     this.receiptQueue.forEach((receiptEvt) => {
       if (this.isOnline() && receiptEvt) {
-        if (receiptEvt.isFiring || receiptEvt._isValidating) {
+        if (receiptEvt.isFiring) {
           firingReceipts++;
         } else if (firingReceipts < MAX_RECEIPT_CONNECTIONS) {
           firingReceipts++;
@@ -703,8 +707,11 @@ class SyncManager extends Root {
     if (Client.dbManager) {
       Client.dbManager.loadSyncQueue((data) => {
         if (data.length) {
-          this.queue = this.queue.concat(data);
+          this.queue = this.queue.concat(data.filter(item => item.operation !== 'RECEIPT'));
           this._processNextRequest();
+
+          this.receiptQueue = this.receiptQueue.concat(data.filter(item => item.operation === 'RECEIPT'));
+          this._processNextReceiptRequest();
         }
       });
     }

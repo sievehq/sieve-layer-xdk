@@ -237,16 +237,14 @@ class MessagePart extends Root {
    * @param {Function} callback
    */
   _fetchContentCallback(err, result, callback) {
+    this.isFiring = false;
     if (err) {
       this.trigger('content-loaded-error', err);
+    } else if (this.isTextualMimeType()) {
+      Util.fetchTextFromFile(result, text => this._fetchContentComplete(text, callback));
     } else {
-      this.isFiring = false;
-      if (this.isTextualMimeType()) {
-        Util.fetchTextFromFile(result, text => this._fetchContentComplete(text, callback));
-      } else {
-        this.url = URL.createObjectURL(result);
-        this._fetchContentComplete(result, callback);
-      }
+      this.url = URL.createObjectURL(result);
+      this._fetchContentComplete(result, callback);
     }
   }
 

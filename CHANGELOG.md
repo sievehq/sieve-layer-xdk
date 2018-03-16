@@ -15,6 +15,9 @@ Additional Changes:
 * WEB-1619: Adds Anonymous avatar and group avatar graphics
 * WEB-1247: Handles scenario where External Content is being accessed prior to it having been created
 * WEB-1574: Now triggers `move` events and rerenders UI when adding Conversation Query results to individually fetched Conversations
+* If `isPersistenceEnabled` is used, but no `import @layerhq/core/db-manager` then an error is thrown
+* WEB-1267: Now correctly writes Receipt Requests to `indexedDB` and loads them on reloading the app (if `isPersistenceEnabled` is `true`)
+* Small adjustments to positioning of Conversation List Item's `<layer-menu-button />`
 
 ## 1.0.0-pre2.8
 

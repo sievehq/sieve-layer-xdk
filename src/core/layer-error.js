@@ -177,6 +177,7 @@ LayerError.ErrorDictionary = {
   permissionDenied: 'Operation not allowed on that object',
   adapterError: 'You must call Layer.init() before you can use an adapter',
   eventHandlerRequired: 'You must provide an event handler for',
+  dbManagerNotLoaded: 'DbManager NOT imported. Persistence disabled!',
 };
 
 module.exports = Core.LayerError = LayerError;

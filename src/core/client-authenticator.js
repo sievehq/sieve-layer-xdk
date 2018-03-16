@@ -599,7 +599,7 @@ class ClientAuthenticator extends Root {
     if (!this.dbManager) {
       if (!DbManager) {
         if (this.isPersistenceEnabled && this.isTrustedDevice) {
-          logger.error('DbManager NOT imported. Persistence disabled!');
+          throw new Error(ErrorDictionary.dbManagerNotLoaded);
         }
       } else {
         this.dbManager = new DbManager({
