@@ -59,24 +59,30 @@ class CRDTMultiIdentityStateTracker {
   /**
    * Returns the value for all of the specified identities if they have posted a Response Message for this state.
    *
+   * A `null` input will return All Identities.
+   *
    * @method getValues
-   * @param {Layer.Core.Identity[]} identities
+   * @param {Layer.Core.Identity[]} [identities=null]
    * @returns {Object} results
    * @param {String} return.identityId
    * @param {String|Number|Boolean|String[]|Number[]|Boolean[]} return.value
    */
   getValues(identities) {
-    return identities
-      .map((identity) => {
-        const tracker = this.users[identity.userId];
+    const userIds = (identities === null) ? Object.keys(this.users) : identities.map(identity => identity.userId);
+
+    return userIds
+      .map((userId) => {
+        const tracker = this.users[userId];
         if (tracker) {
-          return {
-            identityId: identity.id,
-            value: tracker.getValue(),
-          };
-        } else {
-          return null;
+          const identity = client.getIdentity(userId);
+          if (identity) {
+            return {
+              identityId: identity.id,
+              value: tracker.getValue(),
+            };
+          }
         }
+        return null;
       })
       .filter(result => result); // filter out the null results that lack a tracker
   }

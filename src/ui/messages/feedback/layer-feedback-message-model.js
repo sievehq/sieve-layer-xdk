@@ -82,11 +82,11 @@ class FeedbackModel extends MessageTypeModel {
   }
 
   parseModelResponses() {
-    const rating = this.responses.getResponse('rating', this.enabledFor[0]);
+    const rating = this.responses.getState('rating', Client.getIdentity(this.enabledFor[0]));
     if (rating) {
       this.rating = rating;
-      this.comment = this.responses.getResponse('comment', this.enabledFor[0]);
-      this.sentAt = new Date(this.responses.getResponse('sent_at', this.enabledFor[0]));
+      this.comment = this.responses.getState('comment', Client.getIdentity(this.enabledFor[0]));
+      this.sentAt = new Date(this.responses.getState('sent_at', Client.getIdentity(this.enabledFor[0])));
     }
   }
 
@@ -198,4 +198,3 @@ Root.initClass.apply(FeedbackModel, [FeedbackModel, 'FeedbackModel']);
 Core.Client.registerMessageTypeModelClass(FeedbackModel, 'FeedbackModel');
 
 module.exports = FeedbackModel;
-

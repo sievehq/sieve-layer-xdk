@@ -11,7 +11,6 @@ import Syncable from './syncable';
 import Root from '../root';
 import { client } from '../../settings';
 import CRDTMultiIdentityTracker from '../crdt/multi-identity-state-tracker';
-import { CRDT_TYPES } from '../../constants';
 
 class MessageTypeResponseSummary extends Root {
   constructor(options) {
@@ -201,12 +200,7 @@ class MessageTypeResponseSummary extends Root {
    * @returns {String | Number | Boolean | String[] | Number[] | Boolean[]} return.value
    */
   getStates(name, identities) {
-    return identities
-      .map(identity => ({
-        identityId: identity.id,
-        value: this.getState(name, identity),
-      }))
-      .filter(result => result.value === undefined);
+    return this._trackers[name].getValues(identities);
   }
 
   /**
@@ -220,6 +214,7 @@ class MessageTypeResponseSummary extends Root {
    * @param {Layer.Core.MessagePart} part
    */
   parseResponsePart(part) {
+    let hasChanges = false;
     this.part = part;
     const payload = JSON.parse(part.body);
     Object.keys(this._trackers).forEach((stateName) => {
@@ -233,14 +228,16 @@ class MessageTypeResponseSummary extends Root {
 
       // Typically changes would be [] for most states,
       changes.forEach((change) => {
+        hasChanges = true;
         this.parentModel._triggerAsync('message-type-model:change', {
           property: 'responses.' + stateName,
-          newValue: changes.value,
-          oldValue: changes.oldValue,
-          identityId: client.getIdentity(changes.userId).id,
+          newValue: change.value,
+          oldValue: change.oldValue,
+          identityId: client.getIdentity(change.userId).id,
         });
       });
     });
+    return hasChanges;
   }
 
   _normalizeId(id) {
@@ -261,7 +258,7 @@ class MessageTypeResponseSummary extends Root {
    * Get _All_ responses from all users that contain the specified `responseName`
    *
    * ```
-   * var responses = model.responses.getResponses("selection");
+   * var responses = model.responses.getStates("selection", null);
    * responses.forEach(response => {
    *   const identity = client.getIdentity(response.identityId);
    *   console.log(`${identity.displayName} selected ${response.value}`);

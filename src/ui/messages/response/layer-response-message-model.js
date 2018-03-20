@@ -69,6 +69,7 @@ class ResponseModel extends MessageTypeModel {
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
   generateParts(callback) {
+    if (!this._operationsToSend || !this._operationsToSend.length) throw new Error('Call addOperations() before calling generateParts()');
     const body = this.initBodyWithMetadata(['responseTo', 'responseToNodeId', 'participantData']);
     body.changes = this._operationsToSend.map(op => op.toSerializableObject());
 

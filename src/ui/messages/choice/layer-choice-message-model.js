@@ -207,7 +207,7 @@ class ChoiceModel extends MessageTypeModel {
 
     // Disable selection if this user is the sender, and other participants have made selections.
     // Rationale: This user was requesting feedback, this user's selections do not get priority
-    const data = this.responses.getStates(this.responseName, this.enabledFor);
+    const data = this.responses.getStates(this.responseName, this.enabledFor && this.enabledFor.length ? this.enabledFor : null);
 
     // If someone else has answered, disable this user from answering
     if (data.filter(item => Identity.prefixUUID + item.identityId !== Client.user.id).length) return false;
@@ -511,7 +511,7 @@ class ChoiceModel extends MessageTypeModel {
 
       this._hasPendingResponse = false;
       const senderId = this.message.sender.userId;
-      let data = this.responses.getResponses(this.responseName, this.enabledFor);
+      let data = this.responses.getStates(this.responseName, this.enabledFor && this.enabledFor.length ? this.enabledFor : null);
 
       // If multiple users have resonded to this Choice Message, ignore any responses from the Choice
       // Message Sender.

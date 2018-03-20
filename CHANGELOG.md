@@ -24,6 +24,9 @@ All Changes:
   for a Custom Message Type (for use in managing sub-message-viewers).
 * Titled Message View Container now expects the Message Type View to provide `getTitle()` and `getIconClass()` methods rather than `_getTitle()` and `_getIconClass()` methods.
 * Fixes `model.source` for the File Message Type Model to refer to a `Layer.Core.MessagePart`
+* Message Type Models now trigger a `message-type-model:has-new-message` event when a locally generated model gets its Message
+* Message event `messages:sending` can now have `evt.cancel()` called on them to prevent the Message from being sent.
+*
 
 ## 1.0.0-pre2.8
 

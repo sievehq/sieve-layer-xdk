@@ -466,24 +466,12 @@ class MessageTypeModel extends Root {
    */
   _parseModelResponses(responsePart) {
     if (responsePart) {
-      const oldData = this.responses._participantData;
       if (this.responses.parseResponsePart(responsePart)) {
         this.parseModelResponses(); // Call the public method that lets each model update its state
-        this._triggerAsync('message-type-model:change', {
-          propertyName: 'responses._participantData',
-          oldValue: oldData,
-          newValue: this.responses._participantData,
-        });
       }
     } else {
-      const oldData = this.responses._participantData;
       this.responses.reset();
       this.parseModelResponses(); // Call the public method that lets each model update its state
-      this._triggerAsync('message-type-model:change', {
-        propertyName: 'responses._participantData',
-        oldValue: oldData,
-        newValue: this.responses._participantData,
-      });
     }
   }
 
@@ -1013,7 +1001,7 @@ MessageTypeModel.prototype.role = null;
  * Stores all user responses which can be accessed using `getResponse` or `getResponses`
  *
  * ```
- * console.log(model.responses.getResponse(identityId, 'selection');
+ * console.log(model.responses.getState('selection', identityId);
  * > 'brain-eating-musically-inclined-zombie'
  * ```
  *

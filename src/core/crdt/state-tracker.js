@@ -51,15 +51,17 @@ class ChangeReport {
    * @param {String} options.name   The state name that this tracks
    * @param {String} options.id     The operation ID
    * @param {Mixed} options.value   The value that was added/removed
+   * @param {Mixed} options.oldValue   The value that was replaced
    * @param {String} options.userId The userId of the user whose state this is
    */
 
-  constructor({ type, operation, name, id, value, userId }) {
+  constructor({ type, operation, name, id, value, oldValue, userId }) {
     this.type = type;
     this.operation = operation;
     this.name = name;
     this.id = id;
     this.value = value;
+    this.oldValue = oldValue;
     this.userId = userId;
   }
 
@@ -253,24 +255,37 @@ class CRDTStateTracker {
    * @returns {Layer.Core.CRDT.ChangeReport[]}
    */
   synchronize(payload) {
+    const initialValue = this.getValue();
     const userPayload = payload[this.userId] || {};
     const { adds, removes } = userPayload[this.name];
-    const addOperations = adds.map(addOperation => new AddOperation({
+    const oldAdds = this.adds;
+    const oldRemoves = this.removes;
+
+    this.adds = adds;
+    this.removes = new Set(removes);
+
+    oldRemoves.forEach((operationId) => {
+      this._remove(operationId);
+    });
+
+    const addOperations = oldAdds.map(addOperation => new AddOperation({
       ids: addOperation.ids,
       value: addOperation.value,
     }));
-    const results = [];
-
-    removes.forEach((operationId) => {
-      const changes = this._remove(operationId);
-      if (changes) changes.forEach(change => results.push(change));
-    });
 
     addOperations.forEach((addOperation) => {
-      const changes = this._add(addOperation);
-      if (changes) changes.forEach(change => results.push(change));
+      this._add(addOperation);
     });
-    return results;
+
+    const finalValue = this.getValue();
+    return [new ChangeReport({
+      operation: finalValue ? 'add' : 'remove',
+      type: this.type,
+      name: this.name,
+      value: finalValue,
+      oldValue: initialValue,
+      userId: this.userId,
+    })];
   }
 }
 
