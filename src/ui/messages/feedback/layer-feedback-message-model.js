@@ -30,9 +30,16 @@
  */
 import { client as Client } from '../../../settings';
 import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
-import ResponseModel from '../response/layer-response-message-model';
+import { CRDT_TYPES } from '../../../constants';
 
 class FeedbackModel extends MessageTypeModel {
+  constructor(options) {
+    super(options);
+    this.responses.registerState('rating', CRDT_TYPES.FIRST_WRITER_WINS);
+    this.responses.registerState('comment', CRDT_TYPES.FIRST_WRITER_WINS);
+    this.responses.registerState('sent_at', CRDT_TYPES.FIRST_WRITER_WINS);
+    this.responses.registerState('custom_response_data', CRDT_TYPES.FIRST_WRITER_WINS);
+  }
   generateParts(callback) {
     const body = this.initBodyWithMetadata([
       'title', 'prompt', 'promptWait', 'responseMessage',
@@ -95,28 +102,11 @@ class FeedbackModel extends MessageTypeModel {
     const responseText = this.getSummary(this.responseMessage, false);
     this.sentAt = new Date();
 
-    const participantData = {
-      rating: this.rating,
-      comment: this.comment,
-      sent_at: this.sentAt.toISOString(),
-    };
-
-    if (this.customResponseData) {
-      Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
-    }
-
-    const StatusModel = Core.Client.getMessageTypeModelClass('StatusModel');
-    const responseModel = new ResponseModel({
-      participantData,
-      responseTo: this.message.id,
-      responseToNodeId: this.nodeId,
-      displayModel: new StatusModel({
-        text: responseText,
-      }),
-    });
-    if (!this.message.isNew()) {
-      responseModel.send({ conversation: this.message.getConversation() });
-    }
+    this.responses.addState('rating', this.rating);
+    this.responses.addState('comment', this.comment);
+    this.responses.addState('sent_at', this.sentAt.toISOString());
+    if (this.customResponseData) this.responses.addState('custom_response_data', this.customResponseData);
+    this.responses.setResponseMessageText(responseText);
 
     this._triggerAsync('message-type-model:change', {
       property: 'sentAt',

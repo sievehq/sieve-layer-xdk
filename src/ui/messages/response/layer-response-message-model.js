@@ -43,11 +43,10 @@
  *
  * ### Importing
  *
- * Included with the standard build. For custom build, Import with either:
+ * Included with the standard build. For custom build, Import with:
  *
  * ```
  * import '@layerhq/web-xdk/ui/messages/response/layer-response-message-view';
- * import '@layerhq/web-xdk/ui/messages/response/layer-response-message-model';
  * ```
  *
  * @class Layer.UI.messages.ResponseMessageModel
@@ -55,6 +54,7 @@
  */
 import Core, { MessagePart, MessageTypeModel } from '../../../core';
 import { registerStatusModel } from '../../ui-utils';
+
 
 class ResponseModel extends MessageTypeModel {
 
@@ -69,7 +69,8 @@ class ResponseModel extends MessageTypeModel {
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
   generateParts(callback) {
-    const body = this.initBodyWithMetadata(['responseTo', 'responseToNodeId', 'participantData', 'sharedData']);
+    const body = this.initBodyWithMetadata(['responseTo', 'responseToNodeId', 'participantData']);
+    body.changes = this._operationsToSend.map(op => op.toSerializableObject());
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -125,7 +126,14 @@ class ResponseModel extends MessageTypeModel {
       return {};
     }
   }
+
+  addOperations(operations) {
+    if (!this._operationsToSend) this._operationsToSend = [];
+    this._operationsToSend.push(...operations);
+  }
 }
+
+ResponseModel.prototype._operationsToSend = null;
 
 /**
  * Contains all of the participants data indexed by Identity ID.
@@ -202,7 +210,7 @@ ResponseModel.SummaryTemplate = '${displayModel}'; // eslint-disable-line no-tem
  * @static
  * @property {String} [MIMEType=application/vnd.layer.response+json]
  */
-ResponseModel.MIMEType = 'application/vnd.layer.response+json';
+ResponseModel.MIMEType = 'application/vnd.layer.response-v2+json';
 
 /**
  * The UI Component to render the Response Model.

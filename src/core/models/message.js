@@ -416,7 +416,10 @@ class Message extends Syncable {
       Client._addMessage(this);
 
       // allow for modification of message before sending
-      this.trigger('messages:sending', { notification });
+      const evt = this.trigger('messages:sending', { notification, cancelable: true });
+      if (evt.canceled) {
+        return;
+      }
 
       const data = {
         parts: new Array(this.parts.size),
@@ -1179,6 +1182,17 @@ Message._supportedEvents = [
    *   if (evt.target.getModelName() === 'ResponseModel') {
    *     evt.detail.notification.text = evt.detail.notification.title = '';
    *   }
+   * });
+   * ```
+   *
+   * You may also use this event to prevent the message from being sent; typically you should destroy the message after.
+   *
+   * ```
+   * client.on('messages:sending', function(evt) {
+   *   if (evt.target.getModelName() === 'ResponseModel') {
+   *     evt.cancel();
+   *     evt.target.destroy();
+   *    }
    * });
    * ```
    *

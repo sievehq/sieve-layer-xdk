@@ -49,14 +49,14 @@ describe("The Message Type Response Summary class", function() {
 
   describe("The constructor", function() {
     it("Should initialize participantData", function() {
-      expect(new Layer.Core.MessageTypeResponseSummaryModel({})._participantData).toEqual({});
+      expect(new Layer.Core.MessageTypeResponseSummary({})._participantData).toEqual({});
     });
   });
 
   describe("The getResponse() method", function() {
     var model, userId1, userId2;
     beforeEach(function() {
-      model = new Layer.Core.MessageTypeResponseSummaryModel({})
+      model = new Layer.Core.MessageTypeResponseSummary({})
       userId1 = 'userA';
       userId2 = 'userB';
       model._participantData = {};
@@ -90,7 +90,7 @@ describe("The Message Type Response Summary class", function() {
   describe("The getResponses() method", function() {
     var model, userId1, userId2;
     beforeEach(function() {
-      model = new Layer.Core.MessageTypeResponseSummaryModel({})
+      model = new Layer.Core.MessageTypeResponseSummary({})
       userId1 = 'userA';
       userId2 = 'userB';
       model._participantData = {};

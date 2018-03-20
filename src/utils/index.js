@@ -352,6 +352,18 @@ exports.layerParse = layerParse;
 
 
 /**
+ * Returns a random string of the specified size. For shorter identifiers than a UUID.
+ *
+ * @param {Number} size
+ * @returns {String}
+ */
+exports.randomString = (size) => {
+  const byteBuffer = new Uint8Array(size);
+  while (size--) byteBuffer[size] = (Math.random() * 91) + 35;
+  return String.fromCharCode.apply(null, byteBuffer);
+};
+
+/**
  * Object comparison.
  *
  * Does a recursive traversal of two objects verifying that they are the same.

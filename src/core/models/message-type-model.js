@@ -14,14 +14,14 @@
  * @class  Layer.Core.MessageTypeModel
  * @extends Layer.Core.Root
  */
-import { client as Client } from '../../settings';
+import { client } from '../../settings';
 import Core from '../namespace';
 import Util from '../../utils';
 import Root from '../root';
 import Message from './message';
 import Identity from './identity';
 import { ErrorDictionary } from '../layer-error';
-import ResponseSummaryModel from './message-type-response-summary-model';
+import MessageTypeResponseSummary from './message-type-response-summary';
 
 class MessageTypeModel extends Root {
   /**
@@ -38,7 +38,8 @@ class MessageTypeModel extends Root {
     if (!options.action) options.action = {};
 
     super(options);
-    this.responses = new ResponseSummaryModel();
+
+    this.responses = new MessageTypeResponseSummary({ parentModel: this });
 
     if (!this.customData) this.customData = {};
     this.currentMessageRenderer = this.constructor.messageRenderer;
@@ -149,12 +150,13 @@ class MessageTypeModel extends Root {
         parts: this.childParts,
       });
 
-      Client._removeMessageTypeModel(this);
+      client._removeMessageTypeModel(this);
       this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
-      Client._addMessageTypeModel(this);
+      client._addMessageTypeModel(this);
       this._setupMessage();
       this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
       if (callback) callback(this.message);
+      this._triggerAsync('message-type-model:has-new-message');
     });
     return this;
   }
@@ -284,7 +286,7 @@ class MessageTypeModel extends Root {
     this.message.on('destroy', this.destroy, this);
 
     // Register this model so that it can be retrieved instead of re-instantiated
-    Client._addMessageTypeModel(this);
+    client._addMessageTypeModel(this);
   }
 
   /**
@@ -644,12 +646,12 @@ class MessageTypeModel extends Root {
    * @method _getBubbleEventsTo
    */
   _getBubbleEventsTo() {
-    return Client;
+    return client;
   }
 
   // Parent method docuemnts this
   destroy() {
-    Client._removeMessageTypeModel(this);
+    client._removeMessageTypeModel(this);
     delete this.message;
     super.destroy();
   }
@@ -826,7 +828,7 @@ class MessageTypeModel extends Root {
   }
 
   __getMessageSender() {
-    return this.message ? this.message.sender : Client.user;
+    return this.message ? this.message.sender : client.user;
   }
 
   __getMessageSentAt() {
@@ -1015,7 +1017,7 @@ MessageTypeModel.prototype.role = null;
  * > 'brain-eating-musically-inclined-zombie'
  * ```
  *
- * @property {Layer.Core.MessageTypeResponseSummaryModel}
+ * @property {Layer.Core.MessageTypeResponseSummary}
  */
 MessageTypeModel.prototype.responses = null;
 
@@ -1168,6 +1170,15 @@ MessageTypeModel._supportedEvents = [
    * @param {Layer.Core.LayerEvent} evt
    */
   'message-type-model:notification',
+
+  /**
+   * An event that is triggered for locally created models once they have generated their message.
+   *
+   * @event
+   * @param {Layer.Core.LayerEvent} evt
+   */
+  'message-type-model:has-new-message',
 ].concat(Root._supportedEvents);
+
 Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel', Core]);
 module.exports = MessageTypeModel;

@@ -1,3 +1,4 @@
+/* eslint-disable */
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
 

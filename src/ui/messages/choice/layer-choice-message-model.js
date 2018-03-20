@@ -65,6 +65,7 @@ import ResponseModel from '../response/layer-response-message-model';
 import StatusModel from '../status/layer-status-message-model';
 import ChoiceItem from './layer-choice-message-model-item';
 import { ErrorDictionary } from '../../../core/layer-error';
+import { CRDT_TYPES } from '../../../constants';
 
 class ChoiceModel extends MessageTypeModel {
   constructor(options = {}) {
@@ -73,6 +74,7 @@ class ChoiceModel extends MessageTypeModel {
     super(options);
     this._normalizeChoices();
     this._sanitizeProperties();
+    this.responses.registerState('custom_response_data', CRDT_TYPES.LAST_WRITER_WINS_NULLABLE);
   }
 
   _normalizeChoices() {
@@ -86,7 +88,6 @@ class ChoiceModel extends MessageTypeModel {
   }
 
   _sanitizeProperties() {
-
     if (this.allowMultiselect) this.allowDeselect = true;
     if (this.allowDeselect) this.allowReselect = true;
   }
@@ -118,8 +119,22 @@ class ChoiceModel extends MessageTypeModel {
       body: JSON.stringify(body),
     });
     this._buildActionButtonProps();
-
+    this._registerResponseName();
     callback([this.part]);
+  }
+
+  _registerResponseName() {
+    let type;
+    if (this.allowMultiselect) {
+      type = CRDT_TYPES.SET;
+    } else if (this.allowDeselect) {
+      type = CRDT_TYPES.LAST_WRITER_WINS_NULLABLE;
+    } else if (this.allowReselect) {
+      type = CRDT_TYPES.LAST_WRITER_WINS;
+    } else {
+      type = CRDT_TYPES.FIRST_WRITER_WINS;
+    }
+    this.responses.registerState(this.responseName, type);
   }
 
   // See parent class
@@ -131,6 +146,7 @@ class ChoiceModel extends MessageTypeModel {
     super.parseModelPart({ payload, isEdit });
 
     this._normalizeChoices();
+    this._registerResponseName();
 
     // Generate the data for an Action Button from our Choices
     this._buildActionButtonProps();
@@ -191,7 +207,7 @@ class ChoiceModel extends MessageTypeModel {
 
     // Disable selection if this user is the sender, and other participants have made selections.
     // Rationale: This user was requesting feedback, this user's selections do not get priority
-    const data = this.responses.getResponses(this.responseName, this.enabledFor);
+    const data = this.responses.getStates(this.responseName, this.enabledFor);
 
     // If someone else has answered, disable this user from answering
     if (data.filter(item => Identity.prefixUUID + item.identityId !== Client.user.id).length) return false;
@@ -285,25 +301,39 @@ class ChoiceModel extends MessageTypeModel {
       action = 'selected';
     }
 
-    // Setup the participant data
-    const participantData = {
-      [this.responseName]: selectedAnswers.join(','),
-    };
 
+    const messageText = this._generateResponseMessage({
+      selectedText,
+      action,
+    });
+
+    if (action === 'selected') {
+      this.responses.addState(this.responseName, id);
+    } else {
+      this.responses.removeState(this.responseName, id);
+    }
+
+    const customResponseData = {};
     if (this.customResponseData) {
-      Object.keys(this.customResponseData).forEach((key) => {
-        participantData[key] = this.customResponseData[key];
-      });
+      Object.keys(this.customResponseData).forEach(key => (customResponseData[key] = this.customResponseData[key]));
     }
 
     if (action === 'selected' && choiceItem.customResponseData) {
       Object.keys(choiceItem.customResponseData).forEach((key) => {
-        participantData[key] = choiceItem.customResponseData[key];
+        customResponseData[key] = choiceItem.customResponseData[key];
       });
     }
 
-    // Update the selectedAnswer property
-    this.selectedAnswer = selectedAnswers.join(',');
+    if (Object.keys(customResponseData).length) {
+      this.responses.addState('custom_response_data', customResponseData);
+    }
+
+    this.responses.setResponseMessageText(messageText);
+
+    // Update the selected answer and update the UI
+    // TODO: Use function to look at all state and get selectedAnswer
+    this.selectedAnswer = this.responses.getState(this.responseName, Client.user).join(',');
+
 
     // Tell the UIs to update
     this._triggerAsync('message-type-model:change', {
@@ -311,21 +341,6 @@ class ChoiceModel extends MessageTypeModel {
       newValue: this.selectedAnswer,
       oldValue: initialSelectedAnswer,
     });
-
-    this._generateResponseMessage({
-      action, selectedText, choiceItem, participantData,
-    });
-
-    // We generate local changes, we generate more local changes then the server sends us the first changes
-    // which we need to ignore. Pause 6 seconds and wait for all changes to come in before rendering changes
-    // from the server after a user change.
-    if (this._pauseUpdateTimeout) clearTimeout(this._pauseUpdateTimeout);
-    this._pauseUpdateTimeout = setTimeout(() => {
-      this._pauseUpdateTimeout = 0;
-      if (this.responses.getResponse(this.responseName, Client.user.id) && this.message && !this.message.isNew()) {
-        this.parseModelResponses();
-      }
-    }, 6000);
   }
 
   /**
@@ -338,7 +353,7 @@ class ChoiceModel extends MessageTypeModel {
   _generateResponseMessage({ action, selectedText, choiceItem, participantData }) {
     // Generate the Response Message
     let text = `${Client.user.displayName} ${action} "${selectedText}"` + (this.name ? ` for "${this.name}"` : '');
-
+    return text;
     /**
      * Whenever the Choice Model is about to send a Response Message, this event is triggered.
      *
@@ -425,55 +440,55 @@ class ChoiceModel extends MessageTypeModel {
   _selectSingleAnswer(answerData) {
     const initialSelectedAnswer = this.selectedAnswer;
     let action = 'selected';
-    let id = answerData.id;
+    const id = answerData.id;
     const choiceItem = this.getChoiceById(id);
 
     // Get the index and text of the selected answer
-    let selectedIndex = this.getChoiceIndexById(answerData.id);
+    const selectedIndex = this.getChoiceIndexById(answerData.id);
     const selectedText = this.getText(selectedIndex);
 
     // If we are actually deselecting, clear the index, id and action
     if (this.isSelectionEnabledFor(selectedIndex) && this.isSelectedIndex(selectedIndex)) {
-      selectedIndex = -1;
-      id = '';
       action = 'deselected';
     }
 
-    // Setup the participant data for the Response Message
-    const participantData = {
-      [this.responseName]: id,
-    };
+    const messageText = this._generateResponseMessage({
+      selectedText,
+      action,
+    });
 
+    if (action === 'selected') {
+      this.responses.addState(this.responseName, id);
+    } else {
+      this.responses.removeState(this.responseName, id);
+    }
+
+    const customResponseData = {};
     if (this.customResponseData) {
-      Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
+      Object.keys(this.customResponseData).forEach(key => (customResponseData[key] = this.customResponseData[key]));
     }
 
     if (action === 'selected' && choiceItem.customResponseData) {
       Object.keys(choiceItem.customResponseData).forEach((key) => {
-        participantData[key] = choiceItem.customResponseData[key];
+        customResponseData[key] = choiceItem.customResponseData[key];
       });
     }
 
+    if (Object.keys(customResponseData).length) {
+      this.responses.addState('custom_response_data', customResponseData);
+    }
+
+    this.responses.setResponseMessageText(messageText);
+
     // Update the selected answer and update the UI
-    this.selectedAnswer = id;
+    // TODO: Use function to look at all state and get selectedAnswer
+    this.selectedAnswer = this.responses.getState(this.responseName, Client.user);
+
     this._triggerAsync('message-type-model:change', {
       property: 'selectedAnswer',
       newValue: this.selectedAnswer,
       oldValue: initialSelectedAnswer,
     });
-
-    this._generateResponseMessage({
-      action, selectedText, choiceItem, participantData,
-    });
-
-    // We generate local changes, we generate more local changes then the server sends us the first changes
-    // which we need to ignore. Pause 6 seconds and wait for all changes to come in before rendering changes
-    // from the server after a user change.
-    if (this._pauseUpdateTimeout) clearTimeout(this._pauseUpdateTimeout);
-    this._pauseUpdateTimeout = setTimeout(() => {
-      this._pauseUpdateTimeout = 0;
-      if (this._hasPendingResponse) this.parseModelResponses();
-    }, 6000);
   }
 
 

@@ -52,8 +52,8 @@ describe("The Message Type Model class", function() {
   describe("The constructor", function() {
     it("Should initialize an empty Response Summary Model", function() {
       var model = new TextModel({});
-      expect(model.responses).toEqual(jasmine.any(Layer.Core.MessageTypeResponseSummaryModel));
-      expect(Layer.Core.MessageTypeResponseSummaryModel).not.toBe(null);
+      expect(model.responses).toEqual(jasmine.any(Layer.Core.MessageTypeResponseSummary));
+      expect(Layer.Core.MessageTypeResponseSummary).not.toBe(null);
     });
 
     it("Should initialize an empty childParts and childModels arrays", function() {

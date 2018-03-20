@@ -20,6 +20,7 @@ module.exports = {
   events: [
     'message-type-model:change',
     'message-type-model:customization',
+    'message-type-model:has-new-message',
 
     /**
      * Any event used to customize the notification sent when sending a Message
