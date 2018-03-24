@@ -69,7 +69,7 @@ model = new ChoiceModel({
  model = new ChoiceModel({
    enabledFor: Layer.client.user.id,
    label: "What is the airspeed velocity of an unladen swallow?",
-   enabledFor: $("layer-conversation-view").conversation.participants.filter(user => user !== client.user).map(user => user.id),
+   enabledFor: $("layer-conversation-view").conversation.participants.filter(user => user !== Layer.client.user).map(user => user.id),
    choices: [
       {text:  "Zero, it can not get off the ground!", id: "zero"},
       {text:  "Are we using Imperial or Metric units?", id: "clever bastard"},
