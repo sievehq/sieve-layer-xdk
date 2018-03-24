@@ -1,21 +1,24 @@
 /*
- * This file is used to create a browserified build with the following properties:
+ * This file is used to create a browserified build similar to index.js,
+ * but removing the following:
  *
- * * Initializes webcomponent-light polyfil
- * * Hooks up all methods/properties in the layerUI namespace
- * * Initializes and registers all widgets of this library
+ * * webcomponent-light polyfil
+ * * autolinker
+ * * emoji handler
+ * * FileDropTarget Mixin
+ * * FocusOnKeystroke Mixin
  *
- * Note that you may create your own build that includes:
+ * Any of these you need may be loaded directly by your app into your build.
  *
- * * webcomponent polyfil
- * * Hooks up all methods/properties in the layerUI namespace
- * * Pick and choose modules from the lib folder to include
+ * Usage:
  *
- * NOTE: JSDuck is picking up on LayerUI and defining it to be a class
- * which we don't want; do not let JSDuck parse this file.
- *
+ * ```
+ * import Layer from '@layerhq/web-xdk/index-core';
+ * import LayerUI from '@layerhq/web-xdk/ui/index-lite';
+ * ```
  */
-import 'webcomponents.js/webcomponents-lite';
+
+// import 'webcomponents.js/webcomponents-lite';
 
 import LayerUI from './layer-ui';
 
@@ -25,8 +28,8 @@ import './components/layer-replaceable-content';
 import './components/layer-conversation-view';
 
 
-import './handlers/text/autolinker';
-import './handlers/text/emoji';
+// import './handlers/text/autolinker';
+// import './handlers/text/emoji';
 import './handlers/text/newline';
 import dateSeparator from './ui-utils/date-separator';
 
@@ -54,14 +57,14 @@ import './message-actions/open-file-action';
 import './message-actions/open-map-action';
 
 import './mixins/clickable';
-import './mixins/file-drop-target';
-import './mixins/message-handler';
+// import './mixins/file-drop-target';
+import MessageHandler from './mixins/message-handler';
 import './mixins/has-query';
 import './mixins/list';
 import './mixins/list-item';
 import './mixins/list-selection';
 import './mixins/list-item-selection';
-import './mixins/focus-on-keydown';
+// import './mixins/focus-on-keydown';
 import './messages/message-view-mixin';
 import './mixins/query-end-indicator';
 import './mixins/size-property';
@@ -69,7 +72,9 @@ import './mixins/throttler';
 import mixins from './mixins';
 
 LayerUI.mixins = mixins;
+
 LayerUI.UIUtils.dateSeparator = dateSeparator;
+LayerUI.mixins.MessageHandler = MessageHandler;
 
 // If we don't expose global.layerUI then custom templates can not load and call window.Layer.UI.registerTemplate()
 module.exports = LayerUI;

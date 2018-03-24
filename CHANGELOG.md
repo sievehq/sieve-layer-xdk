@@ -39,7 +39,16 @@ All Changes:
     * registerAllStates: Function for registering any states sent/received via Response Messages by this MessageType.
     * initializeNewModel: Called during initialization on any Message Type Model that is being instantiated from locally generated properties, and not from a Message
     * initializeAnonymousModel: Called during initalization on any Message Type Model that is "anonymous" (i.e. it has a Message, but no MessagePart from which it gets its data and responses)
-
+* WEB-1735, WEB-1733: Provides a build using `import '@layerhq/web-xdk/index-lite'`
+    * Build comes without Webcomponents polyfil
+    * Build comes without emoji libraries
+    * Build comes without the ConversationView being a file drop target for sending attachments
+    * Build comes without the ConversationView detecting keystrokes and refocusing on the Compose Bar
+    * Changes to all builds:
+        * Refactors initialization for all Mixins
+        * Text Handlers that are missing are ignored and assumed to have been optimized out of the build
+        * Mixins within Component definitions may now be Strings naming the Mixin which can be imported later
+        * Mixins that lack definitions are ignored and assumed to have been optimized out of the build
 
 ## 1.0.0-pre2.8
 

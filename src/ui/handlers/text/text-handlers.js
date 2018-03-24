@@ -24,7 +24,7 @@ module.exports.handlers = handlers;
  */
 module.exports._setupOrderedHandlers = () => {
   handlersOrdered = Object.keys(handlers).filter(handlerName =>
-    handlers[handlerName].enabled)
+    handlers[handlerName].enabled && handlers[handlerName].handler)
     .map(handlerName => handlers[handlerName])
     .sort((a, b) => {
       if (a.order > b.order) return 1;

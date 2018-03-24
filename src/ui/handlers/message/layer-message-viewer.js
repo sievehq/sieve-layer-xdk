@@ -211,7 +211,7 @@ registerComponent('layer-message-viewer', {
         this.cardBorderStyle = this.properties.cardBorderStyle || cardUI.cardBorderStyle || 'standard';
       }
 
-      CustomElements.upgradeAll(this);
+      if (typeof CustomElements !== 'undefined') CustomElements.upgradeAll(this);
       if (this.nodes.cardContainer) this.nodes.cardContainer._onAfterCreate();
       if (cardUI._onAfterCreate) cardUI._onAfterCreate();
       if (this.nodes.cardContainer) cardUI._setupContainerClasses();

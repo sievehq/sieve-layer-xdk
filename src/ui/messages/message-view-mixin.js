@@ -5,8 +5,9 @@
  */
 
 import Constants from '../constants';
+import mixins from '../mixins';
 
-module.exports = {
+mixins.MessageViewMixin = module.exports = {
   properties: {
 
     /**
