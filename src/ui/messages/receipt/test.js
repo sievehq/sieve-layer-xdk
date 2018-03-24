@@ -102,8 +102,8 @@ describe('Receipt Message Components', function() {
             imageUrls: ["https://layer.com/about/c"],
             description: "e",
             options: [
-              new ChoiceModel({choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
-              new ChoiceModel({choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
+              new ChoiceModel({enabledFor: client.user.id, choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
+              new ChoiceModel({enabledFor: client.user.id, choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
             ],
             currency: "doh",
             price: "f",
@@ -150,11 +150,13 @@ describe('Receipt Message Components', function() {
 
       expect(choiceItems[0].mimeType).toEqual(ChoiceModel.MIMEType);
       expect(JSON.parse(choiceItems[0].body)).toEqual({
+        enabled_for: client.user.id,
         choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
       });
 
       expect(choiceItems[1].mimeType).toEqual(ChoiceModel.MIMEType);
       expect(JSON.parse(choiceItems[1].body)).toEqual({
+        enabled_for: client.user.id,
         choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
       });
 
@@ -239,12 +241,14 @@ describe('Receipt Message Components', function() {
           id: 'layer:///messages/' + uuid1 + '/parts/' + uuid6,
           mime_type:  ChoiceModel.MIMEType + "; role=options; parent-node-id=a",
           body: JSON.stringify({
+            enabled_for: client.user.id,
             choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
           })
         }, {
           id: 'layer:///messages/' + uuid1 + '/parts/' + uuid7,
           mime_type:  ChoiceModel.MIMEType + "; role=options; parent-node-id=a",
           body: JSON.stringify({
+            enabled_for: client.user.id,
             choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
           })
         }]
@@ -327,8 +331,8 @@ describe('Receipt Message Components', function() {
             imageUrls: ["https://layer.com/about/c"],
             description: "e",
             options: [
-              new ChoiceModel({choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
-              new ChoiceModel({choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
+              new ChoiceModel({enabledFor: client.user.id, choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
+              new ChoiceModel({enabledFor: client.user.id, choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
             ],
             currency: "doh",
             price: "f",

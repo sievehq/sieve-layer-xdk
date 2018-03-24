@@ -39,7 +39,13 @@ class MessageTypeModel extends Root {
 
     super(options);
 
-    this.responses = new MessageTypeResponseSummary({ parentModel: this });
+    if (this.isAnonymous) {
+      if (!this.message) throw new Error(ErrorDictionary.messageMissing);
+      if (!options.parentModel) throw new Error('parentModel property requried for anonymous models');
+      this.responses = options.parentModel.responses;
+    } else {
+      this.responses = new MessageTypeResponseSummary({ parentModel: this });
+    }
 
     if (!this.customData) this.customData = {};
     this.currentMessageRenderer = this.constructor.messageRenderer;
@@ -49,10 +55,40 @@ class MessageTypeModel extends Root {
     if (this.message) {
       this._setupMessage();
       // Some anonymous models will have a message but not have a part to parse
-      if (this.part) {
+      if (!this.isAnonymous) {
         this.parseMessage();
+      } else {
+        this._initializeAnonymousModel();
       }
+    } else {
+      this._initializeNewModel();
     }
+  }
+
+  _initializeAnonymousModel() {
+    this.registerAllStates();
+    this._applyInitialResponseStates();
+    this.initializeAnonymousModel();
+    if (this.initialResponseState) this.parseModelResponses();
+  }
+
+  initializeAnonymousModel() {}
+
+  _initializeNewModel() {
+    this.registerAllStates();
+    this._applyInitialResponseStates();
+    this.initializeNewModel();
+    if (this.initialResponseState) this.parseModelResponses();
+  }
+
+  initializeNewModel() {
+
+  }
+
+  // TODO: Make this customizable so that all Model Types can be updated to add a new state;
+  // perhaps something that goes into Settings?
+  registerAllStates() {
+
   }
 
   /**
@@ -155,8 +191,12 @@ class MessageTypeModel extends Root {
       client._addMessageTypeModel(this);
       this._setupMessage();
       this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
+      if (this.initialResponseState) {
+        this._applyInitialResponseStates();
+        this.parseModelResponses();
+      }
+      this.trigger('message-type-model:has-new-message'); // do this before the callback so it fires before message.send() is called
       if (callback) callback(this.message);
-      this._triggerAsync('message-type-model:has-new-message');
     });
     return this;
   }
@@ -316,7 +356,7 @@ class MessageTypeModel extends Root {
    */
   initBodyWithMetadata(fields) {
     const body = { };
-    const newFields = ['action', 'customData'].concat(fields);
+    const newFields = ['action', 'customData', 'initialResponseState'].concat(fields);
     newFields.forEach((fieldName) => {
       if (this.propertyHasValue(fieldName)) {
         if (Array.isArray(this[fieldName]) && this[fieldName].length === 0) return;
@@ -371,8 +411,26 @@ class MessageTypeModel extends Root {
       payload: this.part.body ? JSON.parse(this.part.body) : {},
       isEdit: false,
     });
-    if (responses) this._parseModelResponses(responses);
+    this.registerAllStates();
+    if (this.initialResponseState) this._applyInitialResponseStates();
+    if (responses) {
+      this._parseModelResponses(responses);
+    } else if (this.initialResponseState) {
+      this.parseModelResponses();
+    }
     this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
+  }
+
+  _applyInitialResponseStates() {
+    if (this.initialResponseState && this.initialResponseState.length) {
+      this.initialResponseState.forEach((addOperation) => {
+        this.responses._addInitialState(
+          addOperation.name,
+          addOperation.value,
+          client.getIdentity(addOperation.identityId),
+          addOperation.id);
+      });
+    }
   }
 
   /**
@@ -401,7 +459,7 @@ class MessageTypeModel extends Root {
       if (modelName in this.constructor.prototype) {
         if (this[modelName] !== payload[propertyName]) {
           this._triggerAsync('message-type-model:change', {
-            propertyName: modelName,
+            property: modelName,
             oldValue: this[modelName],
             newValue: payload[propertyName],
           });
@@ -870,6 +928,9 @@ class MessageTypeModel extends Root {
   }
 }
 
+
+MessageTypeModel.prototype.isAnonymous = false;
+
 /**
  * Unique identifier, derived from the associated Part ID.
  *
@@ -1010,6 +1071,15 @@ MessageTypeModel.prototype.role = null;
 MessageTypeModel.prototype.responses = null;
 
 /**
+ * Stores the initial state of the Message, if states are being set via Response Messages, and an initial state is needed.
+ *
+ * @property {Object}
+ * @protected
+ */
+MessageTypeModel.prototype.initialResponseState = null;
+
+
+/**
  * The requested UI Component name for rendering this model.
  *
  * This property is set from the static `messageRenderer` property provided by most Models.
@@ -1142,6 +1212,40 @@ MessageTypeModel._supportedEvents = [
    * @param {Layer.Core.LayerEvent} evt
    */
   'message-type-model:customization',
+
+  /**
+   * Customize the Response Message before it is sent.
+   *
+   * ```
+   * client.on('message-type-model:sending-response-message', function(evt) {
+   *   const { respondingToModel, responseModel } = evt;
+   *   if (respondingToModel.getModelName() === 'ChoiceModel') {
+   *     // Customize the Text displayed in the Response
+   *     responseModel.displayModel.text = "Something important just changed";
+   *
+   *     // Add additional changes
+   *     respondingToModel.addState('who-is-a-dodo', 'frodo-the-dodo');
+   *     respondingToModel.addState('who-is-a-odo', 'shape-shifter-from-deep-space-9');
+   * });
+   * ```
+   *
+   * You can prevent the Response Message from being sent using `evt.cancel()` however, it will continue to try and send the message after further state changes:
+   *
+   * ```
+   * client.on('message-type-model:sending-response-message', function(evt) {
+   *    var preventedOperations = evt.responseModel.operations.filter(operation => operation.type === 'remove', operation.value === 'red');
+   *    if (preventedOperations.length) {
+   *      evt.cancel();
+   *    }
+   * });
+   * ```
+   *
+   * @event
+   * @param {Layer.Core.LayerEvent} evt
+   * @param {Layer.Core.MessageTypeModel} evt.respondingToModel
+   * @param {Layer.Core.ResponseMessageModel} evt.responseModel
+   */
+  'message-type-model:sending-response-message',
 
   /**
    * Any event used to customize the notification sent when sending a Message

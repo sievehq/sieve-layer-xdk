@@ -1,5 +1,8 @@
 import { client } from '../../settings';
-import CRDTTracker from './state-tracker';
+import { CRDTStateTracker } from './state-tracker';
+import Core from '../namespace';
+import { CRDT_TYPES } from '../../constants';
+import { ErrorDictionary } from '../layer-error';
 
 /**
  * The Multi Identity tracker class tracks all state related to a given named state across all users.
@@ -21,6 +24,12 @@ class CRDTMultiIdentityStateTracker {
   constructor({ name, type }) {
     this.users = {};
     this.name = name;
+
+    // Too bad Object.values() isn't in IE11...
+    const values = Object.keys(CRDT_TYPES).map(typeKey => CRDT_TYPES[typeKey]);
+    if (values.indexOf(type) === -1) {
+      throw new Error(ErrorDictionary.invalidCRDTType);
+    }
     this.type = type;
   }
 
@@ -33,7 +42,7 @@ class CRDTMultiIdentityStateTracker {
    */
   _addUser(userId) {
     if (!this.users[userId]) {
-      this.users[userId] = new CRDTTracker({
+      this.users[userId] = new CRDTStateTracker({
         type: this.type,
         name: this.name,
         userId,
@@ -51,6 +60,8 @@ class CRDTMultiIdentityStateTracker {
   getValue(identity) {
     if (this.users[identity.userId]) {
       return this.users[identity.userId].getValue();
+    } else if (this.type === CRDT_TYPES.SET) {
+      return [];
     } else {
       return null;
     }
@@ -92,7 +103,7 @@ class CRDTMultiIdentityStateTracker {
    *
    * @method addValue
    * @param {String|Number|Boolean} value
-   * @returns {Layer.Core.CRDT.ChangeReport[]}
+   * @returns {Layer.Core.CRDT.Changes[]}
    */
   addValue(value) {
     const userId = client.user.userId;
@@ -101,11 +112,27 @@ class CRDTMultiIdentityStateTracker {
   }
 
   /**
+   * Adds a value for this state for the current authenticated user.
+   *
+   * @method _addInitialValue
+   * @private
+   * @param {String|Number|Boolean} value
+   * @param {Layer.Core.Identity} identity
+   * @param {String} operationId
+   * @returns {Layer.Core.CRDT.Changes[]}
+   */
+  _addInitialValue(value, identity, operationId) {
+    const userId = identity.userId;
+    this._addUser(userId);
+    return this.users[userId].add(value, operationId);
+  }
+
+  /**
    * Removes a value for this state for the current authenticated user.
    *
    * @method removeValue
    * @param {String|Number|Boolean} value
-   * @returns {Layer.Core.CRDT.ChangeReport[]}
+   * @returns {Layer.Core.CRDT.Changes[]}
    */
   removeValue(value) {
     const userId = client.user.userId;
@@ -118,7 +145,7 @@ class CRDTMultiIdentityStateTracker {
    *
    * @method synchronize
    * @param {Object} payload
-   * @returns {Layer.Core.CRDT.ChangeReport[]}
+   * @returns {Layer.Core.CRDT.Changes[]}
    */
   synchronize(payload) {
     const changes = [];
@@ -136,3 +163,6 @@ class CRDTMultiIdentityStateTracker {
 }
 
 module.exports = CRDTMultiIdentityStateTracker;
+
+if (!Core.CRDT) Core.CRDT = {};
+Core.CRDT.CRDTMultiIdentityStateTracker = CRDTMultiIdentityStateTracker;

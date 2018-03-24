@@ -6,6 +6,8 @@
 
 * WEB-1421: Client now throws errors if a `challenge` event is not registered.  All apps should register this event even if only to handle reauthentication
 * Titled Message View Container now expects the Message Type View to provide `getTitle()` and `getIconClass()` methods rather than `_getTitle()` and `_getIconClass()` methods.
+* CRDT data structures replacing old Response Message datastructures.
+* Custom Messages must now register any state shared via Response Messages
 
 All Changes:
 
@@ -26,7 +28,18 @@ All Changes:
 * Fixes `model.source` for the File Message Type Model to refer to a `Layer.Core.MessagePart`
 * Message Type Models now trigger a `message-type-model:has-new-message` event when a locally generated model gets its Message
 * Message event `messages:sending` can now have `evt.cancel()` called on them to prevent the Message from being sent.
-*
+
+* APIs and usage around Response Messages has changed; most developers do not directly create nor interact with these;
+  so consult docs if this is likely to impact you.
+* `layer-choice-model-generate-response-message` event is removed
+* `message-type-model:customization` event is still present for custom models, but no longer used
+* `message-type-model:change` events now correctly use `property` rather than `propertyName` in the change report.
+* `message-type-model:sending-response-message` event now lets apps customize Response Messages or prevent them from being sent
+* Custom Message Types now have the following additional life cycle methods:
+    * registerAllStates: Function for registering any states sent/received via Response Messages by this MessageType.
+    * initializeNewModel: Called during initialization on any Message Type Model that is being instantiated from locally generated properties, and not from a Message
+    * initializeAnonymousModel: Called during initalization on any Message Type Model that is "anonymous" (i.e. it has a Message, but no MessagePart from which it gets its data and responses)
+
 
 ## 1.0.0-pre2.8
 

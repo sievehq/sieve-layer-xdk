@@ -31,7 +31,13 @@ module.exports = {
         if (oldModel) oldModel.off(null, null, this);
         if (newModel) {
           newModel.on('message-type-model:change', this.onRerender, this);
-          newModel.on('message-type-model:customization', this._forwardEvent, this);
+          newModel.on([
+            'message-type-model:change',
+            'message-type-model:customization',
+            'message-type-model:sending-response-message',
+            'message-type-model:notification',
+            'message-type-model:has-new-message',
+          ].join(' '), this._forwardEvent, this); // not well tested
         }
       },
     },
@@ -183,6 +189,12 @@ module.exports = {
      *
      * If `evt.preventDefault()` was called on the UI event, call `evt.cancel()`
      *
+     * > *Note*
+     * >
+     * > This needs to be better documented in public docs... or removed
+     *
+     * @method _forwardEvent
+     * @private
      * @param {Layer.Core.LayerEvent} evt
      */
     _forwardEvent(evt) {

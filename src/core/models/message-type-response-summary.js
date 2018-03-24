@@ -6,11 +6,13 @@
  * @class  Layer.Core.MessageTypeResponseSummary
  * @extends Layer.Core.Root
  */
-import Core from '../namespace';
+import Core, { Identity } from '../namespace';
 import Syncable from './syncable';
 import Root from '../root';
 import { client } from '../../settings';
 import CRDTMultiIdentityTracker from '../crdt/multi-identity-state-tracker';
+import { logger } from '../../utils';
+import { ErrorDictionary } from '../layer-error';
 
 class MessageTypeResponseSummary extends Root {
   constructor(options) {
@@ -73,7 +75,33 @@ class MessageTypeResponseSummary extends Root {
    */
   addState(name, value) {
     const operations = this._trackers[name].addValue(value);
-    this._addOperations(operations);
+    if (operations && operations.length) {
+      this._addOperations(operations);
+      this.parentModel._triggerAsync('message-type-model:change', {
+        property: 'responses.' + name,
+        newValue: this.getState(name, client.user),
+        addedValue: operations[0].value,
+        oldValue: operations[0].oldValue,
+        identityId: client.user.userId,
+      });
+    }
+  }
+
+  /**
+   * Sets the specified state as initial state, which means no events nor Response Messages.
+   *
+   * An operationId and identity are required.
+   *
+   * @method _addInitialState
+   * @private
+   * @param {String} name
+   * @param {String} value
+   * @param {Layer.Core.Identity} identity
+   * @param {String} operationId
+   */
+  _addInitialState(name, value, identity, operationId) {
+    if (!(identity instanceof Identity)) throw new Error(ErrorDictionary.identityMissing);
+    this._trackers[name]._addInitialValue(value, identity, operationId);
   }
 
   /**
@@ -93,8 +121,17 @@ class MessageTypeResponseSummary extends Root {
    * @param {String} value
    */
   removeState(name, value) {
+    const oldValue = this.getState(name, client.user);
     const operations = this._trackers[name].removeValue(value);
-    this._addOperations(operations);
+    if (operations && operations.length) {
+      this._addOperations(operations);
+      this.parentModel._triggerAsync('message-type-model:change', {
+        property: 'responses.' + name,
+        newValue: operations[0].value,
+        oldValue,
+        identityId: client.user.id,
+      });
+    }
   }
 
   setResponseMessageText(text) {
@@ -117,7 +154,7 @@ class MessageTypeResponseSummary extends Root {
    *
    * @private
    * @method _addOperations
-   * @param {Layer.Core.CRDT.ChangeReport[]} operations
+   * @param {Layer.Core.CRDT.Changes[]} operations
    */
   _addOperations(operations) {
     if (operations && operations.length) {
@@ -150,16 +187,24 @@ class MessageTypeResponseSummary extends Root {
    * @method _sendResponseMessage
    */
   _sendResponseMessage() {
+    if (this.isDestroyed) return;
     this._sendResponseTimeout = 0;
     if (this.parentModel.message && this.parentModel.part && !this.parentModel.message.isNew()) {
       this._currentResponseModel.responseTo = this.parentModel.message.id;
       this._currentResponseModel.responseToNodeId = this.parentModel.parentId || this.parentModel.nodeId;
-      this._currentResponseModel.send({ conversation: this.parentModel.message.getConversation() });
-      this._currentResponseModel = null;
+      const evt = this.parentModel.trigger('message-type-model:sending-response-message', {
+        respondingToModel: this.parentModel,
+        responseModel: this._currentResponseModel,
+        cancelable: true,
+      });
+      if (!evt.canceled) {
+        this._currentResponseModel.send({ conversation: this.parentModel.message.getConversation() });
+        this._currentResponseModel = null;
+      }
     } else if (this.parentModel.message) {
-      this.parentModel.message.once('messages:sent', this._sendResponseMessage());
+      this.parentModel.message.once('messages:sent', this._sendResponseMessage.bind(this), this);
     } else {
-      this.parentModel.once('message-type-model:has-new-message', this._sendResponseMessage());
+      this.parentModel.once('message-type-model:has-new-message', this._sendResponseMessage.bind(this), this);
     }
   }
 
@@ -176,7 +221,15 @@ class MessageTypeResponseSummary extends Root {
    * @returns {String | Number | Boolean | String[] | Number[] | Boolean[]}
    */
   getState(name, identity) {
-    return this._trackers[name].getValue(identity);
+    if (!identity) {
+      logger.warn(`Identity not found for Model.getState(${name})`);
+      return null;
+    }
+    if (this._trackers[name]) {
+      return this._trackers[name].getValue(identity);
+    } else {
+      throw new Error(ErrorDictionary.modelStateNotRegistered);
+    }
   }
 
   /**
@@ -200,7 +253,16 @@ class MessageTypeResponseSummary extends Root {
    * @returns {String | Number | Boolean | String[] | Number[] | Boolean[]} return.value
    */
   getStates(name, identities) {
-    return this._trackers[name].getValues(identities);
+    identities = identities.filter((identity) => {
+      if (identity) return true;
+      logger.warn(`Identity not found for Model.getStates(${name})`);
+      return false;
+    });
+    if (this._trackers[name]) {
+      return this._trackers[name].getValues(identities);
+    } else {
+      throw new Error(ErrorDictionary.modelStateNotRegistered);
+    }
   }
 
   /**
@@ -223,7 +285,7 @@ class MessageTypeResponseSummary extends Root {
       // Note that `synchronize` has no knowledge of what states for what identities have
       // changed, and will import `stateName` for each Identity and identify changes.
       // Typically, multiple Identities would not change in a single update.
-      // synchronize returns an array of zero or more Layer.Core.CRDT.ChangeReport objects
+      // synchronize returns an array of zero or more Layer.Core.CRDT.Changes objects
       const changes = tracker.synchronize(payload);
 
       // Typically changes would be [] for most states,

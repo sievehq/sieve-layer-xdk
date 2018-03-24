@@ -205,6 +205,8 @@ class ButtonsModel extends MessageTypeModel {
           message: this.message,
           parentId: this.nodeId,
           responses: this.responses,
+          isAnonymous: true,
+          parentModel: this,
           id: ButtonsModel.prefixUUID + uuid(this.message.id) + '/parts/buttonchoice' + index,
         };
 
@@ -331,4 +333,3 @@ Root.initClass.apply(ButtonsModel, [ButtonsModel, 'ButtonsModel', MessageTypeMod
 Client.registerMessageTypeModelClass(ButtonsModel, 'ButtonsModel');
 
 module.exports = ButtonsModel;
-

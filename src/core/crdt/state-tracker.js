@@ -1,5 +1,6 @@
 import { randomString } from '../../utils';
 import { CRDT_TYPES } from '../../constants';
+import Core from '../namespace';
 
 /**
  * Simple class for managing value and operationId.
@@ -16,10 +17,12 @@ class AddOperation {
    * @param {Object} options
    * @param {Mixed} options.value   The value that is selected/set
    * @param {String[]} [options.ids]  Operation IDs that resulted in those values
+   * @param {Boolean} [isInitialResponseState=false] State comes from initialResponseState and is not synced to server
    */
-  constructor({ value, ids }) {
+  constructor({ value, ids, isInitialResponseState = false }) {
     this.value = value;
-    this.ids = ids || [randomString(CRDTStateTracker.OperationLength)]; // eslint-disable-line no-use-before-define
+    this.ids = ids && ids.length ? ids : [randomString(CRDTStateTracker.OperationLength)]; // eslint-disable-line no-use-before-define
+    this.isInitialResponseState = isInitialResponseState;
   }
   hasAnId(ids) {
     for (let i = 0; i < ids.length; i++) {
@@ -38,9 +41,9 @@ class AddOperation {
 /**
  * A simple class for reporting on changes that need to be performed (or that have been performed via `synchronize()`)
  *
- * @class Layer.Core.CRDT.ChangeReport
+ * @class Layer.Core.CRDT.Changes
  */
-class ChangeReport {
+class Changes {
   /**
    * Represents a change
    *
@@ -119,12 +122,17 @@ class CRDTStateTracker {
    *
    * @method add
    * @param {String|Number|Boolean} value
-   * @returns {Layer.Core.CRDT.ChangeReport[]}
+   * @param {String} [initializationOperationId]  An operaiton ID provided when using initialResponseState
+   * @returns {Layer.Core.CRDT.Changes[]}
    */
-  add(value) {
+  add(value, initializationOperationId) {
     if (this.adds.filter(anAdd => anAdd.value === value).length) return [];
-    const addOperation = new AddOperation({ value });
-    return this._add(addOperation);
+    const addOperation = new AddOperation({
+      value,
+      ids: initializationOperationId ? [initializationOperationId] : [],
+      isInitialResponseState: Boolean(initializationOperationId),
+    });
+    return this._add(addOperation) || [];
   }
 
   /**
@@ -132,7 +140,7 @@ class CRDTStateTracker {
    *
    * @method remove
    * @param {String|Number|Boolean} value
-   * @returns {Layer.Core.CRDT.ChangeReport[]}
+   * @returns {Layer.Core.CRDT.Changes[]}
    */
   remove(value) {
     const addOperations = this.adds.filter(anAdd => anAdd.value === value);
@@ -152,13 +160,14 @@ class CRDTStateTracker {
    * @method _add
    * @private
    * @param {Layer.Core.CRDT.AddOperation} addOperation
-   * @returns {Layer.Core.CRDT.ChangeReport[]}
+   * @returns {Layer.Core.CRDT.Changes[]}
    */
   _add(addOperation) {
     const oldValue = this.getValue();
+    const removes = [];
 
     // Technically, there should only be a single `id` but the addOperation object does have to support multiple ids.
-    const generateAddOps = () => addOperation.ids.map(id => (new ChangeReport({
+    const generateAddOps = () => addOperation.ids.map(id => (new Changes({
       operation: 'add',
       type: this.type,
       name: this.name,
@@ -172,7 +181,7 @@ class CRDTStateTracker {
     // Note that we overwrite addOperation.ids to remove any removed IDs before this addOperation
     // object can be pushed into the adds array.
     addOperation.ids = addOperation.ids.filter(id => !this.removes.has(id));
-    if (addOperation.ids.length === 0) return;
+    if (addOperation.ids.length === 0) return null;
 
     // Current state is empty so we just add and return
     if (this.adds.length === 0) {
@@ -184,26 +193,40 @@ class CRDTStateTracker {
 
     // if we got here, adds is already non empty. If the operation has previously been applied then do nothing
     if (this.adds.filter(anAdd => addOperation.hasAnId(anAdd.ids)).length) {
-      return;
+      return null;
     }
 
     // if we got here, adds is already non empty. First Writer Wins, so we can't add a new value - new operation goes to removes
     if (this.type === CRDT_TYPES.FIRST_WRITER_WINS) {
       addOperation.ids.forEach(id => this.removes.add(id));
-      return;
+      return null;
     }
 
     // reselection enabled, so we first remove old selection
     if (this.type === CRDT_TYPES.LAST_WRITER_WINS || this.type === CRDT_TYPES.LAST_WRITER_WINS_NULLABLE) {
       const oldOperation = this.adds.pop();
-      oldOperation.ids.forEach(anId => this.removes.add(anId));
+      oldOperation.ids.forEach((anId) => {
+        this.removes.add(anId);
+        if (oldOperation.isInitialResponseState) {
+          removes.push(new Changes({
+            operation: 'remove',
+            type: this.type,
+            name: this.name,
+            oldValue: null,
+            value: oldValue,
+            userId: this.userId,
+            id: anId,
+          }));
+        }
+      });
     }
 
     // Add the LWW, LWWN or Set operation to the adds array
     this.adds.push(addOperation);
 
     // Return the changes.
-    return generateAddOps();
+    removes.push(...generateAddOps());
+    return removes;
   }
 
   /**
@@ -212,12 +235,12 @@ class CRDTStateTracker {
    * @method _remove
    * @private
    * @param {String} operationId   One id to be found in the AddOperation.ids value.
-   * @returns {Layer.Core.CRDT.ChangeReport[]}
+   * @returns {Layer.Core.CRDT.Changes[]}
    */
   _remove(operationId) {
     // Remove operations are not supported on these behavior types
     if (this.type === CRDT_TYPES.FIRST_WRITER_WINS || this.type === CRDT_TYPES.LAST_WRITER_WINS) {
-      return;
+      return null;
     }
 
     // Remove this id from every AddOperation object in the adds array
@@ -235,14 +258,14 @@ class CRDTStateTracker {
 
     // Return the changes
     if (removedOperations.length) {
-      return removedOperations.map(addOperation => (new ChangeReport({
+      return removedOperations.map(addOperation => (new Changes({
         operation: 'remove',
         type: this.type,
         name: this.name,
         userId: this.userId,
         id: operationId,
-        value: null,
-        oldValue: addOperation.value,
+        value: addOperation.value,
+        oldValue: null,
       })));
     }
   }
@@ -252,7 +275,7 @@ class CRDTStateTracker {
    *
    * @method synchronize
    * @param {Object} payload
-   * @returns {Layer.Core.CRDT.ChangeReport[]}
+   * @returns {Layer.Core.CRDT.Changes[]}
    */
   synchronize(payload) {
     const initialValue = this.getValue();
@@ -261,7 +284,7 @@ class CRDTStateTracker {
     const oldAdds = this.adds;
     const oldRemoves = this.removes;
 
-    this.adds = adds;
+    this.adds = adds.map(add => new AddOperation(add));
     this.removes = new Set(removes);
 
     oldRemoves.forEach((operationId) => {
@@ -278,7 +301,7 @@ class CRDTStateTracker {
     });
 
     const finalValue = this.getValue();
-    return [new ChangeReport({
+    return [new Changes({
       operation: finalValue ? 'add' : 'remove',
       type: this.type,
       name: this.name,
@@ -291,4 +314,11 @@ class CRDTStateTracker {
 
 CRDTStateTracker.OperationLength = 6;
 
-module.exports = CRDTStateTracker;
+if (!Core.CRDT) Core.CRDT = {};
+Core.CRDT.CRDTStateTracker = CRDTStateTracker;
+Core.CRDT.Changes = Changes;
+
+module.exports = {
+  CRDTStateTracker,
+  Changes,
+};

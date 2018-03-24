@@ -19,7 +19,7 @@ describe("The Message class", function() {
             appId: appId,
             reset: true,
             url: "https://doh.com"
-        });
+        }).on("challenge", function() {});
 
         client.user = new Layer.Core.Identity({
           userId: "999",
@@ -1446,7 +1446,7 @@ describe("The Message class", function() {
 
         it("Should trigger messages:sending", function() {
             // Setup
-            spyOn(m, "trigger");
+            spyOn(m, "trigger").and.callThrough();
             spyOn(client, "sendSocketRequest");
 
             // Run
@@ -1456,8 +1456,38 @@ describe("The Message class", function() {
 
             // Posttest
             expect(m.trigger).toHaveBeenCalledWith("messages:sending", {
-                notification: undefined
+                notification: undefined,
+                cancelable: true,
             });
+        });
+
+        it("Should allow canceling sending using messages:sending", function() {
+            // Setup
+            m.on('messages:sending', function(evt) {evt.cancel();});
+            spyOn(client, "sendSocketRequest");
+            spyOn(m, "_preparePartsForSending");
+
+            // Run
+            m.send();
+            jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
+
+            // Posttest
+            expect(m._preparePartsForSending).not.toHaveBeenCalled();
+        });
+
+        it("Should allow uncanceled sending of the message", function() {
+            // Setup
+            spyOn(client, "sendSocketRequest");
+            spyOn(m, "_preparePartsForSending");
+
+            // Run
+            m.send();
+            jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
+
+            // Posttest
+            expect(m._preparePartsForSending).toHaveBeenCalled();
         });
 
         it("Should call _readAllBlobs and only add the Message after reading is done", function(done) {

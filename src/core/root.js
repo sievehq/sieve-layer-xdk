@@ -416,7 +416,9 @@ class Root extends EventClass {
    * @param {String} eventName
    */
   _requireEvent(eventName) {
-    if (!this._events[eventName]) throw new Error(`${ErrorDictionary.eventHandlerRequired} '${eventName}'`);
+    if (!this.isDestroyed && !this._events[eventName]) {
+      throw new Error(`${ErrorDictionary.eventHandlerRequired} '${eventName}'`);
+    }
   }
 
 
@@ -477,6 +479,7 @@ class Root extends EventClass {
    * @return {Layer.Core.Root} this
    */
   _triggerAsync(...args) {
+    if (this.isDestroyed) return;
     const computedArgs = this._getTriggerArgs(...args);
     this._delayedTriggers.push(computedArgs);
 
