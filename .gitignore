@@ -49,7 +49,6 @@ test/coverage-build.js
 /lib-es6
 /lib-es5
 build
-/npm
 test/CoverageRunner.html
 test/SpecRunner.html
 test/core_tests.html

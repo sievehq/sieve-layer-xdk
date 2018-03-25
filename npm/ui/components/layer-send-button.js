@@ -35,28 +35,27 @@
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
  */
-import { registerComponent } from './component';
-import Clickable from '../mixins/clickable';
+'use strict';
 
-registerComponent('layer-send-button', {
-  mixins: [Clickable],
+var _component = require('./component');
+
+var _clickable = require('../mixins/clickable');
+
+var _clickable2 = _interopRequireDefault(_clickable);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+
+(0, _component.registerComponent)('layer-send-button', {
+  mixins: [_clickable2.default],
   template: '<i class="fas fa-paper-plane fa-lg"></i>',
-  style: `
-    layer-send-button {
-      cursor: pointer;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-    }
-    layer-send-button div {
-      text-align: center;
-    }
-  `,
+  style: 'layer-send-button {\ncursor: pointer;\ndisplay: flex;\nflex-direction: row;\nalign-items: center;\n}\nlayer-send-button div {\ntext-align: center;\n}',
   methods: {
     // Lifecycle method
-    onCreate() {
+    onCreate: function onCreate() {
       this.addClickHandler('send-click', this, this.onClick.bind(this));
     },
+
 
     /**
      * MIXIN HOOK: Called whenever the button is clicked.
@@ -78,7 +77,7 @@ registerComponent('layer-send-button', {
      * @method onClick
      * @param {Event} evt
      */
-    onClick(evt) {
+    onClick: function onClick(evt) {
 
       /**
        * The layer-send-click is triggered whenever this button is clicked.
@@ -92,6 +91,6 @@ registerComponent('layer-send-button', {
        * @event layer-send-click
        */
       this.trigger('layer-send-click');
-    },
-  },
+    }
+  }
 });

@@ -1,0 +1,40 @@
+.layer-conversation-view-width-large {
+  layer-message-viewer-expanded {
+    padding: 30px 30px;
+
+    .layer-card-title-buttons {
+      right: 40px;
+    }
+  }
+}
+
+.layer-conversation-view-width-medium {
+  layer-message-viewer-expanded {
+    padding: 20px 20px;
+
+    .layer-card-title-buttons {
+      right: 30px;
+    }
+  }
+}
+
+.layer-conversation-view-width-small {
+  layer-message-viewer-expanded {
+    padding: 20px 5px;
+
+    .layer-card-title-buttons {
+      right: 15px;
+    }
+  }
+}
+
+layer-message-viewer-expanded {
+  z-index: 2000;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  .layer-message-viewer-expanded-inner {
+    background-color: @color-white;
+    height: 100%;
+    border-radius: @message-type-expanded-view-radius;
+  }
+}

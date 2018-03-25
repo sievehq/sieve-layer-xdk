@@ -1,0 +1,49 @@
+/* Styles for channel Items that appear within the channel List widget */
+layer-channel-item {
+    /* Style a basic channel Item.  Note that it may be better to put
+     * background color on layer-channels-list rather than layer-channel-item
+     */
+    .layer-list-item {
+        padding-right: 12px;
+        padding-left: 12px;
+        box-sizing: border-box;
+    }
+    /* Style the selected channel Item */
+    &.layer-selected-item .layer-list-item {
+        background-color: @conversation-item-color-selected-background;
+    }
+    .layer-channel-title {
+        margin-right: 15px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    /* Style for Size Large */
+    &.layer-size-large .layer-list-item {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        min-height: 72px;
+        font-size: @conversation-item-large-title-size;
+    }
+    /* Style for Size Medium */
+    &.layer-size-medium .layer-list-item {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        min-height: 60px;
+        font-size: @conversation-item-medium-title-size;
+    }
+    /* Style for Size Small */
+    &.layer-size-small .layer-list-item {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        min-height: 48px;
+        font-size: @conversation-item-small-title-size;
+    }
+    /* Style for Size Tiny */
+    &.layer-size-tiny .layer-list-item {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        min-height: 32px;
+        font-size: @conversation-item-tiny-title-size;
+    }
+}

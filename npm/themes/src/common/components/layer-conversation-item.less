@@ -1,0 +1,194 @@
+/*
+ * The Conversation Item widget
+ *
+ * From left-to-right we have roughly:
+ * 1. Avatar or Presence
+ * 2. Title
+ * 3. Date
+ * 4. Last Message
+ * 5. Menu button
+ *
+ */
+layer-conversation-item {
+    /*
+     * List items all contain a layer-list-item that contains the real contents of the item.
+     */
+    .layer-list-item {
+        padding-right: 12px;
+        padding-left: 12px;
+        box-sizing: border-box;
+    }
+
+    /* Style the selected Conversation Item */
+    &.layer-selected-item .layer-list-item {
+        background-color: @conversation-item-color-selected-background;
+    }
+    /* Style for Size Large */
+    &.layer-size-large .layer-list-item {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        min-height: 72px;
+        layer-conversation-title {
+            font-size: @conversation-item-large-title-size;
+        }
+        layer-conversation-item-date {
+            font-size: @conversation-item-large-date-size;
+        }
+        layer-conversation-last-message {
+            margin-top: 4px;
+            font-size: @conversation-item-large-last-message-size;
+        }
+    }
+    /* Style for Size Medium */
+    &.layer-size-medium .layer-list-item {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        min-height: 60px;
+        layer-conversation-title {
+            font-size: @conversation-item-medium-title-size;
+        }
+        layer-conversation-item-date {
+            font-size: @conversation-item-medium-date-size;
+        }
+        layer-conversation-last-message {
+            display: none;
+            font-size: @conversation-item-medium-last-message-size;
+        }
+    }
+    /* Style for Size Small */
+    &.layer-size-small .layer-list-item {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        min-height: 48px;
+        layer-conversation-title {
+            font-size: @conversation-item-small-title-size;
+        }
+        layer-conversation-item-date {
+            font-size: @conversation-item-small-date-size;
+        }
+        layer-conversation-last-message {
+            display: none;
+            font-size: @conversation-item-small-last-message-size;
+        }
+    }
+    /* Style for Size Tiny */
+    &.layer-size-tiny .layer-list-item {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        min-height: 32px;
+        layer-conversation-title {
+            font-size: @conversation-item-tiny-title-size;
+        }
+        layer-conversation-item-date {
+            display: none;
+            font-size: @conversation-item-tiny-date-size;
+        }
+        layer-conversation-last-message {
+            display: none;
+            font-size: @conversation-item-tiny-last-message-size;
+        }
+    }
+
+    /*
+     * Styles for Avatar, Presence or counter showing how many users are in the group
+     */
+    layer-avatar,
+    layer-presence {
+        margin-right: 12px;
+    }
+    layer-presence.layer-presence-within-avatar {
+        margin-right: 0px;
+    }
+    layer-presence,
+    .layer-group-counter {
+        margin-right: 8px;
+    }
+    .layer-group-counter {
+        font-size: 8px;
+        font-weight: bold;
+        color: @conversation-item-color-group-count;
+        border: solid 1px @conversation-item-color-group-count-border;
+        border-radius: 4px;
+        width: @presence-size-large;
+        height: @presence-size-large;
+        text-align: center;
+    }
+
+    /*
+     * Conversation Titles have 3 states:
+     * A. Normal
+     * B. Unread
+     * C. Selected
+     */
+    layer-conversation-title {
+        color: @conversation-item-color-title;
+        font-weight: normal;
+        margin-right: 10px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    &.layer-conversation-unread-messages layer-conversation-title {
+        font-weight: @conversation-item-unread-title-weight;
+    }
+
+    /*
+     * Dates have 3 states:
+     * A. Normal
+     * B. Unread
+     * C. Selected
+     */
+    layer-conversation-item-date {
+        color: @conversation-item-color-read;
+    }
+    &.layer-conversation-unread-messages layer-conversation-item-date {
+        color: @conversation-item-color-unread;
+    }
+
+    /**
+     * Conversation Last Messages have 3 states:
+     * A. Normal
+     * B. Unread
+     * C. Selected
+     */
+    layer-conversation-last-message {
+        color: @conversation-item-color-read;
+        overflow-y: hidden;
+    }
+    &.layer-conversation-unread-messages layer-conversation-last-message {
+        color: @conversation-item-color-unread;
+    }
+
+    /**
+     * Conversation Menu button
+     */
+    .layer-conversation-right-side {
+        align-self: stretch;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        .layer-replaceable-inner {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            layer-menu-button {
+                margin-left: 4px;
+                span {
+                    padding-right: 4px;
+                }
+            }
+        }
+    }
+    .layer-conversation-title-row {
+        align-items: center;
+    }
+    &.layer-size-large .layer-conversation-title-row {
+        align-items: flex-start;
+    }
+    &.layer-size-large .layer-conversation-right-side .layer-replaceable-inner {
+        align-items: flex-start;
+        layer-menu-button {
+            margin-top: 2px;
+        }
+    }
+}

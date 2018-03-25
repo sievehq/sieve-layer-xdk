@@ -1,0 +1,230 @@
+layer-message-list {
+  /*
+   * Layout of the List itself
+   */
+  padding-top: 8px;
+  padding-bottom: 16px;
+
+  layer-message-status {
+    color: @message-item-status-color;
+    font-size: @message-item-status-size;
+    text-transform: capitalize;
+    display: none;
+  }
+
+  .layer-message-item .layer-list-item layer-date {
+    color: @message-item-date-color;
+    font-size: @message-item-date-size;
+/*    display: none; */
+  }
+  .layer-last-message-sent layer-message-status {
+    display: inline-block;
+  }
+
+  layer-message-item-sent.layer-list-item-last .layer-list-item layer-date,
+  layer-message-item-received.layer-list-item-last .layer-list-item layer-date {
+    display: inline-block;
+  }
+
+  .layer-sender-name {
+    color: @message-item-sender-color;
+    font-size: @message-item-sender-size;
+  }
+
+  /*
+   * Layout for the Header and Footer
+   */
+  .layer-message-header, .layer-message-footer {
+    display: none;
+    flex-direction: row;
+    .layer-replaceable-inner:empty {
+      display: none;
+    }
+    .layer-replaceable-inner {
+      width: 100%;
+      margin-top: 2px;
+      margin-bottom: 2px;
+    }
+  }
+
+  .layer-message-item.layer-list-item-first {
+      margin-top: 14px;
+  }
+
+
+  layer-message-item-received {
+    &.layer-list-item-first .layer-message-header,
+    &.layer-list-item-last .layer-message-footer {
+      display: flex;
+      margin-right: 5px;
+      margin-left: @message-item-text-indent + @message-item-margin-left;
+    }
+  }
+
+  layer-message-item-sent {
+    .layer-message-item-main {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+    &.layer-list-item-last .layer-message-footer {
+      .layer-replaceable-inner {
+        justify-content: flex-end;
+      }
+    }
+
+    &.layer-list-item-first .layer-message-header, &.layer-list-item-last .layer-message-footer {
+      display: flex;
+      .layer-replaceable-inner {
+        margin-right: @message-item-text-indent + @message-item-margin-right;
+        margin-left: 5px;
+        layer-message-status {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
+
+
+  /* Styling for Message header and footer contents */
+  .layer-message-item {
+    layer-message-status:after {
+      content: '-';
+      margin-left: 5px;
+    }
+  }
+
+
+
+
+  /* Do not show the avatar if there is no user associated with the avatar
+    * (only happens with messages sent via via Server API 1.0 using a bot name)
+    * or if the message is not the last message in the Message Group.
+    */
+  layer-avatar:not(.layer-has-user),
+  .layer-message-item:not(.layer-list-item-last) layer-avatar {
+    visibility: hidden;
+    overflow: hidden;
+  }
+
+  .layer-message-item layer-avatar {
+    display: @mesage-item-show-avatars;
+  }
+
+  /*
+   * Common layout for all types of messages
+   */
+  .layer-list-item {
+    font-size: @message-item-font-size;
+
+    .layer-message-row {
+      margin-bottom: 2px;
+      margin-top: 2px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end; /* Align avatar with Message Viewer */
+    }
+  }
+
+   .layer-message-row {
+    flex-grow: 1;
+  }
+
+  /* Left/Right panel layout */
+  .layer-message-item:not(.layer-message-item-hide-replaceable-content) {
+    .layer-message-left-side:not(.layer-replaceable-content-empty), .layer-message-right-side:not(.layer-replaceable-content-empty) {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .layer-message-left-side {
+      .layer-replaceable-inner {
+        position: relative;
+        padding-left: 12px;
+      }
+      .layer-replaceable-inner:not(:empty) {
+        padding-right: 8px;
+      }
+    }
+
+    .layer-message-right-side {
+      .layer-replaceable-inner {
+        position: relative;
+        padding-right: 12px;
+      }
+      .layer-replaceable-inner:not(:empty) {
+        padding-left: 8px;
+      }
+    }
+  }
+
+  /* Menu Button in Left/Right Panel; note that this will render within the 12px margin between the Replaceable Content div and the right edge of the Message Item */
+  .layer-message-item {
+    .layer-message-left-side, .layer-message-right-side {
+      layer-menu-button {
+        display: none;
+        left: 2px;
+        margin-left: 2px;
+        &.layer-has-menu {
+          display: block;
+          span {
+            padding-right: 3px;
+          }
+        }
+      }
+    }
+  }
+
+
+  /*
+  * Custom formatting for Messages sent by the session owner.
+  */
+  layer-message-item-sent .layer-list-item {
+    .layer-message-footer {
+      text-align: right;
+    }
+  }
+
+  .layer-message-status-pending  .layer-message-item-content, .layer-message-status-pending  layer-message-viewer.layer-root-viewer {
+    opacity: 0.5;
+  }
+
+  .layer-message-preview  .layer-message-item-content, .layer-message-preview  layer-message-viewer.layer-root-viewer {
+    opacity: 0.5;
+  }
+
+  layer-message-item-status {
+    .layer-list-item {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      padding: 8px 0px;
+    }
+
+    .layer-message-item-main {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+
+    layer-message-viewer {
+      background-color: transparent;
+      color: @message-item-status-color;
+      font-size: @message-item-status-size;
+
+      .layer-card-top {
+        background-color: transparent;
+      }
+
+      layer-text-message-view {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+
+      &.layer-status-message-view {
+        padding: 0px 4px;
+      }
+    }
+  }
+}

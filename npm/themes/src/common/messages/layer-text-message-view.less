@@ -1,0 +1,38 @@
+/* TODO: Refactor this so that group theme doesnt have chat bubbles */
+layer-standard-message-view-container.layer-card-no-metadata > .layer-card-top > layer-text-message-view {
+  padding: @text-chat-padding;
+
+  p.layer-line-wrapping-paragraph {
+    line-height: @text-chat-line-height;
+  }
+}
+
+layer-standard-message-view-container:not(.layer-card-no-metadata) > .layer-card-top > layer-text-message-view {
+  padding: @text-core-ui-padding;
+  overflow-y: auto;
+
+  p.layer-line-wrapping-paragraph {
+    line-height: @text-core-ui-line-height;
+  }
+}
+
+layer-text-message-view {
+  p.layer-line-wrapping-paragraphs {
+    word-break: break-all; // Firefox
+    word-break: break-word;
+    word-wrap: break-word; // IE 11
+  }
+}
+
+layer-message-item-status layer-text-message-view p {
+  text-align: center;
+}
+
+layer-message-viewer.layer-text-message-view {
+  &.layer-card-width-any-width {
+    border-radius: @text-chat-viewer-radius;
+  }
+  &:not(.layer-card-width-any-width) {
+    border-radius: @text-viewer-radius;
+  }
+}

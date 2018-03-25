@@ -1,0 +1,257 @@
+layer-message-list {
+  /*
+   * Layout of the List itself
+   */
+  padding-top: 8px;
+  padding-bottom: 16px;
+
+  /*
+   * Layout for the Header and Footer
+   */
+  .layer-message-header, .layer-message-footer {
+    margin-left: @message-item-margin-left + @message-item-text-indent;
+    margin-right: @message-item-margin-right;
+
+    display: none;
+    flex-direction: row;
+
+    .layer-replaceable-inner:empty {
+      display: none;
+    }
+    .layer-replaceable-inner {
+      width: 100%;
+      margin-top: 2px;
+      margin-bottom: 2px;
+      align-items: baseline;
+    }
+  }
+
+  .layer-message-left-side {
+    .layer-replaceable-inner:empty {
+      display: none;
+    }
+    width: @message-item-text-indent + @message-item-margin-left;
+    position: relative;
+  }
+
+  .layer-list-item-last {
+    margin-bottom: 8px;
+  }
+
+  layer-message-item-received, layer-message-item-sent {
+    &.layer-list-item-first .layer-message-header,
+    &.layer-list-item-last .layer-message-footer {
+      display: flex;
+    }
+    &.layer-list-item-last layer-avatar {
+      display: block;
+    }
+  }
+
+  layer-message-item-sent {
+    layer-message-status {
+      display: none;
+    }
+
+    &.layer-last-message-sent layer-message-status {
+      display: inline-block;
+    }
+  }
+
+  /*
+   * Common layout for all types of messages
+   */
+  .layer-list-item {
+    font-size: @message-item-font-size;
+
+    .layer-message-row {
+      margin-bottom: 2px;
+      margin-top: 2px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end; /* Align avatar with Message Viewer */
+      flex-grow: 1;
+
+      &:hover {
+        background-color: #f9f9f9;
+        border-radius: 4px;
+      }
+    }
+
+    .layer-message-item-content {
+      display: inline-block;
+    }
+  }
+
+  .layer-message-status-pending .layer-message-item-content {
+    opacity: 0.5;
+  }
+
+  .layer-message-preview .layer-message-item-content {
+    opacity: 0.5;
+  }
+
+  /* Left/Right panel layout */
+  .layer-message-item:not(.layer-message-item-hide-replaceable-content) {
+    .layer-message-left-side:not(.layer-replaceable-content-empty), .layer-message-right-side:not(.layer-replaceable-content-empty) {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .layer-message-left-side {
+      .layer-replaceable-inner {
+        padding-left: 12px;
+      }
+      .layer-replaceable-inner:not(:empty) {
+        padding-right: 8px;
+        position: absolute;
+        top: -32px;
+      }
+    }
+
+    .layer-message-right-side {
+      .layer-replaceable-inner {
+        position: relative;
+        padding-right: 12px;
+      }
+      .layer-replaceable-inner:not(:empty) {
+        padding-left: 8px;
+      }
+      layer-message-status {
+        padding-right: 4px;
+      }
+    }
+  }
+
+  /* Menu Button in Left/Right Panel; note that this will render within the 12px margin between the Replaceable Content div and the right edge of the Message Item */
+  .layer-message-item {
+    .layer-message-left-side, .layer-message-right-side {
+      layer-menu-button {
+        display: none;
+        left: -8px;
+        margin-left: 2px;
+        &.layer-has-menu {
+          display: block;
+          span {
+            padding-right: 3px;
+            top: -9px;
+            left: 0px;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+.layer-message-item {
+    layer-avatar {
+      display: none;
+    }
+
+    layer-message-status {
+      display: none;
+      color: @message-item-status-color;
+      font-size: @message-item-status-size;
+    }
+
+    .layer-last-message-sent layer-message-status {
+      display: inline-block;
+    }
+
+    .layer-sender-name {
+      font-weight: bold;
+      color: @message-item-sender-color;
+      font-size: @message-item-sender-size;
+    }
+    layer-date {
+      color: @message-item-date-color;
+      font-size: @message-item-date-size;
+      margin-left: 15px;
+    }
+
+    layer-message-item-status {
+    .layer-list-item {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      padding: 8px 0px;
+    }
+
+    .layer-message-item-main {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+
+    layer-message-viewer {
+      background-color: transparent;
+      color: @message-item-status-color;
+      font-size: @message-item-status-size;
+
+      .layer-card-top {
+        background-color: transparent;
+      }
+
+      layer-text-message-view {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+
+      &.layer-status-message-view {
+        padding: 0px 4px;
+      }
+    }
+  }
+}
+
+layer-message-list layer-message-item-status {
+  .layer-list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 8px 0px;
+  }
+
+  .layer-message-item-main {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  layer-message-viewer {
+    background-color: transparent;
+    color: @message-item-status-color;
+    font-size: @message-item-status-size;
+
+    .layer-card-top {
+      background-color: transparent;
+    }
+
+    layer-text-message-view {
+      padding-top: 0px;
+      padding-bottom: 0px;
+    }
+
+    &.layer-status-message-view {
+      padding: 0px 4px;
+    }
+  }
+}
+
+layer-message-list .layer-message-item  .layer-message-item-main {
+  text-align: left;
+}
+
+
+.layer-message-status-pending  .layer-message-item-content, .layer-message-status-pending  layer-message-viewer.layer-root-viewer {
+  opacity: 0.5;
+}
+
+.layer-message-preview  .layer-message-item-content, .layer-message-preview  layer-message-viewer.layer-root-viewer {
+  opacity: 0.5;
+}
+
+.layer-message-status-delivered-to-some layer-message-status, .layer-message-status-read-by-some layer-message-status {
+  opacity: 0.5;
+}

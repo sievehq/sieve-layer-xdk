@@ -1,0 +1,84 @@
+
+
+layer-message-viewer.layer-card-width-flex-width, layer-message-viewer.layer-card-width-full-width {
+  & > layer-standard-message-view-container:not(.layer-card-no-metadata) > .layer-card-body-outer {
+    margin: 8px 0px;
+
+    .layer-standard-card-container-title, .layer-standard-card-container-description, .layer-standard-card-container-footer {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    .layer-standard-card-container-title {
+      max-height: 6rem;
+      overflow-y: auto;
+    }
+
+    .layer-standard-card-container-description {
+      max-height: 12rem;
+      overflow-y: auto;
+    }
+  }
+}
+
+layer-standard-message-view-container {
+  .layer-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+layer-message-viewer:not(.layer-card-width-any-width) > layer-standard-message-view-container > .layer-card-top {
+  overflow: hidden; // prevent images from spilling out of bounds
+  border-radius: 16px 16px 0px 0px;
+  max-height: 450px;
+  background-color: @message-type-container-core-ui-background;
+  border-bottom: solid 1px @color-g2;
+}
+
+layer-standard-message-view-container.layer-no-core-ui > .layer-card-top {
+  display: none;
+}
+
+layer-standard-message-view-container, layer-list-item-container {
+  &.layer-has-title > .layer-card-body-outer > .layer-card-body > .layer-standard-card-container-description:not(:empty) {
+    padding-top: 4px;
+  }
+
+  &.layer-has-description > .layer-card-body-outer > .layer-card-body > .layer-standard-card-container-footer:not(:empty) {
+    padding-top: 4px;
+  }
+
+  .layer-standard-card-container-title {
+    color: @message-type-container-title-color;
+    font-size: @font-large;
+  }
+
+  .layer-standard-card-container-description {
+    color: @message-type-container-description-color;
+    font-size: @font-large;
+  }
+
+  .layer-standard-card-container-footer {
+    color: @message-type-container-footer-color;
+    font-size: @font-medium;
+  }
+}
+
+
+
+layer-standard-message-view-container:not(.layer-arrow-next-container) .layer-next-icon {
+  display: none;
+}
+layer-standard-message-view-container.layer-arrow-next-container {
+  cursor: pointer;
+  .layer-next-icon {
+	  width: 30px;
+    height: 30px;
+  }
+}
+
+layer-standard-message-view-container.layer-arrow-next-container .layer-card-body {
+  margin-right: 16px;
+}
