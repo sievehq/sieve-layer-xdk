@@ -159,7 +159,7 @@ class ButtonsModel extends MessageTypeModel {
   // If this.responses.part is set then _setupButtonModels was already called
   parseMessage() {
     super.parseMessage();
-    if (!this.responses.part) this._setupButtonModels();
+    this._setupButtonModels();
   }
 
   parseModelChildParts({ parts, init }) {

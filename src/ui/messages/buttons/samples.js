@@ -91,10 +91,16 @@ ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
    {"type": "action", "text": "open layer", event: 'open-url', data: {url: 'https://layer.com'}},
-   {"type": "choice", "choices": [
-     {"text": "like", "id": "like", "tooltip": "like"},
-     {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
-    ]}
+   {
+      "type": "choice",
+      "choices": [
+        {"text": "like", "id": "like", "tooltip": "like"},
+        {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
+      ],
+      data: {
+        enabledFor: Layer.client.user.id
+      }
+    }
  ]
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
@@ -110,6 +116,9 @@ model = new ButtonModel({
      {"text": "\uD83D\uDC4E", "id": "dislike"},
      {"text": "\ud83d\udc4c", "id": "ok"},
     ],
+      data: {
+        enabledFor: Layer.client.user.id
+      }
   }
  ]
 });
@@ -144,7 +153,11 @@ model = new ButtonModel({
    {"type": "choice", "choices": [
      {"text": "like", "id": "like", "tooltip": "like"},
      {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
-    ], data: {responseName: "satisfaction"}}
+    ],
+    data: {
+      enabledFor: Layer.client.user.id,
+      responseName: "satisfaction"
+    }}
  ]
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
@@ -158,7 +171,11 @@ model = new ButtonModel({
    {"type": "choice", "choices": [
      {"text": "like", "id": "like", "tooltip": "like"},
      {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
-    ], "data": {allowReselect: true, name: 'Liking Layer'}}
+    ], "data": {
+      enabledFor: Layer.client.user.id,
+      allowReselect: true,
+      name: 'Liking Layer'
+    }}
  ]
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
@@ -172,7 +189,11 @@ model = new ButtonModel({
    {"type": "choice", "choices": [
      {"text": "like", "id": "like", "tooltip": "like"},
      {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
-    ], "data": {preselectedChoice: 'dislike', allowReselect: true}}
+    ], "data": {
+      preselectedChoice: 'dislike',
+      allowReselect: true,
+      enabledFor: Layer.client.user.id
+    }}
  ]
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
@@ -186,7 +207,10 @@ model = new ButtonModel({
    {"type": "choice", "choices": [
      {"text": "like", "id": "like", "tooltip": "like"},
      {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
-    ], "data": {allowDeselect: true}}
+    ], "data": {
+      enabledFor: Layer.client.user.id,
+      allowDeselect: true
+    }}
  ]
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
@@ -200,7 +224,10 @@ model = new ButtonModel({
    {"type": "choice", "choices": [
      {"text": "like", "id": "like", "tooltip": "like"},
      {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
-    ], "data": {allowMultiselect: true}}
+    ], "data": {
+      enabledFor: Layer.client.user.id,
+      allowMultiselect: true
+    }}
  ]
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
@@ -214,11 +241,19 @@ model = new ButtonModel({
    {"type": "choice", "choices": [
      {"text": "like", "id": "like", "tooltip": "like"},
      {"text": "dislike", "id": "dislike", "tooltip": "dislike"}
-    ], "data": {"responseName": "satisfaction", allowReselect: true}},
+    ], "data": {
+      enabledFor: Layer.client.user.id,
+      "responseName": "satisfaction",
+      allowReselect: true
+    }},
   {"type": "choice", "choices": [
     {"text": "like 2", "id": "like", "tooltip": "like"},
     {"text": "dislike 2", "id": "dislike", "tooltip": "dislike"}
-    ], "data": {"responseName": "satisfaction2", allowReselect: true}}
+    ], "data": {
+      enabledFor: Layer.client.user.id,
+      "responseName": "satisfaction2",
+      allowReselect: true
+    }}
  ]
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
@@ -227,25 +262,25 @@ model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Product Demo"}).send({ conversation: $("layer-conversation-view").conversation });
 
-ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
-ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
+ProductModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
+ImageModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
    {
      "type": "choice",
      "choices": [{"text": "like", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "dislike", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}],
-     "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}
+     "data": {enabledFor: Layer.client.user.id,"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}
    },
    {
      "type": "choice",
      "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}],
-     "data": {"responseName": "thumborientation", allowReselect: true, allowDeselect: false}
+     "data": {enabledFor: Layer.client.user.id,"responseName": "thumborientation", allowReselect: true, allowDeselect: false}
    },
    {
      "type": "choice",
      "choices": [{"text": "helpful", "id": "helpful", "tooltip": "helpful"}, {"text": "unhelpful", "id": "unhelpful", "tooltip": "unhelpful"}],
-     "data": {"responseName": "helpfulness", allowReselect: false}
+     "data": {enabledFor: Layer.client.user.id,"responseName": "helpfulness", allowReselect: false}
    },
  ],
  contentModel: new ProductModel({
@@ -261,25 +296,25 @@ model.send({ conversation: $("layer-conversation-view").conversation });
 
 
 
-ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
-ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
+ProductModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
+ImageModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
    {
      "type": "choice",
      "choices": [{"text": "like", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "dislike", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}],
-     "data": {"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}
+     "data": {enabledFor: Layer.client.user.id,"responseName": "satisfaction", preselectedChoice: 'dislike', allowReselect: true}
    },
    {
      "type": "choice",
      "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}],
-     "data": {"responseName": "thumborientation", allowReselect: true, allowDeselect: false, customResponseData: {howdy: "ho der"}}
+     "data": {enabledFor: Layer.client.user.id,"responseName": "thumborientation", allowReselect: true, allowDeselect: false, customResponseData: {howdy: "ho der"}}
    },
    {
      "type": "choice",
      "choices": [{"text": "helpful", "id": "helpful", "tooltip": "helpful"}, {"text": "unhelpful", "id": "unhelpful", "tooltip": "unhelpful"}],
-     "data": {"responseName": "helpfulness", allowReselect: false}
+     "data": {enabledFor: Layer.client.user.id,"responseName": "helpfulness", allowReselect: false}
    },
  ],
  contentModel: new ProductModel({
@@ -293,8 +328,8 @@ model = new ButtonModel({
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
 
-ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
-ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
+ProductModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
+ImageModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
 ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonModel({
  buttons: [
@@ -326,17 +361,17 @@ model = new ButtonModel({
          "id": "dislike",
          "tooltip": "dislike"
        }],
-     "data": {"responseName": "satisfaction", allowReselect: true}
+     "data": {enabledFor: Layer.client.user.id,"responseName": "satisfaction", allowReselect: true}
    },
    {
      "type": "choice",
      "choices": [{"text": "\uD83D\uDC4D", "id": "up", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "down", "tooltip": "dislike", "icon": "custom-dislike-button"}],
-     "data": {"responseName": "thumborientation", allowReselect: true, allowDeselect: false, customResponseData: {howdy: "ho der"}}
+     "data": {enabledFor: Layer.client.user.id,"responseName": "thumborientation", allowReselect: true, allowDeselect: false, customResponseData: {howdy: "ho der"}}
    },
    {
      "type": "choice",
      "choices": [{"text": "helpful", "id": "helpful", "tooltip": "helpful"}, {"text": "unhelpful", "id": "unhelpful", "tooltip": "unhelpful"}],
-     "data": {"responseName": "helpfulness", allowReselect: false}
+     "data": {enabledFor: Layer.client.user.id,"responseName": "helpfulness", allowReselect: false}
    },
  ],
  contentModel: new ProductModel({
