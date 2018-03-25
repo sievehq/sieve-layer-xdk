@@ -40,7 +40,7 @@ import Clickable from '../mixins/clickable';
 
 registerComponent('layer-send-button', {
   mixins: [Clickable],
-  template: '<div></div>',
+  template: '<i class="fas fa-paper-plane fa-lg"></i>',
   style: `
     layer-send-button {
       cursor: pointer;
