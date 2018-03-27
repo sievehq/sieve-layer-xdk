@@ -255,6 +255,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
           case _constants4.default.CONVERSATIONS_SORT.LAST_MESSAGE:
             this.properties.sortBy = [{ 'lastMessage.sentAt': 'desc' }];
             break;
+          case 'conversationType':
+            this.properties.sortBy = [{ 'metadata.conversationType': 'desc' }];
+            break;
           default:
             this.properties.sortBy = [{ createdAt: 'desc' }];
         }

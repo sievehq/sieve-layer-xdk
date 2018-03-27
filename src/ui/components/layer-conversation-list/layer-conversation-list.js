@@ -256,7 +256,7 @@ registerComponent('layer-conversation-list', {
           case UIConstants.CONVERSATIONS_SORT.LAST_MESSAGE:
             this.properties.sortBy = [{ 'lastMessage.sentAt': 'desc' }];
             break;
-          case "conversationType":
+          case 'conversationType':
             this.properties.sortBy = [{ 'metadata.conversationType': 'desc' }];
             break;
           default:

@@ -52,7 +52,8 @@ module.exports = {
   /**
    * @property {String} menuNode Describes a menu button for use within a Message List.  Use {@link Layer.UI.components.ConversationView#getMenuItems} to customize the menu.
    */
-  menuNode: '<layer-menu-button layer-id="menuButton"></layer-menu-button>',
+  // menuNode: '<layer-menu-button layer-id="menuButton"></layer-menu-button>',
+  menuNode: '',
 
   /**
    * @property {String} dateNode Describes a date widget for rendering Message Sent Date for use within a Message List
