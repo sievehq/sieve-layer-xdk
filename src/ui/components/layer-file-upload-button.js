@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 /**
  * The Layer file upload button component allows users to select a File to send.
  *
@@ -36,7 +38,8 @@ import Clickable from '../mixins/clickable';
 
 registerComponent('layer-file-upload-button', {
   mixins: [Clickable],
-  template: '<label layer-id="label">+</label><input layer-id="input" type="file"></input>',
+  //
+  template: '<label layer-id="label"><i class="fas fa-paperclip fa-lg"></label><input layer-id="input" type="file"></input>',
   style: `
     layer-file-upload-button {
       cursor: pointer;

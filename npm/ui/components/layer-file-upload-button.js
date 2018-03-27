@@ -47,10 +47,13 @@ var _clickable2 = _interopRequireDefault(_clickable);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/* eslint-disable max-len */
+
 
 (0, _component.registerComponent)('layer-file-upload-button', {
   mixins: [_clickable2.default],
-  template: '<label layer-id="label">+</label><input layer-id="input" type="file"></input>',
+  //
+  template: '<label layer-id="label"><i class="fas fa-paperclip fa-lg"></label><input layer-id="input" type="file"></input>',
   style: 'layer-file-upload-button {\ncursor: pointer;\ndisplay: flex;\nflex-direction: column;\njustify-content: center;\n}',
   properties: {
     /**
